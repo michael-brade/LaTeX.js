@@ -1,59 +1,40 @@
 {
-    var envs = ["itemize", "description"];
-
-    var html = ""; // maybe use jQuery and build a dom
-    // alternatively: build a class-hierarchy of Paragraphs, Headings, Figures, Questions, Sharings, References
-
-
-    function formatLocation(location) {
-        return ""
-    }
-
-    /**
-     * This should process \textbf{}, \sanskrit{}, \Sambodha (i.e., glossary terms), etc.
-     */
-    function processCommand(command, args) {
-
-    }
-
-
-    /**
-     * This should process known environments
-     */
-    function processEnvironment(env, content) {
-
-    }
+    var compiler = new (require('./compiler').Compiler);
 }
 
 
 document =
-    d:text+
-
-    {
-        //return d
-        return html
-    }
+    text+   { return compiler.html(); }
 
 text =
-    b:break         { html += b } /
-    !break n:nl     { html += n } /
-    environment /
-    c:command       { html += "<TODO:cmd>" } /
-    t:char+         { html += t.join("") } /
-    s:(sp / nbsp)   { html += s } /
+    !break s:(nl / sp)+         { compiler.processSpace(); } /
+    break                       { compiler.processParagraphBreak(); } /
+    n:nbsp                      { compiler.processNbsp(n); } /
+    w:char+                     { compiler.processWord(w.join("")); } /
+    p:punctuation               { compiler.processPunctuation(p); } /
+    environment / command /
     comment+
 
+break "paragraph break" =
+    nl (sp* nl+)+    // two or more newlines, mixed with spaces
+    { return null; }
 
-// TODO: command is a command until first whitespace after identifier or closing ] or }, or 
+// TODO: command is a command until first whitespace after identifier or closing ] or }, or
 command =
-    !begin !end "\\" identifier ("{" text* "}")*
+    !begin !end
+    "\\" identifier ("{" text* "}")*
+    {
+        compiler.processCommand();
+    }
 
 environment =
     b:begin
         c:(text*)
     e:end
 
-     {
+    {
+        compiler.processEnvironment(b, c, e);
+        
         if (b != e)
             throw Error("line " + location().start.line + ": begin and end don't match!")
 
@@ -77,31 +58,42 @@ identifier =
     id:char+
     { return id.join("") }
 
-char "character" =
-    [a-z0-9._\-\*]i
 
+
+
+
+/* comments */
 
 comment =
-    "%" (char / sp / nbsp)*
+    "%" (char / sp / nbsp)* (nl / EOF)  // everything up to and including the newline
     { return null }
 
-/* SPACES */
 
-sp "whitespace" =
-    [ \t]+
-    { return " " }
-
-nbsp "non-breakable whitespace" =
-    "~"
-    { return "&nbsp;" }
+/* tokens */
 
 nl "newline" =
     [\n\r]
-    { return " " }
+    { return compiler.nl(); }
 
-break "paragraph break" =
-    nl (sp* nl+)+    // two or more newlines, mixed with spaces
-    { return "\n" }
+char "character" =
+    c:[a-z0-9]i
+    { return compiler.character(c); }
+    
+esc "escaped character" =
+    "\\" c:[%&\\_]
+    { return compiler.escapedCharacter(c); }
+    
+punctuation =
+    p:[.,\-\*]
+    { return compiler.character(p); }
+
+sp "whitespace" =
+    [ \t]+
+    { return compiler.sp(); }
+
+nbsp "non-breakable whitespace" =
+    "~"
+    { return compiler.nbsp(); }
 
 
 EOF =

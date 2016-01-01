@@ -16,7 +16,7 @@ keywords:
 
 scripts:
     clean: 'rimraf dist;'
-    build: 'mkdirp dist; pegjs src/latex.pegjs dist/latex.js;'
+    build: 'mkdirp dist; pegjs src/latex.pegjs dist/latex.js; lsc -c -o dist src/compiler.ls'
     test: 'mocha;'
 
 
