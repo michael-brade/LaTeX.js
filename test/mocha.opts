@@ -1,0 +1,5 @@
+--compilers ls:livescript
+--reporter spec
+--ui bdd
+--check-leaks
+--sort
