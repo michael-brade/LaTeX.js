@@ -15,7 +15,8 @@ keywords:
 
 
 scripts:
-    build: 'pegjs latex.pegjs latex.js;'
+    clean: 'rimraf dist;'
+    build: 'mkdirp dist; pegjs src/latex.pegjs dist/latex.js;'
     test: 'mocha;'
 
 
@@ -29,6 +30,8 @@ devDependencies:
     ### building
 
     'pegjs': '0.9.x'
+    'mkdirp': '0.5.x'
+    'rimraf': '2.5.x'
 
 
     ### testing
