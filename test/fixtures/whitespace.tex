@@ -1,0 +1,49 @@
+** standard double-newline paragraph separation
+.
+first paragraph
+
+second paragraph
+.
+<p>first paragraph</p>
+<p>second paragraph</p>
+.
+
+
+** more than two newlines, including spaces, equal two newlines
+.
+first paragraph
+
+   
+  
+
+
+second paragraph
+.
+<p>first paragraph</p>
+<p>second paragraph</p>
+.
+
+
+** comments are disregarded and won't make a difference
+.
+first paragraph
+
+
+  % this should not cause another paragraph
+
+
+second paragraph
+.
+<p>first paragraph</p>
+<p>second paragraph</p>
+.
+
+
+** several whitespace count as one
+.
+   this     paragraph  has a    few more
+ words,   end
+% another comment
+comes after comment
+.
+.

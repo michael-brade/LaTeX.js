@@ -1,13 +1,12 @@
-/* A LaTeX grammar and parser written using PEG.js */
-
 {
     var envs = ["itemize", "description"];
 
     var html = ""; // maybe use jQuery and build a dom
+    // alternatively: build a class-hierarchy of Paragraphs, Headings, Figures, Questions, Sharings, References
 
 
     function formatLocation(location) {
-    	return ""
+        return ""
     }
 
     /**
@@ -28,41 +27,38 @@
 
 
 document =
-    d:paragraph+
+    d:text+
 
     {
-    	//return d
-    	return html
+        //return d
+        return html
     }
 
-paragraph =
-    text+ (break / EOF)
-
 text =
-    inline /
+    b:break         { html += b } /
+    !break n:nl     { html += n } /
     environment /
+    c:command       { html += "<TODO:cmd>" } /
+    t:char+         { html += t.join("") } /
+    s:(sp / nbsp)   { html += s } /
     comment+
 
-inline =
-	t:char+ 		{ html += t.join("") } /
-    c:command		{ html += " TODO:cmd " } /
-    s:(sp / nbsp)	{ html += s } /
-    !break n:nl		{ html += n }
 
+// TODO: command is a command until first whitespace after identifier or closing ] or }, or 
 command =
-	!begin !end "\\" identifier ("{" inline* "}")*
+    !begin !end "\\" identifier ("{" text* "}")*
 
 environment =
     b:begin
-    	c:(paragraph* text*)
+        c:(text*)
     e:end
 
- 	{
-    	if (b != e)
-        	throw Error("line " + location().start.line + ": begin and end don't match!")
+     {
+        if (b != e)
+            throw Error("line " + location().start.line + ": begin and end don't match!")
 
-		if (!envs.includes(b))
-        	throw Error("unknown environment!")
+        if (!envs.includes(b))
+            throw Error("unknown environment!")
     }
 
 begin =
@@ -78,7 +74,7 @@ end =
 /* IDs and plain text */
 
 identifier =
-	id:char+
+    id:char+
     { return id.join("") }
 
 char "character" =
@@ -86,13 +82,13 @@ char "character" =
 
 
 comment =
-	"%" (char / sp / nbsp)*
+    "%" (char / sp / nbsp)*
     { return null }
 
 /* SPACES */
 
 sp "whitespace" =
-    [ \t]
+    [ \t]+
     { return " " }
 
 nbsp "non-breakable whitespace" =
@@ -104,8 +100,9 @@ nl "newline" =
     { return " " }
 
 break "paragraph break" =
-    nl nl+	// two or more newlines
+    nl (sp* nl+)+    // two or more newlines, mixed with spaces
+    { return "\n" }
 
 
 EOF =
-	!.
+    !.
