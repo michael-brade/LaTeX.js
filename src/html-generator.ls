@@ -1,6 +1,6 @@
 _ = require 'lodash'
 
-export class Compiler
+export class HtmlGenerator
     
     # public instance vars
     

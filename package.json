@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "clean": "rimraf dist;",
-    "build": "mkdirp dist; pegjs src/latex.pegjs dist/latex.js; lsc -c -o dist src/compiler.ls",
+    "build": "mkdirp dist; pegjs src/latex-parser.pegjs dist/latex-parser.js; lsc -c -o dist src/html-generator.ls",
     "test": "mocha;"
   },
   "devDependencies": {

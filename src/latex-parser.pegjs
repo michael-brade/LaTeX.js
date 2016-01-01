@@ -1,17 +1,17 @@
 {
-    var compiler = new (require('./compiler').Compiler);
+    var generator = new (require('./html-generator').HtmlGenerator);
 }
 
 
 document =
-    text+   { return compiler.html(); }
+    text+   { return generator.html(); }
 
 text =
-    !break s:(nl / sp)+         { compiler.processSpace(); } /
-    break                       { compiler.processParagraphBreak(); } /
-    n:nbsp                      { compiler.processNbsp(n); } /
-    w:char+                     { compiler.processWord(w.join("")); } /
-    p:punctuation               { compiler.processPunctuation(p); } /
+    !break s:(nl / sp)+         { generator.processSpace(); } /
+    break                       { generator.processParagraphBreak(); } /
+    n:nbsp                      { generator.processNbsp(n); } /
+    w:char+                     { generator.processWord(w.join("")); } /
+    p:punctuation               { generator.processPunctuation(p); } /
     environment / command /
     comment+
 
@@ -24,7 +24,7 @@ command =
     !begin !end
     "\\" identifier ("{" text* "}")*
     {
-        compiler.processCommand();
+        generator.processCommand();
     }
 
 environment =
@@ -33,7 +33,7 @@ environment =
     e:end
 
     {
-        compiler.processEnvironment(b, c, e);
+        generator.processEnvironment(b, c, e);
         
         if (b != e)
             throw Error("line " + location().start.line + ": begin and end don't match!")
@@ -73,27 +73,27 @@ comment =
 
 nl "newline" =
     [\n\r]
-    { return compiler.nl(); }
+    { return generator.nl(); }
 
 char "character" =
     c:[a-z0-9]i
-    { return compiler.character(c); }
+    { return generator.character(c); }
     
 esc "escaped character" =
     "\\" c:[%&\\_]
-    { return compiler.escapedCharacter(c); }
+    { return generator.escapedCharacter(c); }
     
 punctuation =
     p:[.,\-\*]
-    { return compiler.character(p); }
+    { return generator.character(p); }
 
 sp "whitespace" =
     [ \t]+
-    { return compiler.sp(); }
+    { return generator.sp(); }
 
 nbsp "non-breakable whitespace" =
     "~"
-    { return compiler.nbsp(); }
+    { return generator.nbsp(); }
 
 
 EOF =
