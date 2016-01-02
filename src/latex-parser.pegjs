@@ -4,27 +4,33 @@
 
 
 document =
-    text+   { return generator.html(); }
+    text+                   { return generator.html(); }
 
 text =
-    !break s:(nl / sp)+         { generator.processSpace(); } /
-    break                       { generator.processParagraphBreak(); } /
-    n:nbsp                      { generator.processNbsp(n); } /
-    w:char+                     { generator.processWord(w.join("")); } /
-    p:punctuation               { generator.processPunctuation(p); } /
-    environment / command /
-    comment+
+    !break s:(nl / sp)+     { generator.processSpace(); } /
+    break                   { generator.processParagraphBreak(); } /
+    n:nbsp                  { generator.processNbsp(n); } /
+    w:char+                 { generator.processWord(w.join("")); } /
+    p:punctuation           { generator.processPunctuation(p); } /
+    environment / macro /
+    comment
 
 break "paragraph break" =
-    nl (sp* comment* nl+)+    // two or more newlines, mixed with spaces and comments
-    { return null; }
+    (nl / comment)          // a paragraph break is a newline...
+    (sp* nl)+               // followed by one or more newlines, mixed with spaces,...
+    (sp / nl / comment)*    // ...and optionally followed by any whitespace and/or comment
 
-// TODO: command is a command until first whitespace after identifier or closing ] or }, or
-command =
+macro =
     !begin !end
-    "\\" identifier ("{" text* "}")*
+    "\\" identifier
+    args:(
+        "{" text* "}" /
+        "[" text* "]" /
+        (!break (nl / sp / comment))+
+    )*
+
     {
-        generator.processCommand();
+        generator.processMacro();
     }
 
 environment =

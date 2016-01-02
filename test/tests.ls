@@ -7,7 +7,7 @@ load-fixtures = require('./load-fixtures').load
 
 
 describe 'pegjs-latex fixtures', !->
-    fixture_path = path.join(__dirname, 'fixtures/whitespace.tex')
+    fixture_path = path.join(__dirname, 'fixtures')
 
     fixtures = load-fixtures fixture_path
 

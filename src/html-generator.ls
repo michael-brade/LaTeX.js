@@ -1,17 +1,17 @@
 _ = require 'lodash'
 
 export class HtmlGenerator
-    
+
     # public instance vars
-    
+
     _html: ""   # maybe use jQuery and build a DOM
                 # alternatively: build a class-hierarchy of Paragraphs, Headings, Figures, References
 
     _cpar: ""   # current paragraph
-    
-    
+
+
     # private static
-    
+
     # tokens
     sp = nl = " "
     nbsp = "&nbsp;"
@@ -23,7 +23,7 @@ export class HtmlGenerator
 
     sp: ->
         sp
-    
+
     nbsp: ->
         nbsp
 
@@ -44,7 +44,7 @@ export class HtmlGenerator
         # finish last paragraph
         if @_cpar
             @processParagraphBreak!
-            
+
         @_html
 
 
@@ -61,15 +61,15 @@ export class HtmlGenerator
 
     processPunctuation: (p) !->
         @_cpar += p
-        
+
     processParagraphBreak: !->
         @_html += "<p>" + _.trim(@_cpar) + "</p>\n"
         @_cpar = ""
-        
-        
 
-    processCommand: (command, args) ->
-        
+
+
+    processMacro: (command, args) ->
+
 
     /**
      * This should process known environments
