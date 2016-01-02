@@ -17,7 +17,7 @@ keywords:
 scripts:
     clean: 'rimraf dist;'
     build: 'mkdirp dist; pegjs src/latex-parser.pegjs dist/latex-parser.js; lsc -c -o dist src/html-generator.ls'
-    test: 'mocha;'
+    test: 'mocha test/_*.ls test/tests.ls;'
 
 
 devDependencies:

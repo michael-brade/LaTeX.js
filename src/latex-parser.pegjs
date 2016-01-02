@@ -16,7 +16,7 @@ text =
     comment+
 
 break "paragraph break" =
-    nl (sp* nl+)+    // two or more newlines, mixed with spaces
+    nl (sp* comment* nl+)+    // two or more newlines, mixed with spaces and comments
     { return null; }
 
 // TODO: command is a command until first whitespace after identifier or closing ] or }, or
@@ -34,7 +34,7 @@ environment =
 
     {
         generator.processEnvironment(b, c, e);
-        
+
         if (b != e)
             throw Error("line " + location().start.line + ": begin and end don't match!")
 
@@ -78,11 +78,11 @@ nl "newline" =
 char "character" =
     c:[a-z0-9]i
     { return generator.character(c); }
-    
+
 esc "escaped character" =
     "\\" c:[%&\\_]
     { return generator.escapedCharacter(c); }
-    
+
 punctuation =
     p:[.,\-\*]
     { return generator.character(p); }
