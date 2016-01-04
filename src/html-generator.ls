@@ -2,9 +2,7 @@ _ = require 'lodash'
 
 # on the server we need to include a DOM implementation
 if (typeof document == 'undefined')
-    DOC = require 'domino' .createDocument!
-else
-    DOC = document
+    global.document = require 'domino' .createDocument!
 
 
 export class HtmlGenerator
@@ -16,11 +14,11 @@ export class HtmlGenerator
     _cfrag: null    # current fragment stack
 
     # tokens translated to html
-    sp: " "
-    nbsp: "&nbsp;"
-    endash: "&ndash;"
-    emdash: "&mdash;"
-    thinspace: "&thinsp;"
+    sp:         " "
+    nbsp:       "&nbsp;"
+    endash:     "&ndash;"
+    emdash:     "&mdash;"
+    thinspace:  "&thinsp;"
 
 
     ### private static vars
@@ -33,8 +31,8 @@ export class HtmlGenerator
     # CTOR
     ->
         # initialize only in CTOR, otherwise the objects end up in the prototype
-        @_dom = DOC.createDocumentFragment!
-        @_cpar = DOC.createTextNode ""
+        @_dom = document.createDocumentFragment!
+        @_cpar = document.createTextNode ""
 
 
     character: (c) ->
@@ -54,7 +52,7 @@ export class HtmlGenerator
         if @_cpar.length
             @processParagraphBreak!
 
-        c = DOC.createElement "container"
+        c = document.createElement "container"
         c.appendChild(@_dom)
         c.innerHTML
 
@@ -75,13 +73,13 @@ export class HtmlGenerator
 
     # this should also be called by a macro that is not inline but a block macro to end the previous par
     processParagraphBreak: !->
-        p = DOC.createElement "p"
+        p = document.createElement "p"
         @_cpar.data = _.trim @_cpar.data
         p.appendChild @_cpar
         @_dom.appendChild p
 
         # start a new paragraph
-        @_cpar = DOC.createTextNode ""
+        @_cpar = document.createTextNode ""
 
 
     beginGroup: !->
