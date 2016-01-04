@@ -49,11 +49,11 @@ devDependencies:
 
 repository:
     type: 'git'
-    url: 'git+https://github.com/michael-brade/pegjs-latex.git'
+    url: 'git+https://github.com/michael-brade/LaTeX.js.git'
 
 license: 'MIT'
 
 bugs:
-    url: 'https://github.com/michael-brade/pegjs-latex/issues'
+    url: 'https://github.com/michael-brade/LaTeX.js/issues'
 
-homepage: 'https://github.com/michael-brade/pegjs-latex#readme'
+homepage: 'https://github.com/michael-brade/LaTeX.js#readme'
