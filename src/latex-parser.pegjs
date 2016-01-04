@@ -20,17 +20,23 @@ break "paragraph break" =
     (sp* nl)+               // followed by one or more newlines, mixed with spaces,...
     (sp / nl / comment)*    // ...and optionally followed by any whitespace and/or comment
 
+
+// supports LaTeX2e and LaTeX3 identifiers
+identifier =
+    id:(char / "_" / ":")+  { return id.join("") }
+
 macro =
     !begin !end
-    "\\" identifier
+    escape name:identifier
+    s:"*"?
     args:(
-        "{" text* "}" /
-        "[" text* "]" /
-        (!break (nl / sp / comment))+
+        begin_group t:text* end_group { return t.join(""); } /
+        begin_optgroup t:text* end_optgroup { return t.join(""); } /
+        (!break (nl / sp / comment))+ { return undefined; }
     )*
 
     {
-        generator.processMacro();
+        generator.processMacro(name, s != undefined, args);
     }
 
 environment =
@@ -49,58 +55,59 @@ environment =
     }
 
 begin =
-    "\\begin{" id:identifier "}"
+    escape "begin" begin_group id:identifier end_group
     { return id }
 
 end =
-    "\\end{" id:identifier "}"
+    escape "end" begin_group id:identifier end_group
     { return id }
 
 
 
-/* IDs and plain text */
-
-identifier =
-    id:char+
-    { return id.join("") }
 
 
 
+/* syntax tokens - TeX's first catcodes */
+
+escape          = "\\" { return undefined; }
+begin_group     = "{"  { generator.beginGroup(); return undefined; }
+end_group       = "}"  { generator.endGroup(); return undefined; }
+math_shift      = "$"  { return undefined; }
+alignment_tab   = "&"  { return undefined; }
+macro_parameter = "#"  { return undefined; }
+superscript     = "^"  { return undefined; }
+subscript       = "_"  { return undefined; }
+comment         = "%"  (!nl .)* (nl / EOF)  // everything up to and including the newline
+                       { return undefined; }
+EOF             = !.
 
 
-/* comments */
+/* syntax tokens - LaTeX */
 
-comment =
-    "%" (char / sp / nbsp)* (nl / EOF)  // everything up to and including the newline
-    { return null }
-
-
-/* tokens */
-
-nl "newline" =
-    [\n\r]
-    { return generator.nl(); }
-
-char "character" =
-    c:[a-z0-9]i
-    { return generator.character(c); }
-
-esc "escaped character" =
-    "\\" c:[%&\\_]
-    { return generator.escapedCharacter(c); }
-
-punctuation =
-    p:[.,\-\*]
-    { return generator.character(p); }
-
-sp "whitespace" =
-    [ \t]+
-    { return generator.sp(); }
-
-nbsp "non-breakable whitespace" =
-    "~"
-    { return generator.nbsp(); }
+begin_optgroup  = "["  { generator.beginGroup(); return undefined; }
+end_optgroup    = "]"  { generator.endGroup(); return undefined; }
 
 
-EOF =
-    !.
+/* text tokens - symbols that generate output */
+
+nl "newline"     =   [\n\r]         { return generator.sp(); }
+sp "whitespace"  =   [ \t]+         { return generator.sp(); }
+char "alpha-num" = c:[a-z0-9]i      { return generator.character(c); }
+esc_char "escaped char" =
+            escape c:[\\$%#&~{}_^]  { return generator.escapedCharacter(c); }
+
+// TODO: write tests - maybe we need html entities for <,>,quotes,etc
+punctuation =      p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }
+
+// TODO: maybe we won't need a rule for each symbol, use a generic symbol rule and method
+
+nbsp "non-breakable space" =
+    "~"     { return generator.nbsp(); }
+
+quotes =    q:[“”"']
+
+endash =
+    "--"    { return generator.endash(); }
+
+emdash =
+    "---"   { return generator.emdash(); }
