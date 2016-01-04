@@ -5,9 +5,6 @@ p = require 'path'
 _ = require 'lodash'
 
 
-
-addLF = (str) -> if str.length then str + '\n' else str
-
 parse = (input, separators) ->
     lines = input.split //\r?\n//g
     max = lines.length
@@ -45,7 +42,7 @@ parse = (input, separators) ->
 
             break if line >= max
 
-            fixture[block].text = addLF (lines.slice blockStart, line).join '\n'
+            fixture[block].text = (lines.slice blockStart, line).join '\n'
             fixture[block].range.push(blockStart, line)
 
         line++

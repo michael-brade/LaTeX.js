@@ -1,6 +1,6 @@
 #!/usr/local/bin/lsc -cj
 
-name: 'pegjs-latex'
+name: 'latexjs'
 description: 'A simple PEG.js parser for LaTeX'
 version: '0.1.0'
 
@@ -39,6 +39,7 @@ devDependencies:
     'mocha': '2.3.x'
     'chai': '3.x'
     'chai-as-promised': '5.x'
+    'js-beautify': '1.5.x'
 
 
 repository:

@@ -2,8 +2,9 @@
 
 require! path
 
-latex = require('../dist/latex-parser')
-load-fixtures = require('./load-fixtures').load
+html-beautify   = require "js-beautify" .html
+latex           = require '../dist/latex-parser'
+load-fixtures   = require './load-fixtures' .load
 
 
 describe 'pegjs-latex fixtures', !->
@@ -17,4 +18,6 @@ describe 'pegjs-latex fixtures', !->
         describe desc, ->
             filefixtures.fixtures.forEach (fixture) ->
                 test fixture.header || 'line ' + fixture.first.range.0 - 1, ->
-                    expect(latex.parse fixture.first.text).to.equal fixture.second.text
+                    html = latex.parse fixture.first.text
+                    html = html-beautify html
+                    expect html .to.equal fixture.second.text
