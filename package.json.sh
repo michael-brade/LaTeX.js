@@ -20,6 +20,11 @@ scripts:
     test: 'mocha test/_*.ls test/tests.ls;'
 
 
+dependencies:
+    'domino': '^1.0.21'
+    #'cheerio': '0.x'
+    #'xmldom': '^0.1.19'
+
 devDependencies:
     'livescript': '1.4.x'
 

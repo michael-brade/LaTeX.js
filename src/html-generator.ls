@@ -1,80 +1,107 @@
 _ = require 'lodash'
 
+# on the server we need to include a DOM implementation
+if (typeof document == 'undefined')
+    DOC = require 'domino' .createDocument!
+else
+    DOC = document
+
+
 export class HtmlGenerator
 
-    # public instance vars
+    ### public instance vars (vars beginning with "_" are meant to be private!)
 
-    _html: ""   # maybe use jQuery and build a DOM
-                # alternatively: build a class-hierarchy of Paragraphs, Headings, Figures, References
+    _dom:   null
+    _cpar:  null    # current paragraph (TextNode)
+    _cfrag: null    # current fragment stack
 
-    _cpar: ""   # current paragraph
+    # tokens translated to html
+    sp: " "
+    nbsp: "&nbsp;"
+    endash: "&ndash;"
+    emdash: "&mdash;"
+    thinspace: "&thinsp;"
 
 
-    # private static
+    ### private static vars
 
-    # tokens
-    sp = nl = " "
-    nbsp = "&nbsp;"
-
+    # TODO: move to separate class, use stack
     environments =
         "itemize"
         "description"
 
+    # CTOR
+    ->
+        # initialize only in CTOR, otherwise the objects end up in the prototype
+        @_dom = DOC.createDocumentFragment!
+        @_cpar = DOC.createTextNode ""
 
-    sp: ->
-        sp
-
-    nbsp: ->
-        nbsp
-
-    nl: ->
-        nl
 
     character: (c) ->
         c
 
-    escapedCharacter: (c) ->
-        c
-        # TODO: this is quite wrong, use html entities
-
 
     # get the result
 
+    /* @return the DOM representation (DocumentFrament) for immediate use */
+    dom: ->
+        @_dom
+
+
+    /* @return the HTML representation */
     html: ->
-        # finish last paragraph
-        if @_cpar
+        # finish last paragraph - TODO: move to parser and make it call @finalize() at EOF!
+        if @_cpar.length
             @processParagraphBreak!
 
-        @_html
+        c = DOC.createElement "container"
+        c.appendChild(@_dom)
+        c.innerHTML
 
 
     # content processing
 
     processSpace: !->
-        @_cpar += sp
+        @_cpar.appendData @sp
 
     processNbsp: (n) !->
-        @_cpar += n
+        @_cpar.appendData n
 
     processWord: (w) !->
-        @_cpar += w
+        @_cpar.appendData w
 
     processPunctuation: (p) !->
-        @_cpar += p
+        @_cpar.appendData p
 
+    # this should also be called by a macro that is not inline but a block macro to end the previous par
     processParagraphBreak: !->
-        @_html += "<p>" + _.trim(@_cpar) + "</p>\n"
-        @_cpar = ""
+        p = DOC.createElement "p"
+        @_cpar.data = _.trim @_cpar.data
+        p.appendChild @_cpar
+        @_dom.appendChild p
+
+        # start a new paragraph
+        @_cpar = DOC.createTextNode ""
 
 
+    beginGroup: !->
+    endGroup: !->
 
-    processMacro: (command, args) ->
+    processMacro: (name, starred, args) ->
+        console.log name, ": "
+        for arg, i in args
+            console.log "* #{i}:", arg
 
 
     /**
      * This should process known environments
      */
     processEnvironment: (env, content) ->
+
+
+
+    finalize: !->
+        # TODO
 
 
     # utilities

@@ -90,8 +90,8 @@ end_optgroup    = "]"  { generator.endGroup(); return undefined; }
 
 /* text tokens - symbols that generate output */
 
-nl "newline"     =   [\n\r]         { return generator.sp(); }
-sp "whitespace"  =   [ \t]+         { return generator.sp(); }
+nl "newline"     =   [\n\r]         { return generator.sp; }
+sp "whitespace"  =   [ \t]+         { return generator.sp; }
 char "alpha-num" = c:[a-z0-9]i      { return generator.character(c); }
 esc_char "escaped char" =
             escape c:[\\$%#&~{}_^]  { return generator.escapedCharacter(c); }
@@ -102,12 +102,12 @@ punctuation =      p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }
 // TODO: maybe we won't need a rule for each symbol, use a generic symbol rule and method
 
 nbsp "non-breakable space" =
-    "~"     { return generator.nbsp(); }
+    "~"     { return generator.nbsp; }
 
 quotes =    q:[“”"']
 
 endash =
-    "--"    { return generator.endash(); }
+    "--"    { return generator.endash; }
 
 emdash =
-    "---"   { return generator.emdash(); }
+    "---"   { return generator.emdash; }

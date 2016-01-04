@@ -16,6 +16,9 @@
     "build": "mkdirp dist; pegjs src/latex-parser.pegjs dist/latex-parser.js; lsc -c -o dist src/html-generator.ls",
     "test": "mocha test/_*.ls test/tests.ls;"
   },
+  "dependencies": {
+    "domino": "^1.0.21"
+  },
   "devDependencies": {
     "livescript": "1.4.x",
     "browserify": "12.x",
