@@ -77,7 +77,7 @@ alignment_tab   = "&"  { return undefined; }
 macro_parameter = "#"  { return undefined; }
 superscript     = "^"  { return undefined; }
 subscript       = "_"  { return undefined; }
-comment         = "%"  (!nl .)* (nl / EOF)  // everything up to and including the newline
+comment         = "%"  (!nl .)* (nl / EOF)      // everything up to and including the newline
                        { return undefined; }
 EOF             = !.
 
@@ -90,24 +90,13 @@ end_optgroup    = "]"  { generator.endGroup(); return undefined; }
 
 /* text tokens - symbols that generate output */
 
-nl "newline"     =   [\n\r]         { return generator.sp; }
-sp "whitespace"  =   [ \t]+         { return generator.sp; }
-char "alpha-num" = c:[a-z0-9]i      { return generator.character(c); }
-esc_char "escaped char" =
-            escape c:[\\$%#&~{}_^]  { return generator.escapedCharacter(c); }
+nl       "newline"          =   [\n\r]                  { return generator.sp; }
+sp       "whitespace"       =   [ \t]+                  { return generator.sp; }
+char     "alpha-num"        = c:[a-z0-9]i               { return generator.character(c); }
+esc_char "escaped char"     = escape c:[\\$%#&~{}_^]    { return generator.character(c); }
+punctuation                 = p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }
+quotes                      = q:[“”"']                  // TODO
 
-// TODO: write tests - maybe we need html entities for <,>,quotes,etc
-punctuation =      p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }
-
-// TODO: maybe we won't need a rule for each symbol, use a generic symbol rule and method
-
-nbsp "non-breakable space" =
-    "~"     { return generator.nbsp; }
-
-quotes =    q:[“”"']
-
-endash =
-    "--"    { return generator.endash; }
-
-emdash =
-    "---"   { return generator.emdash; }
+nbsp  "non-breakable space" = "~"                       { return generator.nbsp; }
+endash                      = "--"                      { return generator.endash; }
+emdash                      = "---"                     { return generator.emdash; }
