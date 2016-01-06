@@ -27,12 +27,12 @@ group "group" =
     begin_group text* end_group
 
 
-// supports LaTeX2e and LaTeX3 identifiers
-identifier =
+// supports TeX, LaTeX2e and LaTeX3 identifiers
+identifier "identifier" =
     id:(char / "_" / ":")+  { return id.join("") }
 
-macro =
-    !begin !end
+macro "macro" =
+    !begin_env !end_env
     escape name:identifier
     s:"*"?
     args:(
@@ -45,10 +45,10 @@ macro =
         generator.processMacro(name, s != undefined, args);
     }
 
-environment =
-    b:begin
+environment "environment" =
+    b:begin_env
         c:(text*)
-    e:end
+    e:end_env
 
     {
         generator.processEnvironment(b, c, e);
@@ -60,11 +60,11 @@ environment =
             throw Error("unknown environment!")
     }
 
-begin =
+begin_env =
     escape "begin" begin_group id:identifier end_group
     { return id }
 
-end =
+end_env =
     escape "end" begin_group id:identifier end_group
     { return id }
 
@@ -73,17 +73,20 @@ end =
 
 
 
-/* syntax tokens - TeX's first catcodes */
+/* syntax tokens - TeX's first catcodes that generate no output */
 
-escape          = "\\" { return undefined; }
-begin_group     = "{"  { generator.beginGroup(); return undefined; }
-end_group       = "}"  { generator.endGroup(); return undefined; }
-math_shift      = "$"  { return undefined; }
-alignment_tab   = "&"  { return undefined; }
-macro_parameter = "#"  { return undefined; }
-superscript     = "^"  { return undefined; }
-subscript       = "_"  { return undefined; }
-comment         = "%"  (!nl .)* (nl / EOF)      // everything up to and including the newline
+escape          = "\\" { return undefined; }                            // catcode 0
+begin_group     = "{"  { generator.beginGroup(); return undefined; }    // catcode 1
+end_group       = "}"  { generator.endGroup(); return undefined; }      // catcode 2
+math_shift      = "$"  { return undefined; }                            // catcode 3
+alignment_tab   = "&"  { return undefined; }                            // catcode 4
+
+macro_parameter = "#"  { return undefined; }                            // catcode 6
+superscript     = "^"  { return undefined; }                            // catcode 7
+subscript       = "_"  { return undefined; }                            // catcode 8
+ignore          = "\0" { return undefined; }                            // catcode 9
+
+comment         = "%"  (!nl .)* (nl / EOF)                              // catcode 14, including the newline
                        { return undefined; }
 EOF             = !.
 
