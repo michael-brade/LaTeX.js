@@ -68,3 +68,20 @@ ur words
 .
 <p>here are four words</p>
 .
+
+
+** one space inside as well as after a group is kept, the rest is compressed/skipped
+.
+text with {a group} and more text
+
+text with { a group } and more text
+
+text with { a group  } and more text
+
+text with {  a group  }  and more text
+.
+<p>text with a group and more text</p>
+<p>text with  a group  and more text</p>
+<p>text with  a group  and more text</p>
+<p>text with  a group  and more text</p>
+.

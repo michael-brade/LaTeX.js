@@ -19,5 +19,5 @@ describe 'pegjs-latex fixtures', !->
             filefixtures.fixtures.forEach (fixture) ->
                 test fixture.header || 'line ' + fixture.first.range.0 - 1, ->
                     html = latex.parse fixture.first.text
-                    html = html-beautify html
+                    html = html.replace //><([^/])//g, ">\n<$1"     # beautify: begin opening tags on a new line
                     expect html .to.equal fixture.second.text

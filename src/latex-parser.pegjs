@@ -12,13 +12,19 @@ text =
     n:nbsp                  { generator.processNbsp(n); } /
     w:char+                 { generator.processWord(w.join("")); } /
     p:punctuation           { generator.processPunctuation(p); } /
-    environment / macro /
+    group /
+    macro /
+    environment /
     comment
 
 break "paragraph break" =
     (nl / comment)          // a paragraph break is a newline...
     (sp* nl)+               // followed by one or more newlines, mixed with spaces,...
     (sp / nl / comment)*    // ...and optionally followed by any whitespace and/or comment
+
+
+group "group" =
+    begin_group text* end_group
 
 
 // supports LaTeX2e and LaTeX3 identifiers
