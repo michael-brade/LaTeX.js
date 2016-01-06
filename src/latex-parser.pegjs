@@ -102,13 +102,14 @@ end_optgroup    = "]"  { return undefined; }
 
 /* text tokens - symbols that generate output */
 
-nl       "newline"          =   [\n\r]                  { return generator.sp; }
-sp       "whitespace"       =   [ \t]+                  { return generator.sp; }
-char     "alpha-num"        = c:[a-z0-9]i               { return generator.character(c); }
-esc_char "escaped char"     = escape c:[\\$%#&~{}_^]    { return generator.character(c); }
-punctuation                 = p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }
-quotes                      = q:[“”"']                  // TODO
+nl          "newline"        =   [\n\r]                  { return generator.sp; }            // catcode 5
+sp          "whitespace"     =   [ \t]+                  { return generator.sp; }            // catcode 10
+char        "letter"         = c:[a-z]i                  { return generator.character(c); }  // catcode 11
+ctl_sym     "control symbol" = escape c:[\\$%#&~{}_^ ]   { return generator.character(c); }
+num         "digit"          = n:[0-9]                   { return generator.character(n); }  // catcode 12
+punctuation "punctuation"    = p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }  // catcode 12
+quotes                       = q:[“”"']                  // TODO                             // catcode 12
 
-nbsp  "non-breakable space" = "~"                       { return generator.nbsp; }
-endash                      = "--"                      { return generator.endash; }
-emdash                      = "---"                     { return generator.emdash; }
+nbsp   "non-breakable space" = "~"                       { return generator.nbsp; }          // catcode 13 (active)
+endash                       = "--"                      { return generator.endash; }
+emdash                       = "---"                     { return generator.emdash; }
