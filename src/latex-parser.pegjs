@@ -37,7 +37,7 @@ macro =
     s:"*"?
     args:(
         begin_group t:text* end_group { return t.join(""); } /
-        begin_optgroup t:text* end_optgroup { return t.join(""); } /
+        begin_optgroup t:(!end_optgroup text)* end_optgroup { return t.join(""); } /
         (!break (nl / sp / comment))+ { return undefined; }
     )*
 
@@ -90,8 +90,11 @@ EOF             = !.
 
 /* syntax tokens - LaTeX */
 
-begin_optgroup  = "["  { generator.beginGroup(); return undefined; }
-end_optgroup    = "]"  { generator.endGroup(); return undefined; }
+// Note that these are in reality also just text! I'm just using a separate rule to make it look like syntax, but
+// brackets do not need to be balanced.
+
+begin_optgroup  = "["  { return undefined; }
+end_optgroup    = "]"  { return undefined; }
 
 
 /* text tokens - symbols that generate output */
