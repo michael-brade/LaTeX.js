@@ -4,10 +4,11 @@
 
 
 document =
-    text+                   { return generator.html(); }
+    (sp / nl / comment)*
+    text*                   { return generator.html(); }
 
 text =
-    !break s:(nl / sp)+     { generator.processSpace(); } /
+    !break (nl / sp)+       { generator.processSpace(); } /
     break                   { generator.processParagraphBreak(); } /
     n:nbsp                  { generator.processNbsp(n); } /
     w:char+                 { generator.processWord(w.join("")); } /
@@ -18,6 +19,7 @@ text =
     comment
 
 break "paragraph break" =
+    sp*
     (nl / comment)          // a paragraph break is a newline...
     (sp* nl)+               // followed by one or more newlines, mixed with spaces,...
     (sp / nl / comment)*    // ...and optionally followed by any whitespace and/or comment
@@ -44,6 +46,8 @@ macro "macro" =
     {
         generator.processMacro(name, s != undefined, args);
     }
+
+
 
 environment "environment" =
     b:begin_env
@@ -88,6 +92,9 @@ ignore          = "\0" { return undefined; }                            // catco
 
 comment         = "%"  (!nl .)* (nl / EOF)                              // catcode 14, including the newline
                        { return undefined; }
+
+
+skip_space      = !break (nl / sp / comment) { return undefined; }
 EOF             = !.
 
 
