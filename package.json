@@ -15,7 +15,7 @@
     "clean": "rimraf dist;",
     "build": "mkdirp dist; pegjs src/latex-parser.pegjs dist/latex-parser.js; lsc -c -o dist src/html-generator.ls",
     "test": "mocha test/_*.ls test/tests.ls;",
-    "iron": "iron-mocha test/_*.ls test/tests.ls;",
+    "iron": "iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;",
     "cover": "istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;"
   },
   "dependencies": {
