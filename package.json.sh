@@ -18,6 +18,8 @@ scripts:
     clean: 'rimraf dist;'
     build: 'mkdirp dist; pegjs src/latex-parser.pegjs dist/latex-parser.js; lsc -c -o dist src/html-generator.ls'
     test: 'mocha test/_*.ls test/tests.ls;'
+    iron: 'iron-mocha test/_*.ls test/tests.ls;'
+    cover: 'istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;'
 
 
 dependencies:
@@ -45,6 +47,8 @@ devDependencies:
     'chai': '3.x'
     'chai-as-promised': '5.x'
     'js-beautify': '1.5.x'
+
+    'istanbul': '>= 0.4.x'
 
 
 repository:
