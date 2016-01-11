@@ -4,8 +4,11 @@
 
 
 document =
-    (sp / nl / comment)*
-    text*                   { return generator.html(); }
+    (sp / nl / comment)* text*
+    {
+        generator.processParagraphBreak();  // the end of the document finishes the last paragraph
+        return generator.html();
+    }
 
 text =
     !break (nl / sp)+       { generator.processSpace(); } /

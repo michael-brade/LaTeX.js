@@ -80,10 +80,6 @@ export class HtmlGenerator
 
     /* @return the HTML representation */
     html: ->
-        # finish last paragraph - TODO: move to parser and make it call @finalize() at EOF!
-        if @_cfrag.length
-            @processParagraphBreak!
-
         @_serializeFragment @_dom
 
 
