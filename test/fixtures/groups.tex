@@ -1,0 +1,31 @@
+** groups need to be balanced
+.
+test {text with {{another }two} groups } and more
+.
+<p>test text with another two groups  and more</p>
+.
+
+
+** unbalanced groups fail to parse
+.
+this { { fails}, and more
+.
+.
+
+** brackets do not need to be balanced, they are just punctuation; and in a macro a simple delimiter
+.
+test[ {t]]ext} more
+.
+<p>test[ t]]ext more</p>
+.
+
+
+** groups overlapping paragraphs
+.
+Here is some unsuspecting text in a paragraph. This paragraph { starts a group.
+
+But then suddenly a new paragraph begins... } and misery with it.
+.
+<p>Here is some unsuspecting text in a paragraph. This paragraph  starts a group.</p>
+<p>But then suddenly a new paragraph begins...  and misery with it.</p>
+.

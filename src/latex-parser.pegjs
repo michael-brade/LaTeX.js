@@ -10,10 +10,8 @@ document =
 text =
     !break (nl / sp)+       { generator.processSpace(); } /
     break                   { generator.processParagraphBreak(); } /
-    n:nbsp                  { generator.processNbsp(n); } /
-    w:char+                 { generator.processWord(w.join("")); } /
-    p:punctuation           { generator.processPunctuation(p); } /
-    group /
+    primitive /
+    g:group                 { generator.processFragment(g); } /
     macro /
     environment /
     comment
@@ -25,8 +23,23 @@ break "paragraph break" =
     (sp / nl / comment)*    // ...and optionally followed by any whitespace and/or comment
 
 
+primitive =
+    p:(char / num /
+       punctuation / quotes / // TODO: instead use utf8_char somehow...
+       ctl_sym /
+       nbsp / thinsp /
+       endash / emdash)+     { generator.processString(p.join("")); }
+
+
 group "group" =
-    begin_group text* end_group
+    begin_group
+        text*
+    g:end_group             { return g; }
+
+optgroup "optional argument" =
+    begin_optgroup
+        (!end_optgroup text)*
+    g:end_optgroup          { return g; }
 
 
 // supports TeX, LaTeX2e and LaTeX3 identifiers
@@ -37,14 +50,18 @@ macro "macro" =
     !begin_env !end_env
     escape name:identifier
     s:"*"?
-    args:(
-        begin_group t:text* end_group { return t.join(""); } /
-        begin_optgroup t:(!end_optgroup text)* end_optgroup { return t.join(""); } /
-        (!break (nl / sp / comment))+ { return undefined; }
-    )*
-
+    skip_space*
+    args:(skip_space* optgroup skip_space* / skip_space* group)*
     {
-        generator.processMacro(name, s != undefined, args);
+        generator.processMacro(name, s != undefined, args.map(function(arg) {
+            // each argument consists of an array of length 2 or 3 (each token above is one element), so
+            //  length 3: optgroup at [1]
+            //  length 2: group at [1]
+            return {
+                type: arg.length === 3 ? "optional" : "mandatory",
+                value: arg[1]
+            }
+        }));
     }
 
 
@@ -81,7 +98,7 @@ end_env =
 
 escape          = "\\" { return undefined; }                            // catcode 0
 begin_group     = "{"  { generator.beginGroup(); return undefined; }    // catcode 1
-end_group       = "}"  { generator.endGroup(); return undefined; }      // catcode 2
+end_group       = "}"  { return generator.endGroup(); }                 // catcode 2
 math_shift      = "$"  { return undefined; }                            // catcode 3
 alignment_tab   = "&"  { return undefined; }                            // catcode 4
 
@@ -103,8 +120,8 @@ EOF             = !.
 // Note that these are in reality also just text! I'm just using a separate rule to make it look like syntax, but
 // brackets do not need to be balanced.
 
-begin_optgroup  = "["  { return undefined; }
-end_optgroup    = "]"  { return undefined; }
+begin_optgroup  = "["  { generator.beginGroup(); return undefined; }
+end_optgroup    = "]"  { return generator.endGroup(); }
 
 
 /* text tokens - symbols that generate output */
@@ -112,11 +129,14 @@ end_optgroup    = "]"  { return undefined; }
 nl          "newline"        =   [\n\r]                  { return generator.sp; }            // catcode 5
 sp          "whitespace"     =   [ \t]+                  { return generator.sp; }            // catcode 10
 char        "letter"         = c:[a-z]i                  { return generator.character(c); }  // catcode 11
-ctl_sym     "control symbol" = escape c:[\\$%#&~{}_^ ]   { return generator.character(c); }
-num         "digit"          = n:[0-9]                   { return generator.character(n); }  // catcode 12
+num         "digit"          = n:[0-9]                   { return generator.character(n); }  // catcode 12 (other)
 punctuation "punctuation"    = p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }  // catcode 12
-quotes                       = q:[“”"']                  // TODO                             // catcode 12
+quotes                       = q:[“”"'«»]                // TODO                             // catcode 12
 
 nbsp   "non-breakable space" = "~"                       { return generator.nbsp; }          // catcode 13 (active)
+
+ctl_sym     "control symbol" = escape c:[\\$%#&~{}_^ ]   { return generator.character(c); }
+thinsp                       = escape ","                { return generator.thinsp; }
+
 endash                       = "--"                      { return generator.endash; }
 emdash                       = "---"                     { return generator.emdash; }

@@ -5,20 +5,39 @@ if (typeof document == 'undefined')
     global.document = require 'domino' .createDocument!
 
 
+
+class Macros
+
+    # CTOR
+    (generator) ->
+        @_generator = generator
+
+
+    # all known macros
+
+    echo: (args) ->
+        for arg in args
+            @_generator.processFragment arg.value
+
+
+
+
 export class HtmlGenerator
 
     ### public instance vars (vars beginning with "_" are meant to be private!)
 
+    _macros: null
+
     _dom:   null
-    _cpar:  null    # current paragraph (TextNode)
-    _cfrag: null    # current fragment stack
+    _cfrag: null      # current DocumentFragment stack
+
 
     # tokens translated to html
-    sp:         " "
-    nbsp:       "&nbsp;"
-    endash:     "&ndash;"
-    emdash:     "&mdash;"
-    thinspace:  "&thinsp;"
+    sp:     " "
+    nbsp:   "&nbsp;"
+    thinsp: "&thinsp;"
+    endash: "&ndash;"
+    emdash: "&mdash;"
 
 
     ### private static vars
@@ -32,7 +51,20 @@ export class HtmlGenerator
     ->
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
-        @_cpar = document.createTextNode ""
+        @_cfrag = []
+
+        @_macros = new Macros(this)
+
+        # the whole document is a group
+        # each paragraph is a group TODO: might get us into trouble... with fonts and overlapping groups...
+        @beginGroup!
+
+
+    _serializeFragment: (f) ->
+        c = document.createElement "container"
+        # c.appendChild(f.cloneNode(true))
+        c.appendChild(f)    # for speed; however: if this fragment is to be serialized more often -> cloneNode(true) !!
+        c.innerHTML
 
 
     character: (c) ->
@@ -49,46 +81,46 @@ export class HtmlGenerator
     /* @return the HTML representation */
     html: ->
         # finish last paragraph - TODO: move to parser and make it call @finalize() at EOF!
-        if @_cpar.length
+        if @_cfrag.length
             @processParagraphBreak!
 
-        c = document.createElement "container"
-        c.appendChild(@_dom)
-        c.innerHTML
+        @_serializeFragment @_dom
 
 
     # content processing
 
     processSpace: !->
-        @_cpar.appendData @sp
+        @_cfrag[@_cfrag.length - 1].appendChild document.createTextNode(@sp)
 
-    processNbsp: (n) !->
-        @_cpar.appendData n
-
-    processWord: (w) !->
-        @_cpar.appendData w
-
-    processPunctuation: (p) !->
-        @_cpar.appendData p
+    processString: (s) !->
+        @_cfrag[@_cfrag.length - 1].appendChild document.createTextNode(s)
 
     # this should also be called by a macro that is not inline but a block macro to end the previous par
     processParagraphBreak: !->
         p = document.createElement "p"
-        @_cpar.data = _.trim @_cpar.data
-        p.appendChild @_cpar
+        cur = @endGroup!
+        p.appendChild cur
         @_dom.appendChild p
-
-        # start a new paragraph
-        @_cpar = document.createTextNode ""
+        @beginGroup!
 
 
     beginGroup: !->
-    endGroup: !->
+        @_cfrag.push document.createDocumentFragment!
+
+    endGroup: ->
+        @_cfrag.pop!
+
+    processFragment: (f) !->
+        @_cfrag[@_cfrag.length - 1].appendChild f
+
 
     processMacro: (name, starred, args) ->
-        console.log name, ": "
-        for arg, i in args
-            console.log "* #{i}:", arg
+        if typeof @_macros[name] != "function"
+            console.log "Error: no such macro: #{name}!"
+            return null
+
+        console.log "processing macro #{name}..."
+        @_macros[name](args)
 
 
     /**
@@ -96,10 +128,6 @@ export class HtmlGenerator
      */
     processEnvironment: (env, content) ->
 
-
-
-    finalize: !->
-        # TODO
 
 
     # utilities
