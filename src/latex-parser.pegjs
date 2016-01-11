@@ -28,18 +28,18 @@ primitive =
        punctuation / quotes / // TODO: instead use utf8_char somehow...
        ctl_sym /
        nbsp / thinsp /
-       endash / emdash)+     { generator.processString(p.join("")); }
+       endash / emdash)+    { generator.processString(p.join("")); }
 
 
 group "group" =
-    begin_group
+    begin_group           & { generator.beginGroup(); return true; }
         text*
-    g:end_group             { return g; }
+    end_group               { return generator.endGroup(); }
 
 optgroup "optional argument" =
-    begin_optgroup
+    begin_optgroup        & { generator.beginGroup(); return true; }
         (!end_optgroup text)*
-    g:end_optgroup          { return g; }
+    end_optgroup            { return generator.endGroup(); }
 
 
 // supports TeX, LaTeX2e and LaTeX3 identifiers
@@ -97,8 +97,8 @@ end_env =
 /* syntax tokens - TeX's first catcodes that generate no output */
 
 escape          = "\\" { return undefined; }                            // catcode 0
-begin_group     = "{"  { generator.beginGroup(); return undefined; }    // catcode 1
-end_group       = "}"  { return generator.endGroup(); }                 // catcode 2
+begin_group     = "{"  { return undefined; }                            // catcode 1
+end_group       = "}"  { return undefined; }                            // catcode 2
 math_shift      = "$"  { return undefined; }                            // catcode 3
 alignment_tab   = "&"  { return undefined; }                            // catcode 4
 
@@ -120,8 +120,8 @@ EOF             = !.
 // Note that these are in reality also just text! I'm just using a separate rule to make it look like syntax, but
 // brackets do not need to be balanced.
 
-begin_optgroup  = "["  { generator.beginGroup(); return undefined; }
-end_optgroup    = "]"  { return generator.endGroup(); }
+begin_optgroup  = "["  { return undefined; }
+end_optgroup    = "]"  { return undefined; }
 
 
 /* text tokens - symbols that generate output */
