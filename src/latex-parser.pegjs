@@ -11,6 +11,7 @@ text =
     !break (nl / sp)+       { generator.processSpace(); } /
     break                   { generator.processParagraphBreak(); } /
     primitive /
+    p:punctuation           { generator.processString(p); } /
     g:group                 { generator.processFragment(g); } /
     macro /
     environment /
@@ -25,7 +26,7 @@ break "paragraph break" =
 
 primitive =
     p:(char / num /
-       punctuation / quotes / // TODO: instead use utf8_char somehow...
+       quotes /             // TODO: instead use utf8_char somehow...
        ctl_sym /
        nbsp / thinsp /
        endash / emdash)+    { generator.processString(p.join("")); }
