@@ -91,8 +91,15 @@ export class HtmlGenerator
     processString: (s) !->
         @_cfrag[@_cfrag.length - 1].appendChild document.createTextNode(s)
 
+    processLineBreak: !->
+        @_cfrag[@_cfrag.length - 1].appendChild document.createElement("br")
+
+
     # this should also be called by a macro that is not inline but a block macro to end the previous par
     processParagraphBreak: !->
+        if (@_cfrag.length > 1)
+            throw new Error("Parsing Error: no nesting of block level stuff allowed!")
+
         p = document.createElement "p"
         cur = @endGroup!
         p.appendChild cur

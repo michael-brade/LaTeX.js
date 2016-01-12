@@ -4,21 +4,29 @@
 
 
 document =
-    (sp / nl / comment)* text*
+    (sp / nl / comment)*
+    paragraph_with_parbreak*
     {
         generator.processParagraphBreak();  // the end of the document finishes the last paragraph
         return generator.html();
     }
 
-text =
-    !break (nl / sp)+       { generator.processSpace(); } /
-    break                   { generator.processParagraphBreak(); } /
-    primitive /
-    p:punctuation           { generator.processString(p); } /
-    g:group                 { generator.processFragment(g); } /
-    macro /
-    environment /
-    comment
+paragraph =
+    !break (nl / sp)+       { generator.processSpace(); }
+    / p:(primitive)+        { generator.processString(p.join("")); }
+    / p:punctuation         { generator.processString(p); }
+    / g:group               { generator.processFragment(g); }
+    / macro
+    / environment
+    / comment
+
+paragraph_with_parbreak =
+    paragraph
+    / break                 { generator.processParagraphBreak(); return true; }
+
+paragraph_with_linebreak =
+    paragraph
+    / break                 { generator.processLineBreak(); return true; }
 
 break "paragraph break" =
     sp*
@@ -28,21 +36,22 @@ break "paragraph break" =
 
 
 primitive =
-    p:(char / num /
-       quotes /             // TODO: instead use utf8_char somehow...
-       ctl_sym /
-       nbsp / thinsp /
-       endash / emdash)+    { generator.processString(p.join("")); }
+    char
+    / num
+    / quotes
+    / ctl_sym
+    / nbsp
+    / endash / emdash
 
 
 group "group" =
-    begin_group           & { generator.beginGroup(); return true; }
-        text*
+    begin_group            &{ generator.beginGroup(); return true; }
+        paragraph_with_linebreak*
     end_group               { return generator.endGroup(); }
 
 optgroup "optional argument" =
-    begin_optgroup        & { generator.beginGroup(); return true; }
-        (!end_optgroup text)*
+    begin_optgroup         &{ generator.beginGroup(); return true; }
+        (!end_optgroup paragraph_with_linebreak)*
     end_optgroup            { return generator.endGroup(); }
 
 
@@ -72,7 +81,7 @@ macro "macro" =
 
 environment "environment" =
     b:begin_env
-        c:(text*)
+        c:(paragraph_with_parbreak*)
     e:end_env
 
     {
