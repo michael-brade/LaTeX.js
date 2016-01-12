@@ -34,10 +34,10 @@ export class HtmlGenerator
 
     # tokens translated to html
     sp:     " "
-    nbsp:   "&nbsp;"
-    thinsp: "&thinsp;"
-    endash: "&ndash;"
-    emdash: "&mdash;"
+    nbsp:   entities.decodeHTML "&nbsp;"
+    thinsp: entities.decodeHTML "&thinsp;"
+    endash: entities.decodeHTML "&ndash;"
+    emdash: entities.decodeHTML "&mdash;"
 
 
     ### private static vars
@@ -69,6 +69,12 @@ export class HtmlGenerator
 
     character: (c) ->
         c
+
+    controlSymbol: (c) ->
+        switch c
+        | '\\' => @processLineBreak!
+        | ','  => @thinsp
+        | _    => c
 
 
     # get the result

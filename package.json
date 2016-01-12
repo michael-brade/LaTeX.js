@@ -19,7 +19,8 @@
     "cover": "istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;"
   },
   "dependencies": {
-    "domino": "^1.0.21"
+    "domino": "^1.0.21",
+    "entities": "1.x"
   },
   "devDependencies": {
     "livescript": "1.4.x",

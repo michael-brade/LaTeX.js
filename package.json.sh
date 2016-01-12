@@ -24,6 +24,7 @@ scripts:
 
 dependencies:
     'domino': '^1.0.21'
+    'entities': '1.x'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
 

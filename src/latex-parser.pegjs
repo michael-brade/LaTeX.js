@@ -39,6 +39,7 @@ primitive =
     char
     / num
     / quotes
+    / utf8_char
     / ctl_sym
     / nbsp
     / endash / emdash
@@ -146,10 +147,14 @@ num         "digit"          = n:[0-9]                   { return generator.char
 punctuation "punctuation"    = p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }  // catcode 12
 quotes                       = q:[“”"'«»]                // TODO                             // catcode 12
 
-nbsp   "non-breakable space" = "~"                       { return generator.nbsp; }          // catcode 13 (active)
+utf8_char   "utf8 char"     = !(escape / begin_group / end_group / math_shift / alignment_tab / macro_parameter /
+                                 superscript / subscript / ignore / comment / begin_optgroup / end_optgroup / nl /
+                                 sp / char / num)
+                               u:.                      { return generator.character(u); }  // catcode 12 (other)
 
-ctl_sym     "control symbol" = escape c:[\\$%#&~{}_^ ]   { return generator.character(c); }
-thinsp                       = escape ","                { return generator.thinsp; }
+nbsp   "non-breakable space" = '~'                      { return generator.nbsp; }          // catcode 13 (active)
 
 endash                       = "--"                      { return generator.endash; }
 emdash                       = "---"                     { return generator.emdash; }
+
+ctl_sym "control symbol"     = escape c:[\\$%#&~{}_^, ] { return generator.controlSymbol(c); }
