@@ -7,7 +7,7 @@ latex           = require '../dist/latex-parser'
 load-fixtures   = require './load-fixtures' .load
 
 
-describe 'pegjs-latex fixtures', !->
+describe 'LaTeX.js fixtures', !->
     fixture_path = path.join(__dirname, 'fixtures')
 
     fixtures = load-fixtures fixture_path

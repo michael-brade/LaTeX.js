@@ -12,13 +12,13 @@ document =
     }
 
 paragraph =
-    !break (nl / sp)+       { generator.processSpace(); }
+    !break (nl / sp)+ comment* sp*  { generator.processSpace(); }
+    / !break comment
     / p:(primitive)+        { generator.processString(p.join("")); }
     / p:punctuation         { generator.processString(p); }
     / g:group               { generator.processFragment(g); }
     / macro
     / environment
-    / comment
 
 paragraph_with_parbreak =
     paragraph
