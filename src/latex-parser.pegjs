@@ -64,8 +64,8 @@ macro "macro" =
     !begin_env !end_env
     escape name:identifier
     s:"*"?
-    skip_space*
-    args:(skip_space* optgroup skip_space* / skip_space* group)*
+    skip_space
+    args:(skip_space optgroup skip_space / skip_space group)*
     {
         generator.processMacro(name, s != undefined, args.map(function(arg) {
             // each argument consists of an array of length 2 or 3 (each token above is one element), so
@@ -125,7 +125,7 @@ comment         = "%"  (!nl .)* (nl / EOF)                              // catco
                        { return undefined; }
 
 
-skip_space      = !break (nl / sp / comment) { return undefined; }
+skip_space      = (!break (nl / sp / comment))* { return undefined; }
 EOF             = !.
 
 
