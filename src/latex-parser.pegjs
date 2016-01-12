@@ -4,7 +4,7 @@
 
 
 document =
-    (sp / nl / comment)*
+    (sp / nl / comment)*            // drop spaces at the end of the document
     paragraph_with_parbreak*
     {
         generator.processParagraphBreak();  // the end of the document finishes the last paragraph
@@ -12,8 +12,9 @@ document =
     }
 
 paragraph =
-    !break (nl / sp)+ comment* sp*  { generator.processSpace(); }
+    !break (sp / nl)+ comment* sp*  { generator.processSpace(); }
     / !break comment
+    / (sp / nl / comment)+ EOF      // drop spaces at the end of the document
     / p:(primitive)+                { generator.processString(p.join("")); }
     / p:punctuation                 { generator.processString(p); }
     / g:group                       { generator.processFragment(g); }
