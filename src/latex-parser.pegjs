@@ -37,8 +37,8 @@ break "paragraph break" =
 
 
 primitive =
-    emdash / endash
-    / ligature
+    ligature
+    / emdash / endash / hyphen
     / char
     / num
     / quotes
@@ -149,17 +149,18 @@ ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "!´" / "?
                                                         { return generator.ligature(l); }
 
 num         "digit"         = n:[0-9]                   { return generator.character(n); }  // catcode 12 (other)
-punctuation "punctuation"   = p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }  // catcode 12
+punctuation "punctuation"   = p:[.,;:\*/()!?=+<>\[\]]   { return generator.character(p); }  // catcode 12
 quotes                      = q:[“”"'«»]                // TODO: add "' and "`              // catcode 12
 
 utf8_char   "utf8 char"     = !(escape / begin_group / end_group / math_shift / alignment_tab / macro_parameter /
                                  superscript / subscript / ignore / comment / begin_optgroup / end_optgroup / nl /
-                                 sp / char / num / punctuation / quotes / nbsp / endash / emdash / ctl_sym)
+                                 sp / char / num / punctuation / quotes / nbsp / hyphen / endash / emdash / ctl_sym)
                                u:.                      { return generator.character(u); }  // catcode 12 (other)
 
 nbsp   "non-breakable space" = '~'                      { return generator.nbsp; }          // catcode 13 (active)
 
-endash                       = "--"                     { return generator.endash; }
-emdash                       = "---"                    { return generator.emdash; }
+hyphen      "hyphen"         = "-"                      { return generator.hyphen; }
+endash      "endash"         = "--"                     { return generator.endash; }
+emdash      "emdash"         = "---"                    { return generator.emdash; }
 
 ctl_sym "control symbol"     = escape c:[\\$%#&~{}_^, ] { return generator.controlSymbol(c); }
