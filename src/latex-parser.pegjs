@@ -17,14 +17,17 @@ paragraph =
     / (sp / nl / comment)+ EOF      // drop spaces at the end of the document
     / p:(primitive)+                { generator.processString(p.join("")); }
     / p:punctuation                 { generator.processString(p); }
+    / linebreak                     { generator.processLineBreak(); }
     / g:group                       { generator.processFragment(g); }
     / macro
     / environment
 
+// here, a new paragraph is a real new paragraph
 paragraph_with_parbreak =
     paragraph
     / break                         { generator.processParagraphBreak(); return true; }
 
+// here, a new paragraph is just a linebreak
 paragraph_with_linebreak =
     paragraph
     / break                         { generator.processLineBreak(); return true; }
@@ -126,6 +129,7 @@ ignore          = "\0" { return undefined; }                            // catco
 comment         = "%"  (!nl .)* (nl / EOF)                              // catcode 14, including the newline
                        { return undefined; }
 
+linebreak       = escape "\\" '*'? skip_space   { return undefined; }
 
 skip_space      = (!break (nl / sp / comment))* { return undefined; }
 EOF             = !.
@@ -163,4 +167,4 @@ hyphen      "hyphen"         = "-"                      { return generator.hyphe
 endash      "endash"         = "--"                     { return generator.endash; }
 emdash      "emdash"         = "---"                    { return generator.emdash; }
 
-ctl_sym "control symbol"     = escape c:[\\$%#&~{}_^, ] { return generator.controlSymbol(c); }
+ctl_sym     "control symbol" = escape c:[$%#&~{}_^, ]   { return generator.controlSymbol(c); }

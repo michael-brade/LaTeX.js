@@ -16,6 +16,10 @@ class Macros
 
     # all known macros
 
+    newline: !-> 
+        @_generator.processLineBreak!
+
+    
     echo: (args) ->
         for arg in args
             @_generator.processFragment arg.value
@@ -91,7 +95,6 @@ export class HtmlGenerator
 
     controlSymbol: (c) ->
         switch c
-        | '\\' => @processLineBreak!
         | ','  => @thinsp
         | _    => c
 
