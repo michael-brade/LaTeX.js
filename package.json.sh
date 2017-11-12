@@ -16,38 +16,39 @@ keywords:
 
 scripts:
     clean: 'rimraf dist;'
-    build: 'mkdirp dist; pegjs src/latex-parser.pegjs dist/latex-parser.js; lsc -c -o dist src/html-generator.ls'
-    test: 'mocha test/_*.ls test/tests.ls;'
-    iron: 'iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;'
+    build: 'mkdirp dist && pegjs -o dist/latex-parser.js src/latex-parser.pegjs && lsc -c -o dist src/html-generator.ls'
+    test:  'mocha test/_*.ls test/tests.ls;'
+    iron:  'iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;'
     cover: 'istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;'
 
 
 dependencies:
-    'domino': '^1.0.21'
+    'domino': '2.x'
     'entities': '1.x'
+    'lodash': '4.x'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
 
 devDependencies:
-    'livescript': '1.4.x'
+    'livescript': '1.5.x'
 
-    'browserify': '12.x'
-    'babelify': '7.x'
+    #'browserify': '14.x'
+    #'babelify': '8.x'
 
 
     ### building
 
-    'pegjs': '0.9.x'
+    'pegjs': '0.10.x'
     'mkdirp': '0.5.x'
-    'rimraf': '2.5.x'
+    'rimraf': '2.6.x'
 
 
     ### testing
 
-    'mocha': '2.3.x'
-    'chai': '3.x'
-    'chai-as-promised': '5.x'
-    'js-beautify': '1.5.x'
+    'mocha': '4.x'
+    'chai': '4.x'
+    'chai-as-promised': '7.x'
+    'js-beautify': '1.7.x'
 
     'istanbul': '>= 0.4.x'
 

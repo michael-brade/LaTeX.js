@@ -1,5 +1,6 @@
---compilers ls:livescript
+--require livescript
 --reporter spec
 --ui bdd
 --check-leaks
+--globals document
 --sort
