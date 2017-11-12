@@ -37,13 +37,14 @@ break "paragraph break" =
 
 
 primitive =
-    char
+    emdash / endash
+    / ligature
+    / char
     / num
     / quotes
-    / utf8_char
-    / ctl_sym
     / nbsp
-    / endash / emdash
+    / ctl_sym
+    / utf8_char
 
 
 group "group" =
@@ -144,6 +145,8 @@ end_optgroup                = "]"                       { return undefined; }
 nl          "newline"       = !'\r''\n' / '\r' / '\r\n' { return generator.sp; }            // catcode 5 (linux, os x, windows)
 sp          "whitespace"    =   [ \t]+                  { return generator.sp; }            // catcode 10
 char        "letter"        = c:[a-z]i                  { return generator.character(c); }  // catcode 11
+ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "!´" / "?´" / "<<" / ">>")
+                                                        { return generator.ligature(l); }
 
 num         "digit"         = n:[0-9]                   { return generator.character(n); }  // catcode 12 (other)
 punctuation "punctuation"   = p:[.,;:\-\*/()!?=+<>\[\]] { return generator.character(p); }  // catcode 12
@@ -151,7 +154,7 @@ quotes                      = q:[“”"'«»]                // TODO: add "' an
 
 utf8_char   "utf8 char"     = !(escape / begin_group / end_group / math_shift / alignment_tab / macro_parameter /
                                  superscript / subscript / ignore / comment / begin_optgroup / end_optgroup / nl /
-                                 sp / char / num)
+                                 sp / char / num / punctuation / quotes / nbsp / endash / emdash / ctl_sym)
                                u:.                      { return generator.character(u); }  // catcode 12 (other)
 
 nbsp   "non-breakable space" = '~'                      { return generator.nbsp; }          // catcode 13 (active)

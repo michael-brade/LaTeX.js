@@ -35,13 +35,28 @@ export class HtmlGenerator
 
     # tokens translated to html
     sp:     " "
-    nbsp:   entities.decodeHTML "&nbsp;"
-    thinsp: entities.decodeHTML "&thinsp;"
-    endash: entities.decodeHTML "&ndash;"
-    emdash: entities.decodeHTML "&mdash;"
+    nbsp:   entities.decodeHTML "&nbsp;"    # &#160;
+    thinsp: entities.decodeHTML "&thinsp;"  # &#8201;
+    hyphen: entities.decodeHTML "&hyphen;"  # &#8208;  U+2010
+    minus:  entities.decodeHTML "&minus;"   # &#8722;  U+2212
+    endash: entities.decodeHTML "&ndash;"   # &#8211;  U+2013
+    emdash: entities.decodeHTML "&mdash;"   # &#8212;  U+2014
 
 
     ### private static vars
+
+    ligatures = new Map([
+        * 'ff'  '\uFB00'
+        * 'ffi' '\uFB03'
+        * 'ffl' '\uFB04'
+        * 'fi'  '\uFB01'
+        * 'fl'  '\uFB02'
+        * '!´'  '\u00A1'      # &iexcl;
+        * '?´'  '\u00BF'      # &iquest;
+        * '<<'  '\u00AB'      # &laquo;
+        * '>>'  '\u00BB'      # &raquo;
+    ])
+
 
     # TODO: move to separate class, use stack
     environments =
@@ -70,6 +85,9 @@ export class HtmlGenerator
 
     character: (c) ->
         c
+
+    ligature: (l) ->
+        ligatures.get l
 
     controlSymbol: (c) ->
         switch c

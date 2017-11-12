@@ -1,6 +1,53 @@
 ** UTF-8 text, punctuation, TeX symbols
 .
-A paragraph with “quotes,” German »quotes«, umlauts (äöüÄÖÜ), ß, thin spaces 80\,000. Numbers?! Money \$10 and 5€.
+A paragraph with “quotes,” German »quotes«, umlauts (äöüÄÖÜ), ß, thin spaces 80\,000. Numbers?! Money \$10, \$5, and 5€.
+
+.:;,?!'´`()[]-/*@+=
 .
-<p>A paragraph with “quotes,” German »quotes«, umlauts (äöüÄÖÜ), ß, thin spaces 80 000. Numbers?! Money $10 and 5€.</p>
+<p>A paragraph with “quotes,” German »quotes«, umlauts (äöüÄÖÜ), ß, thin spaces 80 000. Numbers?! Money $10, $5, and 5€.</p>
+<p>.:;,?!'´`()[]-/*@+=</p>
+.
+
+
+** special characters
+.
+\# \$ \$ \^{} \& \_ \{ \} \~{} \%
+.
+<p># $ $ ^ &amp; _ { } ~ %</p>
+.
+
+
+** dashes, dots (no math)
+.
+daughter-in-law, pages 13--67, yes---or no?
+.
+<p>daughter‐in‐law, pages 13–67, yes—or no?</p>
+.
+
+
+** ligatures
+.
+ff ffi ffl fi fl << >> !´ ?´
+
+Not shelfful but shelf\mbox{}ful
+.
+<p>ﬀ ﬃ ﬄ ﬁ ﬂ « » ¡ ¿</p>
+<p>Not shelﬀul but shelfful</p>
+.
+
+
+** paragraphs and newlines
+.
+first line\\
+second line\newline
+third line
+.
+<p>ﬁrst line<br>second line<br>third line</p>
+.
+
+
+** alignment
+.
+.
+<p></p>
 .
