@@ -110,14 +110,18 @@ export class HtmlGenerator
 
     # content processing
 
+    processFragment: (f) !->
+        @_cfrag[@_cfrag.length - 1].appendChild f
+
+
     processSpace: !->
-        @_cfrag[@_cfrag.length - 1].appendChild document.createTextNode(@sp)
+        @processFragment document.createTextNode(@sp)
 
     processString: (s) !->
-        @_cfrag[@_cfrag.length - 1].appendChild document.createTextNode(s)
+        @processFragment document.createTextNode(s)
 
     processLineBreak: !->
-        @_cfrag[@_cfrag.length - 1].appendChild document.createElement("br")
+        @processFragment document.createElement("br")
 
 
     # this should also be called by a macro that is not inline but a block macro to end the previous par
@@ -132,14 +136,14 @@ export class HtmlGenerator
         @beginGroup!
 
 
+    # A group is contained in a new document fragment. endGroup() always returns the fragment.
+
     beginGroup: !->
         @_cfrag.push document.createDocumentFragment!
 
     endGroup: ->
         @_cfrag.pop!
 
-    processFragment: (f) !->
-        @_cfrag[@_cfrag.length - 1].appendChild f
 
 
     processMacro: (name, starred, args) ->
