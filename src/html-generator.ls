@@ -1,3 +1,4 @@
+require! entities
 _ = require 'lodash'
 
 # on the server we need to include a DOM implementation
