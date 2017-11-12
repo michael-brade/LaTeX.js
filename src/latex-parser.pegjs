@@ -12,8 +12,8 @@ document =
     }
 
 paragraph =
-    !break (sp / nl)+ comment* sp*  { generator.processSpace(); }
-    / !break comment
+    !break (sp / nl)+ comment* (sp / nl)*  { generator.processSpace(); }
+    / !break comment (sp / nl)*
     / (sp / nl / comment)+ EOF      // drop spaces at the end of the document
     / p:(primitive)+                { generator.processString(p.join("")); }
     / p:punctuation                 { generator.processString(p); }

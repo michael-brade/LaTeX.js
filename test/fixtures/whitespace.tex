@@ -13,11 +13,12 @@
 .
 
 
+
 ** standard double-newline paragraph separation
 .
 first paragraph
 
-second paragraph
+ second paragraph
 .
 <p>ﬁrst paragraph</p>
 <p>second paragraph</p>
@@ -70,11 +71,15 @@ third paragraph
 
 ** comments can remove a linebreak (i.e. space) and thus join lines
 .
-here are fo% comment
-ur words
+This is an % stupid
+% Better: instructive <----
+example: Supercal%
+              ifragilist%
+    icexpialidocious
 .
-<p>here are four words</p>
+<p>This is an example: Supercalifragilisticexpialidocious</p>
 .
+
 
 
 ** one space inside as well as after a group is kept, the rest is compressed/skipped
@@ -98,4 +103,11 @@ text with {  a group  }  and more text
 some \echo  text.
 .
 <p>some text.</p>
+.
+
+** force a space after a macro with {}
+.
+some \echo{} text.
+.
+<p>some  text.</p>
 .
