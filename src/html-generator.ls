@@ -180,8 +180,10 @@ export class HtmlGenerator
 
 
     endParagraph: !->
-        p = document.createElement "p"
         cur = @endGroup!
+        return if not cur.hasChildNodes!
+
+        p = document.createElement "p"
         p.appendChild cur
         @_dom.appendChild p
 
