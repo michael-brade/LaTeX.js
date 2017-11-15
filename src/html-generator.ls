@@ -24,6 +24,45 @@ class Macros
         for arg in args
             @_generator.processFragment arg.value
 
+    TeX: !->
+        # document.createRange().createContextualFragment('<span class="tex">T<sub>e</sub>X</span>')
+        tex = document.createElement 'span'
+        tex.setAttribute('class', 'tex')
+
+        tex.appendChild document.createTextNode 'T'
+        sub = document.createElement 'sub'
+        sub.appendChild document.createTextNode 'e'
+        tex.appendChild sub
+        tex.appendChild document.createTextNode 'X'
+
+        @_generator.processFragment tex
+
+    LaTeX: !-> 
+        # <span class="latex">L<sup>a</sup>T<sub>e</sub>X</span>
+        latex = document.createElement 'span'
+        latex.setAttribute('class', 'latex')
+
+        latex.appendChild document.createTextNode 'L'
+        sup = document.createElement 'sup'
+        sup.appendChild document.createTextNode 'a'
+        latex.appendChild sup
+        latex.appendChild document.createTextNode 'T'
+        sub = document.createElement 'sub'
+        sub.appendChild document.createTextNode 'e'
+        latex.appendChild sub
+        latex.appendChild document.createTextNode 'X'
+
+        @_generator.processFragment latex
+
+
+    textbackslash: !-> 
+        @_generator.processString '\\'
+
+
+
+    today: ->
+        @_generator.processString new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+
 
 
 class Itemize
