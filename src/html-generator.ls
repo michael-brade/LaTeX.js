@@ -161,9 +161,6 @@ export class HtmlGenerator
         @_cfrag[@_cfrag.length - 1].appendChild f
 
 
-    processSpace: !->
-        @processFragment document.createTextNode(@sp)
-
     processString: (s) !->
         @processFragment document.createTextNode(s)
 

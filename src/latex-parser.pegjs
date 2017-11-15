@@ -12,7 +12,7 @@ document =
     }
 
 paragraph =
-    !break (sp / nl)+ comment* (sp / nl)*  { generator.processSpace(); }
+    !break (sp / nl)+ comment* (sp / nl)*  { generator.processString(generator.sp); }
     / !break comment (sp / nl)*
     / (sp / nl / comment)+ EOF      // drop spaces at the end of the document
     / p:(primitive)+                { generator.processString(p.join("")); }
