@@ -19,10 +19,38 @@ class Macros
     newline: !-> 
         @_generator.processLineBreak!
 
-    
-    echo: (args) ->
+
+    echo: (args) !->
         for arg in args
             @_generator.processFragment arg.value
+
+
+
+class Itemize
+
+    _empty: true
+
+    # CTOR
+    (generator) ->
+        @_generator = generator
+        @_generator.addFragment "ul"
+        
+    # item should take cfrag into li, then start a new cfrag
+    # OR: after item, add stuff with addChildFragment
+    item: !->
+        @_generator.popFragment! if not @_empty
+        @_generator.addFragment "li"
+        @_empty = false
+
+    end: ->
+        @_generator.popFragment! if not @_empty
+        
+
+class Enumerate
+
+
+
+class Description
 
 
 
@@ -34,8 +62,8 @@ export class HtmlGenerator
     _macros: null
 
     _dom:   null
-    _cfrag: null      # current DocumentFragment stack
-
+    _cfrag: null        # current DocumentFragment stack
+    _env:   null        # current environment stack
 
     # tokens translated to html
     sp:     " "
@@ -62,16 +90,26 @@ export class HtmlGenerator
     ])
 
 
-    # TODO: move to separate class, use stack
-    environments =
-        "itemize"
-        "description"
+    environments = new Map([
+        * "itemize"     Itemize
+        * "enumerate"   Enumerate
+        * "description" Description
+        # * "comment"
+        # * "center"
+        # * "flushleft"
+        # * "flushright"
+        # * "quote"
+        # * "quotation"
+        # * "verse"
+    ])
+
 
     # CTOR
     ->
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
         @_cfrag = []
+        @_env = []
 
         @_macros = new Macros(this)
 
@@ -113,6 +151,12 @@ export class HtmlGenerator
 
     # content processing
 
+    addFragment: (e) ->
+        @_cfrag.push document.createElement(e)
+
+    popFragment: !->
+        @processFragment @_cfrag.pop!
+
     processFragment: (f) !->
         @_cfrag[@_cfrag.length - 1].appendChild f
 
@@ -132,11 +176,15 @@ export class HtmlGenerator
         if (@_cfrag.length > 1)
             throw new Error("Parsing Error: no nesting of block level stuff allowed!")
 
+        @endParagraph!
+        @beginGroup!
+
+
+    endParagraph: !->
         p = document.createElement "p"
         cur = @endGroup!
         p.appendChild cur
         @_dom.appendChild p
-        @beginGroup!
 
 
     # A group is contained in a new document fragment. endGroup() always returns the fragment.
@@ -150,19 +198,31 @@ export class HtmlGenerator
 
 
     processMacro: (name, starred, args) ->
-        if typeof @_macros[name] != "function"
-            console.log "Error: no such macro: #{name}!"
-            return null
+        # first see if the current environment provides the macro, then fall back
+        if @_env.length > 0 and typeof @_env[@_env.length - 1][name] == "function"
+            @_env[@_env.length - 1][name](args)
+        else if typeof @_macros[name] == "function"
+            @_macros[name](args)
+        else
+            console.error "Error: no such macro: #{name}!"
 
-        console.log "processing macro #{name}..."
-        @_macros[name](args)
 
 
-    /**
-     * This should process known environments
-     */
-    processEnvironment: (env, content) ->
+    
+    # Environments
 
+    startEnv: (name) !->
+        @endParagraph!
+        @_env.push new (environments.get name)(this)
+
+
+    endEnv: !->
+        env = @_env.pop!
+        env.end!
+
+        @_dom.appendChild @endGroup!        
+        @beginGroup!
+        
 
 
     # utilities

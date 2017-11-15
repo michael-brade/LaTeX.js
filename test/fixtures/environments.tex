@@ -1,0 +1,74 @@
+** itemize environment
+.
+text
+
+\begin{itemize}
+    \item first item
+    \item second item
+\end{itemize}
+
+more text
+\begin{itemize}
+    \item first item
+    \item second item
+\end{itemize}
+this belongs to paragraph with itemize
+.
+<p>text</p>
+<ul><li>first item</li><li>second item</li></ul>
+<p>more text
+<ul><li>first item</li><li>second item</li></ul>
+this belongs to paragraph with itemize</p>
+.
+
+
+** empty and consecutive itemize environments
+.
+\begin{itemize}
+\end{itemize}
+\begin{itemize}
+\end{itemize}
+.
+<ul></ul>
+<ul></ul>
+.
+
+
+** nested itemize environments
+.
+\begin{itemize}
+    \item first item
+    \begin{itemize}
+        \item first nested item
+    \end{itemize}
+\end{itemize}
+.
+<ul></ul>
+<ul></ul>
+.
+
+
+** single environment
+.
+\begin{itemize}
+    \item first item
+    \item second item
+\end{itemize}
+.
+<ul>
+<li>ﬁrst item </li>
+<li>second item </li></ul>
+.
+
+
+** comment environment
+.
+text
+\begin{comment}
+    This is a comment.
+\end{comment}
+more text
+.
+text
+more text
+.

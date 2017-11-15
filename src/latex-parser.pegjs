@@ -86,27 +86,21 @@ macro "macro" =
 
 
 environment "environment" =
-    b:begin_env
-        c:(paragraph_with_parbreak*)
-    e:end_env
-
+    b:begin_env                         &{ generator.startEnv(b); return true; }
+        c:(paragraph_with_linebreak*)
+    e:end_env                           &{ generator.endEnv(); return true; }
     {
-        generator.processEnvironment(b, c, e);
-
         if (b != e)
-            throw Error("line " + location().start.line + ": begin and end don't match!")
-
-        if (!envs.includes(b))
-            throw Error("unknown environment!")
+            throw new Error("line " + location().start.line + ": environment " + b + " has no matching end, " + e + " found instead!")
     }
 
 begin_env =
     escape "begin" begin_group id:identifier end_group
-    { return id }
+    { return id; }
 
 end_env =
     escape "end" begin_group id:identifier end_group
-    { return id }
+    { return id; }
 
 
 
