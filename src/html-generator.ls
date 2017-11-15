@@ -133,8 +133,10 @@ export class HtmlGenerator
 
     controlSymbol: (c) ->
         switch c
+        | ' '  => @sp
         | ','  => @thinsp
-        | _    => c
+        | '-'  =>               # nothing, just a word break marker
+        | _    => @character c
 
 
     # get the result

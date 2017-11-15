@@ -161,4 +161,4 @@ hyphen      "hyphen"         = "-"                      { return generator.hyphe
 endash      "endash"         = "--"                     { return generator.endash; }
 emdash      "emdash"         = "---"                    { return generator.emdash; }
 
-ctl_sym     "control symbol" = escape c:[$%#&~{}_^, ]   { return generator.controlSymbol(c); }
+ctl_sym     "control symbol" = escape c:[$%#&~{}_^\-, ] { return generator.controlSymbol(c); }
