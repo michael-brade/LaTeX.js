@@ -4,39 +4,42 @@
 
 
 document =
-    (sp / nl / comment)*            // drop spaces at the end of the document
-    paragraph_with_parbreak*
+    skip_all_space            // drop spaces at the beginning of the document
+    fs:(paragraph_with_parbreak)*
+    skip_all_space EOF        // drop spaces at the end of the document
     {
-        generator.processParagraphBreak();  // the end of the document finishes the last paragraph
+        generator.createDocument(fs);
         return generator.html();
     }
 
-paragraph =
-    !break (sp / nl)+ comment* (sp / nl)*  { generator.processString(generator.sp); }
-    / !break comment (sp / nl)*
-    / (sp / nl / comment)+ EOF      // drop spaces at the end of the document
-    / p:(primitive)+                { generator.processString(p.join("")); }
-    / p:punctuation                 { generator.processString(p); }
-    / linebreak                     { generator.processLineBreak(); }
-    / g:group                       { generator.processFragment(g); }
-    / macro
-    / environment
 
 // here, a new paragraph is a real new paragraph
 paragraph_with_parbreak =
-    paragraph
-    / break                         { generator.processParagraphBreak(); return true; }
+    p:(paragraph+) break?                       { return generator.createParagraph(p); }
 
 // here, a new paragraph is just a linebreak
 paragraph_with_linebreak =
     paragraph
-    / break                         { generator.processLineBreak(); return true; }
+    / break                                     { return generator.createLineBreak(); }
+
+
+// paragraph creates and returns a node tree or document fragment
+paragraph =
+      p:(primitive)+                            { return generator.createText(p.join("")); }
+    / p:punctuation                             { return generator.createText(p); }
+    / group                                   
+    / linebreak                                 { return generator.createLineBreak(); }
+    / macro
+    / environment
+    / !break (sp / nl)+ comment* (sp / nl)*     { return generator.createText(generator.sp); }
+    / !break comment (sp / nl)*                 { return undefined; }
+
 
 break "paragraph break" =
     sp*
-    (nl / comment)                  // a paragraph break is a newline...
-    (sp* nl)+                       // followed by one or more newlines, mixed with spaces,...
-    (sp / nl / comment)*            // ...and optionally followed by any whitespace and/or comment
+    (nl / comment)                              // a paragraph break is a newline...
+    (sp* nl)+                                   // followed by one or more newlines, mixed with spaces,...
+    (sp / nl / comment)*                        // ...and optionally followed by any whitespace and/or comment
 
 
 primitive =
@@ -51,14 +54,22 @@ primitive =
 
 
 group "group" =
-    begin_group                    &{ generator.beginGroup(); return true; }
-        paragraph_with_linebreak*
-    end_group                       { return generator.endGroup(); }
+    begin_group
+        p:(paragraph_with_linebreak*)
+    end_group                       
+    {
+        return generator.createFragment(p); 
+    }
 
 optgroup "optional argument" =
-    begin_optgroup                 &{ generator.beginGroup(); return true; }
-        (!end_optgroup paragraph_with_linebreak)*
-    end_optgroup                    { return generator.endGroup(); }
+    begin_optgroup
+        p:(!end_optgroup paragraph_with_linebreak)*
+    end_optgroup
+    { 
+        return generator.createFragment(p.map(function(op) {
+            return op[1]; // skip end_optgroup
+        })); 
+    }
 
 
 // supports TeX, LaTeX2e and LaTeX3 identifiers
@@ -72,7 +83,7 @@ macro "macro" =
     skip_space
     args:(skip_space optgroup skip_space / skip_space group)*
     {
-        generator.processMacro(name, s != undefined, args.map(function(arg) {
+        return generator.processMacro(name, s != undefined, args.map(function(arg) {
             // each argument consists of an array of length 2 or 3 (each token above is one element), so
             //  length 3: optgroup at [1]
             //  length 2: group at [1]
@@ -95,11 +106,14 @@ environment "environment" =
     }
 
 begin_env =
+    skip_all_space
     escape "begin" begin_group id:identifier end_group
+    skip_all_space
     { return id; }
 
 end_env =
     escape "end" begin_group id:identifier end_group
+    skip_all_space
     { return id; }
 
 
@@ -126,6 +140,8 @@ comment         = "%"  (!nl .)* (nl / EOF)                              // catco
 linebreak       = escape "\\" '*'? skip_space   { return undefined; }
 
 skip_space      = (!break (nl / sp / comment))* { return undefined; }
+skip_all_space  = (nl / sp / comment)*          { return undefined; }
+
 EOF             = !.
 
 
@@ -138,10 +154,13 @@ begin_optgroup              = "["                       { return undefined; }
 end_optgroup                = "]"                       { return undefined; }
 
 
+/* these generate no output because they are handled further up */
+
+nl          "newline"       = !'\r''\n' / '\r' / '\r\n' { return undefined; }               // catcode 5 (linux, os x, windows)
+sp          "whitespace"    =   [ \t]+                  { return undefined; }               // catcode 10
+
 /* text tokens - symbols that generate output */
 
-nl          "newline"       = !'\r''\n' / '\r' / '\r\n' { return generator.sp; }            // catcode 5 (linux, os x, windows)
-sp          "whitespace"    =   [ \t]+                  { return generator.sp; }            // catcode 10
 char        "letter"        = c:[a-z]i                  { return generator.character(c); }  // catcode 11
 ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "!´" / "?´" / "<<" / ">>")
                                                         { return generator.ligature(l); }

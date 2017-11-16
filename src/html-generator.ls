@@ -16,15 +16,16 @@ class Macros
 
     # all known macros
 
-    newline: !-> 
-        @_generator.processLineBreak!
+    # inline macros
+
+    newline: -> 
+        @_generator.createLineBreak!
 
 
-    echo: (args) !->
-        for arg in args
-            @_generator.processFragment arg.value
+    echo: (args) ->
+        @_generator.createFragment args.map (x) -> x.value
 
-    TeX: !->
+    TeX: ->
         # document.createRange().createContextualFragment('<span class="tex">T<sub>e</sub>X</span>')
         tex = document.createElement 'span'
         tex.setAttribute('class', 'tex')
@@ -35,9 +36,9 @@ class Macros
         tex.appendChild sub
         tex.appendChild document.createTextNode 'X'
 
-        @_generator.processFragment tex
+        return tex
 
-    LaTeX: !-> 
+    LaTeX: -> 
         # <span class="latex">L<sup>a</sup>T<sub>e</sub>X</span>
         latex = document.createElement 'span'
         latex.setAttribute('class', 'latex')
@@ -52,16 +53,15 @@ class Macros
         latex.appendChild sub
         latex.appendChild document.createTextNode 'X'
 
-        @_generator.processFragment latex
+        return latex
 
 
-    textbackslash: !-> 
-        @_generator.processString '\\'
-
+    textbackslash: -> 
+        @_generator.createText '\\'
 
 
     today: ->
-        @_generator.processString new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        @_generator.createText new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
 
 
@@ -152,10 +152,6 @@ export class HtmlGenerator
 
         @_macros = new Macros(this)
 
-        # the whole document is a group
-        # each paragraph is a group TODO: might get us into trouble... with fonts and overlapping groups...
-        @beginGroup!
-
 
     _serializeFragment: (f) ->
         c = document.createElement "container"
@@ -190,55 +186,39 @@ export class HtmlGenerator
         @_serializeFragment @_dom
 
 
-    # content processing
 
-    addFragment: (e) ->
-        @_cfrag.push document.createElement(e)
+    # content creation
 
-    popFragment: !->
-        @processFragment @_cfrag.pop!
+    createText: (t) ->
+        document.createTextNode t
 
-    processFragment: (f) !->
-        @_cfrag[@_cfrag.length - 1].appendChild f
+    createLineBreak: ->
+        document.createElement "br"
 
+    createFragment: (fs) ->
+        f = document.createDocumentFragment!
+        for i to fs.length
+            f.appendChild fs[i] if fs[i]?
 
-    processString: (s) !->
-        @processFragment document.createTextNode(s)
-
-    processLineBreak: !->
-        @processFragment document.createElement("br")
+        return f
 
 
-    # this should also be called by a macro that is not inline but a block macro to end the previous par
-    processParagraphBreak: !->
-        if (@_cfrag.length > 1)
-            throw new Error("Parsing Error: no nesting of block level stuff allowed!")
+    createParagraph: (p) ->
+        par = document.createElement "p"
+        for i to p.length
+            par.appendChild p[i] if p[i]?
 
-        @endParagraph!
-        @beginGroup!
+        return par
 
-
-    endParagraph: !->
-        cur = @endGroup!
-        return if not cur.hasChildNodes!
-
-        p = document.createElement "p"
-        p.appendChild cur
-        @_dom.appendChild p
-
-
-    # A group is contained in a new document fragment. endGroup() always returns the fragment.
-
-    beginGroup: !->
-        @_cfrag.push document.createDocumentFragment!
-
-    endGroup: ->
-        @_cfrag.pop!
+    createDocument: (fs) ->
+        for i to fs.length
+            @_dom.appendChild fs[i] if fs[i]?
 
 
 
+
+    # first see if the current environment provides the macro, then fall back to Macros
     processMacro: (name, starred, args) ->
-        # first see if the current environment provides the macro, then fall back
         if @_env.length > 0 and typeof @_env[@_env.length - 1][name] == "function"
             @_env[@_env.length - 1][name](args)
         else if typeof @_macros[name] == "function"
@@ -252,17 +232,13 @@ export class HtmlGenerator
     # Environments
 
     startEnv: (name) !->
-        @endParagraph!
         @_env.push new (environments.get name)(this)
 
 
-    endEnv: !->
+    endEnv: ->
         env = @_env.pop!
         env.end!
 
-        @_dom.appendChild @endGroup!        
-        @beginGroup!
-        
 
 
     # utilities
