@@ -18,6 +18,7 @@ describe 'LaTeX.js fixtures', !->
         describe desc, ->
             filefixtures.fixtures.forEach (fixture) ->
                 test fixture.header || 'line ' + fixture.first.range.0 - 1, ->
-                    html = latex.parse fixture.first.text
-                    html = html.replace //><([^/])//g, ">\n<$1"     # beautify: begin opening tags on a new line
-                    expect html .to.equal fixture.second.text
+                    html-is     = latex.parse fixture.first.text
+                    html-should = fixture.second.text.replace //\n//g, ""
+                    #html-is = html-beautify html-is
+                    expect html-is .to.equal html-should
