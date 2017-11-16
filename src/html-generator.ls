@@ -19,7 +19,7 @@ class Macros
     # inline macros
 
     newline: -> 
-        @_generator.createLineBreak!
+        @_generator.create @_generator.linebreak
 
 
     echo: (args) ->
@@ -65,33 +65,6 @@ class Macros
 
 
 
-class Itemize
-
-    _empty: true
-
-    # CTOR
-    (generator) ->
-        @_generator = generator
-        @_generator.addFragment "ul"
-        
-    # item should take cfrag into li, then start a new cfrag
-    # OR: after item, add stuff with addChildFragment
-    item: !->
-        @_generator.popFragment! if not @_empty
-        @_generator.addFragment "li"
-        @_empty = false
-
-    end: ->
-        @_generator.popFragment! if not @_empty
-        
-
-class Enumerate
-
-
-
-class Description
-
-
 
 
 export class HtmlGenerator
@@ -101,8 +74,6 @@ export class HtmlGenerator
     _macros: null
 
     _dom:   null
-    _cfrag: null        # current DocumentFragment stack
-    _env:   null        # current environment stack
 
     # tokens translated to html
     sp:     " "
@@ -112,6 +83,19 @@ export class HtmlGenerator
     minus:  entities.decodeHTML "&minus;"   # &#8722;  U+2212
     endash: entities.decodeHTML "&ndash;"   # &#8211;  U+2013
     emdash: entities.decodeHTML "&mdash;"   # &#8212;  U+2014
+
+
+    # typographic elements
+    paragraph:              "p"
+    linebreak:              "br"
+
+    unordered-list:         "ul"
+    ordered-list:           "ol"
+    listitem:               "li"
+
+    description-list:       "dl"
+    term:                   "dt"
+    description:            "dd"
 
 
     ### private static vars
@@ -129,26 +113,11 @@ export class HtmlGenerator
     ])
 
 
-    environments = new Map([
-        * "itemize"     Itemize
-        * "enumerate"   Enumerate
-        * "description" Description
-        # * "comment"
-        # * "center"
-        # * "flushleft"
-        # * "flushright"
-        # * "quote"
-        # * "quotation"
-        # * "verse"
-    ])
-
 
     # CTOR
     ->
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
-        @_cfrag = []
-        @_env = []
 
         @_macros = new Macros(this)
 
@@ -186,42 +155,36 @@ export class HtmlGenerator
         @_serializeFragment @_dom
 
 
+    # helper
+
+    appendChildrenTo: (children, parent) ->
+        for i to children?.length
+            parent.appendChild children[i] if children[i]?
+
+        return parent
+
 
     # content creation
+
+    createDocument: (fs) !->
+        @appendChildrenTo fs, @_dom
+
+
+    create: (type, children) ->
+        el = document.createElement type
+        @appendChildrenTo children, el
 
     createText: (t) ->
         document.createTextNode t
 
-    createLineBreak: ->
-        document.createElement "br"
-
-    createFragment: (fs) ->
+    createFragment: (children) ->
         f = document.createDocumentFragment!
-        for i to fs.length
-            f.appendChild fs[i] if fs[i]?
-
-        return f
-
-
-    createParagraph: (p) ->
-        par = document.createElement "p"
-        for i to p.length
-            par.appendChild p[i] if p[i]?
-
-        return par
-
-    createDocument: (fs) ->
-        for i to fs.length
-            @_dom.appendChild fs[i] if fs[i]?
+        @appendChildrenTo children, f
 
 
 
-
-    # first see if the current environment provides the macro, then fall back to Macros
     processMacro: (name, starred, args) ->
-        if @_env.length > 0 and typeof @_env[@_env.length - 1][name] == "function"
-            @_env[@_env.length - 1][name](args)
-        else if typeof @_macros[name] == "function"
+        if typeof @_macros[name] == "function"
             @_macros[name](args)
         else
             console.error "Error: no such macro: #{name}!"

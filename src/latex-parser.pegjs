@@ -15,22 +15,22 @@ document =
 
 // here, a new paragraph is a real new paragraph
 paragraph_with_parbreak =
-    p:(paragraph+) break?                       { return generator.createParagraph(p); }
+    p:text+ break?                              { return generator.create(generator.paragraph, p); }
+    / environments
 
 // here, a new paragraph is just a linebreak
 paragraph_with_linebreak =
-    paragraph
-    / break                                     { return generator.createLineBreak(); }
+    text
+    / environments
+    / break                                     { return generator.create(generator.linebreak); }
 
 
-// paragraph creates and returns a node tree or document fragment
-paragraph =
+text =
       p:(primitive)+                            { return generator.createText(p.join("")); }
     / p:punctuation                             { return generator.createText(p); }
-    / group                                   
-    / linebreak                                 { return generator.createLineBreak(); }
+    / group
+    / linebreak                                 { return generator.create(generator.linebreak); }
     / macro
-    / environment
     / !break (sp / nl)+ comment* (sp / nl)*     { return generator.createText(generator.sp); }
     / !break comment (sp / nl)*                 { return undefined; }
 
@@ -55,29 +55,35 @@ primitive =
 
 group "group" =
     begin_group
-        p:(paragraph_with_linebreak*)
-    end_group                       
+        p:paragraph_with_linebreak*
+    end_group
     {
-        return generator.createFragment(p); 
+        return generator.createFragment(p);
     }
 
 optgroup "optional argument" =
     begin_optgroup
         p:(!end_optgroup paragraph_with_linebreak)*
     end_optgroup
-    { 
+    {
         return generator.createFragment(p.map(function(op) {
             return op[1]; // skip end_optgroup
-        })); 
+        }));
     }
 
+
+begin =
+    skip_all_space escape "begin"
+
+end =
+    skip_all_space escape "end"
 
 // supports TeX, LaTeX2e and LaTeX3 identifiers
 identifier "identifier" =
     id:(char / "_" / ":")+          { return id.join("") }
 
 macro "macro" =
-    !begin_env !end_env
+    !begin !end
     escape name:identifier
     s:"*"?
     skip_space
@@ -95,27 +101,31 @@ macro "macro" =
     }
 
 
+environments =
+    itemize
 
-environment "environment" =
-    b:begin_env                         &{ generator.startEnv(b); return true; }
-        c:(paragraph_with_linebreak*)
-    e:end_env                           &{ generator.endEnv(); return true; }
+itemize =
+    begin begin_group "itemize" end_group
+        items:(item (!(item/end) paragraph_with_linebreak)*)*
+    end begin_group "itemize" end_group
+    skip_all_space
     {
-        if (b != e)
-            throw new Error("line " + location().start.line + ": environment " + b + " has no matching end, " + e + " found instead!")
+        // if l == itemize
+
+        return generator.create(generator.unorderedList,
+                    items.map(function(item_pwtext) {
+                        return generator.create(generator.listitem,
+                            // this becomes the paragraph_with_linebreak fragment
+                            item_pwtext[1].map(function(text) { return text[1]; })
+                        );
+                    })
+               );
     }
 
-begin_env =
-    skip_all_space
-    escape "begin" begin_group id:identifier end_group
-    skip_all_space
-    { return id; }
 
-end_env =
-    escape "end" begin_group id:identifier end_group
-    skip_all_space
-    { return id; }
-
+item =
+    skip_all_space escape "item" og:optgroup? skip_space
+    { return og; }
 
 
 
