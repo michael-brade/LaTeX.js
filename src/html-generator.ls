@@ -14,6 +14,12 @@ class Macros
         @_generator = generator
 
 
+    # make sure only one mandatory arg was given or throw an error
+    _checkOneM: (arg) ->
+        macro = /Macros\.(\w+)/.exec(new Error().stack.split('\n')[2])[1]
+        arg.length == 1 && arg[0].mandatory || throw new Error("#{macro} expects exactly one mandatory argument!")
+
+
     # all known macros
 
     # inline macros
@@ -64,6 +70,105 @@ class Macros
         @_generator.createText new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
 
+    mbox: (arg) ->
+    fbox: (arg) ->
+
+    ## alignment
+
+    centering: !->
+        @_generator.addClass "center"
+
+    raggedright: !->
+        @_generator.addClass "raggedright"
+
+    raggedleft: !->
+        @_generator.addClass "raggedleft"
+
+
+
+    ## fonts
+
+    # commands
+
+    textnormal: (arg) ->
+        @_checkOneM arg
+
+    textrm: (arg) ->
+        @_checkOneM arg
+    textsf: (arg) ->
+        @_checkOneM arg
+    texttt: (arg) ->
+        @_checkOneM arg
+
+    textmd: (arg) ->
+        @_checkOneM arg
+    textbf: (arg) ->
+        @_checkOneM arg
+
+    textup: (arg) ->
+        @_checkOneM arg
+    textit: (arg) ->
+        @_checkOneM arg
+    textsl: (arg) ->
+        @_checkOneM arg
+    textsc: (arg) ->
+        @_checkOneM arg
+
+    emph: (arg) ->
+        @_checkOneM arg
+        @_generator.create @_generator.emph, arg.map (x) -> x.value
+
+    underline: (arg) ->
+
+    # declarations
+
+    normalfont: ->
+
+    rmfamily: ->
+    sffamily: ->
+    ttfamily: ->
+
+    mdseries: ->
+    bfseries: ->
+
+    upshape: ->
+    itshape: ->
+    slshape: ->
+    scshape: ->
+
+    em: ->
+
+
+    # size
+
+    tiny: ->
+    scriptsize: ->
+    footnotesize: ->
+    small: ->
+    normalsize: ->
+    large: ->
+    Large: ->
+    LARGE: ->
+    huge: ->
+    Huge: ->
+
+
+    ## not yet...
+
+    pagestyle: (arg) ->
+    thispagestyle: (arg) ->
+
+    ## ignored macros since not useful in html
+    include: (arg) ->
+    includeonly: (arg) ->
+    input: (arg) ->
+
+    newpage: !->
+    linebreak: !->
+    nolinebreak: !->
+    pagebreak: !->
+    nopagebreak: !->
+    enlargethispage: !->
 
 
 
@@ -100,6 +205,7 @@ export class HtmlGenerator
     term:                   "dt"
     description:            "dd"
 
+    emph:                   "em"
 
     ### private static vars
 

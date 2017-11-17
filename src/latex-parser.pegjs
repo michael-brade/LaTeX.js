@@ -93,7 +93,7 @@ macro "macro" =
             //  length 3: optgroup at [1]
             //  length 2: group at [1]
             return {
-                type: arg.length === 3 ? "optional" : "mandatory",
+                ...(arg.length === 3) && {optional: true} || {mandatory: true},
                 value: arg[1]
             }
         }));
