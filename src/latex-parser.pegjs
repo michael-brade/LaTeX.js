@@ -5,20 +5,20 @@
 
 document =
     skip_all_space            // drop spaces at the beginning of the document
-    fs:(paragraph_with_parbreak)*
+    blocks:block*
     skip_all_space EOF        // drop spaces at the end of the document
     {
-        generator.createDocument(fs);
+        generator.createDocument(blocks);
         return generator.html();
     }
 
 
-// here, a new paragraph is a real new paragraph
-paragraph_with_parbreak =
-    p:text+ break?                              { return generator.create(generator.paragraph, p); }
-    / environments
+block =
+    b:break? skip_space p:text+                 { b && generator.break(); return generator.create(generator.paragraph, p); }
+    / e:environments                            { generator.continue(); return e; }
 
-// here, a new paragraph is just a linebreak
+
+// here, an empty line is just a linebreak
 paragraph_with_linebreak =
     text
     / environments
@@ -26,7 +26,7 @@ paragraph_with_linebreak =
 
 
 text =
-      p:(primitive)+                            { return generator.createText(p.join("")); }
+      p:primitive+                              { return generator.createText(p.join("")); }
     / p:punctuation                             { return generator.createText(p); }
     / group
     / linebreak                                 { return generator.create(generator.linebreak); }
@@ -73,7 +73,7 @@ optgroup "optional argument" =
 
 
 begin =
-    skip_all_space escape "begin"
+    b:break? skip_space escape "begin"          { b && generator.break(); }
 
 end =
     skip_all_space escape "end"
@@ -83,8 +83,7 @@ identifier "identifier" =
     id:(char / "_" / ":")+          { return id.join("") }
 
 macro "macro" =
-    !begin !end
-    escape name:identifier
+    escape !("begin"/"end") name:identifier
     s:"*"?
     skip_space
     args:(skip_space optgroup skip_space / skip_space group)*
@@ -108,7 +107,6 @@ itemize =
     begin begin_group "itemize" end_group
         items:(item (!(item/end) paragraph_with_linebreak)*)*
     end begin_group "itemize" end_group
-    skip_all_space
     {
         // if l == itemize
 

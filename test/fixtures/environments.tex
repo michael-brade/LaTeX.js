@@ -27,7 +27,7 @@ this belongs to paragraph with itemize
 <li>ﬁrst item</li>
 <li>second item</li>
 </ul>
-<p>this belongs to paragraph with itemize</p>
+<p class="continue">this belongs to paragraph with itemize</p>
 .
 
 
@@ -39,7 +39,7 @@ this belongs to paragraph with itemize
 \end{itemize}
 .
 <ul></ul>
-<ul></ul>
+<ul class="continue"></ul>
 .
 
 
@@ -48,9 +48,9 @@ this belongs to paragraph with itemize
 text before
 \begin{itemize}
     \item first item
-    \begin{itemize}
-        \item first nested item
-    \end{itemize}
+        \begin{itemize}
+            \item first nested item
+        \end{itemize}
 \end{itemize}
 text after
 .
@@ -58,7 +58,7 @@ text after
 <ul>
 <li>ﬁrst item <ul><li>ﬁrst nested item</li></ul></li>
 </ul>
-<p>text after</p>
+<p class="continue">text after</p>
 .
 
 

@@ -74,6 +74,9 @@ export class HtmlGenerator
     _macros: null
 
     _dom:   null
+    _attrs: null        # attribute stack
+
+    _continue: false
 
     # tokens translated to html
     sp:     " "
@@ -118,6 +121,7 @@ export class HtmlGenerator
     ->
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
+        @_attrs = []
 
         @_macros = new Macros(this)
 
@@ -172,6 +176,9 @@ export class HtmlGenerator
 
     create: (type, children) ->
         el = document.createElement type
+        if @_continue
+            el.setAttribute("class", "continue")
+            @_continue = false
         @appendChildrenTo children, el
 
     createText: (t) ->
@@ -190,18 +197,11 @@ export class HtmlGenerator
             console.error "Error: no such macro: #{name}!"
 
 
+    continue: !->
+        @_continue = true
 
-    
-    # Environments
-
-    startEnv: (name) !->
-        @_env.push new (environments.get name)(this)
-
-
-    endEnv: ->
-        env = @_env.pop!
-        env.end!
-
+    break: !->
+        @_continue = false
 
 
     # utilities
