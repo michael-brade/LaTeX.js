@@ -25,7 +25,7 @@ paragraph_with_linebreak =
     / break                                     { return generator.create(generator.linebreak); }
 
 
-text =
+text "text" =
       p:primitive+                              { return generator.createText(p.join("")); }
     / p:punctuation                             { return generator.createText(p); }
     / group
@@ -42,7 +42,7 @@ break "paragraph break" =
     (sp / nl / comment)*                        // ...and optionally followed by any whitespace and/or comment
 
 
-primitive =
+primitive "primitive" =
     ligature
     / emdash / endash / hyphen
     / char
@@ -72,15 +72,15 @@ optgroup "optional argument" =
     }
 
 
-begin =
+begin "\\begin" =
     b:break? skip_space escape "begin"          { b && generator.break(); }
 
-end =
+end "\\end" =
     skip_all_space escape "end"
 
 // supports TeX, LaTeX2e and LaTeX3 identifiers
 identifier "identifier" =
-    id:(char / "_" / ":")+          { return id.join("") }
+    id:(char / "_" / ":")+                      { return id.join("") }
 
 macro "macro" =
     escape !("begin"/"end") name:identifier
@@ -100,7 +100,7 @@ macro "macro" =
     }
 
 
-environments =
+environments "environment" =
     itemize
 
 itemize =
@@ -131,26 +131,26 @@ item =
 
 /* syntax tokens - TeX's first catcodes that generate no output */
 
-escape          = "\\" { return undefined; }                            // catcode 0
-begin_group     = "{"  { return undefined; }                            // catcode 1
-end_group       = "}"  { return undefined; }                            // catcode 2
-math_shift      = "$"  { return undefined; }                            // catcode 3
-alignment_tab   = "&"  { return undefined; }                            // catcode 4
+escape                      = "\\" { return undefined; }                                    // catcode 0
+begin_group                 = "{"  { return undefined; }                                    // catcode 1
+end_group                   = "}"  { return undefined; }                                    // catcode 2
+math_shift      "math"      = "$"  { return undefined; }                                    // catcode 3
+alignment_tab               = "&"  { return undefined; }                                    // catcode 4
 
-macro_parameter = "#"  { return undefined; }                            // catcode 6
-superscript     = "^"  { return undefined; }                            // catcode 7
-subscript       = "_"  { return undefined; }                            // catcode 8
-ignore          = "\0" { return undefined; }                            // catcode 9
+macro_parameter "parameter" = "#"  { return undefined; }                                    // catcode 6
+superscript                 = "^"  { return undefined; }                                    // catcode 7
+subscript                   = "_"  { return undefined; }                                    // catcode 8
+ignore                      = "\0" { return undefined; }                                    // catcode 9
 
-comment         = "%"  (!nl .)* (nl / EOF)                              // catcode 14, including the newline
-                       { return undefined; }
+comment         "comment"   = "%"  (!nl .)* (nl / EOF)      { return undefined; }           // catcode 14, including the newline
 
-linebreak       = escape "\\" '*'? skip_space   { return undefined; }
 
-skip_space      = (!break (nl / sp / comment))* { return undefined; }
-skip_all_space  = (nl / sp / comment)*          { return undefined; }
+linebreak       "linebreak" = escape "\\" '*'? skip_space   { return undefined; }
 
-EOF             = !.
+skip_space      "spaces"    = (!break (nl / sp / comment))* { return undefined; }
+skip_all_space  "spaces"    = (nl / sp / comment)*          { return undefined; }
+
+EOF             "EOF"       = !.
 
 
 /* syntax tokens - LaTeX */
@@ -165,7 +165,7 @@ end_optgroup                = "]"                       { return undefined; }
 /* these generate no output because they are handled further up */
 
 nl          "newline"       = !'\r''\n' / '\r' / '\r\n' { return undefined; }               // catcode 5 (linux, os x, windows)
-sp          "whitespace"    =   [ \t]+                  { return undefined; }               // catcode 10
+sp          "whitespace"    = [ \t]+                    { return undefined; }               // catcode 10
 
 /* text tokens - symbols that generate output */
 
@@ -175,7 +175,7 @@ ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "!´" / "?
 
 num         "digit"         = n:[0-9]                   { return generator.character(n); }  // catcode 12 (other)
 punctuation "punctuation"   = p:[.,;:\*/()!?=+<>\[\]]   { return generator.character(p); }  // catcode 12
-quotes                      = q:[“”"'«»]                // TODO: add "' and "`              // catcode 12
+quotes      "quotes"        = q:[“”"'«»]                // TODO: add "' and "`              // catcode 12
 
 utf8_char   "utf8 char"     = !(escape / begin_group / end_group / math_shift / alignment_tab / macro_parameter /
                                  superscript / subscript / ignore / comment / begin_optgroup / end_optgroup / nl /
