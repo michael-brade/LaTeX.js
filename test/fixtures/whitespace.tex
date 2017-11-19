@@ -1,5 +1,14 @@
 ** whitespaces are compressed, comments are discarded
 .
+three
+\par
+% comment
+
+paragraphs
+    \par\par
+    % comment
+ separated by par.
+
    this     paragraph  has a    few 
  words,   including
  % comment
@@ -9,9 +18,20 @@
  % spaces at the end
  
 .
+<p>three</p><p>paragraphs</p><p>separated by par.</p>
 <p>this paragraph has a few words, including a comment.</p>
 .
 
+
+** how to force two paragraphs
+.
+text  \par
+~
+\par
+more text
+.
+<p>text</p><p>&nbsp;</p><p>more text</p>
+.
 
 
 ** standard double-newline paragraph separation
@@ -84,6 +104,8 @@ example: Supercal%
 
 ** one space inside as well as after a group is kept, the rest is compressed/skipped
 .
+text with empty group {  } and more text
+
 text with {a group} and more text
 
 text with { a group } and more text
@@ -92,6 +114,7 @@ text with { a group  } and more text
 
 text with {  a group  }  and more text
 .
+<p>text with empty group ​ ​ and more text</p>
 <p>text with a group​ and more text</p>
 <p>text with ​ a group ​ and more text</p>
 <p>text with ​ a group ​ and more text</p>

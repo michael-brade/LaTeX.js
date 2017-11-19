@@ -40,7 +40,8 @@ space "space" =
 
 
 break "paragraph break" =
-    escape par /                                // a paragraph break is either \par, or
+    (skip_all_space escape par skip_all_space)+ // a paragraph break is either \par embedded in spaces,
+    /                                           // or
     sp*
     (nl / comment)                              // a paragraph break is a newline...
     (sp* nl)+                                   // followed by one or more newlines, mixed with spaces,...
