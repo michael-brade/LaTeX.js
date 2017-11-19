@@ -1,0 +1,32 @@
+** \bfseries declaration
+.
+Hello \bfseries is emphasized.
+.
+<p>Hello <span class="bf">is emphasized.</span></p>
+.
+
+** \emph{} command
+.
+Hello, \emph{this} is emphasized.
+.
+<p>Hello, <em>this</em>​ is emphasized.</p>
+.
+
+
+** fonts stay until the surrounding group ends
+.
+outer { text \bfseries {what} more text } end outer
+.
+<p>outer  text <span class="bf">what more text </span> end outer</p>
+.
+
+
+** fonts reach across paragraphs if no group ends
+.
+hello, \bfseries what
+
+are we going to do here?
+.
+<p>hello, <span class="bf">what</span></p>
+<p><span class="bf">are we going to do here?</span></p>
+.

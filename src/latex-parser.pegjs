@@ -29,11 +29,18 @@ paragraph_with_linebreak =
 
 
 text "text" =
-      p:(primitive/punctuation/left_br)+        { return generator.createText(p.join("")); }
-    // a right bracket is only allowed if we are in an open group (unbalanced)
-    / p:right_br                              & { return !generator.isBalanced() }
-                                                { return generator.createText(p); }
+    p:(
+        primitive
+      / punctuation
+      / space                                   { return generator.sp; }
+      / !break comment (sp / nl)*               { return undefined; }
+      / left_br
+        // a right bracket is only allowed if we are in an open group (unbalanced)
+      / b:right_br                            & { return !generator.isBalanced() } { return b; }
+      )+                                        { return generator.createText(p.join("")); }
+
     / linebreak                                 { return generator.create(generator.linebreak); }
+    / macro
 
     // groups
     / begin_group                             & { generator.enterGroup(); return true; }
@@ -41,9 +48,6 @@ text "text" =
     / end_group                               & { return !generator.isBalanced() && generator.exitGroup(); }
       s:space?                                  { return generator.createText(s); }
 
-    / macro
-    / space                                     { return generator.createText(generator.sp); }
-    / !break comment (sp / nl)*                 { return undefined; }
 
 
 primitive "primitive" =
@@ -94,6 +98,8 @@ macro "macro" =
     escape !(begin/end/par)
     m:(
       custom_macro
+    / mdseries
+    / bfseries
     / unknown_macro
     )
     { return m; }
@@ -135,6 +141,9 @@ unknown_macro =
     { error("unknown macro: " + m); }
 
 
+
+mdseries =  "mdseries" skip_space               { generator.addAttribute("md") }
+bfseries =  "bfseries" skip_space               { generator.addAttribute("bf") }
 
 
 
