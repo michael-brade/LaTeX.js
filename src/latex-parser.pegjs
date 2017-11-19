@@ -166,6 +166,15 @@ item =
     { return og; }
 
 
+comment_env "comment environment" =
+    "\\begin{comment}"
+        (!end_comment .)*
+    end_comment skip_space
+    { generator.break(); return undefined; }
+
+end_comment = "\\end{comment}"
+
+
 unknown_environment =
     e:identifier
     { error("unknown environment: " + e); }
@@ -194,7 +203,8 @@ superscript                 = "^"                           { return undefined; 
 subscript                   = "_"                           { return undefined; }           // catcode 8
 ignore                      = "\0"                          { return undefined; }           // catcode 9
 
-comment         "comment"   = "%"  (!nl .)* (nl / EOF)      { return undefined; }           // catcode 14, including the newline
+comment         "comment"   = "%"  (!nl .)* (nl / EOF)                                      // catcode 14, including the newline
+                            / comment_env                   { return undefined; }           //             and the comment environment
 
 
 linebreak       "linebreak" = escape "\\" '*'? skip_space   { return undefined; }
