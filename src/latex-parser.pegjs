@@ -35,19 +35,6 @@ text "text" =
     / !break comment (sp / nl)*                 { return undefined; }
 
 
-space "space" =
-    !break (sp / nl)+ comment* (sp / nl)*       { return generator.brsp; }
-
-
-break "paragraph break" =
-    (skip_all_space escape par skip_all_space)+ // a paragraph break is either \par embedded in spaces,
-    /                                           // or
-    sp*
-    (nl / comment)                              // a paragraph break is a newline...
-    (sp* nl)+                                   // followed by one or more newlines, mixed with spaces,...
-    (sp / nl / comment)*                        // ...and optionally followed by any whitespace and/or comment
-
-
 primitive "primitive" =
     ligature
     / emdash / endash / hyphen
@@ -213,52 +200,64 @@ par                         = "par"
 
 /* syntax tokens - TeX's first catcodes that generate no output */
 
-escape                      = "\\"                          { return undefined; }           // catcode 0
-begin_group                 = "{"                           { return undefined; }           // catcode 1
-end_group                   = "}"                           { return undefined; }           // catcode 2
-math_shift      "math"      = "$"                           { return undefined; }           // catcode 3
-alignment_tab               = "&"                           { return undefined; }           // catcode 4
+escape                      = "\\"                              { return undefined; }       // catcode 0
+begin_group                 = "{"                               { return undefined; }       // catcode 1
+end_group                   = "}"                               { return undefined; }       // catcode 2
+math_shift      "math"      = "$"                               { return undefined; }       // catcode 3
+alignment_tab               = "&"                               { return undefined; }       // catcode 4
 
-macro_parameter "parameter" = "#"                           { return undefined; }           // catcode 6
-superscript                 = "^"                           { return undefined; }           // catcode 7
-subscript                   = "_"                           { return undefined; }           // catcode 8
-ignore                      = "\0"                          { return undefined; }           // catcode 9
-
-comment         "comment"   = "%"  (!nl .)* (nl / EOF)                                      // catcode 14, including the newline
-                            / comment_env                   { return undefined; }           //             and the comment environment
-
-
-linebreak       "linebreak" = escape "\\" '*'? skip_space   { return undefined; }
-
-skip_space      "spaces"    = (!break (nl / sp / comment))* { return undefined; }
-skip_all_space  "spaces"    = (nl / sp / comment)*          { return undefined; }
+macro_parameter "parameter" = "#"                               { return undefined; }       // catcode 6
+superscript                 = "^"                               { return undefined; }       // catcode 7
+subscript                   = "_"                               { return undefined; }       // catcode 8
+ignore                      = "\0"                              { return undefined; }       // catcode 9
 
 EOF             "EOF"       = !.
 
 
+
+
+/* space handling */
+
+nl              "newline"   = !'\r''\n' / '\r' / '\r\n'         { return undefined; }       // catcode 5 (linux, os x, windows)
+sp              "whitespace"= [ \t]                             { return undefined; }       // catcode 10
+
+comment         "comment"   = "%"  (!nl .)* (nl / EOF)                                      // catcode 14, including the newline
+                            / comment_env                       { return undefined; }       //             and the comment environment
+
+skip_space      "spaces"    = (!break (nl / sp / comment))*     { return undefined; }
+skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefined; }
+
+space           "spaces"    = !break
+                              (sp / nl)+ comment* (sp / nl)*    { return generator.brsp; }
+
+break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
+                              /                                             // or
+                              sp*
+                              (nl / comment)                                // a paragraph break is a newline...
+                              (sp* nl)+                                     // followed by one or more newlines, mixed with spaces,...
+                              (sp / nl / comment)*                          // ...and optionally followed by any whitespace and/or comment
+
+
 /* syntax tokens - LaTeX */
+
+linebreak       "linebreak" = escape "\\" '*'? skip_space       { return undefined; }
 
 // Note that these are in reality also just text! I'm just using a separate rule to make it look like syntax, but
 // brackets do not need to be balanced.
 
-begin_optgroup              = "["                       { return undefined; }
-end_optgroup                = "]"                       { return undefined; }
+begin_optgroup              = "["                               { return undefined; }
+end_optgroup                = "]"                               { return undefined; }
 
-
-/* these generate no output because they are handled further up */
-
-nl          "newline"       = !'\r''\n' / '\r' / '\r\n' { return undefined; }               // catcode 5 (linux, os x, windows)
-sp          "whitespace"    = [ \t]+                    { return undefined; }               // catcode 10
 
 /* text tokens - symbols that generate output */
 
 char        "letter"        = c:[a-z]i                  { return generator.character(c); }  // catcode 11
 ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "!´" / "?´" / "<<" / ">>")
-                                                        { return generator.ligature(l); }
+                                                        { return generator.ligature(l); }   // TODO: add "' and "`?
 
 num         "digit"         = n:[0-9]                   { return generator.character(n); }  // catcode 12 (other)
 punctuation "punctuation"   = p:[.,;:\*/()!?=+<>\[\]]   { return generator.character(p); }  // catcode 12
-quotes      "quotes"        = q:[“”"'«»]                // TODO: add "' and "`              // catcode 12
+quotes      "quotes"        = q:[“”"'«»]                { return generator.character(q); }  // catcode 12
 
 utf8_char   "utf8 char"     = !(escape / begin_group / end_group / math_shift / alignment_tab / macro_parameter /
                                  superscript / subscript / ignore / comment / begin_optgroup / end_optgroup / nl /
