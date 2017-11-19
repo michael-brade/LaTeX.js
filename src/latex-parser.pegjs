@@ -70,6 +70,16 @@ group "group" =
         return generator.createFragment(p);
     }
 
+arggroup "mandatory argument" =
+    begin_group
+    s:space?
+        p:paragraph_with_linebreak*
+    end_group
+    {
+        s != undefined && p.unshift(generator.createText(s));
+        return generator.createFragment(p);
+    }
+
 optgroup "optional argument" =
     begin_optgroup
         p:(!end_optgroup paragraph_with_linebreak)*
@@ -100,11 +110,12 @@ identifier "identifier" =
 
 custom_macro "user-defined macro" =
     name:identifier &{ return generator.hasMacro(name); }
-    s:"*"?
+    starred:"*"?
     skip_space
-    args:(skip_space optgroup skip_space / skip_space group)*
+    args:(skip_space optgroup skip_space / skip_space arggroup)*
+    s:space?
     {
-        return generator.processMacro(name, s != undefined, args.map(function(arg) {
+        var node = generator.processMacro(name, starred != undefined, args.map(function(arg) {
             // each argument consists of an array of length 2 or 3 (each token above is one element), so
             //  length 3: optgroup at [1]
             //  length 2: group at [1]
@@ -113,6 +124,15 @@ custom_macro "user-defined macro" =
                 value: arg[1]
             }
         }));
+
+        if (s != undefined) {
+            if (node == undefined)
+                node = generator.createText(s);
+            else
+                node = generator.createFragment([node, generator.createText(s)]);
+        }
+
+        return node;
     }
 
 unknown_macro =
