@@ -15,21 +15,28 @@ class Macros
 
 
     # make sure only one mandatory arg was given or throw an error
-    _checkOneM: (arg) ->
+    _checkOneM: (arg) !->
+        return if arg.length == 1 && arg[0].mandatory
         macro = /Macros\.(\w+)/.exec(new Error().stack.split('\n')[2])[1]
-        arg.length == 1 && arg[0].mandatory || throw new Error("#{macro} expects exactly one mandatory argument!")
+        throw new Error("#{macro} expects exactly one mandatory argument!")
 
 
     # all known macros
 
     # inline macros
 
-    newline: -> 
+    newline: ->
         @_generator.create @_generator.linebreak
 
 
     echo: (args) ->
-        @_generator.createFragment args.map (x) -> x.value
+        @_generator.createFragment args.map (x) ~>
+            if x.value
+                @_generator.createFragment [
+                    @_generator.createText if x.mandatory then "+" else "-"
+                    x.value
+                    @_generator.createText if x.mandatory then "+" else "-"
+                ]
 
     TeX: ->
         # document.createRange().createContextualFragment('<span class="tex">T<sub>e</sub>X</span>')
@@ -44,7 +51,7 @@ class Macros
 
         return tex
 
-    LaTeX: -> 
+    LaTeX: ->
         # <span class="latex">L<sup>a</sup>T<sub>e</sub>X</span>
         latex = document.createElement 'span'
         latex.setAttribute('class', 'latex')
@@ -62,7 +69,7 @@ class Macros
         return latex
 
 
-    textbackslash: -> 
+    textbackslash: ->
         @_generator.createText '\\'
 
 
@@ -180,6 +187,7 @@ export class HtmlGenerator
 
     _dom:   null
     _attrs: null        # attribute stack
+    _groups: null       # grouping stack
 
     _continue: false
 
@@ -229,6 +237,7 @@ export class HtmlGenerator
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
         @_attrs = []
+        @_groups = []
 
         @_macros = new Macros(this)
 
@@ -292,6 +301,7 @@ export class HtmlGenerator
         document.createTextNode t
 
     createFragment: (children) ->
+        return if not children or !children.length
         f = document.createDocumentFragment!
         @appendChildrenTo children, f
 
@@ -305,6 +315,35 @@ export class HtmlGenerator
         else
             console.error "Error: no such macro: #{name}!"
 
+
+    # groups
+
+    # start a new group
+    enterGroup: !->
+        # copy top and push again
+        @_attrs.push @_attrs[@_attrs.length - 1]
+        ++@_groups[@_groups.length - 1]
+
+    # end the last group - returns false if there was no group to end
+    exitGroup: ->
+        @_attrs.pop!
+        --@_groups[@_groups.length - 1] >= 0
+
+
+    # start a new level of grouping
+    startBalanced: !->
+        @_groups.push 0
+
+    # exit a level of grouping and return true if it was balanced
+    endBalanced: ->
+        @_groups.pop! == 0
+
+    # check if the current level of grouping is balanced
+    isBalanced: ->
+        @_groups[@_groups.length - 1] == 0
+
+
+    # attributes (CSS classes)
 
     continue: !->
         @_continue = true
