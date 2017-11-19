@@ -31,8 +31,12 @@ text "text" =
     / group
     / linebreak                                 { return generator.create(generator.linebreak); }
     / macro
-    / !break (sp / nl)+ comment* (sp / nl)*     { return generator.createText(generator.sp); }
+    / space                                     { return generator.createText(generator.sp); }
     / !break comment (sp / nl)*                 { return undefined; }
+
+
+space "space" =
+    !break (sp / nl)+ comment* (sp / nl)*       { return generator.brsp; }
 
 
 break "paragraph break" =
@@ -55,9 +59,13 @@ primitive "primitive" =
 
 group "group" =
     begin_group
+    s1:space?
         p:paragraph_with_linebreak*
     end_group
+    s2:space?
     {
+        s1 != undefined && p.unshift(generator.createText(s1));
+        s2 != undefined && p.push(generator.createText(s2));
         return generator.createFragment(p);
     }
 

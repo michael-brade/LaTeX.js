@@ -184,8 +184,9 @@ export class HtmlGenerator
     _continue: false
 
     # tokens translated to html
-    sp:     " "
-    nbsp:   entities.decodeHTML "&nbsp;"    # &#160;
+    sp:     ' '
+    brsp:   '\u200B '                       # breakable but non-collapsible space: &#8203; U+200B
+    nbsp:   entities.decodeHTML "&nbsp;"    # &#160;   U+00A0
     thinsp: entities.decodeHTML "&thinsp;"  # &#8201;
     hyphen: entities.decodeHTML "&hyphen;"  # &#8208;  U+2010
     minus:  entities.decodeHTML "&minus;"   # &#8722;  U+2212
@@ -247,7 +248,7 @@ export class HtmlGenerator
 
     controlSymbol: (c) ->
         switch c
-        | ' '  => @sp
+        | ' '  => @brsp
         | ','  => @thinsp
         | '-'  =>               # nothing, just a word break marker
         | _    => @character c
