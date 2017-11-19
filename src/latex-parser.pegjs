@@ -131,16 +131,16 @@ item =
 
 /* syntax tokens - TeX's first catcodes that generate no output */
 
-escape                      = "\\" { return undefined; }                                    // catcode 0
-begin_group                 = "{"  { return undefined; }                                    // catcode 1
-end_group                   = "}"  { return undefined; }                                    // catcode 2
-math_shift      "math"      = "$"  { return undefined; }                                    // catcode 3
-alignment_tab               = "&"  { return undefined; }                                    // catcode 4
+escape                      = "\\"                          { return undefined; }           // catcode 0
+begin_group                 = "{"                           { return undefined; }           // catcode 1
+end_group                   = "}"                           { return undefined; }           // catcode 2
+math_shift      "math"      = "$"                           { return undefined; }           // catcode 3
+alignment_tab               = "&"                           { return undefined; }           // catcode 4
 
-macro_parameter "parameter" = "#"  { return undefined; }                                    // catcode 6
-superscript                 = "^"  { return undefined; }                                    // catcode 7
-subscript                   = "_"  { return undefined; }                                    // catcode 8
-ignore                      = "\0" { return undefined; }                                    // catcode 9
+macro_parameter "parameter" = "#"                           { return undefined; }           // catcode 6
+superscript                 = "^"                           { return undefined; }           // catcode 7
+subscript                   = "_"                           { return undefined; }           // catcode 8
+ignore                      = "\0"                          { return undefined; }           // catcode 9
 
 comment         "comment"   = "%"  (!nl .)* (nl / EOF)      { return undefined; }           // catcode 14, including the newline
 
@@ -182,10 +182,10 @@ utf8_char   "utf8 char"     = !(escape / begin_group / end_group / math_shift / 
                                  sp / char / num / punctuation / quotes / nbsp / hyphen / endash / emdash / ctl_sym)
                                u:.                      { return generator.character(u); }  // catcode 12 (other)
 
-nbsp   "non-breakable space" = '~'                      { return generator.nbsp; }          // catcode 13 (active)
+nbsp        "non-brk space" = '~'                       { return generator.nbsp; }          // catcode 13 (active)
 
-hyphen      "hyphen"         = "-"                      { return generator.hyphen; }
-endash      "endash"         = "--"                     { return generator.endash; }
-emdash      "emdash"         = "---"                    { return generator.emdash; }
+hyphen      "hyphen"        = "-"                       { return generator.hyphen; }
+endash      "endash"        = "--"                      { return generator.endash; }
+emdash      "emdash"        = "---"                     { return generator.emdash; }
 
-ctl_sym     "control symbol" = escape c:[$%#&~{}_^\-, ] { return generator.controlSymbol(c); }
+ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-, ]  { return generator.controlSymbol(c); }
