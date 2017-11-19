@@ -6,12 +6,6 @@ test {text with {{another }two} groups } and more
 .
 
 
-** unbalanced groups fail to parse
-.
-this { { fails}, and more
-.
-.
-
 ** brackets do not need to be balanced, they are just punctuation; and in a macro a simple delimiter
 .
 test[ {t]]ext} more
@@ -25,6 +19,10 @@ test[ {t]]ext} more
 Here is some unsuspecting text in a paragraph. This paragraph { starts a group.
 
 But then suddenly a new paragraph begins... } and misery with it.
+
+It is also possible {to have a\par par command} in a group.
 .
-<p>Here is some unsuspecting text in a paragraph. This paragraph ​ starts a group.<br>But then suddenly a new paragraph begins... ​ and misery with it.</p>
+<p>Here is some unsuspecting text in a paragraph. This paragraph ​ starts a group.
+<br>But then suddenly a new paragraph begins... ​ and misery with it.</p>
+<p>It is also possible to have a<br> par command​ in a group.</p>
 .

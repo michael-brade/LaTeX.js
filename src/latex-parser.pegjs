@@ -40,6 +40,7 @@ space "space" =
 
 
 break "paragraph break" =
+    escape par /                                // a paragraph break is either \par, or
     sp*
     (nl / comment)                              // a paragraph break is a newline...
     (sp* nl)+                                   // followed by one or more newlines, mixed with spaces,...
@@ -80,18 +81,18 @@ optgroup "optional argument" =
     }
 
 
-begin "\\begin" =
-    b:break? skip_space escape "begin"          { b && generator.break(); }
+begin_env "\\begin" =
+    b:break? skip_space escape begin            { b && generator.break(); }
 
-end "\\end" =
-    skip_all_space escape "end"
+end_env "\\end" =
+    skip_all_space escape end
 
 // supports TeX, LaTeX2e and LaTeX3 identifiers
 identifier "identifier" =
     id:(char / "_" / ":")+                      { return id.join("") }
 
 macro "macro" =
-    escape !("begin"/"end") name:identifier
+    escape !(begin/end/par) name:identifier
     s:"*"?
     skip_space
     args:(skip_space optgroup skip_space / skip_space group)*
@@ -112,9 +113,9 @@ environments "environment" =
     itemize
 
 itemize =
-    begin begin_group "itemize" end_group
-        items:(item (!(item/end) paragraph_with_linebreak)*)*
-    end begin_group "itemize" end_group
+    begin_env begin_group "itemize" end_group
+        items:(item (!(item/end_env) paragraph_with_linebreak)*)*
+    end_env begin_group "itemize" end_group
     {
         // if l == itemize
 
@@ -134,6 +135,12 @@ item =
     { return og; }
 
 
+/* kind of keywords */
+
+begin                       = "begin"
+end                         = "end"
+
+par                         = "par"
 
 
 
