@@ -15,13 +15,13 @@ document =
 
 block =
     b:break? skip_space p:text+                 { b && generator.break(); return generator.create(generator.paragraph, p); }
-    / e:environments                            { generator.continue(); return e; }
+    / e:environment                             { generator.continue(); return e; }
 
 
 // here, an empty line is just a linebreak
 paragraph_with_linebreak =
     text
-    / environments
+    / environment
     / break                                     { return generator.create(generator.linebreak); }
 
 
@@ -81,18 +81,25 @@ optgroup "optional argument" =
     }
 
 
-begin_env "\\begin" =
-    b:break? skip_space escape begin            { b && generator.break(); }
 
-end_env "\\end" =
-    skip_all_space escape end
+/* macros */
+
+
+macro "macro" =
+    escape !(begin/end/par)
+    m:(
+      custom_macro
+    / unknown_macro
+    )
+    { return m; }
+
 
 // supports TeX, LaTeX2e and LaTeX3 identifiers
 identifier "identifier" =
     id:(char / "_" / ":")+                      { return id.join("") }
 
-macro "macro" =
-    escape !(begin/end/par) name:identifier
+custom_macro "user-defined macro" =
+    name:identifier &{ return generator.hasMacro(name); }
     s:"*"?
     skip_space
     args:(skip_space optgroup skip_space / skip_space group)*
@@ -108,12 +115,36 @@ macro "macro" =
         }));
     }
 
+unknown_macro =
+    m:identifier
+    { error("unknown macro: " + m); }
 
-environments "environment" =
-    itemize
 
-itemize =
-    begin_env begin_group "itemize" end_group
+
+
+
+/* environments */
+
+begin_env "\\begin" =
+    b:break? skip_space
+    escape begin                                { b && generator.break(); }
+
+end_env "\\end" =
+    skip_all_space
+    escape end
+
+
+
+environment "environment" =
+    begin_env begin_group
+    e:(
+        itemize
+      / unknown_environment
+    )
+    { return e; }
+
+itemize "itemize environment" =
+    "itemize" end_group
         items:(item (!(item/end_env) paragraph_with_linebreak)*)*
     end_env begin_group "itemize" end_group
     {
@@ -133,6 +164,12 @@ itemize =
 item =
     skip_all_space escape "item" og:optgroup? skip_space
     { return og; }
+
+
+unknown_environment =
+    e:identifier
+    { error("unknown environment: " + e); }
+
 
 
 /* kind of keywords */

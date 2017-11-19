@@ -296,9 +296,11 @@ export class HtmlGenerator
         @appendChildrenTo children, f
 
 
+    hasMacro: (name) ->
+        typeof @_macros[name] == "function"
 
     processMacro: (name, starred, args) ->
-        if typeof @_macros[name] == "function"
+        if @hasMacro name
             @_macros[name](args)
         else
             console.error "Error: no such macro: #{name}!"
