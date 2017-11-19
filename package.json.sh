@@ -2,7 +2,7 @@
 
 name: 'latexjs'
 description: 'A simple PEG.js parser for LaTeX'
-version: '0.2.0'
+version: '0.3.0'
 
 author:
     'name': 'Michael Brade'
@@ -17,9 +17,17 @@ keywords:
 scripts:
     clean: 'rimraf dist;'
     build: 'mkdirp dist && pegjs -o dist/latex-parser.js src/latex-parser.pegjs && lsc -c -o dist src/html-generator.ls'
+    browserify: 'browserify dist/latex-parser.js --standalone latexjs -t babelify -o dist/latex-parser.amd.js -i domino -r ./dist/html-generator.js'
     test:  'mocha test/_*.ls test/tests.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;'
     cover: 'istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;'
+
+babel:
+    presets:
+        "es2015"
+
+    plugins:
+        "transform-object-rest-spread"
 
 
 dependencies:
@@ -32,8 +40,11 @@ dependencies:
 devDependencies:
     'livescript': '1.5.x'
 
-    #'browserify': '14.x'
-    #'babelify': '8.x'
+    'browserify': '14.x'
+    'babelify': '8.x'
+    'babel-core': '6.26.x'
+    'babel-preset-es2015': '6.24.x'
+    'babel-plugin-transform-object-rest-spread': '6.26.x'
 
 
     ### building
