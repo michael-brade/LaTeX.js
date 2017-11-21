@@ -277,8 +277,11 @@ export class HtmlGenerator
     # helper
 
     appendChildrenTo: (children, parent) ->
-        for i to children?.length
-            parent.appendChild children[i] if children[i]?
+        if children
+            for i to children.length
+                parent.appendChild children[i] if children[i]?
+            else
+                parent.appendChild children
 
         return parent
 
