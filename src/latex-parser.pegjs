@@ -21,7 +21,7 @@ block =
     / e:environment                             { generator.continue(); return e; }
 
 
-// here, an empty line is just a linebreak - needed in some macro arguments
+// here, an empty line or \par is just a linebreak - needed in some macro arguments
 paragraph_with_linebreak =
     text
     / environment
@@ -30,14 +30,11 @@ paragraph_with_linebreak =
 
 text "text" =
     p:(
-        primitive
-      / punctuation
-      / space                                   { return generator.sp; }
+        ligature
+      / emdash / endash
+      / primitive
       / !break comment (sp / nl)*               { return undefined; }
-      / left_br
-        // a right bracket is only allowed if we are in an open group (unbalanced)
-      / b:right_br                            & { return !generator.isBalanced() } { return b; }
-      )+                                        { return generator.createText(p.join("")); }
+    )+                                          { return generator.createText(p.join("")); }
 
     / linebreak                                 { return generator.create(generator.linebreak); }
     / macro
@@ -51,11 +48,15 @@ text "text" =
 
 
 primitive "primitive" =
-    ligature
-    / emdash / endash / hyphen
-    / char
+      char
+    / space                                     { return generator.sp; }
+    / hyphen
     / num
+    / punctuation
     / quotes
+    / left_br
+                                              // a right bracket is only allowed if we are in an open (unbalanced) group
+    / b:right_br                              & { return !generator.isBalanced() } { return b; }
     / nbsp
     / ctl_sym
     / utf8_char
@@ -277,9 +278,8 @@ quotes      "quotes"        = q:[“”"'«»]                { return generator
 left_br     "left bracket"  = b:"["                     { return generator.character(b); }  // catcode 12
 right_br    "right bracket" = b:"]"                     { return generator.character(b); }  // catcode 12
 
-utf8_char   "utf8 char"     = !(escape / begin_group / end_group / math_shift / alignment_tab / macro_parameter /
-                                 superscript / subscript / ignore / comment / begin_optgroup / end_optgroup / nl /
-                                 sp / char / num / punctuation / quotes / nbsp / hyphen / endash / emdash / ctl_sym)
+utf8_char   "utf8 char"     = !(sp / nl / escape / begin_group / end_group / math_shift / alignment_tab / macro_parameter /
+                                superscript / subscript / ignore / comment / begin_optgroup / end_optgroup /* primitive */)
                                u:.                      { return generator.character(u); }  // catcode 12 (other)
 
 nbsp        "non-brk space" = '~'                       { return generator.nbsp; }          // catcode 13 (active)
