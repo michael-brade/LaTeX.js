@@ -16,7 +16,7 @@
 
   <script src="../dist/latex-parser.amd.js" defer></script>
 
-  <link rel="stylesheet" type="text/css" href="playground.css"> -->
+  <link rel="stylesheet" type="text/css" href="playground.css">
 
   <style type="text/css">
   body {
@@ -26,7 +26,7 @@
     height: 100vh;
   }
 
-  #header {
+  #header, #footer {
     text-align: center;
   }
   </style>
@@ -67,7 +67,23 @@ And another paragraph. And another paragraph.
 
 Today is \today.}
 
-Actually, what about { some groups? } They\,are\ \ \ \ \ nice.</live-editor>
+Actually, what about { some groups? } They\,are\ \ \ \ \ nice.
+
+{\small The small and
+  \textbf{bold} Romans ruled}
+  {\Large all of great big
+  \textit{Italy}.}
+
+\textit{You can also
+  \emph{emphasize} text if
+  it is set in italics,}
+  \textsf{in a
+  \emph{sans-serif} font,}
+  \texttt{or in
+  \emph{typewriter} style.}
+
+
+</live-editor>
 
   <div id="footer">
     <div id="copyright">Copyright 2017 Michael Brade.</div>

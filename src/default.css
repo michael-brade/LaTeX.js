@@ -6,6 +6,7 @@ html {
     font-variant-ligatures: common-ligatures;
 }
 
+
 /* family */
 .rm {
     font-family: serif;
@@ -26,21 +27,72 @@ html {
     font-weight: bold;
 }
 
-/* shape */
+/* shape - LaTeX doesn't support slanted small-caps by default */
 .up {
     font-style: normal;
+    font-variant-caps: normal;
 }
 
 .it {
     font-style: italic;
+    font-variant-caps: normal;
 }
 
 .sl {
     font-style: oblique;
+    font-variant-caps: normal;
 }
 
 .sc {
+    font-style: normal;
     font-variant-caps: small-caps;
+}
+
+.em, em {
+    font-style: italic; /* TODO: what if nested? */
+}
+
+
+/* size */
+
+.tiny {
+    font-size: 50%;
+}
+
+.scriptsize {
+    font-size: 70%;
+}
+
+.footnotesize {
+    font-size: 82%;
+}
+
+.small {
+    font-size: 91%;
+}
+
+.normalsize {
+    font-size: 100%;
+}
+
+.large {
+    font-size: 120%;
+}
+
+.Large {
+    font-size: 140%;
+}
+
+.LARGE {
+    font-size: 170%;
+}
+
+.huge {
+    font-size: 200%;
+}
+
+.Huge {
+    font-size: 250%;
 }
 
 
@@ -57,6 +109,17 @@ html {
 .raggedleft {
     text-align: right;
 }
+
+/* paragraphs are indented */
+
+p, ul, ol, dl {
+    margin: 0;
+}
+
+p {
+   text-indent: 2em;
+}
+
 
 
 /* the TeX and LaTeX logos */

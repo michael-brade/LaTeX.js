@@ -2,8 +2,15 @@ require! entities
 _ = require 'lodash'
 
 # on the server we need to include a DOM implementation
-if (typeof document == 'undefined')
+if typeof document == 'undefined'
     global.document = require 'domino' .createDocument!
+
+
+Object.defineProperty Array.prototype, 'top',
+    enumerable: false
+    configurable: true
+    get: -> @[@length - 1]
+    set: undefined
 
 
 
@@ -79,82 +86,6 @@ class Macros
 
     mbox: (arg) ->
     fbox: (arg) ->
-
-    ## alignment
-
-    centering: !->
-        @_generator.addClass "center"
-
-    raggedright: !->
-        @_generator.addClass "raggedright"
-
-    raggedleft: !->
-        @_generator.addClass "raggedleft"
-
-
-
-    ## fonts
-
-    # commands
-
-    textnormal: (arg) ->
-        @_checkOneM arg
-
-    textrm: (arg) ->
-        @_checkOneM arg
-    textsf: (arg) ->
-        @_checkOneM arg
-    texttt: (arg) ->
-        @_checkOneM arg
-
-    textmd: (arg) ->
-        @_checkOneM arg
-    textbf: (arg) ->
-        @_checkOneM arg
-
-    textup: (arg) ->
-        @_checkOneM arg
-    textit: (arg) ->
-        @_checkOneM arg
-    textsl: (arg) ->
-        @_checkOneM arg
-    textsc: (arg) ->
-        @_checkOneM arg
-
-    emph: (arg) ->
-        @_checkOneM arg
-        @_generator.create @_generator.emph, arg.map (x) -> x.value
-
-    underline: (arg) ->
-
-    # declarations
-
-    normalfont: ->
-
-    rmfamily: ->
-    sffamily: ->
-    ttfamily: ->
-
-    upshape: ->
-    itshape: ->
-    slshape: ->
-    scshape: ->
-
-    em: ->
-
-
-    # size
-
-    tiny: ->
-    scriptsize: ->
-    footnotesize: ->
-    small: ->
-    normalsize: ->
-    large: ->
-    Large: ->
-    LARGE: ->
-    huge: ->
-    Huge: ->
 
 
     ## not yet...
@@ -234,8 +165,8 @@ export class HtmlGenerator
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
 
-        # stack of lists of attributes - entering a group adds another list, leaving a group removes the top list
-        @_attrs = [[]]
+        # stack of text attributes - entering a group adds another entry, leaving a group removes the top entry
+        @_attrs = [{}]
         @_groups = []
 
         @_macros = new Macros(this)
@@ -285,16 +216,6 @@ export class HtmlGenerator
 
         return parent
 
-    wrapWithAttributes: (el) ->
-        attrs = @_attrs[@_attrs.length - 1].join(" ")
-
-        if attrs > ""
-            span = document.createElement "span"
-            span.setAttribute "class", attrs
-            span.appendChild el
-            return span
-
-        return el
 
     # content creation
 
@@ -311,7 +232,7 @@ export class HtmlGenerator
 
     createText: (t) ->
         return if not t
-        @wrapWithAttributes document.createTextNode t
+        @_wrapWithAttributes document.createTextNode t
 
     createFragment: (children) ->
         return if not children or !children.length
@@ -323,18 +244,16 @@ export class HtmlGenerator
         typeof @_macros[name] == "function"
 
     processMacro: (name, starred, args) ->
-        if @hasMacro name
-            @_macros[name](args)
-        else
-            console.error "Error: no such macro: #{name}!"
+        @_macros[name](args)
 
 
     # groups
 
     # start a new group
     enterGroup: !->
-        # copy top and push again
-        @_attrs.push @_attrs[@_attrs.length - 1].slice!
+        # shallow copy of top, then push again
+        #@_attrs.push @_attrs.top.slice!
+        @_attrs.push Object.assign {}, @_attrs.top
         ++@_groups[@_groups.length - 1]
 
     # end the last group - returns false if there was no group to end
@@ -365,6 +284,64 @@ export class HtmlGenerator
         @_continue = false
 
 
-    addAttribute: (c) !->
-        @_attrs[@_attrs.length - 1].push c
+    # font attributes
 
+    setFontFamily: (family) !->
+        @_attrs.top.fontFamily = family
+
+    setFontWeight: (weight) !->
+        @_attrs.top.fontWeight = weight
+
+    setFontShape: (shape) !->
+        @_attrs.top.fontShape = shape
+
+    setFontSize: (size) !->
+        @_attrs.top.fontSize = size
+
+    setAlignment: (align) !->
+        @_attrs.top.align = align
+
+
+    _attributes: ->
+        cur = @_attrs.top
+        [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.align].join " " .trim!
+
+
+    _wrapWithAttributes: (el, attrs) ->
+        if not attrs
+            attrs = @_attributes!
+
+        if attrs
+            span = document.createElement "span"
+            span.setAttribute "class", attrs
+            span.appendChild el
+            return span
+
+        return el
+
+
+    # utilities
+
+    debugDOM: (oParent, oCallback) !->
+        if oParent.hasChildNodes()
+            oNode = oParent.firstChild
+            while oNode, oNode = oNode.nextSibling
+                DOMComb(oNode, oCallback)
+
+        oCallback.call(oParent)
+
+
+    debugNode: (n) !->
+        return if not n
+        if typeof n.nodeName != "undefined"
+            console.log n.nodeName, ": ", n.textContent
+        else
+            console.log "not a node: ", n
+
+    debugNodes: (l) !->
+        for n in l
+            @debugNode n
+
+    debugNodeContent: !->
+        if @nodeValue
+            console.log @nodeValue

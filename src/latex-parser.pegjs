@@ -64,15 +64,15 @@ primitive "primitive" =
 
 
 
-
-
-
+/**********/
 /* macros */
+/**********/
 
 // group balancing: groups have to be balanced inside arguments, inside environments, and inside a document.
 // startBalanced() is used to start a new level inside of which groups have to be balanced.
 
 arggroup "mandatory argument" =
+    skip_space
     begin_group                                 & { g.enterGroup(); g.startBalanced(); return true; }
     s:space?
         p:paragraph_with_linebreak*
@@ -87,6 +87,7 @@ arggroup "mandatory argument" =
 
 
 optgroup "optional argument" =
+    skip_space
     begin_optgroup                              & { g.startBalanced(); return true; }
         p:paragraph_with_linebreak*
     end_optgroup                                & { return g.isBalanced(); }
@@ -100,8 +101,15 @@ macro "macro" =
     escape !(begin/end/par)
     m:(
       custom_macro
-    / mdseries
-    / bfseries
+    / textfamily / textweight / textshape
+    / textnormal / emph / underline
+
+    / fontfamily / fontweight / fontshape
+    / normalfont / em
+
+    / fontsize
+
+    / centering / raggedright / raggedleft
     / unknown_macro
     )
     { return m; }
@@ -115,18 +123,10 @@ custom_macro "user-defined macro" =
     name:identifier &{ return g.hasMacro(name); }
     starred:"*"?
     skip_space
-    args:(skip_space optgroup skip_space / skip_space arggroup)*
+    args:(o:optgroup { return { optional: true, value: o }; } / m:arggroup { return { mandatory: true, value: m }; })*
     s:space?
     {
-        var node = g.processMacro(name, starred != undefined, args.map(function(arg) {
-            // each argument consists of an array of length 2 or 3 (each token above is one element), so
-            //  length 3: optgroup at [1]
-            //  length 2: group at [1]
-            return {
-                ...(arg.length === 3) && {optional: true} || {mandatory: true},
-                value: arg[1]
-            }
-        }));
+        var node = g.processMacro(name, starred != undefined, args);
 
         if (s != undefined) {
             if (node == undefined)
@@ -144,12 +144,70 @@ unknown_macro =
 
 
 
-mdseries =  "mdseries" skip_space               { g.addAttribute("md") }
-bfseries =  "bfseries" skip_space               { g.addAttribute("bf") }
+
+// ** font macros
+
+// commands
+
+textfamily      =   "text" f:("rm"/"sf"/"tt")       !char   &{ g.enterGroup(); g.setFontFamily(f); return true; }
+                    a:arggroup
+                    { g.exitGroup(); return a; }
+
+textweight      =   "text" w:("md"/"bf")            !char   &{ g.enterGroup(); g.setFontWeight(w); return true; }
+                    a:arggroup
+                    { g.exitGroup(); return a; }
+
+textshape       =   "text" s:("up"/"it"/"sl"/"sc")  !char   &{ g.enterGroup(); g.setFontShape(s); return true; }
+                    a:arggroup
+                    { g.exitGroup(); return a; }
+
+
+textnormal      =   "textnormal" !char                      &{ g.enterGroup();
+                                                               g.setFontFamily("rm");
+                                                               g.setFontWeight("md");
+                                                               g.setFontShape("up"); return true; }
+                    a:arggroup
+                    { g.exitGroup(); return a; }
+
+
+underline       =   "underline" !char &{ g.enterGroup(); g.addAttribute("underline"); return true; }   a:arggroup  { g.exitGroup(); return a; }
+
+emph            =   "emph" !char a:arggroup  { return g.create(g.emph, a); }
+
+// declarations
+
+fontfamily      =   f:("rm"/"sf"/"tt")      "family" !char skip_space   { g.setFontFamily(f); }
+fontweight      =   w:("md"/"bf")           "series" !char skip_space   { g.setFontWeight(w); }
+fontshape       =   s:("up"/"it"/"sl"/"sc") "shape"  !char skip_space   { g.setFontShape(s); }
+
+normalfont      =   "normalfont"                     !char  skip_space  { g.setFontFamily("rm");
+                                                                          g.setFontWeight("md");
+                                                                          g.setFontShape("up"); }
+
+fontsize        =   s:("tiny"/"scriptsize"/"footnotesize"/"small"/"normalsize"/"large"/"Large"/"LARGE"/"huge"/"Huge")
+                    !char skip_space
+                    { g.setFontSize(s); }
+
+em              =   "em"       !char    skip_space  { g.setFontShape("em"); }       // TOGGLE em?!
+
+
+// color
 
 
 
+// block level: alignment
+
+centering       =   "centering"     !char skip_space  { g.setAlignment("center"); }
+raggedright     =   "raggedright"   !char skip_space  { g.setAlignment("raggedright"); }
+raggedleft      =   "raggedleft"    !char skip_space  { g.setAlignment("raggedleft"); }
+
+
+
+
+
+/****************/
 /* environments */
+/****************/
 
 begin_env "\\begin" =
     b:break? skip_space
@@ -213,6 +271,7 @@ begin                       = "begin"
 end                         = "end"
 
 par                         = "par"
+
 
 
 
