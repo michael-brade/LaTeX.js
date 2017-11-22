@@ -1,31 +1,32 @@
 {
-    var generator = new (require('./html-generator').HtmlGenerator);
+    var g = new (require('./html-generator').HtmlGenerator);
 }
 
 
 document =
-    & { generator.startBalanced(); generator.enterGroup(); return true; }
+    & { g.startBalanced(); g.enterGroup(); return true; }
     skip_all_space            // drop spaces at the beginning of the document
-    blocks:block*
+    pars:paragraph*
     skip_all_space EOF        // drop spaces at the end of the document
     {
-        generator.exitGroup();
-        generator.endBalanced() || error("groups need to be balanced!");
-        generator.createDocument(blocks);
-        return generator.html();
+        g.exitGroup();
+        g.endBalanced() || error("groups need to be balanced!");
+        g.createDocument(pars);
+        return g.html();
     }
 
 
-block =
-    b:break? skip_space p:text+                 { b && generator.break(); return generator.create(generator.paragraph, p); }
-    / e:environment                             { generator.continue(); return e; }
+
+paragraph =
+    b:break? skip_space p:text+                 { b && g.break(); return g.create(g.paragraph, p); }
+    / e:environment                             { g.continue(); return e; }
 
 
 // here, an empty line or \par is just a linebreak - needed in some macro arguments
 paragraph_with_linebreak =
     text
     / environment
-    / break                                     { return generator.create(generator.linebreak); }
+    / break                                     { return g.create(g.linebreak); }
 
 
 text "text" =
@@ -34,29 +35,29 @@ text "text" =
       / emdash / endash
       / primitive
       / !break comment (sp / nl)*               { return undefined; }
-    )+                                          { return generator.createText(p.join("")); }
+    )+                                          { return g.createText(p.join("")); }
 
-    / linebreak                                 { return generator.create(generator.linebreak); }
+    / linebreak                                 { return g.create(g.linebreak); }
     / macro
 
     // groups
-    / begin_group                             & { generator.enterGroup(); return true; }
-      s:space?                                  { return generator.createText(s); }
-    / end_group                               & { return !generator.isBalanced() && generator.exitGroup(); }
-      s:space?                                  { return generator.createText(s); }
+    / begin_group                             & { g.enterGroup(); return true; }
+      s:space?                                  { return g.createText(s); }
+    / end_group                               & { return !g.isBalanced() && g.exitGroup(); }
+      s:space?                                  { return g.createText(s); }
 
 
 
 primitive "primitive" =
       char
-    / space                                     { return generator.sp; }
+    / space                                     { return g.sp; }
     / hyphen
     / num
     / punctuation
     / quotes
     / left_br
                                               // a right bracket is only allowed if we are in an open (unbalanced) group
-    / b:right_br                              & { return !generator.isBalanced() } { return b; }
+    / b:right_br                              & { return !g.isBalanced() } { return b; }
     / nbsp
     / ctl_sym
     / utf8_char
@@ -72,26 +73,26 @@ primitive "primitive" =
 // startBalanced() is used to start a new level inside of which groups have to be balanced.
 
 arggroup "mandatory argument" =
-    begin_group                                 & { generator.enterGroup(); generator.startBalanced(); return true; }
+    begin_group                                 & { g.enterGroup(); g.startBalanced(); return true; }
     s:space?
         p:paragraph_with_linebreak*
     end_group
     {
-        generator.endBalanced() || error("groups need to be balanced!");
-        generator.exitGroup()   || error("there was no group to end");
+        g.endBalanced() || error("groups need to be balanced!");
+        g.exitGroup()   || error("there was no group to end");
 
-        s != undefined && p.unshift(generator.createText(s));
-        return generator.createFragment(p);
+        s != undefined && p.unshift(g.createText(s));
+        return g.createFragment(p);
     }
 
 
 optgroup "optional argument" =
-    begin_optgroup                              & { generator.startBalanced(); return true; }
+    begin_optgroup                              & { g.startBalanced(); return true; }
         p:paragraph_with_linebreak*
-    end_optgroup                                & { return generator.isBalanced(); }
+    end_optgroup                                & { return g.isBalanced(); }
     {
-        generator.endBalanced();
-        return generator.createFragment(p);
+        g.endBalanced();
+        return g.createFragment(p);
     }
 
 
@@ -111,13 +112,13 @@ identifier "identifier" =
     id:(char / "_" / ":")+                      { return id.join("") }
 
 custom_macro "user-defined macro" =
-    name:identifier &{ return generator.hasMacro(name); }
+    name:identifier &{ return g.hasMacro(name); }
     starred:"*"?
     skip_space
     args:(skip_space optgroup skip_space / skip_space arggroup)*
     s:space?
     {
-        var node = generator.processMacro(name, starred != undefined, args.map(function(arg) {
+        var node = g.processMacro(name, starred != undefined, args.map(function(arg) {
             // each argument consists of an array of length 2 or 3 (each token above is one element), so
             //  length 3: optgroup at [1]
             //  length 2: group at [1]
@@ -129,9 +130,9 @@ custom_macro "user-defined macro" =
 
         if (s != undefined) {
             if (node == undefined)
-                node = generator.createText(s);
+                node = g.createText(s);
             else
-                node = generator.createFragment([node, generator.createText(s)]);
+                node = g.createFragment([node, g.createText(s)]);
         }
 
         return node;
@@ -143,8 +144,8 @@ unknown_macro =
 
 
 
-mdseries =  "mdseries" skip_space               { generator.addAttribute("md") }
-bfseries =  "bfseries" skip_space               { generator.addAttribute("bf") }
+mdseries =  "mdseries" skip_space               { g.addAttribute("md") }
+bfseries =  "bfseries" skip_space               { g.addAttribute("bf") }
 
 
 
@@ -152,7 +153,7 @@ bfseries =  "bfseries" skip_space               { generator.addAttribute("bf") }
 
 begin_env "\\begin" =
     b:break? skip_space
-    escape begin                                { b && generator.break(); }
+    escape begin                                { b && g.break(); }
 
 end_env "\\end" =
     skip_all_space
@@ -175,9 +176,9 @@ itemize "itemize environment" =
     {
         // if l == itemize
 
-        return generator.create(generator.unorderedList,
+        return g.create(g.unorderedList,
                     items.map(function(item_pwtext) {
-                        return generator.create(generator.listitem,
+                        return g.create(g.listitem,
                             // this becomes the paragraph_with_linebreak fragment
                             item_pwtext[1].map(function(text) { return text[1]; })
                         );
@@ -195,7 +196,7 @@ comment_env "comment environment" =
     "\\begin{comment}"
         (!end_comment .)*
     end_comment skip_space
-    { generator.break(); return undefined; }
+    { g.break(); return undefined; }
 
 end_comment = "\\end{comment}"
 
@@ -245,7 +246,7 @@ skip_space      "spaces"    = (!break (nl / sp / comment))*     { return undefin
 skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefined; }
 
 space           "spaces"    = !break
-                              (sp / nl)+ comment* (sp / nl)*    { return generator.brsp; }
+                              (sp / nl)+ comment* (sp / nl)*    { return g.brsp; }
 
 break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
                               /                                             // or
@@ -268,24 +269,25 @@ end_optgroup                = "]"                               { return undefin
 
 /* text tokens - symbols that generate output */
 
-char        "letter"        = c:[a-z]i                  { return generator.character(c); }  // catcode 11
-ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "!´" / "?´" / "<<" / ">>")
-                                                        { return generator.ligature(l); }   // TODO: add "' and "`?
+char        "letter"        = c:[a-z]i                          { return g.character(c); }  // catcode 11
+ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl"
+                                / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
+                                                                { return g.ligature(l); }
 
-num         "digit"         = n:[0-9]                   { return generator.character(n); }  // catcode 12 (other)
-punctuation "punctuation"   = p:[.,;:\*/()!?=+<>]       { return generator.character(p); }  // catcode 12
-quotes      "quotes"        = q:[“”"'«»]                { return generator.character(q); }  // catcode 12
-left_br     "left bracket"  = b:"["                     { return generator.character(b); }  // catcode 12
-right_br    "right bracket" = b:"]"                     { return generator.character(b); }  // catcode 12
+num         "digit"         = n:[0-9]                           { return g.character(n); }  // catcode 12 (other)
+punctuation "punctuation"   = p:[.,;:\*/()!?=+<>]               { return g.character(p); }  // catcode 12
+quotes      "quotes"        = q:[“”"'«»]                        { return g.character(q); }  // catcode 12
+left_br     "left bracket"  = b:"["                             { return g.character(b); }  // catcode 12
+right_br    "right bracket" = b:"]"                             { return g.character(b); }  // catcode 12
 
 utf8_char   "utf8 char"     = !(sp / nl / escape / begin_group / end_group / math_shift / alignment_tab / macro_parameter /
                                 superscript / subscript / ignore / comment / begin_optgroup / end_optgroup /* primitive */)
-                               u:.                      { return generator.character(u); }  // catcode 12 (other)
+                               u:.                              { return g.character(u); }  // catcode 12 (other)
 
-nbsp        "non-brk space" = '~'                       { return generator.nbsp; }          // catcode 13 (active)
+nbsp        "non-brk space" = '~'                               { return g.nbsp; }          // catcode 13 (active)
 
-hyphen      "hyphen"        = "-"                       { return generator.hyphen; }
-endash      "endash"        = "--"                      { return generator.endash; }
-emdash      "emdash"        = "---"                     { return generator.emdash; }
+hyphen      "hyphen"        = "-"                               { return g.hyphen; }
+endash      "endash"        = "--"                              { return g.endash; }
+emdash      "emdash"        = "---"                             { return g.emdash; }
 
-ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-, ]  { return generator.controlSymbol(c); }
+ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-, ]          { return g.controlSymbol(c); }
