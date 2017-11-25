@@ -6,6 +6,8 @@ to `marked` for Markdown.
 LaTeX.js is absolutely and uncompromisingly exact and compatible with LaTeX, the generated HTML is exactly what
 is meant to be output, down to the last space. See the unit tests for examples and all the edge cases.
 
+You can play with it here: [http://michael-brade.github.io/LaTeX.js/playground.html](http://michael-brade.github.io/LaTeX.js/playground.html)
+
 
 ## Usage and Tests
 
