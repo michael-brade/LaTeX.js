@@ -162,25 +162,28 @@ textshape       =   "text" s:("up"/"it"/"sl"/"sc")  !char   &{ g.enterGroup(); g
                     { g.exitGroup(); return a; }
 
 
-textnormal      =   "textnormal" !char                      &{ g.enterGroup();
-                                                               g.setFontFamily("rm");
-                                                               g.setFontWeight("md");
-                                                               g.setFontShape("up"); return true; }
+textnormal      =   "textnormal"                    !char   &{ g.enterGroup(); g.setFontFamily("rm");
+                                                                               g.setFontWeight("md");
+                                                                               g.setFontShape("up"); return true; }
                     a:arggroup
                     { g.exitGroup(); return a; }
 
 
-underline       =   "underline" !char &{ g.enterGroup(); g.addAttribute("underline"); return true; }   a:arggroup  { g.exitGroup(); return a; }
+underline       =   "underline"                     !char   &{ g.enterGroup(); g.addAttribute("underline"); return true; }
+                    a:arggroup
+                    { g.exitGroup(); return a; }
 
-emph            =   "emph" !char a:arggroup  { return g.create(g.emph, a); }
+emph            =   "emph"  a:arggroup
+                    { return g.create(g.emph, a); }
+
 
 // declarations
 
-fontfamily      =   f:("rm"/"sf"/"tt")      "family" !char skip_space   { g.setFontFamily(f); }
-fontweight      =   w:("md"/"bf")           "series" !char skip_space   { g.setFontWeight(w); }
-fontshape       =   s:("up"/"it"/"sl"/"sc") "shape"  !char skip_space   { g.setFontShape(s); }
+fontfamily      =   f:("rm"/"sf"/"tt")     "family" !char skip_space    { g.setFontFamily(f); }
+fontweight      =   w:("md"/"bf")          "series" !char skip_space    { g.setFontWeight(w); }
+fontshape       =   s:("up"/"it"/"sl"/"sc") "shape" !char skip_space    { g.setFontShape(s); }
 
-normalfont      =   "normalfont"                     !char  skip_space  { g.setFontFamily("rm");
+normalfont      =   "normalfont"                    !char skip_space    { g.setFontFamily("rm");
                                                                           g.setFontWeight("md");
                                                                           g.setFontShape("up"); }
 
@@ -188,7 +191,7 @@ fontsize        =   s:("tiny"/"scriptsize"/"footnotesize"/"small"/"normalsize"/"
                     !char skip_space
                     { g.setFontSize(s); }
 
-em              =   "em"       !char    skip_space  { g.setFontShape("em"); }       // TOGGLE em?!
+em              =   "em"                            !char skip_space    { g.setFontShape("em"); }       // TODO: TOGGLE em?!
 
 
 // color
@@ -197,9 +200,9 @@ em              =   "em"       !char    skip_space  { g.setFontShape("em"); }   
 
 // block level: alignment
 
-centering       =   "centering"     !char skip_space  { g.setAlignment("center"); }
-raggedright     =   "raggedright"   !char skip_space  { g.setAlignment("raggedright"); }
-raggedleft      =   "raggedleft"    !char skip_space  { g.setAlignment("raggedleft"); }
+centering       =   "centering"             !char skip_space    { g.setAlignment("center"); }
+raggedright     =   "raggedright"           !char skip_space    { g.setAlignment("raggedright"); }
+raggedleft      =   "raggedleft"            !char skip_space    { g.setAlignment("raggedleft"); }
 
 
 
@@ -267,10 +270,10 @@ unknown_environment =
 
 /* kind of keywords */
 
-begin                       = "begin"
-end                         = "end"
+begin                       = "begin"   !char
+end                         = "end"     !char
 
-par                         = "par"
+par                         = "par"     !char
 
 
 
