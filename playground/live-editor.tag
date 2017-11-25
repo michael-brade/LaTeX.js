@@ -44,8 +44,13 @@
     function compile(latex) {
       var messages = self.root.querySelector('messages')
       try {
-        html = latexjs.parse(latex)
-        self.refs.preview.contentDocument.body.innerHTML = html
+        var body = self.refs.preview.contentDocument.body
+        while (body.firstChild)
+          body.removeChild(body.firstChild)
+
+        var dom = latexjs.parse(latex).dom()
+
+        body.appendChild(dom)
         messages.innerHTML = ""
       } catch (e) {
         console.log(e.message)

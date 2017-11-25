@@ -12,7 +12,7 @@ document =
         g.exitGroup();
         g.endBalanced() || error("groups need to be balanced!");
         g.createDocument(pars);
-        return g.html();
+        return g;
     }
 
 
