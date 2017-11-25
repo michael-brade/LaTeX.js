@@ -76,10 +76,6 @@ class Macros
         return latex
 
 
-    textbackslash: ->
-        @_generator.createText '\\'
-
-
     today: ->
         @_generator.createText new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
@@ -130,32 +126,34 @@ export class HtmlGenerator
     _continue: false
 
     # tokens translated to html
-    sp:     ' '
-    brsp:   '\u200B '                       # breakable but non-collapsible space: &#8203; U+200B
-    nbsp:   entities.decodeHTML "&nbsp;"    # &#160;   U+00A0
-    thinsp: entities.decodeHTML "&thinsp;"  # &#8201;
-    hyphen: entities.decodeHTML "&hyphen;"  # &#8208;  U+2010
-    minus:  entities.decodeHTML "&minus;"   # &#8722;  U+2212
-    endash: entities.decodeHTML "&ndash;"   # &#8211;  U+2013
-    emdash: entities.decodeHTML "&mdash;"   # &#8212;  U+2014
+    sp:                         ' '
+    brsp:                       '\u200B '                       # breakable but non-collapsible space: &#8203; U+200B
+    nbsp:                       entities.decodeHTML "&nbsp;"    # U+00A0
+    thinsp:                     entities.decodeHTML "&thinsp;"  # U+2009
+
+    hyphen:                     entities.decodeHTML "&hyphen;"  # U+2010
+    minus:                      entities.decodeHTML "&minus;"   # U+2212
+    endash:                     entities.decodeHTML "&ndash;"   # U+2013
+    emdash:                     entities.decodeHTML "&mdash;"   # U+2014
 
 
     # typographic elements
-    paragraph:              "p"
-    linebreak:              "br"
+    paragraph:                  "p"
 
-    unordered-list:         "ul"
-    ordered-list:           "ol"
-    listitem:               "li"
+    unordered-list:             "ul"
+    ordered-list:               "ol"
+    listitem:                   "li"
 
-    description-list:       "dl"
-    term:                   "dt"
-    description:            "dd"
+    description-list:           "dl"
+    term:                       "dt"
+    description:                "dd"
 
-    emph:                   "em"
+    emph:                       "em"
 
-    inline-block:           "span"
-    block:                  "div"
+    linebreak:                  "br"
+
+    inline-block:               "span"
+    block:                      "div"
 
 
     ### private static vars
@@ -166,10 +164,170 @@ export class HtmlGenerator
         * 'ffl' '\uFB04'
         * 'fi'  '\uFB01'
         * 'fl'  '\uFB02'
-        * '!´'  '\u00A1'      # &iexcl;
-        * '?´'  '\u00BF'      # &iquest;
-        * '<<'  '\u00AB'      # &laquo;
-        * '>>'  '\u00BB'      # &raquo;
+        * '!´'  '\u00A1'        # &iexcl;
+        * '?´'  '\u00BF'        # &iquest;
+        * '<<'  '\u00AB'        # &laquo;
+        * '>>'  '\u00BB'        # &raquo;
+    ])
+
+    symbols = new Map([
+        # spaces
+        * \nobreakspace         entities.decodeHTML '&nbsp;'    #     U+00A0
+        * \thinspace            entities.decodeHTML '&thinsp;'  #     U+2009
+        * \enspace              entities.decodeHTML '&ensp;'    #     U+2002   (en quad: U+2000)
+        * \enskip               entities.decodeHTML '&ensp;'
+        * \quad                 entities.decodeHTML '&emsp;'    #     U+2003   (em quad: U+2001)
+        * \qquad                entities.decodeHTML '&emsp;'*2
+
+        * \textvisiblespace     '\u2423'                        # ␣
+
+        # basic latin
+        * \slash                '/'
+        * \textasciicircum      '^'                             #     U+005E    \^{}
+        * \textless             '<'                             #     U+003C
+        * \textgreater          '>'                             #     U+003E
+        * \textasciitilde       '˜'                             #     U+007E    \~{}
+        * \textbackslash        '∖'                             #     U+005C
+        * \textbraceleft        '{'                             #               \{
+        * \textbraceright       '}'                             #               \}
+        * \textdollar           '$'                             #               \$
+        * \textunderscore       '_'                             #     U+005F    \_
+
+        # quotes
+        * \textquoteleft        entities.decodeHTML '&lsquo;'   # ‘   U+2018
+        * \textquoteright       entities.decodeHTML '&rsquo;'   # ’   U+2019
+        * \textquotedbl         entities.decodeHTML '&quot;'    # "   U+0022
+        * \textquotedblleft     entities.decodeHTML '&ldquo;'   # “   U+201C
+        * \textquotedblright    entities.decodeHTML '&rdquo;'   # ”   U+201D
+        * \quotesinglbase       entities.decodeHTML '&sbquo;'   # ‚   U+201A
+        * \quotedblbase         entities.decodeHTML '&bdquo;'   # „   U+201E
+        * \guillemotleft        entities.decodeHTML '&laquo;'   # «   U+00AB
+        * \guillemotright       entities.decodeHTML '&raquo;'   # »   U+00BB
+        * \guilsinglleft        entities.decodeHTML '&lsaquo;'  # ‹   U+2039
+        * \guilsinglright       entities.decodeHTML '&rsaquo;'  # ›   U+203A
+
+        # punctuation
+        * \textellipsis         entities.decodeHTML '&hellip;'  # …   U+2026    \dots
+        * \dots                 entities.decodeHTML '&hellip;'
+        * \textbullet           entities.decodeHTML '&bull;'    # •   U+2022
+        * \textemdash           '\u2013'                        # —
+        * \textendash           '\u2014'                        # –
+        * \textdagger           '\u2020'                        # †             \dag
+        * \dag                  '\u2020'
+        * \textdaggerdbl        '\u2021'                        # ‡             \ddag
+        * \ddag                 '\u2021'
+        * \textperiodcentered   entities.decodeHTML '&middot;'  # ·   U+00B7
+        * \textexclamdown       entities.decodeHTML '&iexcl;'   # ¡   U+00A1
+        * \textquestiondown     entities.decodeHTML '&iquest;'  # ¿   U+00BF
+
+        * \textsection          entities.decodeHTML '&sect;'    # §   U+00A7    \S
+        * \S                    entities.decodeHTML '&sect;'
+        * \textparagraph        entities.decodeHTML '&para;'    # ¶   U+00B6    \P
+        * \P                    entities.decodeHTML '&para;'
+
+        # misc
+        * \checkmark            '\u2713'                        # ✓
+        * \textordfeminine      entities.decodeHTML '&ordf;'    # ª   U+00AA
+        * \textordmasculine     entities.decodeHTML '&ordm;'    # º   U+00BA
+        * \textbar              '\u007C'                        # |
+        * \textbardbl           '\u2016'                        # ‖
+        * \textbigcircle        '\u25CB'                        # ○
+        * \textcopyright        entities.decodeHTML '&copy;'    # ©   U+00A9    \copyright
+        * \copyright            entities.decodeHTML '&copy;'
+        * \textregistered       entities.decodeHTML '&reg;'     # ®   U+00AE
+        * \texttrademark        entities.decodeHTML '&trade;'   # ™   U+2122
+
+        * \textdegree           entities.decodeHTML '&deg;'     # °   U+00B0    \degree
+        * \degree               entities.decodeHTML '&deg;'
+        * \textcelsius          '\u2103'                        # ℃  U+2103    \celsius
+        * \celsius              '\u2103'
+
+        # math symbols
+        * \textperthousand      entities.decodeHTML '&permil;'  # ‰   U+2030    \perthousand
+        * \perthousand          entities.decodeHTML '&permil;'
+        * \textpertenthousand   '\u2031'                        # ‱
+        * \textonehalf          entities.decodeHTML '&frac12;'  # ½   U+00BD
+        * \textthreequarters    entities.decodeHTML '&frac34;'  # ¾   U+00BE
+        * \textonequarter       entities.decodeHTML '&frac14;'  # ¼   U+00BC
+        * \textfractionsolidus  entities.decodeHTML '&frasl;'   # ⁄   U+2044
+        * \textdiv              entities.decodeHTML '&divide;'  # ÷   U+00F7
+        * \texttimes            entities.decodeHTML '&times;'   # ×   U+00D7
+        * \textminus            entities.decodeHTML '&minus;'   # −   U+2212
+        * \textpm               entities.decodeHTML '&plusmn;'  # ±   U+00B1
+        * \textsurd             entities.decodeHTML '&radic;'   # √   U+221A
+        * \textlnot             entities.decodeHTML '&not;'     # ¬   U+00AC
+        * \textasteriskcentered entities.decodeHTML '&lowast;'  # ∗   U+2217
+        * \textonesuperior      entities.decodeHTML '&sup1;'    # ¹   U+00B9
+        * \texttwosuperior      entities.decodeHTML '&sup2;'    # ²   U+00B2
+        * \textthreesuperior    entities.decodeHTML '&sup3;'    # ³   U+00B3
+
+        # old style numerals
+        * \textzerooldstyle     '\uF730'                        # 
+        * \textoneoldstyle      '\uF731'                        # 
+        * \texttwooldstyle      '\uF732'                        # 
+        * \textthreeoldstyle    '\uF733'                        # 
+        * \textfouroldstyle     '\uF734'                        # 
+        * \textfiveoldstyle     '\uF735'                        # 
+        * \textsixoldstyle      '\uF736'                        # 
+        * \textsevenoldstyle    '\uF737'                        # 
+        * \texteightoldstyle    '\uF738'                        # 
+        * \textnineoldstyle     '\uF739'                        # 
+
+        # currencies
+        * \texteuro             entities.decodeHTML '&euro;'    # €   U+20AC
+        * \textcent             entities.decodeHTML '&cent;'    # ¢   U+00A2
+        * \textsterling         entities.decodeHTML '&pound;'   # £   U+00A3    \pounds
+        * \pounds               entities.decodeHTML '&pound;'
+
+        # greek letters - lower case
+        * \textalpha            entities.decodeHTML '&alpha;'   # α     U+03B1
+        * \textbeta             entities.decodeHTML '&beta;'    # β     U+03B2
+        * \textgamma            entities.decodeHTML '&gamma;'   # γ     U+03B3
+        * \textdelta            entities.decodeHTML '&delta;'   # δ     U+03B4
+        * \textepsilon          entities.decodeHTML '&epsilon;' # ε     U+03B5
+        * \textzeta             entities.decodeHTML '&zeta;'    # ζ     U+03B6
+        * \texteta              entities.decodeHTML '&eta;'     # η     U+03B7
+        * \texttheta            entities.decodeHTML '&thetasym;'# ϑ     U+03D1  (θ = U+03B8)
+        * \textiota             entities.decodeHTML '&iota;'    # ι     U+03B9
+        * \textkappa            entities.decodeHTML '&kappa;'   # κ     U+03BA
+        * \textlambda           entities.decodeHTML '&lambda;'  # λ     U+03BB
+        * \textmu               entities.decodeHTML '&mu;'      # μ     U+03BC
+        * \textnu               entities.decodeHTML '&nu;'      # ν     U+03BD
+        * \textxi               entities.decodeHTML '&xi;'      # ξ     U+03BE
+        * \textomikron          entities.decodeHTML '&omicron;' # ο     U+03BF
+        * \textpi               entities.decodeHTML '&pi;'      # π     U+03C0
+        * \textrho              entities.decodeHTML '&rho;'     # ρ     U+03C1
+        * \textsigma            entities.decodeHTML '&sigma;'   # σ     U+03C3
+        * \texttau              entities.decodeHTML '&tau;'     # τ     U+03C4
+        * \textupsilon          entities.decodeHTML '&upsilon;' # υ     U+03C5
+        * \textphi              entities.decodeHTML '&phi;'     # φ     U+03C6
+        * \textchi              entities.decodeHTML '&chi;'     # χ     U+03C7
+        * \textpsi              entities.decodeHTML '&psi;'     # ψ     U+03C8
+        * \textomega            entities.decodeHTML '&omega;'   # ω     U+03C9
+        * \textAlpha            entities.decodeHTML '&Alpha;'   # Α     U+0391
+        * \textBeta             entities.decodeHTML '&Beta;'    # Β     U+0392
+        * \textGamma            entities.decodeHTML '&Gamma;'   # Γ     U+0393
+        * \textDelta            entities.decodeHTML '&Delta;'   # Δ     U+0394
+        * \textEpsilon          entities.decodeHTML '&Epsilon;' # Ε     U+0395
+        * \textZeta             entities.decodeHTML '&Zeta;'    # Ζ     U+0396
+        * \textEta              entities.decodeHTML '&Eta;'     # Η     U+0397
+        * \textTheta            entities.decodeHTML '&Theta;'   # Θ     U+0398
+        * \textIota             entities.decodeHTML '&Iota;'    # Ι     U+0399
+        * \textKappa            entities.decodeHTML '&Kappa;'   # Κ     U+039A
+        * \textLambda           entities.decodeHTML '&Lambda;'  # Λ     U+039B
+        * \textMu               entities.decodeHTML '&Mu;'      # Μ     U+039C
+        * \textNu               entities.decodeHTML '&Nu;'      # Ν     U+039D
+        * \textXi               entities.decodeHTML '&Xi;'      # Ξ     U+039E
+        * \textOmikron          entities.decodeHTML '&Omicron;' # Ο     U+039F
+        * \textPi               entities.decodeHTML '&Pi;'      # Π     U+03A0
+        * \textRho              entities.decodeHTML '&Rho;'     # Ρ     U+03A1
+        * \textSigma            entities.decodeHTML '&Sigma;'   # Σ     U+03A3
+        * \textTau              entities.decodeHTML '&Tau;'     # Τ     U+03A4
+        * \textUpsilon          entities.decodeHTML '&Upsilon;' # Υ     U+03A5
+        * \textPhi              entities.decodeHTML '&Phi;'     # Φ     U+03A6
+        * \textChi              entities.decodeHTML '&Chi;'     # Χ     U+03A7
+        * \textPsi              entities.decodeHTML '&Psi;'     # Ψ     U+03A8
+        * \textOmega            entities.decodeHTML '&Omega;'   # Ω     U+03A9
     ])
 
 
@@ -241,6 +399,13 @@ export class HtmlGenerator
         return if not children or !children.length
         f = document.createDocumentFragment!
         @_appendChildrenTo children, f
+
+
+    hasSymbol: (name) ->
+        symbols.has name
+
+    getSymbol: (name) ->
+        symbols.get name
 
 
     hasMacro: (name) ->

@@ -55,6 +55,7 @@ primitive "primitive" =
     / num
     / punctuation
     / quotes
+    / symbol
     / left_br
                                               // a right bracket is only allowed if we are in an open (unbalanced) group
     / b:right_br                              & { return !g.isBalanced() } { return b; }
@@ -63,10 +64,24 @@ primitive "primitive" =
     / utf8_char
 
 
+// returns a unicode char/string
+symbol "symbol macro" =
+    escape name:identifier &{ return g.hasSymbol(name); }
+    skip_space
+    {
+        return g.getSymbol(name);
+    }
+
 
 /**********/
 /* macros */
 /**********/
+
+// supports TeX, LaTeX2e and LaTeX3 identifiers
+identifier "identifier" =
+    id:(char / "_" / ":")+                      { return id.join("") }
+
+
 
 // group balancing: groups have to be balanced inside arguments, inside environments, and inside a document.
 // startBalanced() is used to start a new level inside of which groups have to be balanced.
@@ -115,9 +130,7 @@ macro "macro" =
     { return m; }
 
 
-// supports TeX, LaTeX2e and LaTeX3 identifiers
-identifier "identifier" =
-    id:(char / "_" / ":")+                      { return id.join("") }
+
 
 custom_macro "user-defined macro" =
     name:identifier &{ return g.hasMacro(name); }
