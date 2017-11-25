@@ -34,6 +34,7 @@ dependencies:
     'domino': '2.x'
     'entities': '1.x'
     'lodash': '4.x'
+    'katex': '0.9.0-alpha'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
 

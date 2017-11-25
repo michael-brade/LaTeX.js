@@ -5,7 +5,8 @@
     <html>
       <head>
         <title>LaTeX preview</title>
-        <link rel='stylesheet' href='../src/default.css'>
+        <link rel='stylesheet' type='text/css' href='../src/default.css'>
+        <link rel='stylesheet' type='text/css' href='../node_modules/katex/dist/katex.css'>
       </head>
 
       <body>

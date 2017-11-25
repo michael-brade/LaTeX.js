@@ -1,9 +1,10 @@
-require! entities
-_ = require 'lodash'
-
 # on the server we need to include a DOM implementation
 if typeof document == 'undefined'
     global.document = require 'domino' .createDocument!
+
+require! [entities, katex]
+_ = require 'lodash'
+
 
 
 Object.defineProperty Array.prototype, 'top',
@@ -399,6 +400,13 @@ export class HtmlGenerator
         return if not children or !children.length
         f = document.createDocumentFragment!
         @_appendChildrenTo children, f
+
+    parseMath: (math, display) ->
+        f = document.createDocumentFragment!
+        katex.render math, f,
+            displayMode: false
+            throwOnError: false
+        f
 
 
     hasSymbol: (name) ->

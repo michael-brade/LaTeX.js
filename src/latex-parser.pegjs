@@ -39,6 +39,7 @@ text "text" =
 
     / linebreak                                 { return g.create(g.linebreak); }
     / macro
+    / math
 
     // groups
     / begin_group                             & { g.enterGroup(); return true; }
@@ -293,6 +294,28 @@ end_comment = "\\end{comment}"
 
 
 
+
+/**********/
+/*  math  */
+/**********/
+
+
+math =
+    inline_math / display_math
+
+inline_math =
+    math_shift            m:$math_primitive+ math_shift            { return g.parseMath(m, false); }
+
+display_math =
+    math_shift math_shift m:$math_primitive+ math_shift math_shift { return g.parseMath(m, true); }
+    / escape left_br      m:$math_primitive+ escape right_br       { return g.parseMath(m, true); }
+
+
+math_primitive =
+    primitive
+    / alignment_tab
+    / superscript
+    / subscript
 
 /* kind of keywords */
 
