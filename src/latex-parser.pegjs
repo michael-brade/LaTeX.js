@@ -219,32 +219,47 @@ begin_env "\\begin" =
 end_env "\\end" =
     skip_all_space
     escape end
-
-
+    begin_group id:identifier end_group         { return id; }
 
 environment "environment" =
-    begin_env begin_group
-    e:(
+    begin_env begin_group e:(
         itemize
       / unknown_environment
     )
-    { return e; }
+    id:end_env
+    {
+        // each environment has to return a json object: { name: <name in begin>, node: <content node> }
+        if (e.name != id)
+            error("environment <b>" + e.name + "</b> is missing its end, found " + id + " instead");
+
+        return e.node;
+    }
+
+
+unknown_environment =
+    e:identifier
+    { error("unknown environment: " + e); }
+
+
+    
+// lists: itemize, enumerate, description
 
 itemize "itemize environment" =
-    "itemize" end_group
+    name:"itemize" end_group
         items:(item (!(item/end_env) paragraph_with_linebreak)*)*
-    end_env begin_group "itemize" end_group
     {
         // if l == itemize
 
-        return g.create(g.unorderedList,
-                    items.map(function(item_pwtext) {
-                        return g.create(g.listitem,
-                            // this becomes the paragraph_with_linebreak fragment
-                            item_pwtext[1].map(function(text) { return text[1]; })
-                        );
-                    })
-               );
+        return {
+            name: name,
+            node: g.create(g.unorderedList,
+                        items.map(function(item_pwtext) {
+                            return g.create(g.listitem,
+                                // this becomes the paragraph_with_linebreak fragment
+                                item_pwtext[1].map(function(text) { return text[1]; })
+                            );
+                        }))
+        }
     }
 
 
@@ -252,6 +267,8 @@ item =
     skip_all_space escape "item" og:optgroup? skip_space
     { return og; }
 
+
+// comment
 
 comment_env "comment environment" =
     "\\begin{comment}"
@@ -261,10 +278,6 @@ comment_env "comment environment" =
 
 end_comment = "\\end{comment}"
 
-
-unknown_environment =
-    e:identifier
-    { error("unknown environment: " + e); }
 
 
 
