@@ -47,31 +47,31 @@ class Macros
 
     TeX: ->
         # document.createRange().createContextualFragment('<span class="tex">T<sub>e</sub>X</span>')
-        tex = document.createElement 'span'
+        tex = @_generator.create @_generator.inline-block
         tex.setAttribute('class', 'tex')
 
-        tex.appendChild document.createTextNode 'T'
+        tex.appendChild @_generator.createText 'T'
         sub = document.createElement 'sub'
-        sub.appendChild document.createTextNode 'e'
+        sub.appendChild @_generator.createText 'e'
         tex.appendChild sub
-        tex.appendChild document.createTextNode 'X'
+        tex.appendChild @_generator.createText 'X'
 
         return tex
 
     LaTeX: ->
         # <span class="latex">L<sup>a</sup>T<sub>e</sub>X</span>
-        latex = document.createElement 'span'
+        latex = @_generator.create @_generator.inline-block
         latex.setAttribute('class', 'latex')
 
-        latex.appendChild document.createTextNode 'L'
+        latex.appendChild @_generator.createText 'L'
         sup = document.createElement 'sup'
-        sup.appendChild document.createTextNode 'a'
+        sup.appendChild @_generator.createText 'a'
         latex.appendChild sup
-        latex.appendChild document.createTextNode 'T'
+        latex.appendChild @_generator.createText 'T'
         sub = document.createElement 'sub'
-        sub.appendChild document.createTextNode 'e'
+        sub.appendChild @_generator.createText 'e'
         latex.appendChild sub
-        latex.appendChild document.createTextNode 'X'
+        latex.appendChild @_generator.createText 'X'
 
         return latex
 
@@ -89,21 +89,31 @@ class Macros
 
 
     ## not yet...
-
     pagestyle: (arg) ->
-    thispagestyle: (arg) ->
 
     ## ignored macros since not useful in html
     include: (arg) ->
     includeonly: (arg) ->
     input: (arg) ->
 
+
+    # these make no sense without pagebreaks
+    vfill: !->
+
+    break: !->
+    nobreak: !->
+    allowbreak: !->
     newpage: !->
-    linebreak: !->
+    linebreak: !->      # \linebreak[4] actually means \\
     nolinebreak: !->
     pagebreak: !->
     nopagebreak: !->
+
+    samepage: !->
     enlargethispage: !->
+    thispagestyle: !->
+
+
 
 
 
@@ -143,6 +153,10 @@ export class HtmlGenerator
     description:            "dd"
 
     emph:                   "em"
+
+    inline-block:           "span"
+    block:                  "div"
+
 
     ### private static vars
 
@@ -205,22 +219,11 @@ export class HtmlGenerator
         @_serializeFragment @_dom
 
 
-    # helper
-
-    appendChildrenTo: (children, parent) ->
-        if children
-            for i to children.length
-                parent.appendChild children[i] if children[i]?
-            else
-                parent.appendChild children
-
-        return parent
-
 
     # content creation
 
     createDocument: (fs) !->
-        @appendChildrenTo fs, @_dom
+        @_appendChildrenTo fs, @_dom
 
 
     create: (type, children) ->
@@ -228,7 +231,7 @@ export class HtmlGenerator
         if @_continue
             el.setAttribute("class", "continue")
             @_continue = false
-        @appendChildrenTo children, el
+        @_appendChildrenTo children, el
 
     createText: (t) ->
         return if not t
@@ -237,7 +240,7 @@ export class HtmlGenerator
     createFragment: (children) ->
         return if not children or !children.length
         f = document.createDocumentFragment!
-        @appendChildrenTo children, f
+        @_appendChildrenTo children, f
 
 
     hasMacro: (name) ->
@@ -305,6 +308,18 @@ export class HtmlGenerator
     _attributes: ->
         cur = @_attrs.top
         [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.align].join " " .trim!
+
+
+    # private helpers
+
+    _appendChildrenTo: (children, parent) ->
+        if children
+            for i to children.length
+                parent.appendChild children[i] if children[i]?
+            else
+                parent.appendChild children
+
+        return parent
 
 
     _wrapWithAttributes: (el, attrs) ->
