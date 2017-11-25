@@ -3,19 +3,7 @@
 /* fonts */
 /*********/
 
-@import url("./fonts/Bright/cmun-bright.css");
-@import url("./fonts/Bright Semibold/cmun-bright-semibold.css");
-@import url("./fonts/Classical Serif Italic/cmun-classical-serif-italic.css");
-@import url("./fonts/Concrete/cmun-concrete.css");
-@import url("./fonts/Sans/cmun-sans.css");
-@import url("./fonts/Sans Demi-Condensed/cmun-sans-demicondensed.css");
-@import url("./fonts/Serif/cmun-serif.css");
-@import url("./fonts/Serif Slanted/cmun-serif-slanted.css");
-@import url("./fonts/Typewriter/cmun-typewriter.css");
-@import url("./fonts/Typewriter Light/cmun-typewriter-light.css");
-@import url("./fonts/Typewriter Variable/cmun-typewriter-variable.css");
-@import url("./fonts/Upright Italic/cmun-upright-italic.css");
-
+@import url("../fonts/cmu.css");
 
 html {
     font-family: "Computer Modern Serif", serif;
@@ -115,7 +103,42 @@ html {
 }
 
 
+/**************/
+/* sectioning */
+/**************/
+
+
+body {
+    counter-reset: h2counter;
+}
+
+h1 {
+    counter-reset: h2counter;
+}
+
+h2:before {
+    content: counter(h2counter) "\0000a0\0000a0";
+    counter-increment: h2counter;
+    counter-reset: h3counter;
+}
+h2.nocount:before {
+    content: none;
+    counter-increment: none;
+}
+
+h3:before {
+    content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0";
+    counter-increment: h3counter;
+}
+h3.nocount:before {
+    content: none;
+    counter-increment: none;
+}
+
+
+/*************/
 /* alignment */
+/*************/
 
 .center {
     text-align: center;
@@ -129,6 +152,12 @@ html {
     text-align: right;
 }
 
+
+/**********/
+/* spaces */
+/**********/
+
+
 /* paragraphs are indented */
 
 p, ul, ol, dl {
@@ -138,6 +167,34 @@ p, ul, ol, dl {
 p {
    text-indent: 2em;
 }
+
+.noindent, .continue {
+    text-indent: 0;
+}
+
+
+/* horizontal spaces */
+.negthinspace {
+    margin-left: -0.16666667em;
+}
+
+
+/* vertical spaces */
+.smallskip {
+    display: inline-flex;
+    margin-bottom: 0.25em;
+}
+
+.medskip {
+    display: inline-flex;
+    margin-bottom: 0.5em;
+}
+
+.bigskip {
+    display: inline-flex;
+    margin-bottom: 1em;
+}
+
 
 
 
