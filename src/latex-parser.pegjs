@@ -53,7 +53,7 @@ primitive "primitive" =
       char
     / space                                     { return g.sp; }
     / hyphen
-    / num
+    / digit
     / punctuation
     / quotes
     / symbol
@@ -62,6 +62,7 @@ primitive "primitive" =
     / b:right_br                              & { return !g.isBalanced() } { return b; }
     / nbsp
     / ctl_sym
+    / charsym
     / utf8_char
 
 
@@ -94,7 +95,7 @@ arggroup "mandatory argument" =
         p:paragraph_with_linebreak*
     end_group
     {
-        g.endBalanced() || error("groups need to be balanced!");
+        g.endBalanced() || error("groups inside an argument need to be balanced!");
         g.exitGroup()   || error("there was no group to end");
 
         s != undefined && p.unshift(g.createText(s));
@@ -385,7 +386,7 @@ ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl"
                                 / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
                                                                 { return g.ligature(l); }
 
-num         "digit"         = n:[0-9]                           { return g.character(n); }  // catcode 12 (other)
+digit       "digit"         = n:[0-9]                           { return g.character(n); }  // catcode 12 (other)
 punctuation "punctuation"   = p:[.,;:\*/()!?=+<>]               { return g.character(p); }  // catcode 12
 quotes      "quotes"        = q:[“”"'«»]                        { return g.character(q); }  // catcode 12
 left_br     "left bracket"  = b:"["                             { return g.character(b); }  // catcode 12
@@ -402,3 +403,34 @@ endash      "endash"        = "--"                              { return g.endas
 emdash      "emdash"        = "---"                             { return g.emdash; }
 
 ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-, ]          { return g.controlSymbol(c); }
+
+
+
+
+/* TeX language */
+
+// \symbol{}= \char
+// \char98  = decimal 98
+// \char'77 = octal 77
+// \char"FF = hex FF
+// ^^FF     = hex FF
+// ^^^^FFFF = hex FFFF
+// ^^c      = if charcode(c) < 64 then fromCharCode(c+64) else fromCharCode(c-64) (TODO)
+charsym     = escape "symbol" begin_group skip_space i:charnumber skip_space end_group  { return String.fromCharCode(i); }
+            / escape "char" i:charnumber                        { return String.fromCharCode(i); }
+            / "^^^^" i:hex64                                    { return String.fromCharCode(i); }
+            / "^^"   i:hex32                                    { return String.fromCharCode(i); }
+
+
+charnumber  =     i:int                                         { return parseInt(i, 10); }
+            / "'" o:oct                                         { return parseInt(i, 8); }
+            / '"' h:(hex64/hex32)                               { return h; }
+
+hex32       = h:$(hex hex)                                      { return parseInt(h, 16); }
+hex64       = h:$(hex hex hex hex)                              { return parseInt(h, 16); }
+
+int         = $[0-9]+
+oct         = $[0-7]+
+hex         = [a-f0-9]i
+
+float       = $([+\-]? (int? ('.' int?)? / '.' int))
