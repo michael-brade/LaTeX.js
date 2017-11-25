@@ -13,11 +13,11 @@ Hello, \emph{this} is emphasized.
 .
 
 
-** fonts stay until the surrounding group ends
+** fonts stay until the surrounding group ends      TODO: same spans should be merged
 .
 outer { text \bfseries {what} more text } end outer
 .
-<p>outer  text <span class="bf">what more text </span> end outer</p>
+<p>outer ​ text <span class="bf">what</span><span class="bf">​ </span><span class="bf">more text </span>​ end outer</p>
 .
 
 
