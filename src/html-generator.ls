@@ -121,15 +121,7 @@ class Macros
 
 export class HtmlGenerator
 
-    ### public instance vars (vars beginning with "_" are meant to be private!)
-
-    _macros: null
-
-    _dom:   null
-    _attrs: null        # attribute stack
-    _groups: null       # grouping stack
-
-    _continue: false
+    ### public instance vars
 
     # tokens translated to html
     sp:                         ' '
@@ -345,6 +337,16 @@ export class HtmlGenerator
     ])
 
 
+    ### public instance vars (vars beginning with "_" are meant to be private!)
+
+    _macros: null
+
+    _dom:   null
+    _attrs: null        # attribute stack
+    _groups: null       # grouping stack
+
+    _continue: false
+
 
     # CTOR
     ->
@@ -400,9 +402,20 @@ export class HtmlGenerator
 
     create: (type, children) ->
         el = document.createElement type
+
+        classes = ""
+
+        if type == @paragraph # TODO if @_isPhrasingContent type
+            classes += @_blockAttributes!
+
+        # if continue then do not add parindent or parskip, we are not supposed to start a new paragraph
         if @_continue
-            el.setAttribute("class", "continue")
+            classes += " continue"
             @_continue = false
+
+        if classes.trim!
+            el.setAttribute "class", classes.trim!
+
         @_appendChildrenTo children, el
 
     createText: (t) ->
@@ -511,9 +524,12 @@ export class HtmlGenerator
         @_attrs.top.align = align
 
 
-    _attributes: ->
+    _inlineAttributes: ->
         cur = @_attrs.top
-        [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.align].join " " .trim!
+        [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize].join " " .trim!
+
+    _blockAttributes: ->
+        [@_attrs.top.align].join " ".trim!
 
 
     # private helpers
@@ -530,7 +546,7 @@ export class HtmlGenerator
 
     _wrapWithAttributes: (el, attrs) ->
         if not attrs
-            attrs = @_attributes!
+            attrs = @_inlineAttributes!
 
         if attrs
             span = document.createElement "span"
