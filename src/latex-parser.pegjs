@@ -396,6 +396,11 @@ math_primitive =
     / alignment_tab
     / superscript
     / subscript
+    / escape identifier
+    / begin_group skip_space end_group
+    / begin_group math_primitive+ end_group
+    / break / linebreak
+
 
 /* kind of keywords */
 
