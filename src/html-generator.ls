@@ -33,10 +33,6 @@ class Macros
 
     # inline macros
 
-    newline: ->
-        @_generator.create @_generator.linebreak
-
-
     echo: (args) ->
         @_generator.createFragment args.map (x) ~>
             if x.value
@@ -80,6 +76,15 @@ class Macros
     today: ->
         @_generator.createText new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
+
+    newline: ->
+        @_generator.create @_generator.linebreak
+
+
+    negthinspace: ->
+        ts = @_generator.create @_generator.inline-block
+        ts.setAttribute 'class', 'negthinspace'
+        return ts
 
     mbox: (arg) ->
     fbox: (arg) ->
@@ -139,6 +144,14 @@ export class HtmlGenerator
 
 
     # typographic elements
+    part:                       "part"
+    chapter:                    "h1"
+    section:                    "h2"
+    subsection:                 "h3"
+    subsubsection:              "h4"
+    #paragraph:                  "h5"
+    subparagraph:               "h6"
+
     paragraph:                  "p"
 
     unordered-list:             "ul"
@@ -379,7 +392,7 @@ export class HtmlGenerator
 
 
 
-    # content creation
+    ### content creation
 
     createDocument: (fs) !->
         @_appendChildrenTo fs, @_dom
@@ -400,6 +413,26 @@ export class HtmlGenerator
         return if not children or !children.length
         f = document.createDocumentFragment!
         @_appendChildrenTo children, f
+
+
+    # for smallskip, medskip, bigskip
+    createVSpaceSkip: (skip) ->
+        span = document.createElement "span"
+        span.setAttribute "class", skip
+        return span
+
+    createVSpace: (length) ->
+        span = document.createElement "span"
+        span.setAttribute "style", "display:inline-flex;margin-bottom:" + length
+        return span
+
+    createHSpace: (length) ->
+        span = document.createElement "span"
+        span.setAttribute "style", "margin-right:" + length
+        return span
+
+
+
 
     parseMath: (math, display) ->
         f = document.createDocumentFragment!
@@ -423,7 +456,7 @@ export class HtmlGenerator
         @_macros[name](args)
 
 
-    # groups
+    ### groups
 
     # start a new group
     enterGroup: !->
@@ -451,7 +484,7 @@ export class HtmlGenerator
         @_groups[@_groups.length - 1] == 0
 
 
-    # attributes (CSS classes)
+    ### attributes (CSS classes)
 
     continue: !->
         @_continue = true
