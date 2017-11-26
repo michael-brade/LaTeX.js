@@ -317,7 +317,7 @@ end_env "\\end" =
     begin_group id:identifier end_group         { return id; }
 
 environment "environment" =
-    begin_env begin_group                       & { g.startBalanced(); return true; }
+    begin_env begin_group                       & { g.enterGroup(); g.startBalanced(); return true; }
     e:(
         itemize
       / unknown_environment
@@ -329,6 +329,7 @@ environment "environment" =
             error("environment <b>" + e.name + "</b> is missing its end, found " + id + " instead");
 
         g.endBalanced() || error(e.name + ": groups need to be balanced in environments!");
+        g.exitGroup()   || error("there was no group to end");
 
         return e.node;
     }
