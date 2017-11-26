@@ -445,7 +445,7 @@ comment         "comment"   = "%"  (!nl .)* (nl / EOF)                          
 skip_space      "spaces"    = (!break (nl / sp / comment))*     { return undefined; }
 skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefined; }
 
-space           "spaces"    = !break
+space           "spaces"    = !break !linebreak
                               (sp / nl)+ comment* (sp / nl)*    { return g.brsp; }
 
 break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
@@ -455,7 +455,7 @@ break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a
                               (sp* nl)+                                     // followed by one or more newlines, mixed with spaces,...
                               (sp / nl / comment)*                          // ...and optionally followed by any whitespace and/or comment
 
-linebreak       "linebreak" = escape "\\" skip_space '*'?
+linebreak       "linebreak" = skip_space escape "\\" skip_space '*'?
                               skip_space
                               l:(begin_optgroup skip_space
                                     l:length
