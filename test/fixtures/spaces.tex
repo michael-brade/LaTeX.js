@@ -8,9 +8,8 @@ Non-break space: -~- \\
 en-space: -\enspace- \\
 em-space: -\quad- \\
 2x em-space: -\qquad-\\
-%3cm horizontal space: -\hspace{3cm}- \\
-%relative fills: -\hspace{\stretch{1}}-\hspace{\stretch{2}}-
-%This text should now automatically be in a new line.
+3cm horizontal space: -\hspace{3cm}- \\
+%relative fills: -\hspace{\stretch{1}}-\hspace{\stretch{2}}- % not possible in html!
 .
 <p>Thin space: ‐ ‐ <br>
 Thin space: ‐ ‐ <br>
@@ -20,6 +19,53 @@ Non‐break space: ‐&nbsp;‐ <br>
 en‐space: ‐ ‐ <br>
 em‐space: ‐ ‐ <br>
 2x em‐space: ‐  ‐<br>
+3cm horizontal space: ‐<span style="margin-right:3cm"></span>‐ <br>
 </p>
 .
 
+
+** linebreaks with vertical space
+.
+This is just some simple text.\\[1cm]
+This is just some simple text.
+.
+<p>This is just some simple text.<span style="display:inline-flex;margin-bottom:1cm"></span><br>
+This is just some simple text.</p>
+.
+
+
+** \smallskip etc. and \smallbreak etc.: paragraph breaks with vertical space
+.
+This is just a line of text \smallskip with an embedded small skip.
+
+This is just some simple text.
+
+\medskip
+A line after the medskip.
+
+\bigskip
+
+A line after the bigskip.
+
+This is just some simple text.
+\smallbreak
+A line after the smallbreak with just some simple text.
+\medbreak
+A line after the medbreak with just some simple text.
+\bigbreak
+Final line of just some simple text.
+.
+<p>This is just a line of text <span class="smallskip"></span>with an embedded small skip.</p>
+<p>This is just some simple text.</p>
+<span class="medskip"></span>
+<p>A line after the medskip.</p>
+<span class="bigskip"></span>
+<p>A line after the bigskip.</p>
+<p>This is just some simple text. </p>
+<span class="smallskip"></span>
+<p>A line after the smallbreak with just some simple text. </p>
+<span class="medskip"></span>
+<p>A line after the medbreak with just some simple text. </p>
+<span class="bigskip"></span>
+<p>Final line of just some simple text.</p>
+.

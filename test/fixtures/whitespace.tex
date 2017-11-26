@@ -121,6 +121,7 @@ text with {  a group  }  and more text
 <p>text with ​ a group ​ and more text</p>
 .
 
+
 ** macros without arguments ignore spaces afterwards
 .
 some \echo  text.
@@ -128,9 +129,27 @@ some \echo  text.
 <p>some text.</p>
 .
 
+
 ** force a space after a macro with {}
 .
 some \echo{} text.
+.
+<p>some ​ text.</p>
+.
+
+
+** force a space after a macro with \
+.
+some \echo\ text.
+.
+<p>some ​ text.</p>
+.
+
+
+** force a space after a macro with \ even if a linebreak follows immediately
+.
+some \echo\
+text.
 .
 <p>some ​ text.</p>
 .

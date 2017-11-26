@@ -1,0 +1,44 @@
+** a chapter
+.
+\chapter{A Chapter}
+
+Then the text follows.
+\chapter{A Chapter}
+Then the text follows.
+.
+<h1>A Chapter</h1>
+<p>Then the text follows.</p>
+<h1>A Chapter</h1>
+<p>Then the text follows.</p>
+.
+
+
+** a chapter and a section
+.
+\chapter{A Chapter}
+
+\section{Here starts a section}
+
+Then the text follows.
+
+\chapter{A Chapter}\section{Here starts a section}
+Then the text follows.
+.
+<h1>A Chapter</h1>
+<h2>Here starts a section</h2>
+<p>Then the text follows.</p>
+<h1>A Chapter</h1>
+<h2>Here starts a section</h2>
+<p>Then the text follows.</p>
+.
+
+
+** section inside a macro - correct visual appearance to be done with CSS
+.
+Start with \emph{some \section{A Section}} text.
+
+Then more text follows.
+.
+<p>Start with <em>some <h2>A Section</h2></em> text.</p>
+<p>Then more text follows.</p>
+.
