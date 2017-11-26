@@ -255,8 +255,8 @@ em              =   "em"                            !char skip_space    { g.setF
 // block level: alignment
 
 centering       =   "centering"                     !char skip_space    { g.setAlignment("center"); }
-raggedright     =   "raggedright"                   !char skip_space    { g.setAlignment("raggedright"); }
-raggedleft      =   "raggedleft"                    !char skip_space    { g.setAlignment("raggedleft"); }
+raggedright     =   "raggedright"                   !char skip_space    { g.setAlignment("flushleft"); }
+raggedleft      =   "raggedleft"                    !char skip_space    { g.setAlignment("flushright"); }
 
 
 
@@ -320,6 +320,7 @@ environment "environment" =
     begin_env begin_group                       & { g.enterGroup(); g.startBalanced(); return true; }
     e:(
         itemize
+      / alignment
       / unknown_environment
     )
     id:end_env
@@ -363,6 +364,20 @@ itemize "itemize environment" =
 item =
     skip_all_space escape "item" og:optgroup? skip_space
     { return og; }
+
+
+// alignment:  flushleft, flushright, center
+
+alignment =
+    align:("flushleft"/"flushright"/"center")   &{ g.setAlignment(align); return true; }
+    end_group
+        p:paragraph_with_linebreak*
+    {
+        return {
+            name: align,
+            node: g.create(g.block, p)
+        }
+    }
 
 
 // comment

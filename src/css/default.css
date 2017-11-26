@@ -154,12 +154,20 @@ h3.nocount:before {
     text-align: center;
 }
 
-.raggedright {
+.flushleft {
     text-align: left;
 }
 
-.raggedleft {
+.flushright {
     text-align: right;
+}
+
+/* the environment form skips a line before and after */
+div.center,
+div.flushleft,
+div.flushright {
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 
@@ -170,7 +178,7 @@ h3.nocount:before {
 
 /* paragraphs are indented */
 
-p, ul, ol, dl {
+p, ul, ol, dl, div {
     margin: 0;
 }
 

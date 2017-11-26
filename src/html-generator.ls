@@ -405,7 +405,7 @@ export class HtmlGenerator
 
         classes = ""
 
-        if type == @paragraph # TODO if @_isPhrasingContent type
+        if type == @paragraph or type == @block # TODO if @_isPhrasingContent type
             classes += @_blockAttributes!
 
         # if continue then do not add parindent or parskip, we are not supposed to start a new paragraph
