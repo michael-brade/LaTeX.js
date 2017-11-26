@@ -1,14 +1,26 @@
+@import url("../fonts/cmu.css");
+
+
+/***************/
+/* page layout */
+/***************/
+
+body {
+    max-width: 40rem;
+    margin: 1em auto;
+    padding: 0 5em;
+}
+
 
 /*********/
 /* fonts */
 /*********/
 
-@import url("../fonts/cmu.css");
-
 html {
     font-family: "Computer Modern Serif", serif;
     text-align: justify;
     font-variant-ligatures: common-ligatures;
+    line-height: 1.2;
 }
 
 
@@ -34,6 +46,7 @@ html {
 
 /* shape - LaTeX doesn't support slanted small-caps by default */
 .up {
+    font-family: "Computer Modern Serif", serif;
     font-style: normal;
     font-variant-caps: normal;
 }
@@ -51,6 +64,7 @@ html {
 }
 
 .sc {
+    font-family: "Computer Modern Serif", serif;
     font-style: normal;
     font-variant-caps: small-caps;
 }
@@ -62,78 +76,74 @@ html {
 
 /* size */
 
+.katex {
+    font-size: 1em !important;
+}
+
+
 .tiny {
-    font-size: 50%;
+    font-size: .5rem;
 }
 
 .scriptsize {
-    font-size: 70%;
+    font-size: .7rem;
 }
 
 .footnotesize {
-    font-size: 82%;
+    font-size: .82rem;
 }
 
 .small {
-    font-size: 91%;
+    font-size: .91rem;
 }
 
 .normalsize {
-    font-size: 100%;
+    font-size: 1rem;
 }
 
 .large {
-    font-size: 120%;
+    font-size: 1.2rem;
 }
 
 .Large {
-    font-size: 140%;
+    font-size: 1.4rem;
 }
 
 .LARGE {
-    font-size: 170%;
+    font-size: 1.7rem;
 }
 
 .huge {
-    font-size: 200%;
+    font-size: 2rem;
 }
 
 .Huge {
-    font-size: 250%;
+    font-size: 2.5rem;
 }
+
+
 
 
 /**************/
 /* sectioning */
 /**************/
 
+h1, h2, h3, h4 {
+    /* \normalfont */
+    font-family: "Computer Modern Serif", serif;
+    font-style: normal;
+    font-variant-caps: normal;
 
-body {
-    counter-reset: h2counter;
-}
-
-h1 {
-    counter-reset: h2counter;
-}
-
-h2:before {
-    content: counter(h2counter) "\0000a0\0000a0";
-    counter-increment: h2counter;
-    counter-reset: h3counter;
-}
-h2.nocount:before {
-    content: none;
-    counter-increment: none;
+    text-align: left;
 }
 
-h3:before {
-    content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0";
-    counter-increment: h3counter;
-}
+h1.nocount:before,
+h2.nocount:before,
 h3.nocount:before {
     content: none;
     counter-increment: none;
 }
+
 
 
 /*************/
@@ -165,33 +175,55 @@ p, ul, ol, dl {
 }
 
 p {
-   text-indent: 2em;
+    text-indent: 2em;
 }
 
-.noindent, .continue {
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p,
+.noindent,
+.continue {
     text-indent: 0;
 }
 
 
-/* horizontal spaces */
+
+
+/* predefined horizontal spaces */
 .negthinspace {
     margin-left: -0.16666667em;
 }
 
 
-/* vertical spaces */
+/* vertical space - insert the actual space (negative or positive) with margin-bottom */
+.vspace {
+    display: block;
+}
+
+/* vertical space that forces a linebreak */
+.breakspace {
+    display: table;
+}
+
+/* inline vertical space - this cannot be negative */
+.vspace-inline {
+    display: inline-block;
+    height: calc(1em * 1.2);    /* full maximum height, including the leading: line-height - font-size */
+    vertical-align: top;        /* if bottom is used, space could be inserted above this line of text */
+}
+
+
+/* predefined vertical spaces */
 .smallskip {
-    display: inline-flex;
     margin-bottom: 0.25em;
 }
 
 .medskip {
-    display: inline-flex;
     margin-bottom: 0.5em;
 }
 
 .bigskip {
-    display: inline-flex;
     margin-bottom: 1em;
 }
 
@@ -209,7 +241,7 @@ p {
 .latex span:first-child {
     font-size: 0.8em;
     vertical-align: 0.2em;
-    margin-left:  -0.45em; /*-0.36em;*/
+    margin-left:  -0.45em;
     margin-right: -0.15em;
 }
 
