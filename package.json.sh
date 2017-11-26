@@ -17,7 +17,7 @@ keywords:
 scripts:
     clean: 'rimraf dist;'
     build: 'mkdirp dist && pegjs -o dist/latex-parser.js src/latex-parser.pegjs && lsc -c -o dist src/html-generator.ls'
-    bundle:'webpack'
+    bundle:'npm run build && webpack'
     test:  'mocha test/_*.ls test/tests.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;'
     cover: 'istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;'
@@ -51,6 +51,7 @@ devDependencies:
     ### bundling
 
     'webpack': '3.8.x'
+    'copy-webpack-plugin': '4.2.x'
     'babel-loader': '7.1.x'
     'babel-core': '6.26.x'
     # babel-preset-env '1.6.x'
