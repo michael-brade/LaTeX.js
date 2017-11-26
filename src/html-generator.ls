@@ -43,31 +43,31 @@ class Macros
                 ]
 
     TeX: ->
-        # document.createRange().createContextualFragment('<span class="tex">T<sub>e</sub>X</span>')
+        # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
         tex = @_generator.create @_generator.inline-block
         tex.setAttribute('class', 'tex')
 
         tex.appendChild @_generator.createText 'T'
-        sub = document.createElement 'sub'
-        sub.appendChild @_generator.createText 'e'
-        tex.appendChild sub
+        e = @_generator.create @_generator.inline-block
+        e.appendChild @_generator.createText 'e'
+        tex.appendChild e
         tex.appendChild @_generator.createText 'X'
 
         return tex
 
     LaTeX: ->
-        # <span class="latex">L<sup>a</sup>T<sub>e</sub>X</span>
+        # <span class="latex">L<span>a</span>T<span>e</span>X</span>
         latex = @_generator.create @_generator.inline-block
         latex.setAttribute('class', 'latex')
 
         latex.appendChild @_generator.createText 'L'
-        sup = document.createElement 'sup'
-        sup.appendChild @_generator.createText 'a'
-        latex.appendChild sup
+        a = @_generator.create @_generator.inline-block
+        a.appendChild @_generator.createText 'a'
+        latex.appendChild a
         latex.appendChild @_generator.createText 'T'
-        sub = document.createElement 'sub'
-        sub.appendChild @_generator.createText 'e'
-        latex.appendChild sub
+        e = @_generator.create @_generator.inline-block
+        e.appendChild @_generator.createText 'e'
+        latex.appendChild e
         latex.appendChild @_generator.createText 'X'
 
         return latex
