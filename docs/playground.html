@@ -136,10 +136,10 @@ Actually, what about { some groups? } They\,are\ \ \ \ \ nice.
     function compile(latex) {
       var body = preview.contentDocument.body
       try {
+        var dom = latexjs.parse(latex).dom()
+
         while (body.firstChild)
           body.removeChild(body.firstChild)
-
-        var dom = latexjs.parse(latex).dom()
 
         body.appendChild(dom)
       } catch (e) {
