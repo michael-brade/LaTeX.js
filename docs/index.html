@@ -1,1 +1,234 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="None">
+
+    <title>LaTeX.js - Convert LaTeX Documents to HTML5</title>
+
+
+    <link rel="shortcut icon" href="./img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <link href="./css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="./css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="./css/base.css" rel="stylesheet">
+    <link href="./css/logos.css" rel="stylesheet">
+    <link href="./css/highlight.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="./js/jquery-3.2.1.min.js"></script>
+    <script src="./js/bootstrap-3.3.7.min.js"></script>
+    <script src="./js/highlight.pack.js"></script>
+
+    <script src="./js/elasticlunr.min.js"></script>
+
+    <base target="_top">
+    <script>
+      var base_url = '.';
+      var is_top_frame = (window === window.parent);
+
+        var pageToc = [
+          {title: "Convert LaTeX Documents to HTML5 in the Browser", url: "#convert-latex-documents-to-html5-in-the-browser", children: [
+              {title: "Usage and Tests", url: "#usage-and-tests" },
+              {title: "Limitations", url: "#limitations" },
+              {title: "Alternatives", url: "#alternatives" },
+              {title: "License", url: "#license" },
+          ]},
+        ];
+
+    </script>
+    <script src="./js/base.js"></script>
+      <script src="./search/require.js"></script>
+      <script src="./search/search.js"></script>
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+<nav class="navbar wm-page-top-frame">
+  <div class="container-fluid wm-top-container">
+
+    <div class="wm-top-tool pull-right wm-vcenter">
+      <form class="dropdown wm-vcentered" id="wm-search-form" action="./search.html">
+
+        <button id="wm-search-show" class="btn btn-sm btn-default" type="submit"
+          ><i class="fa fa-search" aria-hidden="true"></i></button>
+
+        <div class="input-group input-group-sm wm-top-search">
+          <input type="text" name="q" class="form-control" id="mkdocs-search-query" placeholder="Search">
+          <span class="input-group-btn" role="search">
+
+            <button class="btn btn-default dropdown-toggle collapse" data-toggle="dropdown" type="button"><span class="caret"></span></button>
+            <ul id="mkdocs-search-results" class="dropdown-menu dropdown-menu-right"></ul>
+            <button id="wm-search-go" class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          </span>
+        </div>
+      </form>
+    </div>
+
+
+    <div class="wm-top-tool wm-vcenter pull-right wm-small-left">
+      <button id="wm-toc-button" type="button" class="btn btn-sm btn-default wm-vcentered"><i class="fa fa-th-list" aria-hidden="true"></i></button>
+    </div>
+
+
+
+
+
+    <a href="" class="wm-top-brand wm-top-link wm-vcenter">
+
+      <div class="wm-top-title">
+        LaTeX.js<br>
+
+      </div>
+    </a>
+  </div>
+</nav>
+
+  <div id="main-content" class="wm-page-top-frame">
+
+<nav class="wm-toc-pane">
+
+  <ul class="wm-toctree">
+        <li class="wm-toc-li wm-toc-lev1 "><a href="." class="wm-article-link wm-toc-text">Home</a>
+</li>
+  </ul>
+</nav>
+
+    <div class="wm-content-pane">
+      <iframe class="wm-article" name="article"></iframe>
+    </div>
+  </div>
+
+<div class="container-fluid wm-page-content">
+
+
+
+
+    <h1 id="convert-latex-documents-to-html5-in-the-browser">Convert LaTeX Documents to HTML5 in the Browser</h1>
+<p>This is a LaTeX to HTML5 translator written in JavaScript using PEG.js. <code>latex.js</code> for LaTeX is similar in spirit
+to <code>marked</code> for Markdown.</p>
+<p>LaTeX.js is absolutely and uncompromisingly exact and compatible with LaTeX, the generated HTML is exactly what
+is meant to be output, down to the last space. See the unit tests for examples and all the edge cases.</p>
+<p>You can play with it here: <a href="http://michael-brade.github.io/LaTeX.js/playground.html">http://michael-brade.github.io/LaTeX.js/playground.html</a></p>
+<h2 id="usage-and-tests">Usage and Tests</h2>
+<p>To build it and run the tests, execute:</p>
+<pre><code>npm run build
+npm test
+</code></pre>
+
+<p>LaTeX.js only translates LaTeX's structure, you will have to write your CSS yourself or use some predefined CSS once I
+provide it. You could think of a documentclass in LaTeX as a CSS file in LaTeX.js.</p>
+<h2 id="limitations">Limitations</h2>
+<p>This is a PEG parser, which means it interprets LaTeX as a context-free language. However, TeX is Turing complete, so TeX
+can only really be parsed by a complete Turing machine. It is not possible to parse the full TeX language with a static
+parser. See <a href="https://tex.stackexchange.com/questions/4201/is-there-a-bnf-grammar-of-the-tex-language">here</a> for some interesting
+examples.</p>
+<p>It is even undecidable wheather a TeX program has a parse tree. There has been done some research on the problem
+of parsing TeX, see <a href="http://www.mathematik.uni-marburg.de/~seba/publications/sle10.pdf">here</a>.</p>
+<p>To quote the four problems of TeX:</p>
+<ul>
+<li>
+<p>Since TeX has dynamic scoping, it is not possible to determine statically wheather <code>a</code> is an argument to <code>\app</code> in <code>\app a</code>
+  or just another letter. It depends on the definition of <code>\app</code> at runtime.</p>
+</li>
+<li>
+<p>Macros can be passed as arguments to other macros, further complicating this problem. E.g.:
+  <code>tex
+  \def\app #1 #2 {#1 #2}
+  \def\id #1 {#1}
+  \app a b
+  \app \id c</code>
+  Thus, targets of macro calls can in general not be determined statically.</p>
+</li>
+<li>
+<p>TeX has a lexical macro system, which means macro bodies do not have to be syntactically correct pieces of TeX code. Also,
+  macros can expand to new macro definitions.</p>
+</li>
+<li>
+<p>Tex allows custom macro call syntax. Basically, any syntax could be changed.</p>
+</li>
+</ul>
+<p>I therefore take a slightly different approach:</p>
+<ul>
+<li>
+<p>First, I don't care about TeX, but only LaTeX, and most LaTeX documents do not use TeX syntax, or <code>\def</code> in particular.
+  Therefore, this parser assumes standard LaTeX syntax and catcodes, and parses that statically.</p>
+</li>
+<li>
+<p>Second, for now there is no way of defining macros, only expanding macros is supported. So if a new LaTeX macro is
+  needed, reimplement it in JavaScript directly, thus circumventing the problem altogether.</p>
+</li>
+<li>
+<p>Third, I don't care about formal correctness of my syntax tree. If a custom macro, say, takes only one argument and
+  <code>\foo{a}{b}</code> is encountered, both arguments are passed to the JavaScript function <code>foo</code>, which then leaves <code>b</code>
+  untouched, simply returning it along with its own result. This parser does not know about the arity of custom macros
+  (defined only in JavaScript), it assumes that the author of a macro call knows it. So ideally, macros should be
+  defined in the PEG.js grammar.</p>
+</li>
+</ul>
+<h3 id="expansion-and-execution">Expansion and Execution</h3>
+<p>Additionally, this parser does not implement TeX's distinction of expansion and execution. I am not yet sure
+if I need to implement it at all. Right now, there is only one phase that takes a macro and returns an HTML fragment.</p>
+<p>Skipped spaces and macros that expand to a macro taking a parameter further down in the input provide a good
+illustration of why TeX makes this distinction. Consider the commands</p>
+<pre><code class="tex">\def\a{\penalty200}
+\a 0
+</code></pre>
+
+<p>This is not equivalent to</p>
+<pre><code class="tex">\penalty200 0
+</code></pre>
+
+<p>which would place a penalty of 200, and typeset the digit 0. Instead, it expands to</p>
+<pre><code class="tex">\penalty2000
+</code></pre>
+
+<p>because the space after \a is skipped in the input processor. Later stages of processing then receive the sequence</p>
+<pre><code class="tex">\a0
+</code></pre>
+
+<p>However, LaTeX documents themselves usually don't rely on or need this feature--that is, until I'm convinced otherwise.</p>
+<h4 id="todo">TODO</h4>
+<p>Maybe:</p>
+<ul>
+<li>[ ] implement the output using TeX's original linebreaking algorithm: https://github.com/bramstein/typeset</li>
+</ul>
+<h2 id="alternatives">Alternatives</h2>
+<p>If you need a more complete LaTeX to HTML translator that really understands TeX, take a look at</p>
+<ul>
+<li><a href="https://github.com/brucemiller/LaTeXML">LaTeXML</a> (Perl) or</li>
+<li><a href="http://hevea.inria.fr/">HEVEA</a> (OCaml) or</li>
+<li><a href="https://github.com/tiarno/plastex">plasTeX</a> (Python).</li>
+</ul>
+<p>There is no such alternative in JavaScript yet, though, which is why I started this project. I want to use it in my
+<code>derby-entities-lib</code> project.</p>
+<h2 id="license">License</h2>
+<p>MIT</p>
+<p>Copyright (c) 2015-2017 Michael Brade</p>
+
+  <br>
+
+
+    <br>
+</div>
+
+<footer class="col-md-12 wm-page-content">
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
+<!--
+MkDocs version : 0.17.2
+Build Date UTC : 2017-11-26 17:57:00
+-->

@@ -1,6 +1,6 @@
 # A PEG.js Parser to Convert LaTeX Documents to HTML5
 
-This is a LaTeX to HTML5 translator written in JavaScript using PEG.js. `latexjs` for LaTeX is similar in spirit
+This is a LaTeX to HTML5 translator written in JavaScript using PEG.js. `latex.js` for LaTeX is similar in spirit
 to `marked` for Markdown.
 
 LaTeX.js is absolutely and uncompromisingly exact and compatible with LaTeX, the generated HTML is exactly what
