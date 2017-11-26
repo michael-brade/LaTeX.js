@@ -1,0 +1,65 @@
+@import url("default.css");
+
+
+/**************/
+/* sectioning */
+/**************/
+
+body {
+    counter-reset: chapter section subsection;
+}
+
+/* chapter */
+h1:before {
+    counter-increment: chapter;
+    counter-reset: section;
+
+    content: "Chaper\0000a0" counter(chapter);
+
+    display: block;
+    font-size: 2rem;        /* \huge */
+    margin-bottom: 2rem;
+}
+
+h1 {
+    font-size: 2.5rem;      /* \Huge */
+    font-weight: bold;
+    margin-top: 5rem;
+    margin-bottom: 4rem;
+}
+
+/* section */
+h2:before {
+    counter-increment: section;
+    counter-reset: subsection;
+    content: counter(chapter) "." counter(section) "\0000a0\0000a0";
+}
+
+h2 {
+    font-size: 1.4rem;      /* \Large */
+    font-weight: bold;
+    margin-top: 3.5ex;
+    margin-bottom: 2.3ex;
+}
+
+/* subsection */
+h3:before {
+    counter-increment: subsection;
+    content: counter(chapter) "." counter(section) "." counter(subsection) "\0000a0\0000a0";
+}
+
+h3 {
+    font-size: 1.2rem;      /* \large */
+    font-weight: bold;
+    margin-top: 3.25ex;
+    margin-bottom: 1.5ex;
+}
+
+
+/* subsubsection */
+h4 {
+    font-size: 1rem;        /* \normalsize */
+    font-weight: bold;
+    margin-top: 3.25ex;
+    margin-bottom: 1.5ex;
+}

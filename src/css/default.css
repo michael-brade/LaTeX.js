@@ -1,9 +1,20 @@
+@import url("../fonts/cmu.css");
+
+
+/***************/
+/* page layout */
+/***************/
+
+body {
+    max-width: 40rem;
+    margin: 1em auto;
+    padding: 0 5em;
+}
+
 
 /*********/
 /* fonts */
 /*********/
-
-@import url("../fonts/cmu.css");
 
 html {
     font-family: "Computer Modern Serif", serif;
@@ -35,6 +46,7 @@ html {
 
 /* shape - LaTeX doesn't support slanted small-caps by default */
 .up {
+    font-family: "Computer Modern Serif", serif;
     font-style: normal;
     font-variant-caps: normal;
 }
@@ -52,6 +64,7 @@ html {
 }
 
 .sc {
+    font-family: "Computer Modern Serif", serif;
     font-style: normal;
     font-variant-caps: small-caps;
 }
@@ -69,43 +82,43 @@ html {
 
 
 .tiny {
-    font-size: 50%;
+    font-size: .5rem;
 }
 
 .scriptsize {
-    font-size: 70%;
+    font-size: .7rem;
 }
 
 .footnotesize {
-    font-size: 82%;
+    font-size: .82rem;
 }
 
 .small {
-    font-size: 91%;
+    font-size: .91rem;
 }
 
 .normalsize {
-    font-size: 100%;
+    font-size: 1rem;
 }
 
 .large {
-    font-size: 120%;
+    font-size: 1.2rem;
 }
 
 .Large {
-    font-size: 140%;
+    font-size: 1.4rem;
 }
 
 .LARGE {
-    font-size: 170%;
+    font-size: 1.7rem;
 }
 
 .huge {
-    font-size: 200%;
+    font-size: 2rem;
 }
 
 .Huge {
-    font-size: 250%;
+    font-size: 2.5rem;
 }
 
 
@@ -115,33 +128,22 @@ html {
 /* sectioning */
 /**************/
 
+h1, h2, h3, h4 {
+    /* \normalfont */
+    font-family: "Computer Modern Serif", serif;
+    font-style: normal;
+    font-variant-caps: normal;
 
-body {
-    counter-reset: h2counter;
-}
-
-h1 {
-    counter-reset: h2counter;
-}
-
-h2:before {
-    content: counter(h2counter) "\0000a0\0000a0";
-    counter-increment: h2counter;
-    counter-reset: h3counter;
-}
-h2.nocount:before {
-    content: none;
-    counter-increment: none;
+    text-align: left;
 }
 
-h3:before {
-    content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0";
-    counter-increment: h3counter;
-}
+h1.nocount:before,
+h2.nocount:before,
 h3.nocount:before {
     content: none;
     counter-increment: none;
 }
+
 
 
 /*************/
@@ -173,12 +175,19 @@ p, ul, ol, dl {
 }
 
 p {
-   text-indent: 2em;
+    text-indent: 2em;
 }
 
-.noindent, .continue {
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p,
+.noindent,
+.continue {
     text-indent: 0;
 }
+
+
 
 
 /* predefined horizontal spaces */
