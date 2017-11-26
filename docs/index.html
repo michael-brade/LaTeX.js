@@ -35,8 +35,7 @@
       var is_top_frame = (window === window.parent);
 
         var pageToc = [
-          {title: "Convert LaTeX Documents to HTML5 in the Browser", url: "#convert-latex-documents-to-html5-in-the-browser", children: [
-              {title: "Usage and Tests", url: "#usage-and-tests" },
+          {title: "Convert <span class='latex'>L<span>a</span>T<span>e</span>X</span> Documents to HTML5 in the Browser", url: "#convert-latex-documents-to-html5-in-the-browser", children: [
               {title: "Limitations", url: "#limitations" },
               {title: "Alternatives", url: "#alternatives" },
               {title: "License", url: "#license" },
@@ -87,7 +86,7 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
     <a href="" class="wm-top-brand wm-top-link wm-vcenter">
 
       <div class="wm-top-title">
-        LaTeX.js<br>
+        <span class="latex">L<span>a</span>T<span>e</span>X</span>.js<br>
 
       </div>
     </a>
@@ -113,32 +112,30 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 
 
 
+<h1 id="convert-latex-documents-to-html5-in-the-browser">Convert <span class="latex">L<span>a</span>T<span>e</span>X</span> Documents to HTML5 in the Browser</h1>
 
-    <h1 id="convert-latex-documents-to-html5-in-the-browser">Convert LaTeX Documents to HTML5 in the Browser</h1>
-<p>This is a LaTeX to HTML5 translator written in JavaScript using PEG.js. <code>latex.js</code> for LaTeX is similar in spirit
+<p>This is a <span class="latex">L<span>a</span>T<span>e</span>X</span> to HTML5 translator written in JavaScript using PEG.js. <code>latex.js</code> for <span class="latex">L<span>a</span>T<span>e</span>X</span> is similar in spirit
 to <code>marked</code> for Markdown.</p>
-<p>LaTeX.js is absolutely and uncompromisingly exact and compatible with LaTeX, the generated HTML is exactly what
+<p><span class="latex">L<span>a</span>T<span>e</span>X</span>.js is absolutely and uncompromisingly exact and compatible with <span class="latex">L<span>a</span>T<span>e</span>X</span>, the generated HTML is exactly what
 is meant to be output, down to the last space. See the unit tests for examples and all the edge cases.</p>
 <p>You can play with it here: <a href="http://michael-brade.github.io/LaTeX.js/playground.html">http://michael-brade.github.io/LaTeX.js/playground.html</a></p>
-<h2 id="usage-and-tests">Usage and Tests</h2>
-<p>To build it and run the tests, execute:</p>
-<pre><code>npm run build
-npm test
-</code></pre>
 
-<p>LaTeX.js only translates LaTeX's structure, you will have to write your CSS yourself or use some predefined CSS once I
-provide it. You could think of a documentclass in LaTeX as a CSS file in LaTeX.js.</p>
+
+<p><span class="latex">L<span>a</span>T<span>e</span>X</span>.js only translates <span class="latex">L<span>a</span>T<span>e</span>X</span>'s structure, you will have to write your CSS yourself or use some predefined CSS once I
+provide it. You could think of a documentclass in <span class="latex">L<span>a</span>T<span>e</span>X</span> as a CSS file in <span class="latex">L<span>a</span>T<span>e</span>X</span>.js.</p>
+
 <h2 id="limitations">Limitations</h2>
-<p>This is a PEG parser, which means it interprets LaTeX as a context-free language. However, TeX is Turing complete, so TeX
-can only really be parsed by a complete Turing machine. It is not possible to parse the full TeX language with a static
+
+<p>This is a PEG parser, which means it interprets <span class="latex">L<span>a</span>T<span>e</span>X</span> as a context-free language. However, <span class="tex">T<span>e</span>X</span> is Turing complete, so <span class="tex">T<span>e</span>X</span>
+can only really be parsed by a complete Turing machine. It is not possible to parse the full <span class="tex">T<span>e</span>X</span> language with a static
 parser. See <a href="https://tex.stackexchange.com/questions/4201/is-there-a-bnf-grammar-of-the-tex-language">here</a> for some interesting
 examples.</p>
-<p>It is even undecidable wheather a TeX program has a parse tree. There has been done some research on the problem
-of parsing TeX, see <a href="http://www.mathematik.uni-marburg.de/~seba/publications/sle10.pdf">here</a>.</p>
-<p>To quote the four problems of TeX:</p>
+<p>It is even undecidable wheather a <span class="tex">T<span>e</span>X</span> program has a parse tree. There has been done some research on the problem
+of parsing <span class="tex">T<span>e</span>X</span>, see <a href="http://www.mathematik.uni-marburg.de/~seba/publications/sle10.pdf">here</a>.</p>
+<p>To quote the four problems of <span class="tex">T<span>e</span>X</span>:</p>
 <ul>
 <li>
-<p>Since TeX has dynamic scoping, it is not possible to determine statically wheather <code>a</code> is an argument to <code>\app</code> in <code>\app a</code>
+<p>Since <span class="tex">T<span>e</span>X</span> has dynamic scoping, it is not possible to determine statically wheather <code>a</code> is an argument to <code>\app</code> in <code>\app a</code>
   or just another letter. It depends on the definition of <code>\app</code> at runtime.</p>
 </li>
 <li>
@@ -151,7 +148,7 @@ of parsing TeX, see <a href="http://www.mathematik.uni-marburg.de/~seba/publicat
   Thus, targets of macro calls can in general not be determined statically.</p>
 </li>
 <li>
-<p>TeX has a lexical macro system, which means macro bodies do not have to be syntactically correct pieces of TeX code. Also,
+<p><span class="tex">T<span>e</span>X</span> has a lexical macro system, which means macro bodies do not have to be syntactically correct pieces of <span class="tex">T<span>e</span>X</span> code. Also,
   macros can expand to new macro definitions.</p>
 </li>
 <li>
@@ -161,11 +158,11 @@ of parsing TeX, see <a href="http://www.mathematik.uni-marburg.de/~seba/publicat
 <p>I therefore take a slightly different approach:</p>
 <ul>
 <li>
-<p>First, I don't care about TeX, but only LaTeX, and most LaTeX documents do not use TeX syntax, or <code>\def</code> in particular.
-  Therefore, this parser assumes standard LaTeX syntax and catcodes, and parses that statically.</p>
+<p>First, I don't care about <span class="tex">T<span>e</span>X</span>, but only <span class="latex">L<span>a</span>T<span>e</span>X</span>, and most <span class="latex">L<span>a</span>T<span>e</span>X</span> documents do not use <span class="tex">T<span>e</span>X</span> syntax, or <code>\def</code> in particular.
+  Therefore, this parser assumes standard <span class="latex">L<span>a</span>T<span>e</span>X</span> syntax and catcodes, and parses that statically.</p>
 </li>
 <li>
-<p>Second, for now there is no way of defining macros, only expanding macros is supported. So if a new LaTeX macro is
+<p>Second, for now there is no way of defining macros, only expanding macros is supported. So if a new <span class="latex">L<span>a</span>T<span>e</span>X</span> macro is
   needed, reimplement it in JavaScript directly, thus circumventing the problem altogether.</p>
 </li>
 <li>
@@ -177,10 +174,10 @@ of parsing TeX, see <a href="http://www.mathematik.uni-marburg.de/~seba/publicat
 </li>
 </ul>
 <h3 id="expansion-and-execution">Expansion and Execution</h3>
-<p>Additionally, this parser does not implement TeX's distinction of expansion and execution. I am not yet sure
+<p>Additionally, this parser does not implement <span class="tex">T<span>e</span>X</span>'s distinction of expansion and execution. I am not yet sure
 if I need to implement it at all. Right now, there is only one phase that takes a macro and returns an HTML fragment.</p>
 <p>Skipped spaces and macros that expand to a macro taking a parameter further down in the input provide a good
-illustration of why TeX makes this distinction. Consider the commands</p>
+illustration of why <span class="tex">T<span>e</span>X</span> makes this distinction. Consider the commands</p>
 <pre><code class="tex">\def\a{\penalty200}
 \a 0
 </code></pre>
@@ -197,16 +194,16 @@ illustration of why TeX makes this distinction. Consider the commands</p>
 <pre><code class="tex">\a0
 </code></pre>
 
-<p>However, LaTeX documents themselves usually don't rely on or need this feature--that is, until I'm convinced otherwise.</p>
+<p>However, <span class="latex">L<span>a</span>T<span>e</span>X</span> documents themselves usually don't rely on or need this feature--that is, until I'm convinced otherwise.</p>
 <h4 id="todo">TODO</h4>
 <p>Maybe:</p>
 <ul>
-<li>[ ] implement the output using TeX's original linebreaking algorithm: https://github.com/bramstein/typeset</li>
+<li>[ ] implement the output using <span class="tex">L<span>a</span>T<span>e</span>X</span>'s original linebreaking algorithm: https://github.com/bramstein/typeset</li>
 </ul>
 <h2 id="alternatives">Alternatives</h2>
-<p>If you need a more complete LaTeX to HTML translator that really understands TeX, take a look at</p>
+<p>If you need a more complete <span class="latex">L<span>a</span>T<span>e</span>X</span> to HTML translator that really understands <span class="tex">T<span>e</span>X</span>, take a look at</p>
 <ul>
-<li><a href="https://github.com/brucemiller/LaTeXML">LaTeXML</a> (Perl) or</li>
+<li><a href="https://github.com/brucemiller/LaTeXML"><span class="latex">L<span>a</span>T<span>e</span>X</span>ML</a> (Perl) or</li>
 <li><a href="http://hevea.inria.fr/">HEVEA</a> (OCaml) or</li>
 <li><a href="https://github.com/tiarno/plastex">plasTeX</a> (Python).</li>
 </ul>

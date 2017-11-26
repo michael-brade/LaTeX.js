@@ -237,7 +237,6 @@ h4 + p,
     text-transform: uppercase;
 }
 
-.tex span:first-child,
 .latex span:first-child {
     font-size: 0.8em;
     vertical-align: 0.2em;
@@ -245,6 +244,7 @@ h4 + p,
     margin-right: -0.15em;
 }
 
+.tex span:first-child,
 .latex span:last-child {
     margin-left: -0.2em;
     margin-right: -0.2em;
