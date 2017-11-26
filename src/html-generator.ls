@@ -431,12 +431,31 @@ export class HtmlGenerator
     # for smallskip, medskip, bigskip
     createVSpaceSkip: (skip) ->
         span = document.createElement "span"
-        span.setAttribute "class", skip
+        span.setAttribute "class", "vspace " + skip
+        return span
+
+    createVSpaceSkipInline: (skip) ->
+        span = document.createElement "span"
+        span.setAttribute "class", "vspace-inline " + skip
         return span
 
     createVSpace: (length) ->
         span = document.createElement "span"
-        span.setAttribute "style", "display:inline-flex;margin-bottom:" + length
+        span.setAttribute "class", "vspace"
+        span.setAttribute "style", "margin-bottom:" + length
+        return span
+
+    createVSpaceInline: (length) ->
+        span = document.createElement "span"
+        span.setAttribute "class", "vspace-inline"
+        span.setAttribute "style", "margin-bottom:" + length
+        return span
+
+    # create a linebreak with a given vspace between the lines
+    createBreakSpace: (length) ->
+        span = document.createElement "span"
+        span.setAttribute "class", "breakspace"
+        span.setAttribute "style", "margin-bottom:" + length
         return span
 
     createHSpace: (length) ->

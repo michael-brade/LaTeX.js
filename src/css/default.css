@@ -9,6 +9,7 @@ html {
     font-family: "Computer Modern Serif", serif;
     text-align: justify;
     font-variant-ligatures: common-ligatures;
+    line-height: 1.2;
 }
 
 
@@ -180,25 +181,40 @@ p {
 }
 
 
-/* horizontal spaces */
+/* predefined horizontal spaces */
 .negthinspace {
     margin-left: -0.16666667em;
 }
 
 
-/* vertical spaces */
+/* vertical space - insert the actual space (negative or positive) with margin-bottom */
+.vspace {
+    display: block;
+}
+
+/* vertical space that forces a linebreak */
+.breakspace {
+    display: table;
+}
+
+/* inline vertical space - this cannot be negative */
+.vspace-inline {
+    display: inline-block;
+    height: calc(1em * 1.2);    /* full maximum height, including the leading: line-height - font-size */
+    vertical-align: top;        /* if bottom is used, space could be inserted above this line of text */
+}
+
+
+/* predefined vertical spaces */
 .smallskip {
-    display: inline-flex;
     margin-bottom: 0.25em;
 }
 
 .medskip {
-    display: inline-flex;
     margin-bottom: 0.5em;
 }
 
 .bigskip {
-    display: inline-flex;
     margin-bottom: 1em;
 }
 

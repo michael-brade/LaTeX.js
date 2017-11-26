@@ -126,8 +126,6 @@ macro =
     / fontsize
 
     / centering / raggedright / raggedleft
-
-    / vspace / smbskip
     )
     { return m; }
 
@@ -143,7 +141,7 @@ hmode_macro =
     / textfamily / textweight / textshape
     / textnormal / emph / underline
 
-    / hspace
+    / smbskip_hmode / hspace / vspace_hmode
     )
     { return m; }
 
@@ -157,7 +155,7 @@ vmode_macro =
     escape
     m:(
       part / chapter / section / subsection / subsubsection
-    / addvspace / smbbreak
+    / vspace_vmode / addvspace / smbskip_vmode / smbbreak
     )
     skip_all_space
     { g.break(); return m; }
@@ -265,10 +263,14 @@ raggedleft      =   "raggedleft"                    !char skip_space    { g.setA
 // ** spacing macros
 
 // vertical
-vspace          =   "vspace" "*"?                   !char l:lengthgroup { return g.createVSpace(l); }
-addvspace       =   "addvspace"                     !char l:lengthgroup { return g.createVSpace(l); }   // TODO not correct?
+vspace_hmode    =   "vspace" "*"?                   !char l:lengthgroup { return g.createVSpaceInline(l); }
+vspace_vmode    =   "vspace" "*"?                   !char l:lengthgroup { return g.createVSpace(l); }
 
-smbskip         =   s:$("small"/"med"/"big")"skip"  !char skip_space    { return g.createVSpaceSkip(s + "skip"); }
+smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  !char skip_space    { return g.createVSpaceSkipInline(s + "skip"); }
+smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  !char skip_space    { return g.createVSpaceSkip(s + "skip"); }
+
+// only in vmode possible
+addvspace       =   "addvspace"                     !char l:lengthgroup { return g.createVSpace(l); }   // TODO not correct?
 smbbreak        =   s:$("small"/"med"/"big")"break" !char skip_space    { return g.createVSpaceSkip(s + "skip"); }
 
 //  \\[length] is defined in the linebreak rule further down
@@ -459,9 +461,8 @@ linebreak       "linebreak" = escape "\\" skip_space '*'?
                                     l:length
                                 end_optgroup skip_space {return l;})?
                               {
-                                  if (l)
-                                      return g.createFragment([g.createVSpace(l), g.create(g.linebreak)]);
-                                  return g.create(g.linebreak);
+                                  if (l) return g.createBreakSpace(l);
+                                  else   return g.create(g.linebreak);
                               }
 
 
