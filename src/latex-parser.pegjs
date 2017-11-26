@@ -517,16 +517,16 @@ charsym     = escape "symbol"
                 skip_space i:charnumber skip_space
               end_group                                         { return String.fromCharCode(i); }
             / escape "char" i:charnumber                        { return String.fromCharCode(i); }
-            / "^^^^" i:hex64                                    { return String.fromCharCode(i); }
-            / "^^"   i:hex32                                    { return String.fromCharCode(i); }
+            / "^^^^" i:hex16                                    { return String.fromCharCode(i); }
+            / "^^"   i:hex8                                     { return String.fromCharCode(i); }
 
 
 charnumber  =     i:int                                         { return parseInt(i, 10); }
             / "'" o:oct                                         { return parseInt(i, 8); }
-            / '"' h:(hex64/hex32)                               { return h; }
+            / '"' h:(hex16/hex8)                                { return h; }
 
-hex32       = h:$(hex hex)                                      { return parseInt(h, 16); }
-hex64       = h:$(hex hex hex hex)                              { return parseInt(h, 16); }
+hex8        = h:$(hex hex)                                      { return parseInt(h, 16); }
+hex16       = h:$(hex hex hex hex)                              { return parseInt(h, 16); }
 
 int         = $[0-9]+
 oct         = $[0-7]+
