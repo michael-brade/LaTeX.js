@@ -375,10 +375,10 @@ export class HtmlGenerator
 
     controlSymbol: (c) ->
         switch c
-        | ' '  => @brsp
-        | ','  => @thinsp
-        | '-'  =>               # nothing, just a word break marker
-        | _    => @character c
+        | ' ', '\n', '\r', '\t' => @brsp
+        | ','                   => @thinsp
+        | '-'                   =>               # nothing, just a word break marker
+        | _                     => @character c
 
 
     # get the result

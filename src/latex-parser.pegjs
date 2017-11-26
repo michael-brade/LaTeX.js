@@ -62,7 +62,7 @@ primitive "primitive" =
                                               // a right bracket is only allowed if we are in an open (unbalanced) group
     / b:right_br                              & { return !g.isBalanced() } { return b; }
     / nbsp
-    / ctl_sym
+    / !break c:ctl_sym                          { return c; }
     / symbol
     / charsym
     / utf8_char
@@ -444,7 +444,7 @@ space           "spaces"    = !break
 break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
                               /                                             // or
                               sp*
-                              (nl / comment)                                // a paragraph break is a newline...
+                              (escape? nl / comment)                        // a paragraph break is a newline...
                               (sp* nl)+                                     // followed by one or more newlines, mixed with spaces,...
                               (sp / nl / comment)*                          // ...and optionally followed by any whitespace and/or comment
 
@@ -492,7 +492,7 @@ hyphen      "hyphen"        = "-"                               { return g.hyphe
 endash      "endash"        = "--"                              { return g.endash; }
 emdash      "emdash"        = "---"                             { return g.emdash; }
 
-ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-, ]          { return g.controlSymbol(c); }
+ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-, \n\r\t]    { return g.controlSymbol(c); }
 
 
 
