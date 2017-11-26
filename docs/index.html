@@ -140,11 +140,10 @@ of parsing <span class="tex">T<span>e</span>X</span>, see <a href="http://www.ma
 </li>
 <li>
 <p>Macros can be passed as arguments to other macros, further complicating this problem. E.g.:
-  <code>tex
-  \def\app #1 #2 {#1 #2}
-  \def\id #1 {#1}
-  \app a b
-  \app \id c</code>
+    <pre><code class="tex">\def\app #1 #2 {#1 #2}
+\def\id #1 {#1}
+\app a b
+\app \id c</code></pre>
   Thus, targets of macro calls can in general not be determined statically.</p>
 </li>
 <li>
