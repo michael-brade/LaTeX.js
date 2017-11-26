@@ -9,7 +9,7 @@ paragraphs
     % comment
  separated by par.
 
-   this     paragraph  has a    few 
+   this     paragraph  has a 	    few 
  words,   including
  % comment
  a comment.
@@ -146,10 +146,12 @@ some \echo\ text.
 .
 
 
-** force a space after a macro with \ even if a linebreak follows immediately
+** \ followed by tab or linebreak is also a space
 .
 some \echo\
-text.
+text. And\	this is a space, but not\
+
+this.
 .
 <p>some ​ text.</p>
 .
