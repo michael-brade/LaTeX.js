@@ -449,8 +449,8 @@ export class HtmlGenerator
 
     parseMath: (math, display) ->
         f = document.createDocumentFragment!
-        katex.render math, f,
-            displayMode: false
+        katex.default.render math, f,
+            displayMode: !!display
             throwOnError: false
         f
 
