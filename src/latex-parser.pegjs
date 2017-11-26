@@ -56,12 +56,12 @@ primitive "primitive" =
     / digit
     / punctuation
     / quotes
-    / symbol
     / left_br
                                               // a right bracket is only allowed if we are in an open (unbalanced) group
     / b:right_br                              & { return !g.isBalanced() } { return b; }
     / nbsp
     / ctl_sym
+    / symbol
     / charsym
     / utf8_char
 
@@ -81,7 +81,7 @@ symbol "symbol macro" =
 
 // supports TeX, LaTeX2e and LaTeX3 identifiers
 identifier "identifier" =
-    id:(char / "_" / ":")+                      { return id.join("") }
+    $(char / "_" / ":")+
 
 
 
@@ -215,9 +215,9 @@ em              =   "em"                            !char skip_space    { g.setF
 
 // block level: alignment
 
-centering       =   "centering"             !char skip_space    { g.setAlignment("center"); }
-raggedright     =   "raggedright"           !char skip_space    { g.setAlignment("raggedright"); }
-raggedleft      =   "raggedleft"            !char skip_space    { g.setAlignment("raggedleft"); }
+centering       =   "centering"                     !char skip_space    { g.setAlignment("center"); }
+raggedright     =   "raggedright"                   !char skip_space    { g.setAlignment("raggedright"); }
+raggedleft      =   "raggedleft"                    !char skip_space    { g.setAlignment("raggedleft"); }
 
 
 
@@ -237,7 +237,8 @@ end_env "\\end" =
     begin_group id:identifier end_group         { return id; }
 
 environment "environment" =
-    begin_env begin_group e:(
+    begin_env begin_group                       & { g.startBalanced(); return true; }
+    e:(
         itemize
       / unknown_environment
     )
@@ -246,6 +247,8 @@ environment "environment" =
         // each environment has to return a json object: { name: <name in begin>, node: <content node> }
         if (e.name != id)
             error("environment <b>" + e.name + "</b> is missing its end, found " + id + " instead");
+
+        g.endBalanced() || error(e.name + ": groups need to be balanced in environments!");
 
         return e.node;
     }
@@ -256,15 +259,13 @@ unknown_environment =
     { error("unknown environment: " + e); }
 
 
-    
+
 // lists: itemize, enumerate, description
 
 itemize "itemize environment" =
     name:"itemize" end_group
         items:(item (!(item/end_env) paragraph_with_linebreak)*)*
     {
-        // if l == itemize
-
         return {
             name: name,
             node: g.create(g.unorderedList,
@@ -320,8 +321,8 @@ math_primitive =
 
 /* kind of keywords */
 
-begin                       = "begin"   !char
-end                         = "end"     !char
+begin                       = "begin"   !char skip_space
+end                         = "end"     !char skip_space
 
 par                         = "par"     !char
 
@@ -416,7 +417,10 @@ ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-, ]          { return g.contr
 // ^^FF     = hex FF
 // ^^^^FFFF = hex FFFF
 // ^^c      = if charcode(c) < 64 then fromCharCode(c+64) else fromCharCode(c-64) (TODO)
-charsym     = escape "symbol" begin_group skip_space i:charnumber skip_space end_group  { return String.fromCharCode(i); }
+charsym     = escape "symbol"
+              begin_group
+                skip_space i:charnumber skip_space
+              end_group                                         { return String.fromCharCode(i); }
             / escape "char" i:charnumber                        { return String.fromCharCode(i); }
             / "^^^^" i:hex64                                    { return String.fromCharCode(i); }
             / "^^"   i:hex32                                    { return String.fromCharCode(i); }
