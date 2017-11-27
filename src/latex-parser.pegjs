@@ -442,7 +442,7 @@ math_primitive =
     / escape identifier
     / begin_group skip_space end_group
     / begin_group math_primitive+ end_group
-    / break / linebreak
+    / sp / nl / linebreak / comment
 
 
 /* kind of keywords */

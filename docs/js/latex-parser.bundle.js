@@ -5207,9 +5207,15 @@ function peg$parse(input, options) {
                   s0 = peg$FAILED;
                 }
                 if (s0 === peg$FAILED) {
-                  s0 = peg$parsebreak();
+                  s0 = peg$parsesp();
                   if (s0 === peg$FAILED) {
-                    s0 = peg$parselinebreak();
+                    s0 = peg$parsenl();
+                    if (s0 === peg$FAILED) {
+                      s0 = peg$parselinebreak();
+                      if (s0 === peg$FAILED) {
+                        s0 = peg$parsecomment();
+                      }
+                    }
                   }
                 }
               }
