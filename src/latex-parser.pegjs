@@ -319,7 +319,7 @@ end_env "\\end" =
 environment "environment" =
     begin_env begin_group                       & { g.enterGroup(); g.startBalanced(); return true; }
     e:(
-        itemize
+        list
       / alignment
       / unknown_environment
     )
@@ -344,18 +344,32 @@ unknown_environment =
 
 // lists: itemize, enumerate, description
 
-itemize "itemize environment" =
-    name:"itemize" end_group
+list "list environment" =
+    name:("itemize"/"enumerate"/"description") end_group
         items:(item (!(item/end_env) paragraph_with_linebreak)*)*
     {
+        let list, item, term;
+
+        if (name === "itemize")         { list = g.unorderedList;   item = g.listitem; }
+        else if (name === "enumerate")  { list = g.orderedList;     item = g.listitem; }
+        else                            { list = g.descriptionList; item = g.description; term = g.term; }
+
         return {
             name: name,
-            node: g.create(g.unorderedList,
+            node: g.create(list,
                         items.map(function(item_pwtext) {
-                            return g.create(g.listitem,
-                                // this becomes the paragraph_with_linebreak fragment
-                                item_pwtext[1].map(function(text) { return text[1]; })
-                            );
+                            // this is the paragraph_with_linebreak fragment
+                            let itemtext = item_pwtext[1].map(function(text) { return text[1]; })
+
+                            if (term) {
+                                var dt = g.create(term, item_pwtext[0]);
+                                var dd = g.create(item, itemtext)
+                                return g.createFragment([dt, dd])
+                            }
+
+                            // TODO: giving an item in an (un)ordered list is not supported...
+                            itemtext.unshift(item_pwtext[0]);
+                            return g.create(item, itemtext);
                         }))
         }
     }
