@@ -161,6 +161,16 @@ vmode_macro =
     { g.break(); return m; }
 
 
+// test: does a vertical mode follow next? then don't add a space!
+vmode_test =
+    skip_all_space
+    escape (
+        "part" / "chapter" / "section" / "subsection" / "subsubsection" / "paragraph" / "subparagraph"
+      / "addvspace" / ("small"/"med"/"big")"break" / "begin" / "end" / "item"
+    ) !char
+
+// user-defined macros have the disadvantage that all groups directly following them will
+// be interpreted as arguments to the macro, so the macro will have to return the unused arguments
 custom_macro "user-defined hmode macro" =
     name:identifier &{ return g.hasMacro(name); }
     starred:"*"?
@@ -385,6 +395,7 @@ item =
 alignment =
     align:("flushleft"/"flushright"/"center")   &{ g.setAlignment(align); return true; }
     end_group
+    skip_space
         p:paragraph_with_linebreak*
     {
         return {
@@ -475,7 +486,7 @@ comment         "comment"   = "%"  (!nl .)* (nl / EOF)                          
 skip_space      "spaces"    = (!break (nl / sp / comment))*     { return undefined; }
 skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefined; }
 
-space           "spaces"    = !break !linebreak
+space           "spaces"    = !break !linebreak !vmode_test
                               (sp / nl)+ comment* (sp / nl)*    { return g.brsp; }
 
 break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
