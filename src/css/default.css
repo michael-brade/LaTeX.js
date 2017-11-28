@@ -22,6 +22,14 @@ html {
     line-height: 1.2;
 }
 
+.katex {
+    font-size: 1em !important;
+    font-family: "Computer Modern Serif", "KaTeX_Main" !important;
+    font-style: inherit !important;
+    font-variant: inherit !important;
+    font-weight: inherit !important;
+}
+
 
 /* family */
 .rm {
@@ -78,11 +86,6 @@ html {
 
 
 /* size */
-
-.katex {
-    font-size: 1em !important;
-}
-
 
 .tiny {
     font-size: .5rem;
@@ -190,6 +193,7 @@ p {
     /* should be 1em with twocolumn layout */
 }
 
+
 h1 + p,
 h2 + p,
 h3 + p,
@@ -228,15 +232,15 @@ h4 + p,
 
 /* predefined vertical spaces */
 .smallskip {
-    margin-bottom: 0.25em;
+    margin-bottom: 0.25rem;
 }
 
 .medskip {
-    margin-bottom: 0.5em;
+    margin-bottom: 0.5rem;
 }
 
 .bigskip {
-    margin-bottom: 1em;
+    margin-bottom: 1rem;
 }
 
 
