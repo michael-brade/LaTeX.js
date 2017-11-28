@@ -1,28 +1,6 @@
-<style>
-span.tex span,
-span.latex span {
-    text-transform: uppercase;
-}
-
-span.latex span:first-child {
-    font-size: 0.8em;
-    vertical-align: 0.2em;
-    margin-left:  -0.45em;
-    margin-right: -0.15em;
-}
-
-span.tex span:first-child,
-span.latex span:last-child {
-    margin-left: -0.2em;
-    margin-right: -0.2em;
-    position: relative;
-    top: 0.45ex;
-}
-</style>
-
 # A PEG.js Parser to Convert <span class="latex">L<span>a</span>T<span>e</span>X</span> Documents to HTML5
 
-This is a <span class="latex">L<span>a</span>T<span>e</span>X</span> to HTML5 translator written in JavaScript using PEG.js.
+This is a L<span style="text-transform: uppercase;font-size:0.8em;vertical-align:0.2em;margin-left:-0.45em;margin-right:-0.15em;">a</span>T<span style="margin-left: -0.2em;margin-right: -0.2em;position: relative;top: 0.45ex;">e</span>X to HTML5 translator written in JavaScript using PEG.js.
 `latex.js` for <span class="latex">L<span>a</span>T<span>e</span>X</span> is similar in spirit to `marked` for Markdown.
 
 <span class="latex">L<span>a</span>T<span>e</span>X</span>.js is absolutely and uncompromisingly exact and compatible 
