@@ -25,6 +25,10 @@ body {
     display: flex;
 }
 
+#latex-editor {
+    height: auto;
+}
+
 #preview {
     color: #333;
     border: none;
