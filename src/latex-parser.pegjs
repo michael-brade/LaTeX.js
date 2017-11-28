@@ -386,7 +386,7 @@ list "list environment" =
 
 
 item =
-    skip_all_space escape "item" og:optgroup? skip_space
+    skip_all_space escape "item" !char og:optgroup? skip_space
     { return og; }
 
 
@@ -408,12 +408,12 @@ alignment =
 // comment
 
 comment_env "comment environment" =
-    "\\begin{comment}"
+    "\\begin" skip_space "{comment}"
         (!end_comment .)*
     end_comment skip_space
     { g.break(); return undefined; }
 
-end_comment = "\\end{comment}"
+end_comment = "\\end" skip_space "{comment}"
 
 
 
@@ -566,11 +566,12 @@ charnumber  =     i:int                                         { return parseIn
             / "'" o:oct                                         { return parseInt(i, 8); }
             / '"' h:(hex16/hex8)                                { return h; }
 
-hex8        = h:$(hex hex)                                      { return parseInt(h, 16); }
-hex16       = h:$(hex hex hex hex)                              { return parseInt(h, 16); }
 
-int         = $[0-9]+
-oct         = $[0-7]+
-hex         = [a-f0-9]i
+hex8  "8bit hex value"  = h:$(hex hex)                          { return parseInt(h, 16); }
+hex16 "16bit hex value" = h:$(hex hex hex hex)                  { return parseInt(h, 16); }
 
-float       = $([+\-]? (int? ('.' int?)? / '.' int))
+int   "integer value"   = $[0-9]+
+oct   "octal value"     = $[0-7]+
+hex   "hex digit"       = [a-f0-9]i
+
+float "float value"     = $([+\-]? (int? ('.' int?)? / '.' int))
