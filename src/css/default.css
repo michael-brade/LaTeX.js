@@ -186,7 +186,8 @@ p, ul, ol, dl, div {
 }
 
 p {
-    text-indent: 2em;
+    text-indent: 1.5em;
+    /* should be 1em with twocolumn layout */
 }
 
 h1 + p,
@@ -239,6 +240,79 @@ h4 + p,
 }
 
 
+/****************/
+/* environments */
+/****************/
+
+/* TODO: use .list instead of ul, ol, dl */
+
+/* lists - first level */
+ul, ol {
+    margin-top: 0.8rem;     /* \topsep */
+    margin-bottom: 0.8rem;  /* \topsep */
+    padding-left: 2.5rem;   /* \leftmargin */
+}
+
+
+/* lists - second level */
+ul ul,
+ol ol,
+ul ol,
+ol ul {
+    margin: 0.4rem 0;
+    padding-left: 2.2rem;
+}
+
+
+ul ul ul,
+ol ol ol {
+    margin: 0.2rem 0;
+    padding-left: 1.87rem;   /* \leftmargin */    
+}
+
+ul ul ul ul,
+ol ol ol ol {
+    margin: 0;
+    padding-left: 1.7rem;   /* \leftmargin */    
+}
+
+
+
+
+/* itemize */
+
+ul li {
+    list-style-type: '•';
+}
+
+ul li ul li {
+    list-style-type: '–';
+}
+
+ul li ul li ul li {
+    list-style-type: '∗';
+}
+
+ul li ul li ul li ul li {
+    list-style-type: '·';
+}
+
+
+/* \itemsep and \parsep */
+
+ul li + li {
+    margin-top: 0.8rem;  /* \itemsep = \parsep = 0.4em  */
+}
+
+ul ul  li + li {
+    margin-top: 0.4rem;  /* \itemsep = \parsep = 0.2em  */    
+}
+    
+ul ul ul  li + li {
+    margin-top: 0.2rem; /* \parsep = 0.2em */
+}
+
+/* higher depths: \itemsep = \parsep = 0 */
 
 
 /* the TeX and LaTeX logos */

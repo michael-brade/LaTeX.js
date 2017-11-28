@@ -118,27 +118,51 @@
       
       We have already seen two environments: \texttt{itemize} and \texttt{center}. Also
       supported are:
-      
+
       \begin{enumerate}
       \item \texttt{enumerate}, like this one
       \item \texttt{description}
       \item \texttt{flushleft}
       \item \texttt{flushright}
       \end{enumerate}
-      
-      
+      %
+      Lists can be nested:
+      %
+      \begin{itemize}
+        \item list text, level one
+          \begin{itemize}
+            \item list text, level two
+              \begin{itemize}
+                \item list text, level three
+
+                  And a new paragraph can be started, too.
+
+                \item list text, level three
+              \end{itemize}
+            \item list text, level two
+          \end{itemize}
+        \item list text, level one
+        \item list text, level one
+      \end{itemize}
+      %
+      The \texttt{flushleft} environment:
+      %
       \begin{flushleft}
       This text is\\ left-aligned.
       \LaTeX{} is not trying to make
       each line the same length.
       \end{flushleft}
-      
+      %
+      The \texttt{flushright} environment:
+      %
       \begin{flushright}
       This text is right-\\aligned.
       \LaTeX{} is not trying to make
       each line the same length.
       \end{flushright}
-      
+      %
+      And the \texttt{center} environment:
+      %
       \begin{center}
       At the centre\\of the earth
       \end{center}
@@ -186,7 +210,7 @@
         \texttt{or in
         \emph{typewriter} style.}
           
-      Some advice:
+      \subsection{An advice}
       \begin{center}
         \underline{\textbf{Remember\Huge!}} \textit{The}
         \textsf{M\textbf{\LARGE O} \texttt{R}\textsl{E}} fonts \Huge you
