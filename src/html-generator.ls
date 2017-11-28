@@ -542,10 +542,13 @@ export class HtmlGenerator
     setAlignment: (align) !->
         @_attrs.top.align = align
 
+    setTextDecoration: (decoration) !->
+        @_attrs.top.textDecoration = decoration
+
 
     _inlineAttributes: ->
         cur = @_attrs.top
-        [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize].join " " .trim!
+        [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.textDecoration].join " " .trim!
 
     _blockAttributes: ->
         [@_attrs.top.align].join " ".trim!

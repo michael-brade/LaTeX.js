@@ -233,7 +233,7 @@ textnormal      =   "textnormal"                    !char   &{ g.enterGroup(); g
                     { g.exitGroup(); return a; }
 
 
-underline       =   "underline"                     !char   &{ g.enterGroup(); g.addAttribute("underline"); return true; }
+underline       =   "underline"                     !char   &{ g.enterGroup(); g.setTextDecoration("underline"); return true; }
                     a:arggroup
                     { g.exitGroup(); return a; }
 

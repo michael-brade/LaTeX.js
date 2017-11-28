@@ -19,7 +19,6 @@ body {
 html {
     font-family: "Computer Modern Serif", serif;
     text-align: justify;
-    font-variant-ligatures: common-ligatures;
     line-height: 1.2;
 }
 
@@ -71,6 +70,10 @@ html {
 
 .em, em {
     font-style: italic; /* TODO: what if nested? */
+}
+
+.underline {
+    text-decoration: underline;
 }
 
 
