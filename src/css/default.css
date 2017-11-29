@@ -1,5 +1,9 @@
 @import url("../fonts/cmu.css");
 
+pre {
+    white-space: pre-wrap;
+    margin: 2em -5em;
+}
 
 /***************/
 /* page layout */
