@@ -29,9 +29,6 @@ html {
 .katex {
     font-size: 1em !important;
     font-family: "Computer Modern Serif", "KaTeX_Main" !important;
-    font-style: inherit !important;
-    font-variant: inherit !important;
-    font-weight: inherit !important;
 }
 
 
