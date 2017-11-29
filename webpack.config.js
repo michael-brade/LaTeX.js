@@ -10,7 +10,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'docs'),
         filename: 'js/latex-parser.bundle.js',
-        libraryTarget: "var",
+        libraryTarget: "window",
         library: "latexjs"
     },
     module: {
@@ -28,7 +28,7 @@ module.exports = {
         ])
     ],
     externals: {
-        'domino': 'domino'
+        'domino': 'void 8'
     },
     stats: {
         colors: true

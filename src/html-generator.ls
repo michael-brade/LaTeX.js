@@ -3,8 +3,6 @@ if typeof document == 'undefined'
     global.document = require 'domino' .createDocument!
 
 require! [entities, katex]
-_ = require 'lodash'
-
 
 
 Object.defineProperty Array.prototype, 'top',
@@ -582,28 +580,28 @@ export class HtmlGenerator
         return el
 
 
-    # utilities
+    # private utilities
 
-    debugDOM: (oParent, oCallback) !->
+    debugDOM = (oParent, oCallback) !->
         if oParent.hasChildNodes()
             oNode = oParent.firstChild
             while oNode, oNode = oNode.nextSibling
-                DOMComb(oNode, oCallback)
+                debugDOM(oNode, oCallback)
 
         oCallback.call(oParent)
 
 
-    debugNode: (n) !->
+    debugNode = (n) !->
         return if not n
         if typeof n.nodeName != "undefined"
             console.log n.nodeName, ": ", n.textContent
         else
             console.log "not a node: ", n
 
-    debugNodes: (l) !->
+    debugNodes = (l) !->
         for n in l
             @debugNode n
 
-    debugNodeContent: !->
+    debugNodeContent = !->
         if @nodeValue
             console.log @nodeValue

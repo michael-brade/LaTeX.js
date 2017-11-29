@@ -563,7 +563,7 @@ charsym     = escape "symbol"
 
 
 charnumber  =     i:int                                         { return parseInt(i, 10); }
-            / "'" o:oct                                         { return parseInt(i, 8); }
+            / "'" o:oct                                         { return parseInt(o, 8); }
             / '"' h:(hex16/hex8)                                { return h; }
 
 
