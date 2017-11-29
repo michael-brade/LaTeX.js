@@ -1,5 +1,6 @@
 ** different horizontal spaces
 .
+Negavive thin space: -\negthinspace' \\
 Thin space: -\,- \\
 Thin space: -\thinspace- \\
 Normal space: - - \\
@@ -11,7 +12,8 @@ em-space: -\quad- \\
 3cm horizontal space: -\hspace{3cm}- \\
 %relative fills: -\hspace{\stretch{1}}-\hspace{\stretch{2}}- % not possible in html!
 .
-<p>Thin space: ‐ ‐<br>
+<p>Negavive thin space: ‐<span class="negthinspace"></span>'<br>
+Thin space: ‐ ‐<br>
 Thin space: ‐ ‐<br>
 Normal space: ‐ ‐<br>
 Normal space: ‐​ ‐<br>
@@ -68,4 +70,17 @@ Final line of just some simple text.
 <p>A line after the medbreak with just some simple text.</p>
 <span class="vspace bigskip"></span>
 <p>Final line of just some simple text.</p>
+.
+
+
+** \vspace{} in horizontal and vertical mode
+.
+This is some text, it includes\vspace{1cm} a vertical space. And some more text.
+
+\vspace{1cm}
+And another paragraph.
+.
+<p>This is some text, it includes<span class="vspace-inline" style="margin-bottom:1cm"></span> a vertical space. And some more text.</p>
+<span class="vspace" style="margin-bottom:1cm"></span>
+<p>And another paragraph.</p>
 .

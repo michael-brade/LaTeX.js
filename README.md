@@ -33,6 +33,7 @@ unit tests.
 
 The following features in LaTeX just cannot be translated to HTML, not even when using JavaScript:
 
+* the concept of pages does not really exist in HTML, so any macro related to pagebreaks will be ignored
 * `\hfill` in a paragraph of text is not possible
 * `\vspace{}` with a negative value in horizontal mode, i.e. in the middle of a paragraph of text, is not possible
   (but this feature is useless anyway)
