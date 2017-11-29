@@ -146,11 +146,11 @@ export class HtmlGenerator
 
     paragraph:                  "p"
 
-    unordered-list:             "ul"
-    ordered-list:               "ol"
+    unordered-list:             do -> el = document.createElement "ul"; el.setAttribute "class", "list"; return el
+    ordered-list:               do -> el = document.createElement "ol"; el.setAttribute "class", "list"; return el
     listitem:                   "li"
 
-    description-list:           "dl"
+    description-list:           do -> el = document.createElement "dl"; el.setAttribute "class", "list"; return el
     term:                       "dt"
     description:                "dd"
 
@@ -400,13 +400,16 @@ export class HtmlGenerator
         @_appendChildrenTo fs, @_dom
 
 
-    create: (type, children) ->
-        el = document.createElement type
+    create: (type, children, classes = "") ->
+        if type == @paragraph or type == @block # TODO if @_isPhrasingContent type, TODO: also for multicols?
+            classes += " " + @_blockAttributes!
 
-        classes = ""
-
-        if type == @paragraph or type == @block # TODO if @_isPhrasingContent type
-            classes += @_blockAttributes!
+        if typeof type == "object"
+            el = type.cloneNode true
+            if el.hasAttribute "class"
+                classes += " " + el.getAttribute "class"
+        else
+            el = document.createElement type
 
         # if continue then do not add parindent or parskip, we are not supposed to start a new paragraph
         if @_continue

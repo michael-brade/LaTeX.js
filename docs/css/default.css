@@ -29,9 +29,6 @@ html {
 .katex {
     font-size: 1em !important;
     font-family: "Computer Modern Serif", "KaTeX_Main" !important;
-    font-style: inherit !important;
-    font-variant: inherit !important;
-    font-weight: inherit !important;
 }
 
 
@@ -252,39 +249,32 @@ h4 + p,
 /* environments */
 /****************/
 
-/* TODO: use .list instead of ul, ol, dl */
 
-/* lists - first level */
-ul, ol {
+/* lists - first to fourth level */
+.list {
     margin-top: 0.8rem;     /* \topsep */
     margin-bottom: 0.8rem;  /* \topsep */
     padding-left: 2.5rem;   /* \leftmargin */
 }
 
-
-/* lists - second level */
-ul ul,
-ol ol,
-ul ol,
-ol ul {
+.list .list {
     margin: 0.4rem 0;
     padding-left: 2.2rem;
 }
 
-
-ul ul ul,
-ol ol ol {
+.list .list .list {
     margin: 0.2rem 0;
     padding-left: 1.87rem;   /* \leftmargin */    
 }
 
-ul ul ul ul,
-ol ol ol ol {
+.list .list .list .list {
     margin: 0;
     padding-left: 1.7rem;   /* \leftmargin */    
 }
 
-
+.list p {
+    text-indent: 0;         /* \listparindent */
+}
 
 
 /* itemize */
@@ -308,16 +298,26 @@ ul li ul li ul li ul li {
 
 /* \itemsep and \parsep */
 
-ul li + li {
-    margin-top: 0.8rem;  /* \itemsep = \parsep = 0.4em  */
+.list li + li {
+    margin-top: 0.8rem;     /* \itemsep + \parsep = 0.4em + 0.4em  */
 }
 
-ul ul  li + li {
-    margin-top: 0.4rem;  /* \itemsep = \parsep = 0.2em  */    
+.list li p + p {
+    margin-top: 0.4rem;     /* \parsep */
 }
-    
-ul ul ul  li + li {
-    margin-top: 0.2rem; /* \parsep = 0.2em */
+
+.list .list  li + li {
+    margin-top: 0.4rem;     /* \itemsep + \parsep = 0.2em + 0.2em  */    
+}
+
+.list .list li p + p {
+    margin-top: 0.2rem;     /* \parsep */
+}
+
+.list .list .list li + li,  /* \parsep = 0.2em */
+.list .list .list li p + p  /* \itemsp = 0 */
+{
+    margin-top: 0.2rem;     
 }
 
 /* higher depths: \itemsep = \parsep = 0 */

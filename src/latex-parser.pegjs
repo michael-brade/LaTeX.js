@@ -356,7 +356,7 @@ unknown_environment =
 
 list "list environment" =
     name:("itemize"/"enumerate"/"description") end_group
-        items:(item (!(item/end_env) paragraph_with_linebreak)*)*
+        items:(item (!(item/end_env) paragraph)*)*
     {
         let list, item, term;
 

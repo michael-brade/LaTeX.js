@@ -18,14 +18,14 @@ more text
 this belongs to paragraph with itemize
 .
 <p>a paragraph of text</p>
-<ul>
-<li>ﬁrst item<br>with a new paragraph</li>
-<li>second item</li>
+<ul class="list">
+<li><p>ﬁrst item</p><p>with a new paragraph</p></li>
+<li><p>second item</p></li>
 </ul>
 <p>more text</p>
-<ul>
-<li>ﬁrst item</li>
-<li>second item</li>
+<ul class="list">
+<li><p>ﬁrst item</p></li>
+<li><p>second item</p></li>
 </ul>
 <p class="continue">this belongs to paragraph with itemize</p>
 .
@@ -38,8 +38,8 @@ this belongs to paragraph with itemize
 \begin{itemize}
 \end{itemize}
 .
-<ul></ul>
-<ul class="continue"></ul>
+<ul class="list"></ul>
+<ul class="list continue"></ul>
 .
 
 
@@ -55,8 +55,12 @@ text before
 text after
 .
 <p>text before</p>
-<ul>
-<li>ﬁrst item<ul><li>ﬁrst nested item</li></ul></li>
+<ul class="list">
+<li>
+<p>ﬁrst item</p>
+<ul class="list">
+<li><p>ﬁrst nested item</p></li>
+</ul></li>
 </ul>
 <p class="continue">text after</p>
 .
@@ -70,10 +74,10 @@ text after
     \item third item
 \end{itemize}
 .
-<ul>
-<li>ﬁrst item</li>
-<li>second item</li>
-<li>third item</li>
+<ul class="list">
+<li><p>ﬁrst item</p></li>
+<li><p>second item</p></li>
+<li><p>third item</p></li>
 </ul>
 .
 
@@ -92,9 +96,9 @@ a paragraph of text
 this belongs to paragraph with enumerate
 .
 <p>a paragraph of text</p>
-<ol>
-<li>uselessﬁrst item<br>with a new paragraph</li>
-<li>second item</li>
+<ol class="list">
+<li><p>uselessﬁrst item</p><p>with a new paragraph</p></li>
+<li><p>second item</p></li>
 </ol>
 <p class="continue">this belongs to paragraph with enumerate</p>
 .
@@ -113,11 +117,11 @@ a paragraph of text
 this belongs to paragraph with description
 .
 <p>a paragraph of text</p>
-<dl>
+<dl class="list">
 <dt>term 1</dt>
-<dd>ﬁrst item<br>with a new paragraph</dd>
+<dd><p>ﬁrst item</p><p>with a new paragraph</p></dd>
 <dt>term 2</dt>
-<dd>second item</dd>
+<dd><p>second item</p></dd>
 </dl>
 <p class="continue">this belongs to paragraph with description</p>
 .
