@@ -75,10 +75,11 @@
       Experienced \TeX{} users are \TeX perts, and know how to use whitespaces. % renders correct
       
       Longer comments can be embedded in the \texttt{comment} environment:
-      This is another  \begin{comment}  % TODO: no space allowed here :(
+      This is another  \begin  {comment}
       rather stupid,
       but helpful
-      \end{comment}
+      \end
+      {comment}
       example for embedding comments in your document.
       
       
@@ -169,18 +170,17 @@
       
       
       \subsection{Maths}
-      
-      
-      Math is typeset using KaTeX:
-      $$
+
+      Math is typeset using KaTeX. Inline math:
+      $
       f(x) = \int_{-\infty}^\infty \hat f(\xi)\,e^{2 \pi i \xi x} \, d\xi
-      $$
-      Inline math as well as display math is supported.
+      $
+      as well as display math is supported:
       $$
       f(n) = \begin{cases} \frac{n}{2}, & \text{if } n\text{ is even} \\ 3n+1, & \text{if } n\text{ is odd} \end{cases}
       $$
-      
-      
+            
+            
       \subsection{Groups}
       
       
@@ -306,6 +306,7 @@
 
     preview.addEventListener("load", function() {
       compile()
+      editor.refresh()
     })
 
     var delay;
