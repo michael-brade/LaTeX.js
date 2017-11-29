@@ -123,8 +123,11 @@ export class HtmlGenerator
 
     # tokens translated to html
     sp:                         ' '
-    brsp:                       '\u200B '                       # breakable but non-collapsible space: &#8203; U+200B
+    brsp:                       '\u200B '                       # U+200B + ' ' breakable but non-collapsible space 
     nbsp:                       entities.decodeHTML "&nbsp;"    # U+00A0
+    zwnj:                       entities.decodeHTML "&zwnj;"    # U+200C  prevent ligatures
+    shy:                        entities.decodeHTML "&shy;"     # U+00AD  word break/hyphenation marker
+
     thinsp:                     entities.decodeHTML "&thinsp;"  # U+2009
 
     hyphen:                     entities.decodeHTML "&hyphen;"  # U+2010
@@ -374,8 +377,9 @@ export class HtmlGenerator
     controlSymbol: (c) ->
         switch c
         | ' ', '\n', '\r', '\t' => @brsp
+        | '/'                   => @zwnj
         | ','                   => @thinsp
-        | '-'                   =>               # nothing, just a word break marker
+        | '-'                   => @shy
         | _                     => @character c
 
 

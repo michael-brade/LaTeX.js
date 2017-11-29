@@ -18,7 +18,7 @@
 
   <script src="js/codemirror.js"></script>
   <script src="js/codemirror-mode-stex.js"></script>
-  
+
   <script src="js/split.min.js"></script>
   <script src="js/latex-parser.bundle.js"></script>
 
@@ -33,47 +33,50 @@
   <div id="content">
     <textarea id="latex-editor">
       \section{\LaTeX.js Showcase}
-      
+
       This document will show most of the supported features of \LaTeX.js.
-      
+
+
       \subsection{Characters}
-      
+
       It is possible to input any UTF-8 character either directly or by character code
       using one of the following:
-      
+
       \begin{itemize}
           \item \texttt{\textbackslash symbol\{"00A9\}}: \symbol{"00A9}
           \item \texttt{\textbackslash char"A9}: \char"A9
           \item \texttt{\^\^A9 or \^\^\^\^00A9}: ^^A9 or ^^^^00A9
       \end{itemize}
-      
+
       \bigskip
-            
+
       Special characters, like those:
       \begin{center}
       \$ \& \% \# \_ \{ \} \~ \^ \textbackslash % \< \>  \" \|   % TODO cannot be typeset
       \end{center}
       %
       have to be escaped.
-      
+
       Many symbols are accessible through macros. For instance: 30\,\textcelsius{} is
       86\,\textdegree{}F. % TODO: CMU Serif is missing textcelsius!
-      
+
+
+
       \subsection{Spaces and Comments}
-      
+
       Spaces and comments, of course, work just as they do in \LaTeX.
       This is an            % stupid
       % Better: instructive <----
       example: Supercal%
                     ifragilist%
           icexpialidocious
-      
+
       It does not matter whether you enter one or several     spaces after a word, it
       will always be typeset as one space---unless you force several spaces, like\ \ now.
-      
+
       New \TeX users may miss whitespaces after a command. % renders wrong
       Experienced \TeX{} users are \TeX perts, and know how to use whitespaces. % renders correct
-      
+
       Longer comments can be embedded in the \texttt{comment} environment:
       This is another  \begin  {comment}
       rather stupid,
@@ -81,10 +84,11 @@
       \end
       {comment}
       example for embedding comments in your document.
-      
-      
+
+
+
       \subsection{Dashes and Hyphens}
-      
+
       \LaTeX\ knows four kinds of dashes. Access three of them with different numbers
       of consecutive dashes. The fourth sign is actually not a dash at all---it is the
       mathematical minus sign:\\
@@ -97,26 +101,45 @@
       The names for these dashes are: ‘-’ hyphen, ‘–’ en-dash, ‘—’ em-dash,
       and ‘−’ minus sign. \LaTeX.js outputs the actual true unicode character for those
       instead of using the hypen-minus.
-      
-      
-      
+
+
+
       \subsection{Text and Paragraphs, Ligatures}
-      
+
       An empty line starts a new paragraph, and so does \texttt{\textbackslash par}.
       \par Like this. A new line usually starts automatically when the previous one is
-      full. However, using \texttt{\textbackslash newline} or \texttt{\textbackslash 
+      full. However, using \texttt{\textbackslash newline} or \texttt{\textbackslash
       \textbackslash},\newline one can force \\ to start a new line.
-      
-      Ligatures are supported as well, for instance: 
-      
+
+      Ligatures are supported as well, for instance:
+
       \begin{center}
-      fi, fl, ff, ffi, ffl \dots{} instead of  f{}i, f{}l, f{}f{}l \dots
+      fi, fl, ff, ffi, ffl \dots{} instead of f\/i, f\/l, f\/f\/l \dots
       \end{center}
-      
-      % TODO: \- doesn't break the ligature!
-      
+
+      Use \texttt{\textbackslash\slash} to prevent a ligature.  % TODO: without tt, it looks horrible...
+
+
+
+      \subsection{Spacing}
+
+      The following horizontal spaces are supported:
+
+      Negative thin space: -\negthinspace' \\
+      Thin space: -\,- \\
+      Thin space: -\thinspace- \\
+      Normal space: - - \\
+      Normal space: -\ - \\
+      Non-break space: -~- \\
+      en-space: -\enspace- \\
+      em-space: -\quad- \\
+      2x em-space: -\qquad-\\
+      3cm horizontal space: -\hspace{3cm}- \\
+
+
+
       \subsection{Environments}
-      
+
       We have already seen two environments: \texttt{itemize} and \texttt{center}. Also
       supported are:
 
@@ -167,8 +190,8 @@
       \begin{center}
       At the centre\\of the earth
       \end{center}
-      
-      
+
+
       \subsection{Maths}
 
       Math is typeset using KaTeX. Inline math:
@@ -179,29 +202,29 @@
       $$
       f(n) = \begin{cases} \frac{n}{2}, & \text{if } n\text{ is even} \\ 3n+1, & \text{if } n\text{ is odd} \end{cases}
       $$
-            
-            
+
+
       \subsection{Groups}
-      
-      
+
+
       Today is \today.
-      
+
       Actually, what about { some groups? } They\,are\ \ \ \ \ nice.
-      
-      
-      
+
+
+
       \section{Fonts}
-      
-      Usually, \LaTeX.js chooses the right font---just like \LaTeX.  In some cases, 
+
+      Usually, \LaTeX.js chooses the right font---just like \LaTeX.  In some cases,
       one might like to change fonts and sizes by hand. To do this, use the standard
       commands. The actual size of each font is a design issue and depends
       on the document class (in this case on the CSS file).
-      
+
       {\small The small and
         \textbf{bold} Romans ruled}
         {\Large all of great big
         \textit{Italy}.}
-      
+
       \textit{You can also
         \emph{emphasize} text if
         it is set in italics,}
@@ -209,7 +232,7 @@
         \emph{sans-serif} font,}
         \texttt{or in
         \emph{typewriter} style.}
-          
+
       \subsection{An advice}
       \begin{center}
         \underline{\textbf{Remember\Huge!}} \textit{The}
@@ -268,7 +291,7 @@
         epilog: extract(txt, o + 1, e - (o + 1))
       };
     }
-    
+
     /*  render a useful error message  */
     errorMessage = function (e, noFinalNewline) {
       var l = e.location;
@@ -326,7 +349,7 @@
         while (body.firstChild)
           body.removeChild(body.firstChild)
 
-        body.appendChild(result.dom())      
+        body.appendChild(result.dom())
       } catch (e) {
         var error
         if (e instanceof latexjs.SyntaxError) {

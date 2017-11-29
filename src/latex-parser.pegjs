@@ -519,10 +519,6 @@ end_optgroup                = "]"                               { return undefin
 /* text tokens - symbols that generate output */
 
 char        "letter"        = c:[a-z]i                          { return g.character(c); }  // catcode 11
-ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl"
-                                / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
-                                                                { return g.ligature(l); }
-
 digit       "digit"         = n:[0-9]                           { return g.character(n); }  // catcode 12 (other)
 punctuation "punctuation"   = p:[.,;:\*/()!?=+<>]               { return g.character(p); }  // catcode 12
 quotes      "quotes"        = q:[“”"'«»]                        { return g.character(q); }  // catcode 12
@@ -539,7 +535,11 @@ hyphen      "hyphen"        = "-"                               { return g.hyphe
 endash      "endash"        = "--"                              { return g.endash; }
 emdash      "emdash"        = "---"                             { return g.emdash; }
 
-ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-, \n\r\t]    { return g.controlSymbol(c); }
+ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl"
+                                / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
+                                                                { return g.ligature(l); }
+
+ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-,/ \n\r\t]   { return g.controlSymbol(c); }
 
 
 
