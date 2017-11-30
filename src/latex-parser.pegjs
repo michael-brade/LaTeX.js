@@ -139,7 +139,7 @@ hmode_macro =
       custom_macro
 
     / textfamily / textweight / textshape
-    / textnormal / emph / underline
+    / textnormal / emph / underline / url
 
     / smbskip_hmode / hspace / vspace_hmode
     )
@@ -309,7 +309,9 @@ lengthgroup     =   skip_space begin_group skip_space l:length end_group
                     { return l; }
 
 
+// hyperref
 
+url             =   "url" skip_space begin_group u:$primitive* end_group { return g.create(g.link(u), [g.createText(u)]); }
 
 
 

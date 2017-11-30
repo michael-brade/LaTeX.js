@@ -163,6 +163,7 @@ export class HtmlGenerator
 
     emph:                       "em"
     linebreak:                  "br"
+    link:                       do -> el = document.createElement "a"; return (u) -> el.setAttribute "href", u; return el
 
 
     ### private static vars
