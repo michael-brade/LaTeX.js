@@ -191,6 +191,7 @@ export class HtmlGenerator
         * \textvisiblespace     '\u2423'                        # ␣
 
         # basic latin
+        * \ss                   'ß'
         * \slash                '/'
         * \textasciicircum      '^'                             #     U+005E    \^{}
         * \textless             '<'                             #     U+003C
