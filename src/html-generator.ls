@@ -2,7 +2,13 @@
 if typeof document == 'undefined'
     global.document = require 'domino' .createDocument!
 
-require! [entities, katex]
+require! {
+    entities 
+    katex
+    hypher: Hypher, 'hyphenation.en-us': english 
+}
+
+h = new Hypher(english)
 
 
 Object.defineProperty Array.prototype, 'top',
@@ -344,6 +350,7 @@ export class HtmlGenerator
 
     ### public instance vars (vars beginning with "_" are meant to be private!)
 
+    _options: null
     _macros: null
 
     _dom:   null
@@ -354,7 +361,9 @@ export class HtmlGenerator
 
 
     # CTOR
-    ->
+    (options) ->
+        @_options = Object.assign { hyphenate: true } options
+
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
 
@@ -429,7 +438,7 @@ export class HtmlGenerator
 
     createText: (t) ->
         return if not t
-        @_wrapWithAttributes document.createTextNode t
+        @_wrapWithAttributes document.createTextNode if @_options.hyphenate then h.hyphenateText t else t
 
     createFragment: (children) ->
         return if not children or !children.length

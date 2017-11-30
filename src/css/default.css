@@ -44,6 +44,7 @@ html {
     font-family: "Computer Modern Serif", serif;
     text-align: justify;
     line-height: 1.2;
+    hyphens: auto;
 }
 
 .katex {

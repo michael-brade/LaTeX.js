@@ -35,8 +35,13 @@ babel:
 dependencies:
     'domino': '2.x'
     'entities': '1.x'
-    'lodash': '4.x'
     'katex': '0.9.0-alpha'
+
+    'hypher': '0.x'
+    'hyphenation.en-us': '*'
+    'hyphenation.de': '*'
+    
+    #'lodash': '4.x'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
 

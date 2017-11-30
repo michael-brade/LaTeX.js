@@ -6,6 +6,8 @@ html-beautify   = require "js-beautify" .html
 latex           = require '../dist/latex-parser'
 load-fixtures   = require './load-fixtures' .load
 
+options =
+    hyphenate: false
 
 describe 'LaTeX.js fixtures', !->
     fixture_path = path.join(__dirname, 'fixtures')
@@ -18,7 +20,7 @@ describe 'LaTeX.js fixtures', !->
         describe desc, ->
             filefixtures.fixtures.forEach (fixture) ->
                 test fixture.header || 'line ' + fixture.first.range.0 - 1, ->
-                    html-is     = latex.parse fixture.first.text .html!
+                    html-is     = latex.parse fixture.first.text, options .html!
                     html-should = fixture.second.text.replace //\n//g, ""
                     #html-is = html-beautify html-is
                     expect html-is .to.equal html-should
