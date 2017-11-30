@@ -3,10 +3,8 @@ var webpack = require('webpack');
 var CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-};
-
-module.exports = {
-    entry: path.join(__dirname, 'dist/latex-parser.js'),
+    context: __dirname,
+    entry: './dist/latex-parser.js',
     output: {
         path: path.resolve(__dirname, 'docs'),
         filename: 'js/latex-parser.bundle.js',
@@ -17,7 +15,7 @@ module.exports = {
         loaders: [
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
+                loader: 'babel-loader'
             }
         ]
     },
@@ -33,5 +31,5 @@ module.exports = {
     stats: {
         colors: true
     },
-    devtool: 'source-map'
+    //devtool: 'source-map'
 };
