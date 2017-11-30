@@ -139,7 +139,7 @@ hmode_macro =
       custom_macro
 
     / textfamily / textweight / textshape
-    / textnormal / emph / underline / url
+    / textnormal / emph / underline / url / href
 
     / smbskip_hmode / hspace / vspace_hmode
     )
@@ -309,10 +309,32 @@ lengthgroup     =   skip_space begin_group skip_space l:length end_group
                     { return l; }
 
 
+// label, ref
+
+
+
 // hyperref
 
-url             =   "url" skip_space begin_group u:$primitive* end_group { return g.create(g.link(u), [g.createText(u)]); }
+url_charset     =   char/digit/hyphen/punctuation/"#"/"&"/escape? "%" { return "%" }
+                /   . &{ error("illegal char in url given"); }
 
+url             =   "url"   skip_space begin_group 
+                        url:(!end_group c:url_charset {return c;})+ 
+                    end_group 
+                    { 
+                        return g.create(g.link(url.join("")), [g.createText(url.join(""))]); 
+                    }
+
+href            =   "href"  skip_space begin_group 
+                        url:(!end_group c:url_charset {return c;})+ 
+                    end_group 
+                    txt:arggroup
+                    {
+                        return g.create(g.link(url.join("")), txt); 
+                    }
+
+// \hyperref[label_name]{''link text''} --- just like \ref{label_name}, only an <a>
+hyperref        =   "hyperref" skip_space optgroup 
 
 
 /****************/
