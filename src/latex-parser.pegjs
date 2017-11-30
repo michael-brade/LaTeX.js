@@ -331,6 +331,7 @@ environment "environment" =
     e:(
         list
       / alignment
+      / multicols
       / unknown_environment
     )
     id:end_env
@@ -401,6 +402,31 @@ alignment =
         return {
             name: align,
             node: g.create(g.block, p)
+        }
+    }
+
+
+// multicolumns
+
+
+// switch to onecolumn layout from now on
+onecolumn = "onecolumn" !char
+
+// switch to twocolumn layout from now on
+twocolumn = "twocolumn" !char o:optgroup?
+
+// \begin{multicols}{number}[pretext][premulticols size]
+multicols =     
+    name:("multicols") end_group 
+    conf:(begin_group c:digit end_group o:optgroup? optgroup? { return { cols: c, pre: o } }
+         / &{ error("multicols error, required syntax: \\begin{multicols}{number}[pretext][premulticols size]") } 
+         )
+    pars:paragraph*
+    {
+        var node = g.create(g.multicols(conf.cols), g.createFragment(pars))
+        return {
+            name: name,
+            node: g.createFragment([conf.pre, node])
         }
     }
 

@@ -155,12 +155,14 @@ export class HtmlGenerator
     term:                       "dt"
     description:                "dd"
 
-    emph:                       "em"
-
-    linebreak:                  "br"
+    multicols:                  do -> el = document.createElement "div"; el.setAttribute "class", "multicols"; return (c) ->
+                                                                         el.setAttribute "style", "column-count:" + c; return el
 
     inline-block:               "span"
     block:                      "div"
+
+    emph:                       "em"
+    linebreak:                  "br"
 
 
     ### private static vars
