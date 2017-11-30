@@ -16,6 +16,26 @@ body {
 }
 
 
+
+.onecolumn {
+    column-count: 1;
+}
+
+.twocolumn {
+    column-count: 2;
+}
+
+.multicols {
+    column-gap: 3em;
+    column-rule: 1px solid;
+    column-fill: balance;
+}
+
+.span-cols {
+    column-span: all;
+}
+
+
 /*********/
 /* fonts */
 /*********/
