@@ -123,7 +123,7 @@ export class HtmlGenerator
 
     # tokens translated to html
     sp:                         ' '
-    brsp:                       '\u200B '                       # U+200B + ' ' breakable but non-collapsible space 
+    brsp:                       '\u200B '                       # U+200B + ' ' breakable but non-collapsible space
     nbsp:                       entities.decodeHTML "&nbsp;"    # U+00A0
     zwnj:                       entities.decodeHTML "&zwnj;"    # U+200C  prevent ligatures
     shy:                        entities.decodeHTML "&shy;"     # U+00AD  word break/hyphenation marker

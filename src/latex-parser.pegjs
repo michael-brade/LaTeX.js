@@ -318,23 +318,23 @@ lengthgroup     =   skip_space begin_group skip_space l:length end_group
 url_charset     =   char/digit/hyphen/punctuation/"#"/"&"/escape? "%" { return "%" }
                 /   . &{ error("illegal char in url given"); }
 
-url             =   "url"   skip_space begin_group 
-                        url:(!end_group c:url_charset {return c;})+ 
-                    end_group 
-                    { 
-                        return g.create(g.link(url.join("")), [g.createText(url.join(""))]); 
+url             =   "url"   skip_space begin_group
+                        url:(!end_group c:url_charset {return c;})+
+                    end_group
+                    {
+                        return g.create(g.link(url.join("")), [g.createText(url.join(""))]);
                     }
 
-href            =   "href"  skip_space begin_group 
-                        url:(!end_group c:url_charset {return c;})+ 
-                    end_group 
+href            =   "href"  skip_space begin_group
+                        url:(!end_group c:url_charset {return c;})+
+                    end_group
                     txt:arggroup
                     {
-                        return g.create(g.link(url.join("")), txt); 
+                        return g.create(g.link(url.join("")), txt);
                     }
 
 // \hyperref[label_name]{''link text''} --- just like \ref{label_name}, only an <a>
-hyperref        =   "hyperref" skip_space optgroup 
+hyperref        =   "hyperref" skip_space optgroup
 
 
 /****************/
@@ -440,10 +440,10 @@ onecolumn = "onecolumn" !char
 twocolumn = "twocolumn" !char o:optgroup?
 
 // \begin{multicols}{number}[pretext][premulticols size]
-multicols =     
-    name:("multicols") end_group 
+multicols =
+    name:("multicols") end_group
     conf:(begin_group c:digit end_group o:optgroup? optgroup? { return { cols: c, pre: o } }
-         / &{ error("multicols error, required syntax: \\begin{multicols}{number}[pretext][premulticols size]") } 
+         / &{ error("multicols error, required syntax: \\begin{multicols}{number}[pretext][premulticols size]") }
          )
     pars:paragraph*
     {
