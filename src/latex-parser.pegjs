@@ -36,7 +36,8 @@ text "text" =
         ligature
       / emdash / endash
       / primitive
-      / !break comment (sp / nl)*               { return undefined; }
+      / !break comment                          { return undefined; }
+      // !break, because comment eats a nl and we don't remember that afterwards - space rule also eats a nl
     )+                                          { return g.createText(p.join("")); }
 
     / linebreak
@@ -530,14 +531,14 @@ EOF             "EOF"       = !.
 nl              "newline"   = !'\r''\n' / '\r' / '\r\n'         { return undefined; }       // catcode 5 (linux, os x, windows)
 sp              "whitespace"= [ \t]                             { return undefined; }       // catcode 10
 
-comment         "comment"   = "%"  (!nl .)* (nl / EOF)                                      // catcode 14, including the newline
+comment         "comment"   = "%"  (!nl .)* (nl sp* / EOF)                                  // catcode 14, including the newline
                             / comment_env                       { return undefined; }       //             and the comment environment
 
 skip_space      "spaces"    = (!break (nl / sp / comment))*     { return undefined; }
 skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefined; }
 
 space           "spaces"    = !break !linebreak !vmode_test
-                              (sp / nl)+ comment* (sp / nl)*    { return g.brsp; }
+                              (sp / nl)+                        { return g.brsp; }
 
 break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
                               /                                             // or
