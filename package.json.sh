@@ -21,18 +21,26 @@ main:
 bin:
     'latex.js': './bin/latex.js'
 
+files:
+    'bin/latex.js'
+    'dist/latex-parser.js'
+    'dist/html-generator.js'
+
 
 scripts:
     clean: 'rimraf dist bin;'
     build: "
         mkdirp dist;
+        pegjs -o - src/latex-parser.pegjs | uglifyjs -cm -o dist/latex-parser.js;
+        lsc -cp    src/html-generator.ls  | uglifyjs -cm -o dist/html-generator.js;
+
         mkdirp bin;
-        pegjs -o dist/latex-parser.js src/latex-parser.pegjs;
-        lsc -c -o dist src/html-generator.ls;
-        lsc -c -o bin latex.js.ls;
+        lsc -bc --no-header -o bin src/latex.js.ls;
     "
-    bundle:'npm run build && webpack;'
-    pack:  'google-closure-compiler --compilation_level SIMPLE --externs src/externs.js --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
+    docs:  'npm run build && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
+    pgcc:  "google-closure-compiler --compilation_level SIMPLE \
+                                    --externs src/externs.js \
+                                    --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;"
     test:  'mocha test/_*.ls test/tests.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;'
     cover: 'istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;'
@@ -53,6 +61,7 @@ dependencies:
     'hyphenation.de': '*'
 
     'get-stdin': '5.x'
+
     #'lodash': '4.x'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
@@ -65,6 +74,7 @@ devDependencies:
     'pegjs': '0.10.x'
     'mkdirp': '0.5.x'
     'rimraf': '2.6.x'
+    'uglify-js': '3.2.x'
 
 
     ### bundling
@@ -98,3 +108,6 @@ bugs:
     url: 'https://github.com/michael-brade/LaTeX.js/issues'
 
 homepage: 'https://github.com/michael-brade/LaTeX.js#readme'
+
+engines:
+    node: '>= 8.0'

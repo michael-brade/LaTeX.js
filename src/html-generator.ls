@@ -1,5 +1,5 @@
 require! {
-    entities 
+    entities
     katex: { default: katex }
     hypher: Hypher
 }
