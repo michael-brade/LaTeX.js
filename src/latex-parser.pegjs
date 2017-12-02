@@ -1,5 +1,5 @@
 {
-    var g = new (require('./html-generator').HtmlGenerator)(options);
+    var g = options.generator;
 }
 
 

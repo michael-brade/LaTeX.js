@@ -4,12 +4,12 @@ var CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     context: __dirname,
-    entry: './dist/latex-parser.js',
+    entry: './docs/js/playground.js',
     output: {
         path: path.resolve(__dirname, 'docs'),
-        filename: 'js/latex-parser.bundle.js',
+        filename: 'js/playground.bundle.js',
         libraryTarget: "window",
-        library: "latexjs"
+        library: "Playground"
     },
     module: {
         loaders: [
@@ -19,15 +19,15 @@ module.exports = {
             }
         ]
     },
+    resolve: {
+        modules: [path.resolve(__dirname, "dist"), "node_modules"]
+    },
     plugins: [
         new CopyPlugin([
             { from: 'src/css', to: 'css' },
             //{ from: 'src/fonts', to: 'fonts' }
         ])
     ],
-    externals: {
-        'domino': 'void 8'
-    },
     stats: {
         colors: true
     },

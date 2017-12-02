@@ -1,7 +1,7 @@
 #!/usr/local/bin/lsc -cj
 
 name: 'latex.js'
-description: 'A simple PEG.js parser for LaTeX'
+description: 'JavaScript LaTeX to HTML5 translator'
 version: '0.5.0'
 
 author:
@@ -15,21 +15,32 @@ keywords:
     'html5'
 
 
+main:
+    'dist/latex-parser.js'
+
+bin:
+    'latex.js': './bin/latex.js'
+
+
 scripts:
-    clean: 'rimraf dist;'
-    build: 'mkdirp dist && pegjs -o dist/latex-parser.js src/latex-parser.pegjs && lsc -c -o dist src/html-generator.ls'
-    bundle:'npm run build && webpack'
-    pack:  'google-closure-compiler --compilation_level SIMPLE --externs src/externs.js --js_output_file docs/js/latex-parser.bundle.pack.js docs/js/latex-parser.bundle.js'
+    clean: 'rimraf dist bin;'
+    build: "
+        mkdirp dist;
+        mkdirp bin;
+        pegjs -o dist/latex-parser.js src/latex-parser.pegjs;
+        lsc -c -o dist src/html-generator.ls;
+        lsc -c -o bin latex.js.ls;
+    "
+    bundle:'npm run build && webpack;'
+    pack:  'google-closure-compiler --compilation_level SIMPLE --externs src/externs.js --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
     test:  'mocha test/_*.ls test/tests.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;'
     cover: 'istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;'
 
 babel:
-    presets:
-        "es2015"
-
     plugins:
-        "transform-object-rest-spread"
+        '@babel/syntax-object-rest-spread'
+        ...
 
 
 dependencies:
@@ -40,7 +51,8 @@ dependencies:
     'hypher': '0.x'
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
-    
+
+    'get-stdin': '5.x'
     #'lodash': '4.x'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
@@ -57,13 +69,13 @@ devDependencies:
 
     ### bundling
 
-    'webpack': '3.8.x'
+    'webpack': '3.9.x'
+    'babel-loader': '8.0.0-beta.0'
     'copy-webpack-plugin': '4.2.x'
-    'babel-loader': '7.1.x'
-    'babel-core': '6.26.x'
-    # babel-preset-env '1.6.x'
-    'babel-preset-es2015': '6.24.x'
-    'babel-plugin-transform-object-rest-spread': '6.26.x'
+
+    '@babel/core': '7.0.0-beta.33'
+    '@babel/register': '7.0.0-beta.33'
+    '@babel/plugin-syntax-object-rest-spread': '7.0.0-beta.33'
 
 
     ### testing

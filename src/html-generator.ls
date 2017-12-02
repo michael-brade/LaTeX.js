@@ -1,14 +1,8 @@
-# on the server we need to include a DOM implementation
-if typeof document == 'undefined'
-    global.document = require 'domino' .createDocument!
-
 require! {
     entities 
-    katex
-    hypher: Hypher, 'hyphenation.en-us': english 
+    katex: { default: katex }
+    hypher: Hypher
 }
-
-h = new Hypher(english)
 
 
 Object.defineProperty Array.prototype, 'top',
@@ -362,8 +356,17 @@ export class HtmlGenerator
 
     # CTOR
     (options) ->
-        @_options = Object.assign { hyphenate: true } options
+        @_options = options
 
+        if @_options.hyphenate
+            @_h = new Hypher(@_options.languagePatterns)
+
+        @_macros = new Macros(this)
+
+        @reset!
+
+
+    reset: ->
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
 
@@ -371,14 +374,6 @@ export class HtmlGenerator
         @_attrs = [{}]
         @_groups = []
 
-        @_macros = new Macros(this)
-
-
-    _serializeFragment: (f) ->
-        c = document.createElement "container"
-        # c.appendChild(f.cloneNode(true))
-        c.appendChild(f)    # for speed; however: if this fragment is to be serialized more often -> cloneNode(true) !!
-        c.innerHTML
 
 
     character: (c) ->
@@ -405,7 +400,7 @@ export class HtmlGenerator
 
     /* @return the HTML representation */
     html: ->
-        @_serializeFragment @_dom
+        serializeFragment @_dom
 
 
 
@@ -438,7 +433,7 @@ export class HtmlGenerator
 
     createText: (t) ->
         return if not t
-        @_wrapWithAttributes document.createTextNode if @_options.hyphenate then h.hyphenateText t else t
+        @_wrapWithAttributes document.createTextNode if @_options.hyphenate then @_h.hyphenateText t else t
 
     createFragment: (children) ->
         return if not children or !children.length
@@ -486,7 +481,7 @@ export class HtmlGenerator
 
     parseMath: (math, display) ->
         f = document.createDocumentFragment!
-        katex.default.render math, f,
+        katex.render math, f,
             displayMode: !!display
             throwOnError: false
         f
@@ -598,6 +593,14 @@ export class HtmlGenerator
 
 
     # private utilities
+
+    serializeFragment = (f) ->
+        c = document.createElement "container"
+        c.appendChild f.cloneNode(true)
+        # c.appendChild f     # for speed; however: if this fragment is to be serialized more often -> cloneNode(true) !!
+        c.innerHTML
+
+
 
     debugDOM = (oParent, oCallback) !->
         if oParent.hasChildNodes()
