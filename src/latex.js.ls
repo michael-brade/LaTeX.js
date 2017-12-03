@@ -31,7 +31,7 @@ program
 
     .usage '[options] [files...]'
 
-    .option '-b, --beautify',           'beautify the html (careful: this adds unwanted spaces in some places)'
+    .option '-b, --beautify',           'beautify the html (this may add/remove spaces unintentionally)'
     .option '-e, --entities',           'encode HTML entities in the output instead of using UTF-8 characters'
     .option '-s, --no-soft-hyphenate',  'don\'insert soft hyphens (disables automatic hyphenation in the browser)'
     .option '-l, --language <lang>',    'set hyphenation language (default en)', 'en'
@@ -69,7 +69,11 @@ input.then (text) ->
         html = he.encode html, 'allowUnsafeSymbols': true
 
     if program.beautify
-        html = beautify-html html
+        html = beautify-html html,
+            'end_with_newline': true
+            'wrap_line_length': 120
+            'wrap_attributes' : 'auto'
+            'unformatted': ['span']
 
     if program.output
         fs.writeFileSync program.output, html
