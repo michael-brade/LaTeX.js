@@ -165,9 +165,9 @@ h1, h2, h3, h4 {
     text-align: left;
 }
 
-h1.nocount:before,
-h2.nocount:before,
-h3.nocount:before {
+h1.nocount::before,
+h2.nocount::before,
+h3.nocount::before {
     content: none;
     counter-increment: none;
 }
@@ -216,10 +216,10 @@ p {
 }
 
 
-h1 + p,
-h2 + p,
-h3 + p,
-h4 + p,
+h1 + p, h1 + div.multicols > p:first-child,
+h2 + p, h2 + div.multicols > p:first-child,
+h3 + p, h3 + div.multicols > p:first-child,
+h4 + p, h4 + div.multicols > p:first-child,
 .noindent,
 .continue {
     text-indent: 0;
@@ -280,17 +280,17 @@ h4 + p,
 
 .list .list {
     margin: 0.4rem 0;
-    padding-left: 2.2rem;
+    padding-left: 2.2rem;   /* \leftmargin */
 }
 
 .list .list .list {
     margin: 0.2rem 0;
-    padding-left: 1.87rem;   /* \leftmargin */    
+    padding-left: 1.87rem;   /* \leftmargin */
 }
 
 .list .list .list .list {
     margin: 0;
-    padding-left: 1.7rem;   /* \leftmargin */    
+    padding-left: 1.7rem;   /* \leftmargin */
 }
 
 .list p {
@@ -301,47 +301,95 @@ h4 + p,
 /* itemize */
 
 ul li {
-    list-style-type: '•';
+    list-style-type: '• ';  /* works only in Firefox */
 }
 
 ul li ul li {
-    list-style-type: '–';
+    list-style-type: '– ';
 }
 
 ul li ul li ul li {
-    list-style-type: '∗';
+    list-style-type: '∗ ';
 }
 
 ul li ul li ul li ul li {
-    list-style-type: '·';
+    list-style-type: '· ';
 }
 
 
 /* \itemsep and \parsep */
 
-.list li + li {
+.list li + li,
+.list dd + dt {
     margin-top: 0.8rem;     /* \itemsep + \parsep = 0.4em + 0.4em  */
 }
 
-.list li p + p {
+.list li p + p,
+.list dd p + p {
     margin-top: 0.4rem;     /* \parsep */
 }
 
-.list .list  li + li {
-    margin-top: 0.4rem;     /* \itemsep + \parsep = 0.2em + 0.2em  */    
+.list .list li + li,
+.list .list dd + dt {
+    margin-top: 0.4rem;     /* \itemsep + \parsep = 0.2em + 0.2em  */
 }
 
-.list .list li p + p {
+.list .list li p + p,
+.list .list dd p + p {
     margin-top: 0.2rem;     /* \parsep */
 }
 
 .list .list .list li + li,  /* \parsep = 0.2em */
-.list .list .list li p + p  /* \itemsp = 0 */
+.list .list .list li p + p, /* \itemsp = 0 */
+.list .list .list dd + dt,
+.list .list .list dd p + p
 {
-    margin-top: 0.2rem;     
+    margin-top: 0.2rem;
 }
 
 /* higher depths: \itemsep = \parsep = 0 */
+
+
+/* description */
+
+dd, dd > p:first-child {
+    display: inline;
+}
+
+
+dd::after {
+    content: "";
+    display: block;
+}
+
+
+dt {
+    display: inline-block;
+    font-weight: bold;
+}
+
+.list dt {
+    margin-left: -2.5rem;   /* -padding-left of dl */
+}
+
+.list .list dt {
+    margin-left: -2.2rem;   /* -padding-left of dl */
+}
+
+.list .list .list dt {
+    margin-left: -1.87rem;   /* -padding-left of dl */
+}
+
+.list .list .list .list dt {
+    margin-left: -1.7rem;   /* -padding-left of dl */
+}
+
+
+dd {
+    margin-left: 0.5em;     /* \labelsep */
+}
+
+
 
 
 /* the TeX and LaTeX logos */

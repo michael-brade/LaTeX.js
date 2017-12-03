@@ -98,10 +98,9 @@
       yes---or no? \\
       $0$, $1$ and $-1$\\
       \\
-      The names for these dashes are: ‘-’ hyphen, ‘–’ en-dash, ‘—’ em-dash,
-      and ‘−’ minus sign. \LaTeX.js outputs the actual true unicode character for those
+      The names for these dashes are: ‘-’ hyphen, ‘--’ en-dash, ‘---’ em-dash,
+      and ‘$-$’ minus sign. \LaTeX.js outputs the actual true unicode character for those
       instead of using the hypen-minus.
-
 
 
       \subsection{Text and Paragraphs, Ligatures}
@@ -166,6 +165,39 @@
       \item \texttt{flushleft}
       \item \texttt{flushright}
       \end{enumerate}
+      %
+      Next will follow the \texttt{description} environment. Viewing this in Chrome will show too much vertical
+      space at the end of a nested environment. On top of that, margin collapsing for inline-block boxes is not
+      allowed. Maybe using \texttt{dl} elements is too complicated for this and a simple nested \texttt{div}
+      should be used instead.
+
+      \begin{description}
+        \item[term 1] And the description for the first term goes here. Some more text.
+          \begin{enumerate}
+            \item \texttt{enumerate}, like this one
+            \item \texttt{description}
+            \item \texttt{flushleft}
+            \item \texttt{flushright}
+          \end{enumerate}
+        \item[another one] And the description for the second term goes here. Some more text. And the description
+          for the second term goes here. Some more text. And the description for the second term goes here. Some more text.
+          \begin{description}
+            \item[term 1] A nested description. And the description for the first term goes here. Some more text.
+            \begin{enumerate}
+              \item \texttt{enumerate}, like this one
+              \item \texttt{description}
+              \item \texttt{flushleft}
+              \item \texttt{flushright}
+            \end{enumerate}
+            \item[another one] And the description for the second term goes here. Some more text.
+            \item[third one] Here we will have a separate paragraph, too.
+
+            And then some more of the description for the second term goes here. Some more text.
+          \end{description}
+        \item[third one] Here we will have a separate paragraph, too.
+
+        And then some more of the description for the second term goes here. Some more text.
+      \end{description}
       %
       Lists can be nested:
       %
