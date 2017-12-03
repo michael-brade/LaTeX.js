@@ -37,10 +37,13 @@ this belongs to paragraph with itemize
 \begin{itemize}
 \end{itemize}
 \begin{itemize}
+    \item text that doesn't continue
 \end{itemize}
 .
 <ul class="list"></ul>
-<ul class="list continue"></ul>
+<ul class="list">
+<li><p>text that doesn't continue</p></li>
+</ul>
 .
 
 
@@ -62,6 +65,31 @@ text after
 <ul class="list">
 <li><p>ﬁrst nested item</p></li>
 </ul></li>
+</ul>
+<p class="continue">text after</p>
+.
+
+
+** nested itemize environments (II)
+.
+text before
+\begin{itemize}
+    \item first item
+        \begin{itemize}
+            \item first nested item
+        \end{itemize}
+    \item second item
+\end{itemize}
+text after
+.
+<p>text before</p>
+<ul class="list">
+<li><p>ﬁrst item</p>
+<ul class="list">
+<li><p>ﬁrst nested item</p></li>
+</ul>
+</li>
+<li><p>second item</p></li>
 </ul>
 <p class="continue">text after</p>
 .
