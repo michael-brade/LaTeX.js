@@ -207,12 +207,12 @@ export class HtmlGenerator
 
         # basic latin
         * \ss                   'ß'
-        * \slash                '/'
+        * \slash                he.decode '&sol;'
         * \textasciicircum      '^'                     #     U+005E    \^{}
         * \textless             '<'                     #     U+003C
         * \textgreater          '>'                     #     U+003E
         * \textasciitilde       '˜'                     #     U+007E    \~{}
-        * \textbackslash        '∖'                     #     U+005C
+        * \textbackslash        '\u005C'                #     U+005C
         * \textbraceleft        '{'                     #               \{
         * \textbraceright       '}'                     #               \}
         * \textdollar           '$'                     #               \$
