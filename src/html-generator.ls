@@ -166,6 +166,18 @@ export class HtmlGenerator
     link:                       do -> el = document.createElement "a"; return (u) -> el.setAttribute "href", u; return el
 
 
+
+    # true if it is an inline element, something that makes up paragraphs
+    _isPhrasingContent: (type) ->
+        type in [
+            @inline-block
+            @emph
+            @linebreak
+            @link
+        ]
+
+
+
     ### private static vars
 
     ligatures = new Map([
@@ -411,9 +423,6 @@ export class HtmlGenerator
 
 
     create: (type, children, classes = "") ->
-        if type == @paragraph or type == @block # TODO if @_isPhrasingContent type, TODO: also for multicols?
-            classes += " " + @_blockAttributes!
-
         if typeof type == "object"
             el = type.cloneNode true
             if el.hasAttribute "class"
@@ -421,10 +430,13 @@ export class HtmlGenerator
         else
             el = document.createElement type
 
+        if not @_isPhrasingContent type
+            classes += " " + @_blockAttributes!
+
         # if continue then do not add parindent or parskip, we are not supposed to start a new paragraph
         if @_continue
-            classes += " continue"
-            @_continue = false
+            classes = classes.trim! + " continue"
+            @break!
 
         if classes.trim!
             el.setAttribute "class", classes.trim!

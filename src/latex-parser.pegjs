@@ -150,8 +150,9 @@ hmode_macro =
 // macros that only work in vertical mode (include \par or check for \ifvmode)
 vmode_macro =
     skip_all_space
-    m:macro         { return m; }
-    /
+    m:macro
+    { return m; }
+  /
     skip_all_space
     escape
     m:(
@@ -343,8 +344,8 @@ hyperref        =   "hyperref" skip_space optgroup
 /****************/
 
 begin_env "\\begin" =
-    b:break? skip_space
-    escape begin                                { b && g.break(); }
+    skip_all_space
+    escape begin                                { g.break(); }
 
 end_env "\\end" =
     skip_all_space
@@ -382,9 +383,15 @@ unknown_environment =
 
 list "list environment" =
     name:("itemize"/"enumerate"/"description") end_group
-        items:(item (!(item/end_env) paragraph)*)*
+        items:(
+               item:item  &{ g.break(); return true; }              // break when starting an item
+               pars:(!(item/end_env) p:paragraph { return p; })*    // collect paragraphs in pars
+               { return [item, pars]; }
+              )*
     {
         var list, item, term;
+
+        g.break();
 
         if (name === "itemize")         { list = g.unorderedList;   item = g.listitem; }
         else if (name === "enumerate")  { list = g.orderedList;     item = g.listitem; }
@@ -394,18 +401,15 @@ list "list environment" =
             name: name,
             node: g.create(list,
                         items.map(function(item_pwtext) {
-                            // this is the paragraph_with_linebreak fragment
-                            var itemtext = item_pwtext[1].map(function(text) { return text[1]; })
-
                             if (term) {
                                 var dt = g.create(term, item_pwtext[0]);
-                                var dd = g.create(item, itemtext);
+                                var dd = g.create(item, item_pwtext[1]);
                                 return g.createFragment([dt, dd]);
                             }
 
                             // TODO: giving an item in an (un)ordered list is not supported...
-                            itemtext.unshift(item_pwtext[0]);
-                            return g.create(item, itemtext);
+                            item_pwtext[1].unshift(item_pwtext[0]);
+                            return g.create(item, item_pwtext[1]);
                         }))
         }
     }
