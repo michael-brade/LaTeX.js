@@ -1,7 +1,7 @@
 {
   "name": "latex.js",
   "description": "JavaScript LaTeX to HTML5 translator",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": {
     "name": "Michael Brade",
     "email": "brade@kde.org"
