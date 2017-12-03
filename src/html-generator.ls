@@ -614,13 +614,13 @@ export class HtmlGenerator
     debugNode = (n) !->
         return if not n
         if typeof n.nodeName != "undefined"
-            console.log n.nodeName, ": ", n.textContent
+            console.log n.nodeName + ":", n.textContent
         else
-            console.log "not a node: ", n
+            console.log "not a node:", n
 
     debugNodes = (l) !->
         for n in l
-            @debugNode n
+            debugNode n
 
     debugNodeContent = !->
         if @nodeValue
