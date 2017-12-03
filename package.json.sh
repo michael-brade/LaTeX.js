@@ -53,7 +53,7 @@ babel:
 
 dependencies:
     'domino': '2.x'
-    'entities': '1.x'
+    'he': '1.1.x'
     'katex': '0.9.0-alpha'
 
     'hypher': '0.x'

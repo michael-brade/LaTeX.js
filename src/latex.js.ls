@@ -6,6 +6,7 @@ global.document = require 'domino' .createDocument!
 require! {
     util
     fs
+    he
     commander: program
     'get-stdin': get-stdin
     'js-beautify': { html: beautify-html }
@@ -19,6 +20,9 @@ require! {
     '../package.json': info
 }
 
+he.encode.options.strict = true
+he.encode.options.useNamedReferences = true
+
 
 program
     .name info.name
@@ -28,6 +32,7 @@ program
     .usage '[options] [files...]'
 
     .option '-b, --beautify',           'beautify the html (careful: this adds unwanted spaces in some places)'
+    .option '-e, --entities',           'encode HTML entities in the output instead of using UTF-8 characters'
     .option '-s, --no-soft-hyphenate',  'don\'insert soft hyphens (disables automatic hyphenation in the browser)'
     .option '-l, --language <lang>',    'set hyphenation language (default en)', 'en'
     .option '-o, --output <file>',      'specify output file, otherwise STDOUT will be used'
@@ -59,6 +64,9 @@ input.then (text) ->
         text = text.join "\n\n"
 
     html = latexjs.parse text, { generator: generator } .html!
+
+    if program.entities
+        html = he.encode html, 'allowUnsafeSymbols': true
 
     if program.beautify
         html = beautify-html html
