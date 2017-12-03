@@ -2,7 +2,7 @@
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.6.0'
+version: '0.6.1'
 
 author:
     'name': 'Michael Brade'
@@ -60,6 +60,7 @@ dependencies:
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
+    'commander': '2.12.x'
     'get-stdin': '5.x'
 
     #'lodash': '4.x'
