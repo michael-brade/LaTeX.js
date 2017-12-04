@@ -157,6 +157,10 @@ export class HtmlGenerator
     term:                       "dt"
     description:                "dd"
 
+    quote:                      do -> el = document.createElement "div"; el.setAttribute "class", "list quote"; return el
+    quotation:                  do -> el = document.createElement "div"; el.setAttribute "class", "list quotation"; return el
+    verse:                      do -> el = document.createElement "div"; el.setAttribute "class", "list verse"; return el
+
     multicols:                  do -> el = document.createElement "div"; el.setAttribute "class", "multicols"; return (c) ->
                                                                          el.setAttribute "style", "column-count:" + c; return el
 

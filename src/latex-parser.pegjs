@@ -357,6 +357,7 @@ environment "environment" =
     e:(
         list
       / alignment
+      / quote_quotation_verse
       / multicols
       / unknown_environment
     )
@@ -418,6 +419,20 @@ list "list environment" =
 item =
     skip_all_space escape "item" !char og:optgroup? skip_space
     { return og; }
+
+
+// quote, quotation, verse
+quote_quotation_verse =
+    name:("quote"/"quotation"/"verse") end_group
+    skip_space
+        p:paragraph*
+    {
+        return {
+            name: name,
+            node: g.create(g[name], p)
+        }
+    }
+
 
 
 // alignment:  flushleft, flushright, center

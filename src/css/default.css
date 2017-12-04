@@ -324,8 +324,7 @@ ul li ul li ul li ul li {
     margin-top: 0.8rem;     /* \itemsep + \parsep = 0.4em + 0.4em  */
 }
 
-.list li p + p,
-.list dd p + p {
+.list p + p {
     margin-top: 0.4rem;     /* \parsep */
 }
 
@@ -334,15 +333,13 @@ ul li ul li ul li ul li {
     margin-top: 0.4rem;     /* \itemsep + \parsep = 0.2em + 0.2em  */
 }
 
-.list .list li p + p,
-.list .list dd p + p {
+.list .list p + p {
     margin-top: 0.2rem;     /* \parsep */
 }
 
 .list .list .list li + li,  /* \parsep = 0.2em */
-.list .list .list li p + p, /* \itemsp = 0 */
+.list .list .list p + p,    /* \itemsp = 0 */
 .list .list .list dd + dt,
-.list .list .list dd p + p
 {
     margin-top: 0.2rem;
 }
@@ -390,6 +387,31 @@ dd {
 }
 
 
+
+/* quote, quotation */
+
+.quote, .quotation, .verse {
+    margin-left: 4rem  !important;       /* \leftmargin */
+    margin-right: 4rem !important;
+    padding: 0 !important;
+}
+
+.quote p {
+    text-indent: 0;
+}
+
+.quotation p {
+    text-indent: 1.5em;
+    margin-top: 0 !important;
+}
+
+
+/* verse */
+
+.verse p {
+    text-indent: -1.5em;
+    text-align: left;
+}
 
 
 /* the TeX and LaTeX logos */
