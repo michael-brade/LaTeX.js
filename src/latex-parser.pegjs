@@ -356,8 +356,9 @@ environment "environment" =
     begin_env begin_group                       & { g.enterGroup(); g.startBalanced(); return true; }
     e:(
         list
-      / alignment
       / quote_quotation_verse
+      / font
+      / alignment
       / multicols
       / unknown_environment
     )
@@ -434,6 +435,28 @@ quote_quotation_verse =
     }
 
 
+// font environments
+
+font =
+    name:$
+    ( size:  ("tiny"/"scriptsize"/"footnotesize"/"small"/
+              "normalsize"/"large"/"Large"/"LARGE"/"huge"/"Huge")   &{ g.setFontSize(size); return true; }
+    / family:("rm"/"sf"/"tt")"family"                               &{ g.setFontFamily(family); return true; }
+    / weight:("md"/"bf")"series"                                    &{ g.setFontWeight(weight); return true; }
+    / shape: ("up"/"it"/"sl"/"sc")"shape"                           &{ g.setFontShape(shape); return true; }
+    / "normalfont"                                                  &{ g.setFontFamily("rm");
+                                                                       g.setFontWeight("md");
+                                                                       g.setFontShape("up"); return true; }
+    ) end_group skip_space
+    p:paragraph*
+    {
+        return {
+            name: name,
+            node: g.create(g.block, p)
+        }
+    }
+
+
 
 // alignment:  flushleft, flushright, center
 
@@ -441,7 +464,7 @@ alignment =
     align:("flushleft"/"flushright"/"center")   &{ g.setAlignment(align); return true; }
     end_group
     skip_space
-        p:paragraph_with_linebreak*
+        p:paragraph*
     {
         return {
             name: align,
