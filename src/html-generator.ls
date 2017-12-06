@@ -187,15 +187,20 @@ export class HtmlGenerator
     ### private static vars
 
     ligatures = new Map([
-        * 'ff'  '\uFB00'
-        * 'ffi' '\uFB03'
-        * 'ffl' '\uFB04'
-        * 'fi'  '\uFB01'
-        * 'fl'  '\uFB02'
-        * '!´'  '\u00A1'        # &iexcl;
-        * '?´'  '\u00BF'        # &iquest;
-        * '<<'  '\u00AB'        # &laquo;
-        * '>>'  '\u00BB'        # &raquo;
+        * 'ff'                  '\uFB00'
+        * 'ffi'                 '\uFB03'
+        * 'ffl'                 '\uFB04'
+        * 'fi'                  '\uFB01'
+        * 'fl'                  '\uFB02'
+        * '``'                  he.decode '&ldquo;'     # “   U+201C
+        * "''"                  he.decode '&rdquo;'     # ”   U+201D
+        * '!´'                  he.decode '&iexcl;'     #     U+00A1
+        * '?´'                  he.decode '&iquest;'    #     U+00BF
+        * '--'                  he.decode '&ndash;'     #     U+2013
+        * '---'                 he.decode '&mdash;'     #     U+2014
+
+        * '<<'                  he.decode '&laquo;'     #     U+00AB
+        * '>>'                  he.decode '&raquo;'     #     U+00BB
     ])
 
     symbols = new Map([
@@ -398,7 +403,11 @@ export class HtmlGenerator
         c
 
     ligature: (l) ->
-        ligatures.get l
+        # no ligatures in tt
+        if @_attrs.top.fontFamily == 'tt'
+            l
+        else
+            ligatures.get l
 
     controlSymbol: (c) ->
         switch c

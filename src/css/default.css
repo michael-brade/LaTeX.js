@@ -56,12 +56,15 @@ html {
 /* family */
 .rm {
     font-family: "Computer Modern Serif", serif;
+    font-variant-ligatures: normal;
 }
 .sf {
     font-family: "Computer Modern Sans", sans-serif;
+    font-variant-ligatures: normal;
 }
 .tt {
     font-family: "Computer Modern Typewriter", monospace;
+    font-variant-ligatures: none;
 }
 
 /* weight */

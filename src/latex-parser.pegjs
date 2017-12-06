@@ -34,7 +34,6 @@ paragraph_with_linebreak =
 text "text" =
     p:(
         ligature
-      / emdash / endash
       / primitive
       / !break comment                          { return undefined; }
       // !break, because comment eats a nl and we don't remember that afterwards - space rule also eats a nl
@@ -625,11 +624,9 @@ utf8_char   "utf8 char"     = !(sp / nl / escape / begin_group / end_group / mat
 nbsp        "non-brk space" = '~'                               { return g.nbsp; }          // catcode 13 (active)
 
 hyphen      "hyphen"        = "-"                               { return g.hyphen; }
-endash      "endash"        = "--"                              { return g.endash; }
-emdash      "emdash"        = "---"                             { return g.emdash; }
 
-ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl"
-                                / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
+ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "---" / "--"
+                                / "``" / "''" / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
                                                                 { return g.ligature(l); }
 
 ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-,/ \n\r\t]   { return g.controlSymbol(c); }
