@@ -416,7 +416,7 @@ export class HtmlGenerator
         | '/'                   => @zwnj
         | ','                   => @thinsp
         | '-'                   => @shy
-        | '@'                   =>                  # nothing, in LaTeX this uses \spacefactor
+        | '@'                   => '\u200B'       # nothing, just prevent spaces from collapsing
         | _                     => @character c
 
 
