@@ -19,9 +19,12 @@ document =
 
 paragraph =
     vmode_macro
-    / b:break                                   { b && g.break(); return undefined; }
-    / skip_space p:text+                        { return g.create(g.paragraph, p); }
-    / e:environment                             { g.continue(); return e; }  // after an environment, it is possible to contine without a new paragraph
+    / (escape noindent)? b:break                { b && g.break(); return undefined; }
+    // indent wins over noindent
+    / skip_space n:(escape noindent)? p:text+   { return g.create(g.paragraph, p, n ? "noindent" : ""); }
+    // continue: after an environment, it is possible to contine without a new paragraph
+    / e:environment                             { g.continue(); return e; }
+
 
 
 // here, an empty line or \par is just a linebreak - needed in some macro arguments
@@ -139,6 +142,8 @@ hmode_macro =
     escape
     m:(
       custom_macro
+
+    / noindent
 
     / textfamily / textweight / textshape
     / textnormal / emph / underline / url / href
@@ -547,13 +552,14 @@ math_primitive =
 
 /* kind of keywords */
 
-begin                       = "begin"   !char skip_space
-end                         = "end"     !char skip_space
+begin                       = "begin"       !char skip_space    {}
+end                         = "end"         !char skip_space    {}
 
-par                         = "par"     !char
+par                         = "par"         !char               {}
+noindent                    = "noindent"    !char skip_space    {}
 
-plus                        = "plus"    !char skip_space
-minus                       = "minus"   !char skip_space
+plus                        = "plus"        !char skip_space    {}
+minus                       = "minus"       !char skip_space    {}
 
 
 
@@ -593,7 +599,7 @@ ctrl_space  "control space" = escape (&nl &break / nl / sp)     { return g.brsp;
 
 nbsp        "non-brk space" = "~"                               { return g.nbsp; }          // catcode 13 (active)
 
-break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
+break     "paragraph break" = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
                               /                                             // or
                               sp*
                               (nl comment* / comment+)                      // a paragraph break is a newline...
