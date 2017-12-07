@@ -298,6 +298,21 @@ h4 + p, h4 + div.multicols > p:first-child,
     text-indent: 0;         /* \listparindent */
 }
 
+/**** labels ****/
+
+li.customlabel {
+    list-style: none;
+}
+
+li.customlabel > .itemlabel {
+    position: relative;
+}
+
+li .itemlabel > span {
+    position: absolute;
+    right: 0.7em;           /* TODO */
+    white-space: nowrap;
+}
 
 /* itemize */
 

@@ -117,7 +117,7 @@ text after
 a paragraph of text
 
 \begin{enumerate}
-    \item[useless] first item
+    \item[label] first item
 
         with a new paragraph
     \item second item
@@ -126,7 +126,10 @@ this belongs to paragraph with enumerate
 .
 <p>a paragraph of text</p>
 <ol class="list">
-<li><p>uselessﬁrst item</p><p>with a new paragraph</p></li>
+<li class="customlabel">
+<span class="itemlabel"><span>label</span></span>
+<p>ﬁrst item</p><p>with a new paragraph</p>
+</li>
 <li><p>second item</p></li>
 </ol>
 <p class="continue">this belongs to paragraph with enumerate</p>

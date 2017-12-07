@@ -139,6 +139,8 @@ export class HtmlGenerator
 
 
     # typographic elements
+    create =                    (type, classes) -> el = document.createElement type; el.setAttribute "class", classes;  return el
+
     part:                       "part"
     chapter:                    "h1"
     section:                    "h2"
@@ -149,29 +151,39 @@ export class HtmlGenerator
 
     paragraph:                  "p"
 
-    list:                       do -> el = document.createElement "div"; el.setAttribute "class", "list"; return el
+    list:                       do -> create "div", "list"
 
-    unordered-list:             do -> el = document.createElement "ul"; el.setAttribute "class", "list"; return el
-    ordered-list:               do -> el = document.createElement "ol"; el.setAttribute "class", "list"; return el
+    unordered-list:             do -> create "ul",  "list"
+    ordered-list:               do -> create "ol",  "list"
+    description-list:           do -> create "dl",  "list"
+
     listitem:                   "li"
-
-    description-list:           do -> el = document.createElement "dl"; el.setAttribute "class", "list"; return el
     term:                       "dt"
     description:                "dd"
 
-    quote:                      do -> el = document.createElement "div"; el.setAttribute "class", "list quote"; return el
-    quotation:                  do -> el = document.createElement "div"; el.setAttribute "class", "list quotation"; return el
-    verse:                      do -> el = document.createElement "div"; el.setAttribute "class", "list verse"; return el
+    itemlabel:                  do -> create "span", "itemlabel"
 
-    multicols:                  do -> el = document.createElement "div"; el.setAttribute "class", "multicols"; return (c) ->
-                                                                         el.setAttribute "style", "column-count:" + c; return el
+    quote:                      do -> create "div", "list quote"
+    quotation:                  do -> create "div", "list quotation"
+    verse:                      do -> create "div", "list verse"
+
+    multicols:                  do ->
+                                    el = create "div", "multicols"
+                                    return (c) ->
+                                        el.setAttribute "style", "column-count:" + c
+                                        return el
 
     inline-block:               "span"
     block:                      "div"
 
     emph:                       "em"
     linebreak:                  "br"
-    link:                       do -> el = document.createElement "a"; return (u) -> el.setAttribute "href", u; return el
+    link:                       do ->
+                                    el = document.createElement "a"
+                                    return (u) ->
+                                        el.setAttribute "href", u
+                                        return el
+
 
 
 
@@ -443,7 +455,7 @@ export class HtmlGenerator
         if typeof type == "object"
             el = type.cloneNode true
             if el.hasAttribute "class"
-                classes += " " + el.getAttribute "class"
+                classes = el.getAttribute("class") + " " + classes
         else
             el = document.createElement type
 

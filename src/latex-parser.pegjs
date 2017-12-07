@@ -408,16 +408,21 @@ list "list environment" =
         return {
             name: name,
             node: g.create(list,
-                        items.map(function(item_pwtext) {
+                        items.map(function(item_text) {
                             if (term) {
-                                var dt = g.create(term, item_pwtext[0]);
-                                var dd = g.create(item, item_pwtext[1]);
+                                var dt = g.create(term, item_text[0]);
+                                var dd = g.create(item, item_text[1]);
                                 return g.createFragment([dt, dd]);
                             }
 
-                            // TODO: giving an item in an (un)ordered list is not supported...
-                            item_pwtext[1].unshift(item_pwtext[0]);
-                            return g.create(item, item_pwtext[1]);
+                            var css = ""
+                            // null means no optgroup was given, undefined is just be an empty one
+                            if (item_text[0] !== null) {
+                                item_text[1].unshift(g.create(g.itemlabel, g.create(g.inlineBlock, item_text[0])));
+                                css = "customlabel";
+                            }
+
+                            return g.create(item, item_text[1], css);
                         }))
         }
     }
@@ -473,14 +478,9 @@ alignment =
         p:paragraph*
     {
         // only set alignment on the g.list
-        g.enterGroup();
-        g.setAlignment(align);
-        var node = g.create(g.list, p);
-        g.exitGroup();
-
         return {
             name: align,
-            node: node
+            node: g.create(g.list, p, align)
         }
     }
 
