@@ -19,7 +19,8 @@ document =
 
 paragraph =
     vmode_macro
-    / b:break? skip_space p:text+               { b && g.break(); return g.create(g.paragraph, p); }
+    / b:break                                   { b && g.break(); return undefined; }
+    / skip_space p:text+                        { return g.create(g.paragraph, p); }
     / e:environment                             { g.continue(); return e; }  // after an environment, it is possible to contine without a new paragraph
 
 
@@ -62,7 +63,8 @@ primitive "primitive" =
                                               // a right bracket is only allowed if we are in an open (unbalanced) group
     / b:right_br                              & { return !g.isBalanced() } { return b; }
     / nbsp
-    / !break c:ctl_sym                          { return c; }
+    / ctrl_space
+    / ctrl_sym
     / symbol
     / charsym
     / utf8_char
@@ -581,11 +583,15 @@ skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefin
 space           "spaces"    = !break !linebreak !vmode_test
                               (sp / nl)+                        { return g.brsp; }
 
+ctrl_space  "control space" = escape (&nl &break / nl / sp)     { return g.brsp; }
+
+nbsp        "non-brk space" = "~"                               { return g.nbsp; }          // catcode 13 (active)
+
 break   "paragraph break"   = (skip_all_space escape par skip_all_space)+   // a paragraph break is either \par embedded in spaces,
                               /                                             // or
                               sp*
-                              (escape? nl comment* / comment+)              // a paragraph break is a newline...
-                              (sp* nl)+                                     // followed by one or more newlines, mixed with spaces,...
+                              (nl comment* / comment+)                      // a paragraph break is a newline...
+                              ((sp* nl)+ / EOF)                             // ...followed by one or more newlines, mixed with spaces,...
                               (sp / nl / comment)*                          // ...and optionally followed by any whitespace and/or comment
 
 linebreak       "linebreak" = skip_space escape "\\" skip_space '*'?
@@ -621,15 +627,13 @@ utf8_char   "utf8 char"     = !(sp / nl / escape / begin_group / end_group / mat
                                 superscript / subscript / ignore / comment / begin_optgroup / end_optgroup /* primitive */)
                                u:.                              { return g.character(u); }  // catcode 12 (other)
 
-nbsp        "non-brk space" = '~'                               { return g.nbsp; }          // catcode 13 (active)
-
 hyphen      "hyphen"        = "-"                               { return g.hyphen; }
 
 ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "---" / "--"
                                 / "``" / "''" / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
                                                                 { return g.ligature(l); }
 
-ctl_sym     "control symbol"= escape c:[$%#&~{}_^\-,/ \n\r\t]   { return g.controlSymbol(c); }
+ctrl_sym    "control symbol"= escape c:[$%#&~{}_^\-,/@]         { return g.controlSymbol(c); }
 
 
 

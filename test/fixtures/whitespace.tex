@@ -163,6 +163,38 @@ are spaces, but not\
 
 this.
 .
-<p>some ​ text. And​ these ​ are spaces, but not</p>
+<p>some ​ text. And​ these ​ are spaces, but not​ </p>
 <p>this.</p>
+.
+
+
+** escaped newlines in an empty document (or at the end of a document)
+.
+\
+
+
+.
+<p>​ </p>
+.
+
+
+** escaped newlines at the start of a paragraph
+.
+\
+x
+
+.
+<p>​ x</p>
+.
+
+
+** escaped newlines after an environment
+.
+\begin{center}
+\end{center}
+\
+
+.
+<div class="list center"></div>
+<p class="continue">​ </p>
 .

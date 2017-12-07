@@ -411,10 +411,10 @@ export class HtmlGenerator
 
     controlSymbol: (c) ->
         switch c
-        | ' ', '\n', '\r', '\t' => @brsp
         | '/'                   => @zwnj
         | ','                   => @thinsp
         | '-'                   => @shy
+        | '@'                   =>                  # nothing, in LaTeX this uses \spacefactor
         | _                     => @character c
 
 
