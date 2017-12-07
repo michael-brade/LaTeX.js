@@ -658,7 +658,7 @@ ctrl_sym    "control symbol"= escape c:[$%#&~{}_^\-,/@]         { return g.contr
 // \char"FF = hex FF
 // ^^FF     = hex FF
 // ^^^^FFFF = hex FFFF
-// ^^c      = if charcode(c) < 64 then fromCharCode(c+64) else fromCharCode(c-64) (TODO)
+// ^^c      = if charcode(c) < 64 then fromCharCode(c+64) else fromCharCode(c-64)
 charsym     = escape "symbol"
               begin_group
                 skip_space i:charnumber skip_space
@@ -666,6 +666,8 @@ charsym     = escape "symbol"
             / escape "char" i:charnumber                        { return String.fromCharCode(i); }
             / "^^^^" i:hex16                                    { return String.fromCharCode(i); }
             / "^^"   i:hex8                                     { return String.fromCharCode(i); }
+            / "^^"   c:.                                        { c = c.charCodeAt(0);
+                                                                  return String.fromCharCode(c < 64 ? c + 64 : c - 64); }
 
 
 charnumber  =     i:int                                         { return parseInt(i, 10); }
