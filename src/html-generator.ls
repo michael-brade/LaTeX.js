@@ -149,6 +149,8 @@ export class HtmlGenerator
 
     paragraph:                  "p"
 
+    list:                       do -> el = document.createElement "div"; el.setAttribute "class", "list"; return el
+
     unordered-list:             do -> el = document.createElement "ul"; el.setAttribute "class", "list"; return el
     ordered-list:               do -> el = document.createElement "ol"; el.setAttribute "class", "list"; return el
     listitem:                   "li"

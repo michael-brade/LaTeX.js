@@ -462,14 +462,20 @@ font =
 // alignment:  flushleft, flushright, center
 
 alignment =
-    align:("flushleft"/"flushright"/"center")   &{ g.setAlignment(align); return true; }
+    align:("flushleft"/"flushright"/"center")
     end_group
     skip_space
         p:paragraph*
     {
+        // only set alignment on the g.list
+        g.enterGroup();
+        g.setAlignment(align);
+        var node = g.create(g.list, p);
+        g.exitGroup();
+
         return {
             name: align,
-            node: g.create(g.block, p)
+            node: node
         }
     }
 

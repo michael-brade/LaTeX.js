@@ -182,23 +182,25 @@ h3.nocount::before {
 /*************/
 
 .center {
+    text-indent: 0;
     text-align: center;
 }
 
 .flushleft {
+    text-indent: 0;
     text-align: left;
 }
 
 .flushright {
+    text-indent: 0;
     text-align: right;
 }
 
-/* the environment form skips a line before and after */
-div.center,
-div.flushleft,
-div.flushright {
-    margin-top: 1em;
-    margin-bottom: 1em;
+
+/* alignment environments are lists (trivlist), so padding has to be removed */
+
+.list.center, .list.flushleft, .list.flushright {
+    padding-left: 0 !important;
 }
 
 
@@ -318,6 +320,8 @@ ul li ul li ul li {
 ul li ul li ul li ul li {
     list-style-type: '· ';
 }
+
+
 
 
 /* \itemsep and \parsep */
