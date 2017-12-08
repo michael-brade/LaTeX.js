@@ -258,8 +258,8 @@ export class HtmlGenerator
         * \textellipsis         he.decode '&hellip;'    # …   U+2026    \dots
         * \dots                 he.decode '&hellip;'
         * \textbullet           he.decode '&bull;'      # •   U+2022
-        * \textemdash           '\u2013'                # —
-        * \textendash           '\u2014'                # –
+        * \textendash           '\u2013'                # –
+        * \textemdash           '\u2014'                # —
         * \textdagger           '\u2020'                # †             \dag
         * \dag                  '\u2020'
         * \textdaggerdbl        '\u2021'                # ‡             \ddag
@@ -279,7 +279,7 @@ export class HtmlGenerator
         * \textordmasculine     he.decode '&ordm;'      # º   U+00BA
         * \textbar              '\u007C'                # |
         * \textbardbl           '\u2016'                # ‖
-        * \textbigcircle        '\u25CB'                # ○
+        * \textbigcircle        '\u25EF'                # ◯
         * \textcopyright        he.decode '&copy;'      # ©   U+00A9    \copyright
         * \copyright            he.decode '&copy;'
         * \textregistered       he.decode '&reg;'       # ®   U+00AE
