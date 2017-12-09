@@ -1,4 +1,4 @@
-# A PEG.js Parser to Convert LaTeX Documents to HTML5
+# A JavaScript LaTeX to HTML5 translator using a PEG.js parser
 
 This is a LaTeX to HTML5 translator written in JavaScript using PEG.js.
 `latex.js` for LaTeX is similar in spirit to `marked` for Markdown.
@@ -29,21 +29,20 @@ in a normal LaTeX document.
 The CLI has the following options:
 
 ```
-  Usage: latex.js [options] [files...]
+Usage: latex.js [options] [files...]
 
-  translate a LaTeX document to HTML5
+translate a LaTeX document to HTML5
 
 
-  Options:
+Options:
 
-    -V, --version            output the version number
-    -b, --beautify           beautify the html (this may add/remove spaces unintentionally)
-    -e, --entities           encode HTML entities in the output instead of using UTF-8 characters
-    -s, --no-soft-hyphenate  don'insert soft hyphens (disables automatic hyphenation in the browser) (default: true)
-    -l, --language <lang>    set hyphenation language (default en) (default: en)
-    -o, --output <file>      specify output file, otherwise STDOUT will be used
-    -h, --help               output usage information
-
+  -V, --version            output the version number
+  -b, --beautify           beautify the html (this may add/remove spaces unintentionally)
+  -e, --entities           encode HTML entities in the output instead of using UTF-8 characters
+  -s, --no-soft-hyphenate  don'insert soft hyphens (disables automatic hyphenation in the browser) (default: true)
+  -l, --language <lang>    set hyphenation language (default en) (default: en)
+  -o, --output <file>      specify output file, otherwise STDOUT will be used
+  -h, --help               output usage information
 ```
 
 
