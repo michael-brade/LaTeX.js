@@ -310,7 +310,7 @@ li.customlabel > .itemlabel {
 
 li .itemlabel > span {
     position: absolute;
-    right: 0.7em;           /* TODO */
+    right: 0.5em;
     white-space: nowrap;
 }
 
@@ -426,9 +426,12 @@ dd {
 
 /* verse */
 
+.verse {
+    text-align: left;
+}
+
 .verse p {
     text-indent: -1.5em;
-    text-align: left;
 }
 
 

@@ -50,6 +50,7 @@
 
       \bigskip
 
+      \noindent
       Special characters, like those:
       \begin{center}
       \$ \& \% \# \_ \{ \} \~ \^ \textbackslash % \< \>  \"   % TODO cannot be typeset
@@ -57,7 +58,7 @@
       %
       have to be escaped.
 
-      Many symbols are accessible through macros. For instance: 30\,\textcelsius{} is
+      More than 200 symbols are accessible through macros. For instance: 30\,\textcelsius{} is
       86\,\textdegree{}F. % TODO: CMU Serif is missing textcelsius!
 
 
@@ -101,6 +102,7 @@
       The names for these dashes are: ‘-’ hyphen, ‘--’ en-dash, ‘---’ em-dash,
       and ‘$-$’ minus sign. \LaTeX.js outputs the actual true unicode character for those
       instead of using the hypen-minus.
+
 
 
       \subsection{Text and Paragraphs, Ligatures}
@@ -156,50 +158,29 @@
 
       \subsection{Environments}
 
-      We have already seen two environments: \texttt{itemize} and \texttt{center}. Also
-      supported are:
+      \subsubsection{Lists: Itemize, Enumerate, and Description}
+
+      The \texttt{itemize} environment is suitable for simple lists, the \texttt{enumerate} environment for
+      enumerated lists, and the \texttt{description} environment for descriptions.
 
       \begin{enumerate}
-      \item \texttt{enumerate}, like this one
-      \item \texttt{description}
-      \item \texttt{flushleft}
-      \item \texttt{flushright}
+          \item You can nest the list environments to your taste:
+              \begin{itemize}
+                  \item But it might start to look silly.
+                  \item[-] With a dash.
+              \end{itemize}
+          \item Therefore remember:
+              \begin{description}
+                  \item[Stupid] things will not become smart because they are in a list.
+                  \item[Smart] things, though, can be presented beautifully in a list.
+              \end{description}
+          \item Technical note: Viewing this in Chrome, however, will show too much vertical space at the end
+            of a nested environment (see above). On top of that, margin collapsing for inline-block boxes is
+              not allowed. Maybe using \texttt{dl} elements is too complicated for this and a simple nested
+              \texttt{div} should be used instead.
       \end{enumerate}
       %
-      Next will follow the \texttt{description} environment. Viewing this in Chrome will show too much vertical
-      space at the end of a nested environment. On top of that, margin collapsing for inline-block boxes is not
-      allowed. Maybe using \texttt{dl} elements is too complicated for this and a simple nested \texttt{div}
-      should be used instead.
-
-      \begin{description}
-        \item[term 1] And the description for the first term goes here. Some more text.
-          \begin{enumerate}
-            \item \texttt{enumerate}, like this one
-            \item \texttt{description}
-            \item \texttt{flushleft}
-            \item \texttt{flushright}
-          \end{enumerate}
-        \item[another one] And the description for the second term goes here. Some more text. And the description
-          for the second term goes here. Some more text. And the description for the second term goes here. Some more text.
-          \begin{description}
-            \item[term 1] A nested description. And the description for the first term goes here. Some more text.
-            \begin{enumerate}
-              \item \texttt{enumerate}, like this one
-              \item \texttt{description}
-              \item \texttt{flushleft}
-              \item \texttt{flushright}
-            \end{enumerate}
-            \item[another one] And the description for the second term goes here. Some more text.
-            \item[third one] Here we will have a separate paragraph, too.
-
-            And then some more of the description for the second term goes here. Some more text.
-          \end{description}
-        \item[third one] Here we will have a separate paragraph, too.
-
-        And then some more of the description for the second term goes here. Some more text.
-      \end{description}
-      %
-      Lists can be nested:
+      Lists can be deeply nested:
       %
       \begin{itemize}
         \item list text, level one
@@ -217,7 +198,10 @@
         \item list text, level one
         \item list text, level one
       \end{itemize}
-      %
+
+
+      \subsubsection{Flushleft, Flushright, and Center}
+
       The \texttt{flushleft} environment:
       %
       \begin{flushleft}
@@ -241,7 +225,35 @@
       \end{center}
 
 
-      \subsection{Maths}
+
+      \subsubsection{Quote, Quotation, and Verse}
+
+      The \texttt{quote} environment is useful for quotes, important phrases and examples.
+      A typographical rule of thumb for the line length is:
+      \begin{quote}
+      On average, no line should be longer than 66 characters.
+      \end{quote}
+
+      There are two similar environments: the \texttt{quotation} and the \texttt{verse} environments.
+      The \texttt{quotation} environment is useful for longer quotes going over several paragraphs,
+      because it indents the first line of each paragraph.
+
+      The \texttt{verse} environment is useful for poems where the line breaks are important.
+      The lines are separated by issuing a \texttt{\textbackslash\textbackslash} at the end of a line
+      and an empty line after each verse.
+
+      \begin{verse}
+      Humpty Dumpty sat on a wall:\\
+      Humpty Dumpty had a great fall.\\
+      All the King’s horses and all the King’s men\\
+      Couldn’t put Humpty together again.
+
+      {\raggedleft ---J.W. Elliott\par}
+      \end{verse}
+
+
+
+      \subsection{Mathematical Formulae}
 
       Math is typeset using KaTeX. Inline math:
       $
@@ -281,6 +293,15 @@
         \emph{sans-serif} font,}
         \texttt{or in
         \emph{typewriter} style.}
+
+      The environment form of the font commands is available, too:
+
+      \begin{center}
+      \begin{itshape}
+      This whole paragraph is emphasized, for instance.
+      \end{itshape}
+      \end{center}
+
 
       \subsection{An advice}
       \begin{center}
