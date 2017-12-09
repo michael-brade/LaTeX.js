@@ -1,4 +1,4 @@
-# A JavaScript LaTeX to HTML5 translator using a PEG.js parser
+# LaTeX to HTML5 translator using a PEG.js parser
 
 This is a LaTeX to HTML5 translator written in JavaScript using PEG.js.
 `latex.js` for LaTeX is similar in spirit to `marked` for Markdown.
@@ -23,7 +23,7 @@ npm install -g latex.js
 LaTeX.js is divided into a parser and a generator, so that in theory you could switch the
 generator to create e.g. plain text instead of HTML. Currently, only a HTML generator exists.
 
-LaTeX.js parses only text that comes between \begin{document} and \end{document}
+LaTeX.js parses only text that comes between `\begin{document}` and `\end{document}`
 in a normal LaTeX document.
 
 The CLI has the following options:
