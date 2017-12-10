@@ -70,6 +70,8 @@ unit tests.
 The following features I am just not interested in to implement (yet):
 
 * macro (re)definition
+* incorrect but legal markup in LaTeX won't produce the same result in LaTeX.js - like when using \raggedleft in the
+  middle of a paragraph; but the LaTeX.js result should be intuitively correct
 
 
 ## Limitations of LaTeX.js due to HTML and CSS
@@ -78,7 +80,8 @@ The following features in LaTeX just cannot be translated to HTML, not even when
 
 * TeX removes any whitespace from the beginning and end of a line, even consecutive ones that would be printed in the middle
   of a line, like `\ ` or `~` or ^^0020. This is not possible in HTML (yet - maybe it will be with CSS4).
-* `\hfill` in a paragraph of text is not possible
+* horizontal glue, like `\hfill` in a paragraph of text, is not possible
+* vertical glue makes no sense in HTML, and is impossible to emulate
 * `\vspace{}` with a negative value in horizontal mode, i.e. in the middle of a paragraph of text, is not possible
   (but this feature is useless anyway)
 
