@@ -547,11 +547,11 @@ export class HtmlGenerator
 
         # if continue then do not add parindent or parskip, we are not supposed to start a new paragraph
         if @_continue
-            classes = classes.trim! + " continue"
+            classes = classes + " continue"
             @break!
 
         if classes.trim!
-            el.setAttribute "class", classes.trim!
+            el.setAttribute "class", classes.replace(/\s+/g, ' ').trim!
 
         @_appendChildrenTo children, el
 
@@ -685,10 +685,10 @@ export class HtmlGenerator
 
     _inlineAttributes: ->
         cur = @_attrs.top
-        [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.textDecoration].join " " .trim!
+        [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.textDecoration].join(' ').replace(/\s+/g, ' ').trim!
 
     _blockAttributes: ->
-        [@_attrs.top.align].join " ".trim!
+        [@_attrs.top.align].join(' ').replace(/\s+/g, ' ').trim!
 
 
     # private helpers
