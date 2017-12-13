@@ -1,5 +1,83 @@
 @import url("../fonts/cmu.css");
 
+/*******************/
+/* default lengths */
+/*******************/
+
+:root {
+    --size: 10pt;
+    --line-height: 1.2;
+
+    --parindent: 1.5em;
+    --parskip: 0px;             /* needs to be a length, otherwise calc(2px + var(--parskip)) will return 0 */
+
+    --smallskipamount: 0.3rem;
+    --medskipamount: 0.6rem;
+    --bigskipamount: 1.2rem;
+
+    --marginparsep: 1.1rem;
+
+    --listparindent: 0px;
+    --itemindent: 0px;
+
+    --leftmargini: 2.5rem;
+    --leftmarginii: 2.2rem;
+    --leftmarginiii: 1.87rem;
+    --leftmarginiv: 1.7rem;
+    --leftmarginv: 1rem;
+    --leftmarginvi: 1rem;
+
+    --leftmargin: var(--leftmargini);
+
+    --labelsep: 0.5rem;
+}
+
+
+.twocolumn {
+    --parindent: 1em;
+
+    --marginparsep: 1rem;
+    --leftmargini: 2rem;
+    --leftmarginv: 0.5rem;
+    --leftmarginvi: 0.5rem;
+}
+
+
+.list {
+    --topsep: 0.8rem;
+    --parsep: 0.4rem;
+    --itemsep: 0.4rem;
+    --leftmargin: var(--leftmargini);
+}
+
+.list .list {
+    --topsep: 0.4rem;
+    --parsep: 0.2rem;
+    --itemsep: var(--parsep);
+    --leftmargin: var(--leftmarginii);
+}
+
+.list .list .list {
+    --topsep: 0.2rem;
+    --parsep: 0;
+    --itemsep: var(--topsep);
+    --leftmargin: var(--leftmarginiii);
+}
+
+.list .list .list .list {
+    --topsep: 0;
+    --leftmargin: var(--leftmarginiv);
+}
+
+.list .list .list .list .list {
+    --leftmargin: var(--leftmarginv);
+}
+
+.list .list .list .list .list .list {
+    --leftmargin: var(--leftmarginvi);
+}
+
+
 
 /***************/
 /* page layout */
@@ -39,7 +117,7 @@ body {
 html {
     font-family: "Computer Modern Serif", serif;
     text-align: justify;
-    line-height: 1.2;
+    line-height: var(--line-height);
     hyphens: auto;
 }
 
@@ -205,15 +283,13 @@ h3.nocount::before {
 /**********/
 
 
-/* paragraphs are indented */
-
 p, ul, ol, dl, div {
     margin: 0;
 }
 
 p {
-    text-indent: 1.5em;
-    /* should be 1em with twocolumn layout */
+    margin-top: var(--parskip);
+    text-indent: var(--parindent);
 }
 
 
@@ -248,22 +324,22 @@ h4 + p, h4 + div.multicols > p:first-child,
 /* inline vertical space - this cannot be negative */
 .vspace-inline {
     display: inline-block;
-    height: calc(1em * 1.2);    /* full maximum height, including the leading: line-height - font-size */
-    vertical-align: top;        /* if bottom is used, space could be inserted above this line of text */
+    height: calc(1em * var(--line-height));     /* full maximum height, including the leading: line-height * font-size */
+    vertical-align: top;                        /* if bottom is used, space could be inserted above this line of text */
 }
 
 
 /* predefined vertical spaces */
 .smallskip {
-    margin-bottom: 0.25rem;
+    margin-bottom: var(--smallskipamount);
 }
 
 .medskip {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--medskipamount);
 }
 
 .bigskip {
-    margin-bottom: 1rem;
+    margin-bottom: var(--bigskipamount);
 }
 
 
@@ -272,33 +348,29 @@ h4 + p, h4 + div.multicols > p:first-child,
 /****************/
 
 
-/* lists - first to fourth level */
+/* lists */
+
 .list {
-    margin-top: 0.8rem;     /* \topsep */
-    margin-bottom: 0.8rem;  /* \topsep */
-    padding-left: 2.5rem;   /* \leftmargin */
+    margin: calc(var(--topsep) + var(--parskip)) 0;
+    padding-left: var(--leftmargin);
 }
 
-.list .list {
-    margin: 0.4rem 0;
-    padding-left: 2.2rem;   /* \leftmargin */
+.list p:first-of-type {
+    text-indent: var(--itemindent);
 }
 
-.list .list .list {
-    margin: 0.2rem 0;
-    padding-left: 1.87rem;   /* \leftmargin */
+.list p + p {
+    margin-top: var(--parsep);
+    text-indent: var(--listparindent);
 }
 
-.list .list .list .list {
-    margin: 0;
-    padding-left: 1.7rem;   /* \leftmargin */
+.list li + li,
+.list dd + dt {
+    margin-top: calc(var(--itemsep) + var(--parsep));
 }
 
-.list p {
-    text-indent: 0;         /* \listparindent */
-}
 
-/**** labels ****/
+/* labels */
 
 li.customlabel {
     list-style: none;
@@ -310,7 +382,7 @@ li.customlabel > .itemlabel {
 
 li .itemlabel > span {
     position: absolute;
-    right: 0.5em;
+    right: var(--labelsep);
     white-space: nowrap;
 }
 
@@ -334,37 +406,6 @@ ul li ul li ul li ul li {
 
 
 
-
-/* \itemsep and \parsep */
-
-.list li + li,
-.list dd + dt {
-    margin-top: 0.8rem;     /* \itemsep + \parsep = 0.4em + 0.4em  */
-}
-
-.list p + p {
-    margin-top: 0.4rem;     /* \parsep */
-}
-
-.list .list li + li,
-.list .list dd + dt {
-    margin-top: 0.4rem;     /* \itemsep + \parsep = 0.2em + 0.2em  */
-}
-
-.list .list p + p {
-    margin-top: 0.2rem;     /* \parsep */
-}
-
-.list .list .list li + li,  /* \parsep = 0.2em */
-.list .list .list p + p,    /* \itemsp = 0 */
-.list .list .list dd + dt,
-{
-    margin-top: 0.2rem;
-}
-
-/* higher depths: \itemsep = \parsep = 0 */
-
-
 /* description */
 
 dd, dd > p:first-child {
@@ -384,24 +425,11 @@ dt {
 }
 
 .list dt {
-    margin-left: -2.5rem;   /* -padding-left of dl */
+    margin-left: calc(-1 * var(--leftmargin));
 }
-
-.list .list dt {
-    margin-left: -2.2rem;   /* -padding-left of dl */
-}
-
-.list .list .list dt {
-    margin-left: -1.87rem;   /* -padding-left of dl */
-}
-
-.list .list .list .list dt {
-    margin-left: -1.7rem;   /* -padding-left of dl */
-}
-
 
 dd {
-    margin-left: 0.5em;     /* \labelsep */
+    margin-left: var(--labelsep);
 }
 
 
