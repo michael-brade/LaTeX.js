@@ -434,7 +434,7 @@ dd {
 
 
 
-/* quote, quotation */
+/* quote, quotation, verse */
 
 .quote, .quotation, .verse {
     margin-left: 4rem  !important;       /* \leftmargin */
@@ -442,25 +442,21 @@ dd {
     padding: 0 !important;
 }
 
-.quote p {
-    text-indent: 0;
+.quotation {
+    --parsep: 0px;
+    --itemindent: 1.5em;
+    --listparindent: var(--itemindent);
 }
-
-.quotation p {
-    text-indent: 1.5em;
-    margin-top: 0 !important;
-}
-
-
-/* verse */
 
 .verse {
     text-align: left;
+
+    --itemindent: -1.5em;
+    --listparindent: var(--itemindent);
 }
 
-.verse p {
-    text-indent: -1.5em;
-}
+
+
 
 
 /* the TeX and LaTeX logos */
