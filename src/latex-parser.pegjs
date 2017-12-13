@@ -323,7 +323,7 @@ lengthgroup     =   skip_space begin_group skip_space l:length end_group
 
 // hyperref
 
-url_charset     =   char/digit/hyphen/punctuation/"#"/"&"/escape? "%" { return "%" }
+url_charset     =   char/digit/punctuation/"-"/"#"/"&"/escape? "%" { return "%" }
                 /   . &{ error("illegal char in url given"); }
 
 url             =   "url"   skip_space begin_group
