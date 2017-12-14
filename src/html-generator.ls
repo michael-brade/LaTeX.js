@@ -129,13 +129,8 @@ export class HtmlGenerator
     nbsp:                       he.decode "&nbsp;"      # U+00A0
     zwnj:                       he.decode "&zwnj;"      # U+200C  prevent ligatures
     shy:                        he.decode "&shy;"       # U+00AD  word break/hyphenation marker
-
     thinsp:                     he.decode "&thinsp;"    # U+2009
 
-    hyphen:                     he.decode "&hyphen;"    # U+2010
-    minus:                      he.decode "&minus;"     # U+2212
-    endash:                     he.decode "&ndash;"     # U+2013
-    emdash:                     he.decode "&mdash;"     # U+2014
 
 
     # typographic elements
@@ -217,8 +212,27 @@ export class HtmlGenerator
         * '>>'                  he.decode '&raquo;'     #     U+00BB
     ])
 
+    diacritics = new Map([
+        * \b                   ['\u0332', '\u005F']     # first: combining char, second: standalone char
+        * \c                   ['\u0327', '\u00B8']
+        * \d                   ['\u0323', '\u200B \u0323']
+        * \H                   ['\u030B', '\u02DD']
+        * \k                   ['\u0328', '\u02DB']
+        * \r                   ['\u030A', '\u02DA']
+        * \u                   ['\u0306', '\u02D8']
+        * \v                   ['\u030C', '\u02C7']
+        * \"                   ['\u0308', '\u00A8']
+        * \~                   ['\u0303', '\u007E']
+        * \^                   ['\u0302', '\u005E']
+        * \`                   ['\u0300', '\u0060']
+        * \'                   ['\u0301', '\u00B4']
+        * \=                   ['\u0304', '\u00AF']
+        * \.                   ['\u0307', '\u02D9']
+    ])
+
     symbols = new Map([
         # spaces
+        * \space                ' '
         * \nobreakspace         he.decode '&nbsp;'      #     U+00A0
         * \thinspace            he.decode '&thinsp;'    #     U+2009
         * \enspace              he.decode '&ensp;'      #     U+2002   (en quad: U+2000)
@@ -236,12 +250,16 @@ export class HtmlGenerator
         * \textgreater          '>'                     #     U+003E
         * \textasciitilde       '˜'                     #     U+007E    \~{}
         * \textbackslash        '\u005C'                #     U+005C
+        * \lbrack               '['
+        * \rbrack               ']'
         * \textbraceleft        '{'                     #     U+007B    \{
         * \textbraceright       '}'                     #     U+007D    \}
         * \textdollar           '$'                     #     U+0024    \$
         * \textunderscore       '_'                     #     U+005F    \_
 
         # non-ASCII letters
+        * \AA                   '\u00C5'                # Å
+        * \aa                   '\u00E5'                # å
         * \AE                   he.decode '&AElig;'     # Æ   U+00C6
         * \ae                   he.decode '&aelig;'     # æ   U+00E6
         * \IJ                   he.decode '&IJlig;'     # Ĳ   U+0132
@@ -499,12 +517,33 @@ export class HtmlGenerator
     character: (c) ->
         c
 
+    hyphen: ->
+        if @_attrs.top.fontFamily == 'tt'
+            '-'                                         # U+002D
+        else
+            he.decode "&hyphen;"                        # U+2010
+
     ligature: (l) ->
         # no ligatures in tt
         if @_attrs.top.fontFamily == 'tt'
             l
         else
             ligatures.get l
+
+    hasSymbol: (name) ->
+        symbols.has name
+
+    symbol: (name) ->
+        symbols.get name
+
+    hasDiacritic: (d) ->
+        diacritics.has d
+
+    diacritic: (d, c) ->
+        if not c
+            diacritics.get(d)[1]
+        else
+            c + diacritics.get(d)[0]
 
     controlSymbol: (c) ->
         switch c
@@ -610,12 +649,6 @@ export class HtmlGenerator
             throwOnError: false
         f
 
-
-    hasSymbol: (name) ->
-        symbols.has name
-
-    getSymbol: (name) ->
-        symbols.get name
 
 
     hasMacro: (name) ->

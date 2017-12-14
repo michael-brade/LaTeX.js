@@ -67,6 +67,7 @@ primitive "primitive" =
     / b:right_br                              & { return !g.isBalanced() } { return b; }
     / nbsp
     / ctrl_space
+    / diacritic
     / ctrl_sym
     / symbol
     / charsym
@@ -78,7 +79,18 @@ symbol "symbol macro" =
     escape name:identifier &{ return g.hasSymbol(name); }
     skip_space
     {
-        return g.getSymbol(name);
+        return g.symbol(name);
+    }
+
+
+diacritic "diacritic macro" =
+    escape
+    d:$(char !char / !char .)  &{ return g.hasDiacritic(d); }
+    skip_space
+    c:(begin_group c:primitive? end_group s:space? { return g.diacritic(d, c) + (s ? s:""); }
+      /            c:primitive                     { return g.diacritic(d, c); })
+    {
+        return c;
     }
 
 
@@ -639,13 +651,13 @@ utf8_char   "utf8 char"     = !(sp / nl / escape / begin_group / end_group / mat
                                 superscript / subscript / ignore / comment / begin_optgroup / end_optgroup /* primitive */)
                                u:.                              { return g.character(u); }  // catcode 12 (other)
 
-hyphen      "hyphen"        = "-"                               { return g.hyphen; }
+hyphen      "hyphen"        = "-"                               { return g.hyphen(); }
 
 ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "---" / "--"
                                 / "``" / "''" / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
                                                                 { return g.ligature(l); }
 
-ctrl_sym    "control symbol"= escape c:[$%#&~{}_^\-,/@]         { return g.controlSymbol(c); }
+ctrl_sym    "control symbol"= escape c:[$%#&{}_\-,/@]           { return g.controlSymbol(c); }
 
 
 
