@@ -161,6 +161,8 @@ hmode_macro =
     / textnormal / emph / underline / url / href
 
     / smbskip_hmode / hspace / vspace_hmode
+
+    / verb
     )
     { return m; }
 
@@ -327,6 +329,21 @@ length          =   l:float u:length_unit (plus float length_unit)? (minus float
 
 lengthgroup     =   skip_space begin_group skip_space l:length end_group
                     { return l; }
+
+
+// verb - one-line verbatim text
+
+verb            =   "verb" s:"*"? skip_space !char
+                    b:.
+                        v:$(!nl t:. !{ return b == t; })*
+                    e:.
+                    {
+                        b == e || error("\\verb is missing its end delimiter: " + b);
+                        if (s)
+                            v = v.replace(/ /g, g.visp);
+
+                        return g.create(g.verb, g.createVerbatim(v, true));
+                    }
 
 
 // label, ref

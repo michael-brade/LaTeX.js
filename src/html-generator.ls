@@ -127,6 +127,7 @@ export class HtmlGenerator
     sp:                         ' '
     brsp:                       '\u200B '               # U+200B + ' ' breakable but non-collapsible space
     nbsp:                       he.decode "&nbsp;"      # U+00A0
+    visp:                       he.decode "&blank;"     # U+2423  visible space
     zwnj:                       he.decode "&zwnj;"      # U+200C  prevent ligatures
     shy:                        he.decode "&shy;"       # U+00AD  word break/hyphenation marker
     thinsp:                     he.decode "&thinsp;"    # U+2009
@@ -179,6 +180,8 @@ export class HtmlGenerator
                                         el.setAttribute "href", u
                                         return el
 
+    verb:                       "code"
+    verbatim:                   "pre"
 
 
 
@@ -187,6 +190,7 @@ export class HtmlGenerator
         type in [
             @inline-block
             @emph
+            @verb
             @linebreak
             @link
         ]
@@ -594,9 +598,15 @@ export class HtmlGenerator
 
         @_appendChildrenTo children, el
 
+    # create a text node that has font attributes set and allows for hyphenation
     createText: (t) ->
         return if not t
         @_wrapWithAttributes document.createTextNode if @_options.hyphenate then @_h.hyphenateText t else t
+
+    # create a pure text node without font attributes and no hyphenation
+    createVerbatim: (t) ->
+        return if not t
+        document.createTextNode t
 
     createFragment: (children) ->
         return if not children or !children.length

@@ -44,8 +44,8 @@
 
       \begin{itemize}
           \item \texttt{\textbackslash symbol\{"00A9\}}: \symbol{"00A9}
-          \item \texttt{\textbackslash char"A9}: \char"A9
-          \item \texttt{\^{}\^{}A9 or \^{}\^{}\^{}\^{}00A9}: ^^A9 or ^^^^00A9
+          \item \verb|\char"A9|: \char"A9
+          \item \verb|^^A9 or ^^^^00A9|: ^^A9 or ^^^^00A9
       \end{itemize}
 
       \bigskip
@@ -107,10 +107,9 @@
 
       \subsection{Text and Paragraphs, Ligatures}
 
-      An empty line starts a new paragraph, and so does \texttt{\textbackslash par}.
+      An empty line starts a new paragraph, and so does \verb|\par|.
       \par Like this. A new line usually starts automatically when the previous one is
-      full. However, using \texttt{\textbackslash newline} or \texttt{\textbackslash
-      \textbackslash},\newline one can force \\ to start a new line.
+      full. However, using \verb+\newline+ or \verb|\\|,\newline one can force \\ to start a new line.
 
       Ligatures are supported as well, for instance:
 
