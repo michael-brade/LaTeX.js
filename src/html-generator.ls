@@ -217,21 +217,21 @@ export class HtmlGenerator
     ])
 
     diacritics = new Map([
-        * \b                   ['\u0332', '\u005F']     # first: combining char, second: standalone char
-        * \c                   ['\u0327', '\u00B8']
-        * \d                   ['\u0323', '\u200B \u0323']
-        * \H                   ['\u030B', '\u02DD']
-        * \k                   ['\u0328', '\u02DB']
-        * \r                   ['\u030A', '\u02DA']
-        * \u                   ['\u0306', '\u02D8']
-        * \v                   ['\u030C', '\u02C7']
-        * \"                   ['\u0308', '\u00A8']
-        * \~                   ['\u0303', '\u007E']
-        * \^                   ['\u0302', '\u005E']
-        * \`                   ['\u0300', '\u0060']
-        * \'                   ['\u0301', '\u00B4']
-        * \=                   ['\u0304', '\u00AF']
-        * \.                   ['\u0307', '\u02D9']
+        * \b                    ['\u0332', '\u005F']        # _  first: combining char, second: standalone char
+        * \c                    ['\u0327', '\u00B8']        # ¸
+        * \d                    ['\u0323', '\u200B \u0323'] #
+        * \H                    ['\u030B', '\u02DD']        # ˝
+        * \k                    ['\u0328', '\u02DB']        # ˛
+        * \r                    ['\u030A', '\u02DA']        # ˚
+        * \u                    ['\u0306', '\u02D8']        # ˘
+        * \v                    ['\u030C', '\u02C7']        # ˇ
+        * \"                    ['\u0308', '\u00A8']        # ¨
+        * \~                    ['\u0303', '\u007E']        # ~
+        * \^                    ['\u0302', '\u005E']        # ^
+        * \`                    ['\u0300', '\u0060']        # `
+        * \'                    ['\u0301', '\u00B4']        # ´
+        * \=                    ['\u0304', '\u00AF']        # ¯
+        * \.                    ['\u0307', '\u02D9']        # ˙
     ])
 
     symbols = new Map([
@@ -491,7 +491,7 @@ export class HtmlGenerator
 
     _dom:   null
     _attrs: null        # attribute stack
-    _groups: null       # grouping stack
+    _groups: null       # grouping stack, keeps track of difference between opening and closing brackets
 
     _continue: false
 
@@ -738,8 +738,9 @@ export class HtmlGenerator
 
     _appendChildrenTo: (children, parent) ->
         if children
-            for i to children.length
-                parent.appendChild children[i] if children[i]?
+            if Array.isArray children
+                for i to children.length
+                    parent.appendChild children[i] if children[i]?
             else
                 parent.appendChild children
 

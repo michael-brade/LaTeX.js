@@ -133,7 +133,7 @@ optgroup "optional argument" =
     }
 
 
-// macros that work in horizontal and vertical mode
+// macros that work in horizontal and vertical mode (those basically don't produce text)
 macro =
     escape
     m:(
@@ -359,7 +359,7 @@ url             =   "url"   skip_space begin_group
                         url:(!end_group c:url_charset {return c;})+
                     end_group
                     {
-                        return g.create(g.link(url.join("")), [g.createText(url.join(""))]);
+                        return g.create(g.link(url.join("")), g.createText(url.join("")));
                     }
 
 href            =   "href"  skip_space begin_group
@@ -531,7 +531,7 @@ multicols =
          )
     pars:paragraph*
     {
-        var node = g.create(g.multicols(conf.cols), g.createFragment(pars))
+        var node = g.create(g.multicols(conf.cols), pars)
         return {
             name: name,
             node: g.createFragment([conf.pre, node])
@@ -624,7 +624,7 @@ skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefin
 space           "spaces"    = !break !linebreak !vmode_test
                               (sp / nl)+                        { return g.brsp; }
 
-ctrl_space  "control space" = escape (&nl &break / nl / sp)     { return g.brsp; }
+ctrl_space  "control space" = escape (&nl &break / nl / sp)     { return g.brsp; }          // latex.ltx, line 540
 
 nbsp        "non-brk space" = "~"                               { return g.nbsp; }          // catcode 13 (active)
 
