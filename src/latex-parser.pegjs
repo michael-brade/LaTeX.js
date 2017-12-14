@@ -562,6 +562,7 @@ math =
 
 inline_math =
     math_shift            m:$math_primitive+ math_shift            { return g.parseMath(m, false); }
+    / escape "("          m:$math_primitive+ escape ")"            { return g.parseMath(m, false); }
 
 display_math =
     math_shift math_shift m:$math_primitive+ math_shift math_shift { return g.parseMath(m, true); }
