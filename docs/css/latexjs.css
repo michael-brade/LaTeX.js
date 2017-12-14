@@ -27,8 +27,7 @@ section {
 }
 
 section > h1 {
-  grid-column-start: 1;
-  grid-column-end: span 3;
+  grid-column: 1 / -1;
 }
 
 
