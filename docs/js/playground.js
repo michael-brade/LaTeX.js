@@ -32,9 +32,9 @@ module.exports.compile = function(latex, preview) {
                 location: excerpt(latex, definedOrElse(e.location.start.offset, 0))
             };
 
-            preview.innerHTML = "<pre>ERROR: Parsing failure:\n\n" + errorMessage(error, true) + "</pre>"
+            preview.innerHTML = '<pre class="error">ERROR: Parsing failure:\n\n' + errorMessage(error, true) + '</pre>'
         } else {
-            preview.innerHTML = "<pre>ERROR: " + e.message + "</pre>";
+            preview.innerHTML = '<pre class="error">ERROR: ' + e.message + '</pre>';
         }
         console.error(e)
     }
