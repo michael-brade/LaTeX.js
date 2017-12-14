@@ -279,6 +279,15 @@ h3.nocount::before {
 
 
 /**********/
+/* macros */
+/**********/
+
+code {
+    white-space: pre;
+}
+
+
+/**********/
 /* spaces */
 /**********/
 
