@@ -712,4 +712,4 @@ int   "integer value"   = $[0-9]+
 oct   "octal value"     = $[0-7]+
 hex   "hex digit"       = [a-f0-9]i
 
-float "float value"     = $([+\-]? (int? ('.' int?)? / '.' int))
+float "float value"     = $([+\-]? (int ('.' int?)? / '.' int))
