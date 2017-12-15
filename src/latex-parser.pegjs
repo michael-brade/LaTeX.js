@@ -661,7 +661,7 @@ end_optgroup                = "]"                               { return undefin
 char        "letter"        = c:[a-z]i                          { return g.character(c); }  // catcode 11
 digit       "digit"         = n:[0-9]                           { return g.character(n); }  // catcode 12 (other)
 punctuation "punctuation"   = p:[.,;:\*/()!?=+<>]               { return g.character(p); }  // catcode 12
-quotes      "quotes"        = q:[“”"'«»]                        { return g.character(q); }  // catcode 12
+quotes      "quotes"        = q:[`']                            { return g.textquote(q); }  // catcode 12
 left_br     "left bracket"  = b:"["                             { return g.character(b); }  // catcode 12
 right_br    "right bracket" = b:"]"                             { return g.character(b); }  // catcode 12
 
@@ -672,7 +672,7 @@ utf8_char   "utf8 char"     = !(sp / nl / escape / begin_group / end_group / mat
 hyphen      "hyphen"        = "-"                               { return g.hyphen(); }
 
 ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "---" / "--"
-                                / "``" / "''" / "!´" / "?´" / "<<" / ">>")    // TODO: add "' and "`?
+                                / "``" / "''" / "!´" / "?´" / "<<" / ">>")
                                                                 { return g.ligature(l); }
 
 ctrl_sym    "control symbol"= escape c:[$%#&{}_\-,/@]           { return g.controlSymbol(c); }

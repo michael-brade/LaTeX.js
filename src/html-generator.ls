@@ -214,6 +214,10 @@ export class HtmlGenerator
 
         * '<<'                  he.decode '&laquo;'     #     U+00AB
         * '>>'                  he.decode '&raquo;'     #     U+00BB
+
+        # defined by german
+        * '"`'                  he.decode '&bdquo;'     # „   U+201E  \quotedblbase
+        * '"\''                 he.decode '&ldquo;'     # “   U+201C  \textquotedblleft
     ])
 
     diacritics = new Map([
@@ -289,8 +293,10 @@ export class HtmlGenerator
 
         # quotes
         * \textquotesingle      "'"                     # '   U+0027
-        * \textquoteleft        he.decode '&lsquo;'     # ‘   U+2018
-        * \textquoteright       he.decode '&rsquo;'     # ’   U+2019
+        * \textquoteleft        he.decode '&lsquo;'     # ‘   U+2018    \lq
+        * \lq                   he.decode '&lsquo;'
+        * \textquoteright       he.decode '&rsquo;'     # ’   U+2019    \rq
+        * \rq                   he.decode '&rsquo;'
         * \textquotedbl         he.decode '&quot;'      # "   U+0022
         * \textquotedblleft     he.decode '&ldquo;'     # “   U+201C
         * \textquotedblright    he.decode '&rdquo;'     # ”   U+201D
@@ -520,6 +526,11 @@ export class HtmlGenerator
 
     character: (c) ->
         c
+
+    textquote: (q) ->
+        switch q
+        | '`'   => symbols.get "textquoteleft"
+        | '\''  => symbols.get "textquoteright"
 
     hyphen: ->
         if @_attrs.top.fontFamily == 'tt'
