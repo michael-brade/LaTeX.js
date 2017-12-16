@@ -142,6 +142,8 @@ macro =
     / fontsize
 
     / centering / raggedright / raggedleft
+
+    / setlength / addtolength
     )
     { return m; }
 
@@ -160,6 +162,7 @@ hmode_macro =
     / textnormal / emph / underline / url / href
 
     / smbskip_hmode / hspace / vspace_hmode
+    / the
 
     / verb
     )
@@ -326,8 +329,33 @@ length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") !char
 length          =   l:float u:length_unit (plus float length_unit)? (minus float length_unit)?
                     { return l + u; }
 
+// TODO: should be able to use variables and maths: 2\parskip etc.
 lengthgroup     =   skip_space begin_group skip_space l:length end_group
                     { return l; }
+
+lengthidgroup   =   skip_space begin_group skip_space escape id:identifier skip_space end_group
+                    { return id; }
+
+setlength       =   "setlength"  id:lengthidgroup l:lengthgroup
+                    { g.setLength(id, l); }
+
+addtolength     =   "addtolength" id:lengthidgroup l:lengthgroup
+                    { g.setLength(id, l); }
+
+the             =   "the" skip_space escape id:identifier skip_space
+                    { return g.theLength(id); }
+
+// settoheight     =
+// settowidth      =
+// settodepth      =
+
+
+// get the natural size of a box
+// width           =
+// height          =
+// depth           =
+// totalheight     =
+
 
 
 // verb - one-line verbatim text

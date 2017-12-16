@@ -318,7 +318,7 @@
       The source of \LaTeX.js is here on GitHub: \url{https://github.com/michael-brade/LaTeX.js}
     </textarea>
 
-    <iframe id="preview" sandbox="allow-same-origin" srcdoc="<!DOCTYPE html>
+    <iframe id="preview" sandbox="allow-same-origin allow-scripts" srcdoc="<!DOCTYPE html>
       <html>
         <head>
           <link rel='stylesheet' type='text/css' href='css/article.css'>
@@ -330,6 +330,22 @@
                 margin: 2em -5em;
             }
           </style>
+
+          <script>
+              function getVariable(el, propertyName) {
+                return String(getComputedStyle(el).getPropertyValue('--' + propertyName)).trim();
+              };
+
+              function processTheElements() {
+                var thes = document.querySelectorAll('.the');
+                for (var i = 0; i < thes.length; i++) {
+                  var v = thes[i].getAttribute('display-var');
+                  thes[i].textContent = getVariable(thes[i], v);
+                }
+              }
+
+              document.addEventListener('change', processTheElements);
+          </script>
 
           <title>LaTeX preview</title>
         </head>
@@ -370,6 +386,7 @@
 
     editor.on('change', function(e) {
       Playground.compile(editor.getValue(), iframe.contentDocument.body)
+      iframe.contentDocument.dispatchEvent(new Event('change'))
     })
   </script>
 

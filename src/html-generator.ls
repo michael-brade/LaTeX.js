@@ -749,6 +749,16 @@ export class HtmlGenerator
         [@_attrs.top.align].join(' ').replace(/\s+/g, ' ').trim!
 
 
+    # lengths
+
+    setLength: (id, length) !->
+        console.log "LENGTH:", id, length
+
+    theLength: (id) ->
+        l = @create @inline-block, undefined, "the"
+        l.setAttribute "display-var", id
+        l
+
     # private helpers
 
     _appendChildrenTo: (children, parent) ->
