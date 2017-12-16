@@ -2,6 +2,7 @@ require! {
     he
     katex: { default: katex }
     hypher: Hypher
+    'svg.js': SVG
 }
 
 
@@ -491,6 +492,8 @@ export class HtmlGenerator
 
 
     ### public instance vars (vars beginning with "_" are meant to be private!)
+
+    SVG: SVG
 
     _options: null
     _macros: null

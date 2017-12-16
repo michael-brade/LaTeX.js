@@ -20,7 +20,6 @@ document =
 paragraph =
     vmode_macro
     / (escape noindent)? b:break                { b && g.break(); return undefined; }
-    // indent wins over noindent
     / skip_space n:(escape noindent)? p:text+   { return g.create(g.paragraph, p, n ? "noindent" : ""); }
     // continue: after an environment, it is possible to contine without a new paragraph
     / e:environment                             { g.continue(); return e; }
@@ -133,7 +132,7 @@ optgroup "optional argument" =
     }
 
 
-// macros that work in horizontal and vertical mode (those basically don't produce text)
+// macros that work in horizontal and vertical mode (those that basically don't produce text)
 macro =
     escape
     m:(
@@ -395,6 +394,7 @@ environment "environment" =
       / font
       / alignment
       / multicols
+      / picture
       / unknown_environment
     )
     id:end_env
@@ -537,6 +537,51 @@ multicols =
             node: g.createFragment([conf.pre, node])
         }
     }
+
+
+
+// graphics
+
+// \begin{picture}(width,height)(xoffset,yoffset)
+picture =
+    name:("picture") end_group
+    conf:(size:position offset:position? { return { size: size, offset: offset } }
+         / &{ error("picture error, required syntax: \\begin{picture}(width,height)[(xoffset,yoffset)]") }
+         )
+    pics:put*
+    {
+        var svg = g.createFragment();
+        var draw = g.SVG(svg)
+                    .size(conf.size.x, conf.size.y);
+
+        if (conf.offset)
+            draw.viewbox(conf.offset.x, conf.offset.y, conf.size.x, conf.size.y)
+
+        // here should the drawing happen
+        //draw.line(10, 20, 100, 30).stroke({ width: 1 })
+
+        // last, put the origin into the lower left
+        draw.flip('y', 0);
+
+        return {
+            name: name,
+            node: svg
+        }
+    }
+
+coordinate  = skip_space c:float skip_space
+            { return c; }
+
+position    = skip_space "(" x:coordinate "," y:coordinate ")" skip_space
+            { return { x: x, y: y }; }
+
+put = escape "put" position begin_group end_group
+
+
+pic_macro =
+    put
+
+
 
 
 // comment
