@@ -620,7 +620,8 @@ export class HtmlGenerator
         document.createTextNode t
 
     createFragment: (children) ->
-        return if not children or !children.length
+        # only create an empty fragment if explicitely requested: no arguments given
+        return if arguments.length > 0 and (not children or !children.length)
         f = document.createDocumentFragment!
         @_appendChildrenTo children, f
 
