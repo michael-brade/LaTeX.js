@@ -1,5 +1,6 @@
 {
     var g = options.generator;
+    g.setErrorFn(error);
 }
 
 
@@ -136,7 +137,9 @@ macro =
 
       / centering / raggedright / raggedleft
 
-      / setlength / addtolength
+      / setlength / addtolength / counters
+
+      / logging
     )
     { return undefined; }
 
@@ -331,8 +334,6 @@ setlength       =   "setlength"  id:macro_group l:lengthgroup
 addtolength     =   "addtolength" id:macro_group l:lengthgroup
                     { g.setLength(id, l); }
 
-the             =   "the" skip_space escape id:identifier skip_space
-                    { return g.theLength(id); }
 
 // settoheight     =
 // settowidth      =
@@ -344,6 +345,82 @@ the             =   "the" skip_space escape id:identifier skip_space
 // height          =
 // depth           =
 // totalheight     =
+
+
+// LaTeX counters (always global)
+
+counters        =   newcounter / stepcounter / addtocounter / setcounter / refstepcounter
+
+
+// \newcounter{section}[chapter]
+newcounter      =   "newcounter" c:id_group                 { g.newCount(c); }
+
+// \stepcounter{foo}
+stepcounter     =   "stepcounter" c:id_group                { g.setCount(c, g.count(c) + 1); }
+
+// \addtocounter{foo}{<expression>}
+addtocounter    =   "addtocounter" c:id_group n:expr_group  { g.setCount(c, g.count(c) + n); }
+
+// \setcounter{foo}{<expression>}
+setcounter      =   "setcounter" c:id_group n:expr_group    { g.setCount(c, n); }
+
+
+// \refstepcounter{foo}         // \stepcounter{foo}, and (locally) define \@currentlabel so that the next \label
+                                // will reference the correct current representation of the value
+refstepcounter  =   "refstepcounter" c:id_group             { g.setCount(c, g.count(c) + 1); /* TODO */}
+
+
+// \value{counter}
+value           =   escape "value" c:id_group               { return c; }
+
+// \real{<float>}
+real            =   escape "real" skip_space
+                    begin_group
+                        skip_space f:float skip_space
+                    end_group                               { return f; }
+
+// calc expressions
+
+num_value       =   "(" expr:num_expr ")"                   { return expr; }
+                  / integer
+                  / real
+                  / c:value                                 { return g.count(c); }
+
+num_factor      =   s:("+"/"-") skip_space n:num_factor     { return s == "-" ? -n : n; }
+                  / num_value
+
+num_term        =   head:num_factor tail:(skip_space ("*" / "/") skip_space num_factor)*
+                {
+                    var result = head, i;
+
+                    for (i = 0; i < tail.length; i++) {
+                        if (tail[i][1] === "*") { result = Math.trunc(result * tail[i][3]); }
+                        if (tail[i][1] === "/") { result = Math.trunc(result / tail[i][3]); }
+                    }
+
+                    return Math.trunc(result);
+                }
+
+num_expr        =   skip_space
+                        head:num_term tail:(skip_space ("+" / "-") skip_space num_term)*
+                    skip_space
+                {
+                    var result = head, i;
+
+                    for (i = 0; i < tail.length; i++) {
+                        if (tail[i][1] === "+") { result += tail[i][3]; }
+                        if (tail[i][1] === "-") { result -= tail[i][3]; }
+                    }
+
+                    return result;
+                }
+
+
+// grouped expression
+expr_group      =   skip_space
+                    begin_group n:num_expr end_group        { return n; }
+
+
 
 
 
@@ -798,3 +875,16 @@ float "float value"     = f:$(
                             [+\-]? (int ('.' int?)? / '.' int)
                           )                                     { return parseFloat(f); }
 
+
+// distinguish length/counter: if it's not a counter, it is a length
+the                     = "the" _ t:(
+                            c:value &{ return g.hasCount(c); }  { return g.createText("" + g.count(c)); }
+                            / escape id:identifier skip_space   { return g.theLength(id); }
+                        )                                       { return t; }
+
+// logging
+logging                 = "showthe" _ (
+                            c:value &{ return g.hasCount(c); }  { console.log(g.count(c)); }
+                            / escape l:identifier skip_space    { console.log(g.length(l)); }
+                        )
+                        / "message" m:arggroup                  { console.log(m.textContent); }

@@ -502,6 +502,8 @@ export class HtmlGenerator
     _attrs: null        # attribute stack
     _groups: null       # grouping stack, keeps track of difference between opening and closing brackets
 
+    _counters: null
+
     _continue: false
 
 
@@ -524,6 +526,12 @@ export class HtmlGenerator
         # stack of text attributes - entering a group adds another entry, leaving a group removes the top entry
         @_attrs = [{}]
         @_groups = []
+
+        @_counters = new Map()
+
+    setErrorFn: (e) !->
+        @_error = e
+
 
 
 
@@ -754,10 +762,31 @@ export class HtmlGenerator
     setLength: (id, length) !->
         console.log "LENGTH:", id, length
 
+    length: (id) !->
+        console.log "get length: #{id}"         # TODO
+
     theLength: (id) ->
         l = @create @inline-block, undefined, "the"
         l.setAttribute "display-var", id
         l
+
+    # counters
+
+    newCount: (id) !->
+        @_error "counter #{id} already defined!" if @hasCount id
+        @_counters.set id, 0
+
+    hasCount: (id) ->
+        @_counters.has id
+
+    setCount: (id, v) !->
+        @_error "no such counter: #{id}" if not @hasCount id
+        @_counters.set id, v
+
+    count: (id) ->
+        @_error "no such counter: #{id}" if not @hasCount id
+        @_counters.get id
+
 
     # private helpers
 
