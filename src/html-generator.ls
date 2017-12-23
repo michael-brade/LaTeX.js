@@ -91,6 +91,26 @@ class Macros
     fbox: (arg) ->
 
 
+    # #
+    # empty:
+    # null:
+
+    # # fonts (CSS?)
+    # encodingdefault:
+    # familydefault:
+    # seriesdefault:
+    # shapedefault:
+    # rmdefault:
+    # sfdefault:
+    # ttdefault:
+    # bfdefault:
+    # mddefault:
+    # updefault:
+    # sldefault:
+    # scdefault:
+    # itdefault:
+
+
     ## not yet...
     pagestyle: (arg) ->
 

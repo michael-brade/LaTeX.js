@@ -231,6 +231,12 @@ subparagraph    =   "subparagraph"  s:"*"?  t:arggroup { return g.create(g.subpa
 
 // ** font macros
 
+// fontencoding    =   "fontencoding" begin_group TODO end_group
+// fontfamily      =   "fontfamily"
+// fontseries      =   "fontseries"
+// fontshape       =   "fontshape"
+
+
 // commands
 
 textfamily      =   "text" f:("rm"/"sf"/"tt")       !char   &{ g.enterGroup(); g.setFontFamily(f); return true; }
@@ -309,6 +315,9 @@ smbbreak        =   s:$("small"/"med"/"big")"break" _    { return g.createVSpace
 // horizontal
 hspace          =   "hspace" "*"?    !char l:lengthgroup { return g.createHSpace(l); }
 
+indent          =   "indent"                        _    { /* TODO: hspace equal to parindent */ }
+
+
 //stretch         =   "stretch"               arggroup
 //hphantom        =   "hphantom"              _
 
@@ -316,6 +325,8 @@ hspace          =   "hspace" "*"?    !char l:lengthgroup { return g.createHSpace
 // dotfill         =
 // hrulefill       =
 
+
+hrule           =   "hrule"
 
 // lengths
 length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") _
@@ -719,6 +730,18 @@ math_primitive =
     / sp / nl / linebreak / comment
 
 
+/****************/
+/*   packages   */
+/****************/
+
+// TODO: rules when german package or babel was loaded
+//german =
+//ragged2e =
+
+// permit hyphenation after _ as text_-
+//underscore =
+
+
 // shortcut for end of token
 _                           = !char skip_space
 
@@ -787,6 +810,19 @@ linebreak       "linebreak" = skip_space escape "\\" skip_space '*'?
                                   if (l) return g.createBreakSpace(l);
                                   else   return g.create(g.linebreak);
                               }
+
+
+// macros
+
+showspaces                  = "showspaces"  _   { g.showSpaces(); }
+
+ignorespaces                = "ignorespaces"_   {}
+
+obeylines                   = "obeylines"   !char
+obeycr                      = "obeycr"      !char
+obeyspaces                  = "obeyspaces"  !char
+restorecr                   = "restorecr"   !char
+
 
 
 /* syntax tokens - LaTeX */
