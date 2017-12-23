@@ -214,7 +214,7 @@ unknown_macro =
 
 // ** sectioning
 
-tableofcontents =   "tableofcontents" !char skip_space {}
+tableofcontents =   "tableofcontents" _ {}
 
 part            =   "part"          s:"*"?  t:arggroup { return g.create(g.part, t); }
 chapter         =   "chapter"       s:"*"?  t:arggroup { return g.create(g.chapter, t); }
@@ -260,19 +260,18 @@ emph            =   "emph"  a:arggroup
 
 // declarations
 
-fontfamily      =   f:("rm"/"sf"/"tt")     "family" !char skip_space    { g.setFontFamily(f); }
-fontweight      =   w:("md"/"bf")          "series" !char skip_space    { g.setFontWeight(w); }
-fontshape       =   s:("up"/"it"/"sl"/"sc") "shape" !char skip_space    { g.setFontShape(s); }
+fontfamily      =   f:("rm"/"sf"/"tt")     "family" _    { g.setFontFamily(f); }
+fontweight      =   w:("md"/"bf")          "series" _    { g.setFontWeight(w); }
+fontshape       =   s:("up"/"it"/"sl"/"sc") "shape" _    { g.setFontShape(s); }
 
-normalfont      =   "normalfont"                    !char skip_space    { g.setFontFamily("rm");
-                                                                          g.setFontWeight("md");
-                                                                          g.setFontShape("up"); }
+normalfont      =   "normalfont"                    _    { g.setFontFamily("rm");
+                                                           g.setFontWeight("md");
+                                                           g.setFontShape("up"); }
 
-fontsize        =   s:("tiny"/"scriptsize"/"footnotesize"/"small"/"normalsize"/"large"/"Large"/"LARGE"/"huge"/"Huge")
-                    !char skip_space
+fontsize        =   s:("tiny"/"scriptsize"/"footnotesize"/"small"/"normalsize"/"large"/"Large"/"LARGE"/"huge"/"Huge") _
                     { g.setFontSize(s); }
 
-em              =   "em"                            !char skip_space    { g.setFontShape("em"); }       // TODO: TOGGLE em?!
+em              =   "em"                            _    { g.setFontShape("em"); }       // TODO: TOGGLE em?!
 
 
 // color
@@ -281,34 +280,34 @@ em              =   "em"                            !char skip_space    { g.setF
 
 // block level: alignment
 
-centering       =   "centering"                     !char skip_space    { g.setAlignment("center"); }
-raggedright     =   "raggedright"                   !char skip_space    { g.setAlignment("flushleft"); }
-raggedleft      =   "raggedleft"                    !char skip_space    { g.setAlignment("flushright"); }
+centering       =   "centering"                     _    { g.setAlignment("center"); }
+raggedright     =   "raggedright"                   _    { g.setAlignment("flushleft"); }
+raggedleft      =   "raggedleft"                    _    { g.setAlignment("flushright"); }
 
 
 
 // ** spacing macros
 
 // vertical
-vspace_hmode    =   "vspace" "*"?                   !char l:lengthgroup { return g.createVSpaceInline(l); }
-vspace_vmode    =   "vspace" "*"?                   !char l:lengthgroup { return g.createVSpace(l); }
+vspace_hmode    =   "vspace" "*"?    !char l:lengthgroup { return g.createVSpaceInline(l); }
+vspace_vmode    =   "vspace" "*"?    !char l:lengthgroup { return g.createVSpace(l); }
 
-smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  !char skip_space    { return g.createVSpaceSkipInline(s + "skip"); }
-smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  !char skip_space    { return g.createVSpaceSkip(s + "skip"); }
+smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _    { return g.createVSpaceSkipInline(s + "skip"); }
+smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _    { return g.createVSpaceSkip(s + "skip"); }
 
 // only in vmode possible
-addvspace       =   "addvspace"                     !char l:lengthgroup { return g.createVSpace(l); }   // TODO not correct?
-smbbreak        =   s:$("small"/"med"/"big")"break" !char skip_space    { return g.createVSpaceSkip(s + "skip"); }
+addvspace       =   "addvspace"      !char l:lengthgroup { return g.createVSpace(l); }   // TODO not correct?
+smbbreak        =   s:$("small"/"med"/"big")"break" _    { return g.createVSpaceSkip(s + "skip"); }
 
 //  \\[length] is defined in the linebreak rule further down
 
 
 
 // horizontal
-hspace          =   "hspace" "*"?                   !char l:lengthgroup { return g.createHSpace(l); }
+hspace          =   "hspace" "*"?    !char l:lengthgroup { return g.createHSpace(l); }
 
 //stretch         =   "stretch"               arggroup
-//hphantom        =   "hphantom"              !char skip_space
+//hphantom        =   "hphantom"              _
 
 // hfill           = \hspace{\fill}
 // dotfill         =
@@ -316,7 +315,7 @@ hspace          =   "hspace" "*"?                   !char l:lengthgroup { return
 
 
 // lengths
-length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") !char skip_space
+length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") _
                     { return u; }
 
 length          =   l:float u:length_unit (plus float length_unit)? (minus float length_unit)?
@@ -326,13 +325,10 @@ length          =   l:float u:length_unit (plus float length_unit)? (minus float
 lengthgroup     =   skip_space begin_group skip_space l:length end_group
                     { return l; }
 
-lengthidgroup   =   skip_space begin_group skip_space escape id:identifier skip_space end_group
-                    { return id; }
-
-setlength       =   "setlength"  id:lengthidgroup l:lengthgroup
+setlength       =   "setlength"  id:macro_group l:lengthgroup
                     { g.setLength(id, l); }
 
-addtolength     =   "addtolength" id:lengthidgroup l:lengthgroup
+addtolength     =   "addtolength" id:macro_group l:lengthgroup
                     { g.setLength(id, l); }
 
 the             =   "the" skip_space escape id:identifier skip_space
@@ -646,16 +642,19 @@ math_primitive =
     / sp / nl / linebreak / comment
 
 
+// shortcut for end of token
+_                           = !char skip_space
+
 /* kind of keywords */
 
-begin                       = "begin"       !char skip_space    {}
-end                         = "end"         !char skip_space    {}
+begin                       = "begin"   _   {}
+end                         = "end"     _   {}
 
-par                         = "par"         !char               {}
-noindent                    = "noindent"    !char skip_space    {}
+par                         = "par" !char   {}
+noindent                    = "noindent"_   {}
 
-plus                        = "plus"        !char skip_space    {}
-minus                       = "minus"       !char skip_space    {}
+plus                        = "plus"    _   {}
+minus                       = "minus"   _   {}
 
 
 
