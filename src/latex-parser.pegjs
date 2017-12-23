@@ -888,3 +888,68 @@ logging                 = "showthe" _ (
                             / escape l:identifier skip_space    { console.log(g.length(l)); }
                         )
                         / "message" m:arggroup                  { console.log(m.textContent); }
+
+
+
+// TeX counters
+
+tex_counters            = global / newcount / advance / multiply / divide
+
+
+// don't use \count or \countdef
+//count                   = "count"    _ i:integer
+//countdef                = "countdef" _
+
+global                  = "global"   _
+
+// get a new counter id, assign it to a name
+newcount                = "newcount" _ escape c:identifier skip_space   { g.newCount(c); }
+
+// convert integer to string
+number                  = "number"   _ expression
+
+
+// arithmetic
+advance                 = "advance"  _ c:count ("by" _)? v:expression   { g.setCount(c, g.count(c) + v); }
+multiply                = "multiply" _ c:count ("by" _)? v:expression   { g.setCount(c, g.count(c) * v); }
+divide                  = "divide"   _ c:count ("by" _)? v:expression   { g.setCount(c, g.count(c) / v); }
+
+// expressions
+assignment              = c:count "="? v:expression     { g.setCount(c, v); }
+
+
+
+// the following two rules are only used by the "high level" counter rules
+
+// parse a count variable only if it exists
+count                   = escape c:identifier &{ return g.hasCount(c); } _      { return c; }
+
+expression              = i:integer                     { return i; }
+                        / c:count                       { return g.count(c); }
+
+
+// conditionals - TODO: these are not going to work... the false cases must not have side-effects! This requires an AST :(
+ifnum                   = escape "ifnum"    _ c:count ("<"/">"/"=") d:count
+                            text+
+                          else
+                            text+
+                          fi
+
+ifodd                   = escape "ifodd"    _ c:count
+                            text+
+                          else
+                            text+
+                          fi
+
+ifcase                  = escape "ifcase"   _ c:count cases:(
+                            (text+)
+                            (or t:text+     { return t; })*
+                            (else t:text+   { return t; })?
+                          ) fi
+                          {
+                              return cases[c];
+                          }
+
+or                      = escape "or"       _
+else                    = escape "else"     _
+fi                      = escape "fi"       _
