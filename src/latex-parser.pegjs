@@ -73,25 +73,6 @@ primitive "primitive" =
     / utf8_char
 
 
-// returns a unicode char/string
-symbol "symbol macro" =
-    escape name:identifier &{ return g.hasSymbol(name); }
-    skip_space
-    {
-        return g.symbol(name);
-    }
-
-
-diacritic "diacritic macro" =
-    escape
-    d:$(char !char / !char .)  &{ return g.hasDiacritic(d); }
-    skip_space
-    c:(begin_group c:primitive? end_group s:space? { return g.diacritic(d, c) + (s ? s:""); }
-      /            c:primitive                     { return g.diacritic(d, c); })
-    {
-        return c;
-    }
-
 
 /**********/
 /* macros */
@@ -101,6 +82,18 @@ diacritic "diacritic macro" =
 identifier "identifier" =
     $(char / "_" / ":")+
 
+
+id_group =
+    skip_space begin_group skip_space
+        id:identifier
+    skip_space end_group
+    { return id; }
+
+macro_group =
+    skip_space begin_group skip_space
+        escape id:identifier
+    skip_space end_group
+    { return id; }
 
 
 // group balancing: groups have to be balanced inside arguments, inside environments, and inside a document.
@@ -135,17 +128,17 @@ optgroup "optional argument" =
 // macros that work in horizontal and vertical mode (those that basically don't produce text)
 macro =
     escape
-    m:(
-      fontfamily / fontweight / fontshape
-    / normalfont / em
+    (
+        fontfamily / fontweight / fontshape
+      / normalfont / em
 
-    / fontsize
+      / fontsize
 
-    / centering / raggedright / raggedleft
+      / centering / raggedright / raggedleft
 
-    / setlength / addtolength
+      / setlength / addtolength
     )
-    { return m; }
+    { return undefined; }
 
 
 // macros that only work in horizontal mode (include \leavevmode)
@@ -172,8 +165,8 @@ hmode_macro =
 // macros that only work in vertical mode (include \par or check for \ifvmode)
 vmode_macro =
     skip_all_space
-    m:macro
-    { return m; }
+    macro
+    { return undefined; }
   /
     skip_all_space
     escape
@@ -751,6 +744,23 @@ ligature    "ligature"      = l:("ffi" / "ffl" / "ff" / "fi" / "fl" / "---" / "-
 ctrl_sym    "control symbol"= escape c:[$%#&{}_\-,/@]           { return g.controlSymbol(c); }
 
 
+// returns a unicode char/string
+symbol      "symbol macro"  = escape name:identifier &{ return g.hasSymbol(name); } skip_space
+    {
+        return g.symbol(name);
+    }
+
+
+diacritic "diacritic macro" =
+    escape
+    d:$(char !char / !char .)  &{ return g.hasDiacritic(d); }
+    skip_space
+    c:(begin_group c:primitive? end_group s:space? { return g.diacritic(d, c) + (s ? s:""); }
+      /            c:primitive                     { return g.diacritic(d, c); })
+    {
+        return c;
+    }
+
 
 
 /* TeX language */
@@ -764,16 +774,16 @@ ctrl_sym    "control symbol"= escape c:[$%#&{}_\-,/@]           { return g.contr
 // ^^c      = if charcode(c) < 64 then fromCharCode(c+64) else fromCharCode(c-64)
 charsym     = escape "symbol"
               begin_group
-                skip_space i:charnumber skip_space
+                skip_space i:integer skip_space
               end_group                                         { return String.fromCharCode(i); }
-            / escape "char" i:charnumber                        { return String.fromCharCode(i); }
+            / escape "char" i:integer                           { return String.fromCharCode(i); }
             / "^^^^" i:hex16                                    { return String.fromCharCode(i); }
             / "^^"   i:hex8                                     { return String.fromCharCode(i); }
             / "^^"   c:.                                        { c = c.charCodeAt(0);
                                                                   return String.fromCharCode(c < 64 ? c + 64 : c - 64); }
 
 
-charnumber  =     i:int                                         { return parseInt(i, 10); }
+integer     =     i:int                                         { return parseInt(i, 10); }
             / "'" o:oct                                         { return parseInt(o, 8); }
             / '"' h:(hex16/hex8)                                { return h; }
 
@@ -785,4 +795,7 @@ int   "integer value"   = $[0-9]+
 oct   "octal value"     = $[0-7]+
 hex   "hex digit"       = [a-f0-9]i
 
-float "float value"     = f:$([+\-]? (int ('.' int?)? / '.' int))   { return parseFloat(f); }
+float "float value"     = f:$(
+                            [+\-]? (int ('.' int?)? / '.' int)
+                          )                                     { return parseFloat(f); }
+
