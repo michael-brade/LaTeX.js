@@ -63,6 +63,7 @@ dependencies:
 
     'commander': '2.12.x'
     'get-stdin': '5.x'
+    'js-beautify': '1.7.x'
 
     #'lodash': '4.x'
     #'cheerio': '0.x'
@@ -81,9 +82,9 @@ devDependencies:
 
     ### bundling
 
-    'webpack': '3.9.x'
+    'webpack': '3.10.x'
     'babel-loader': '8.0.0-beta.0'
-    'copy-webpack-plugin': '4.2.x'
+    'copy-webpack-plugin': '4.3.x'
 
     '@babel/core': '7.0.0-beta.33'
     '@babel/register': '7.0.0-beta.33'
@@ -95,7 +96,6 @@ devDependencies:
     'mocha': '4.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
-    'js-beautify': '1.7.x'
 
     'istanbul': '>= 0.4.x'
 

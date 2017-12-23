@@ -44,7 +44,8 @@
     "hyphenation.en-us": "*",
     "hyphenation.de": "*",
     "commander": "2.12.x",
-    "get-stdin": "5.x"
+    "get-stdin": "5.x",
+    "js-beautify": "1.7.x"
   },
   "devDependencies": {
     "livescript": "1.5.x",
@@ -52,16 +53,15 @@
     "mkdirp": "0.5.x",
     "rimraf": "2.6.x",
     "uglify-js": "3.2.x",
-    "webpack": "3.9.x",
+    "webpack": "3.10.x",
     "babel-loader": "8.0.0-beta.0",
-    "copy-webpack-plugin": "4.2.x",
+    "copy-webpack-plugin": "4.3.x",
     "@babel/core": "7.0.0-beta.33",
     "@babel/register": "7.0.0-beta.33",
     "@babel/plugin-syntax-object-rest-spread": "7.0.0-beta.33",
     "mocha": "4.x",
     "chai": "4.x",
     "chai-as-promised": "7.x",
-    "js-beautify": "1.7.x",
     "istanbul": ">= 0.4.x"
   },
   "repository": {
