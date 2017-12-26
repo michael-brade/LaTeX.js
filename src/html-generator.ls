@@ -21,7 +21,7 @@ class Macros
 
     # CTOR
     (generator) ->
-        @_generator = generator
+        @g = generator
 
 
     # make sure only one mandatory arg was given or throw an error
@@ -36,55 +36,55 @@ class Macros
     # inline macros
 
     echo: (args) ->
-        @_generator.createFragment args.map (x) ~>
+        @g.createFragment args.map (x) ~>
             if x.value
-                @_generator.createFragment [
-                    @_generator.createText if x.mandatory then "+" else "-"
+                @g.createFragment [
+                    @g.createText if x.mandatory then "+" else "-"
                     x.value
-                    @_generator.createText if x.mandatory then "+" else "-"
+                    @g.createText if x.mandatory then "+" else "-"
                 ]
 
     TeX: ->
         # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
-        tex = @_generator.create @_generator.inline-block
+        tex = @g.create @g.inline-block
         tex.setAttribute('class', 'tex')
 
-        tex.appendChild @_generator.createText 'T'
-        e = @_generator.create @_generator.inline-block
-        e.appendChild @_generator.createText 'e'
+        tex.appendChild @g.createText 'T'
+        e = @g.create @g.inline-block
+        e.appendChild @g.createText 'e'
         tex.appendChild e
-        tex.appendChild @_generator.createText 'X'
+        tex.appendChild @g.createText 'X'
 
         return tex
 
     LaTeX: ->
         # <span class="latex">L<span>a</span>T<span>e</span>X</span>
-        latex = @_generator.create @_generator.inline-block
+        latex = @g.create @g.inline-block
         latex.setAttribute('class', 'latex')
 
-        latex.appendChild @_generator.createText 'L'
-        a = @_generator.create @_generator.inline-block
-        a.appendChild @_generator.createText 'a'
+        latex.appendChild @g.createText 'L'
+        a = @g.create @g.inline-block
+        a.appendChild @g.createText 'a'
         latex.appendChild a
-        latex.appendChild @_generator.createText 'T'
-        e = @_generator.create @_generator.inline-block
-        e.appendChild @_generator.createText 'e'
+        latex.appendChild @g.createText 'T'
+        e = @g.create @g.inline-block
+        e.appendChild @g.createText 'e'
         latex.appendChild e
-        latex.appendChild @_generator.createText 'X'
+        latex.appendChild @g.createText 'X'
 
         return latex
 
 
     today: ->
-        @_generator.createText new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        @g.createText new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
 
     newline: ->
-        @_generator.create @_generator.linebreak
+        @g.create @g.linebreak
 
 
     negthinspace: ->
-        ts = @_generator.create @_generator.inline-block
+        ts = @g.create @g.inline-block
         ts.setAttribute 'class', 'negthinspace'
         return ts
 
