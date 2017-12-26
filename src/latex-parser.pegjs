@@ -144,7 +144,7 @@ macro =
 
       / centering / raggedright / raggedleft
 
-      / setlength / addtolength / counters
+      / lengths / counters
 
       / logging
     )
@@ -324,7 +324,9 @@ hspace          =   "hspace" "*"?    !char l:lengthgroup { return g.createHSpace
 // hrulefill       =
 
 
-// lengths
+// lengths (scoped)
+lengths         =   newlength / setlength / addtolength
+
 length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") _
                     { return u; }
 
@@ -335,11 +337,14 @@ length          =   l:float u:length_unit (plus float length_unit)? (minus float
 lengthgroup     =   skip_space begin_group skip_space l:length end_group
                     { return l; }
 
+newlength       =   "newlength" id:macro_group
+                    { g.newLength(id); }
+
 setlength       =   "setlength"  id:macro_group l:lengthgroup
                     { g.setLength(id, l); }
 
 addtolength     =   "addtolength" id:macro_group l:lengthgroup
-                    { g.setLength(id, l); }
+                    { g.setLength(id, g.length(id) + l); }
 
 
 // settoheight     =
@@ -746,6 +751,7 @@ noindent                    = "noindent"_   {}
 plus                        = "plus"    _   {}
 minus                       = "minus"   _   {}
 
+endinput                    = "endinput"_   .*
 
 
 /* syntax tokens - TeX's first catcodes that generate no output */
@@ -761,7 +767,7 @@ superscript                 = "^"                               { return undefin
 subscript                   = "_"                               { return undefined; }       // catcode 8
 ignore                      = "\0"                              { return undefined; }       // catcode 9
 
-EOF             "EOF"       = !.
+EOF             "EOF"       = !. / escape endinput
 
 
 
