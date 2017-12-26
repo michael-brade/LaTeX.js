@@ -772,20 +772,97 @@ export class HtmlGenerator
 
     # counters
 
-    newCount: (id) !->
-        @_error "counter #{id} already defined!" if @hasCount id
-        @_counters.set id, 0
+    newCount: (c, parent) !->
+        @_error "counter #{c} already defined!" if @hasCount c
+        @_error "no such counter: #{parent}" if parent and not @hasCount parent
+        @_counters.set c, 0
 
-    hasCount: (id) ->
-        @_counters.has id
+    hasCount: (c) ->
+        @_counters.has c
 
-    setCount: (id, v) !->
-        @_error "no such counter: #{id}" if not @hasCount id
-        @_counters.set id, v
+    setCount: (c, v) !->
+        @_error "no such counter: #{c}" if not @hasCount c
+        @_counters.set c, v
 
-    count: (id) ->
-        @_error "no such counter: #{id}" if not @hasCount id
-        @_counters.get id
+    stepCount: (c) ->
+        @setCount(c, @count(c) + 1);
+        # TODO: reset child counters
+
+    count: (c) ->
+        @_error "no such counter: #{c}" if not @hasCount c
+        @_counters.get c
+
+    refCount: (id) ->
+
+
+    # formatting counters
+
+    alph: (num) -> String.fromCharCode(96 + num)
+
+    Alph: (num) -> String.fromCharCode(64 + num)
+
+    arabic: (num) -> String(num)
+
+    roman: (num) ->
+        lookup =
+            * \m,  1000
+            * \cm, 900
+            * \d,  500
+            * \cd, 400
+            * \c,  100
+            * \xc, 90
+            * \l,  50
+            * \xl, 40
+            * \x,  10
+            * \ix, 9
+            * \v,  5
+            * \iv, 4
+            * \i,  1
+
+        _roman num, lookup
+
+    Roman: (num) ->
+        lookup =
+            * \M,  1000
+            * \CM, 900
+            * \D,  500
+            * \CD, 400
+            * \C,  100
+            * \XC, 90
+            * \L,  50
+            * \XL, 40
+            * \X,  10
+            * \IX, 9
+            * \V,  5
+            * \IV, 4
+            * \I,  1
+
+        _roman num, lookup
+
+
+    _roman = (num, lookup) ->
+        roman = ""
+
+        for i in lookup
+            while num >= i[1]
+                roman += i[0]
+                num -= i[1]
+
+        return roman
+
+    fnsymbol: (num) ->
+        switch num
+        |   1   => @symbol \textasteriskcentered
+        |   2   => @symbol \textdagger
+        |   3   => @symbol \textdaggerdbl
+        |   4   => @symbol \textsection
+        |   5   => @symbol \textparagraph
+        |   6   => @symbol \textbardbl
+        |   7   => @symbol(\textasteriskcentered) + @symbol \textasteriskcentered
+        |   8   => @symbol(\textdagger) + @symbol \textdagger
+        |   9   => @symbol(\textdaggerdbl) + @symbol \textdaggerdbl
+        |   _   => @_error "fnsymbol value must be between 1 and 9"
+
 
 
     # private helpers

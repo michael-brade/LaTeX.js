@@ -70,6 +70,7 @@ primitive "primitive" =
     / diacritic
     / ctrl_sym
     / symbol
+    / print_counter
     / charsym
     / utf8_char
 
@@ -94,6 +95,12 @@ macro_group =
     skip_space begin_group skip_space
         escape id:identifier
     skip_space end_group
+    { return id; }
+
+id_optgroup =
+    skip_space begin_optgroup skip_space
+        id:identifier
+    skip_space end_optgroup
     { return id; }
 
 
@@ -353,21 +360,21 @@ counters        =   newcounter / stepcounter / addtocounter / setcounter / refst
 
 
 // \newcounter{section}[chapter]
-newcounter      =   "newcounter" c:id_group                 { g.newCount(c); }
+newcounter      =   "newcounter" c:id_group p:id_optgroup?  { g.newCount(c, p); }
 
-// \stepcounter{foo}
-stepcounter     =   "stepcounter" c:id_group                { g.setCount(c, g.count(c) + 1); }
+// \stepcounter{counter}
+stepcounter     =   "stepcounter" c:id_group                { g.stepCount(c); }
 
-// \addtocounter{foo}{<expression>}
+// \addtocounter{counter}{<expression>}
 addtocounter    =   "addtocounter" c:id_group n:expr_group  { g.setCount(c, g.count(c) + n); }
 
-// \setcounter{foo}{<expression>}
+// \setcounter{counter}{<expression>}
 setcounter      =   "setcounter" c:id_group n:expr_group    { g.setCount(c, n); }
 
 
-// \refstepcounter{foo}         // \stepcounter{foo}, and (locally) define \@currentlabel so that the next \label
+// \refstepcounter{counter}     // \stepcounter{counter}, and (locally) define \@currentlabel so that the next \label
                                 // will reference the correct current representation of the value
-refstepcounter  =   "refstepcounter" c:id_group             { g.setCount(c, g.count(c) + 1); /* TODO */}
+refstepcounter  =   "refstepcounter" c:id_group             { g.stepCount(c); g.refCount(c); }
 
 
 // \value{counter}
@@ -378,6 +385,7 @@ real            =   escape "real" skip_space
                     begin_group
                         skip_space f:float skip_space
                     end_group                               { return f; }
+
 
 // calc expressions
 
@@ -422,6 +430,17 @@ expr_group      =   skip_space
 
 
 
+
+// formatting counters
+
+print_counter   =   escape c:(alph / Alph / arabic / roman / Roman / fnsymbol)  { return c;}
+
+alph            =   "alph"      c:id_group  { return g.alph(g.count(c)); }
+Alph            =   "Alph"      c:id_group  { return g.Alph(g.count(c)); }
+arabic          =   "arabic"    c:id_group  { return g.arabic(g.count(c)); }
+roman           =   "roman"     c:id_group  { return g.roman(g.count(c)); }
+Roman           =   "Roman"     c:id_group  { return g.Roman(g.count(c)); }
+fnsymbol        =   "fnsymbol"  c:id_group  { return g.fnsymbol(g.count(c)); }
 
 
 // verb - one-line verbatim text

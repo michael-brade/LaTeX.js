@@ -1,0 +1,27 @@
+** counters
+.
+\newcounter{c}
+\stepcounter{c}
+\roman{c}
+
+\addtocounter{c}{3 * -(2+1)}    % 1 - 9
+\arabic{c}
+
+\setcounter{c}{ 3*\real{1.6} * \real{1.7 } + -- 2 }
+\Roman{c}
+
+\the\value{c}
+
+\newcounter{a}[c]
+\setcounter{a}{\value{c}}
+
+\stepcounter{c}
+\arabic{a}          % should be reset now due to stepcounter
+\fnsymbol{c}
+.
+<p>i</p>
+<p>-8</p>
+<p>VIII</p>
+<p>8</p>
+<p>0 ‡‡</p>
+.
