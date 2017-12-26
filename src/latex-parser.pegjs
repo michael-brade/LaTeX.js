@@ -433,14 +433,8 @@ expr_group      =   skip_space
 
 // formatting counters
 
-print_counter   =   escape c:(alph / Alph / arabic / roman / Roman / fnsymbol)  { return c;}
-
-alph            =   "alph"      c:id_group  { return g.alph(g.count(c)); }
-Alph            =   "Alph"      c:id_group  { return g.Alph(g.count(c)); }
-arabic          =   "arabic"    c:id_group  { return g.arabic(g.count(c)); }
-roman           =   "roman"     c:id_group  { return g.roman(g.count(c)); }
-Roman           =   "Roman"     c:id_group  { return g.Roman(g.count(c)); }
-fnsymbol        =   "fnsymbol"  c:id_group  { return g.fnsymbol(g.count(c)); }
+print_counter   =   escape format:("alph" / "Alph" / "arabic" / "roman" / "Roman" / "fnsymbol") c:id_group
+                    { return g[format](g.count(c)); }
 
 
 // verb - one-line verbatim text
