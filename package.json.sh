@@ -24,6 +24,7 @@ bin:
 files:
     'bin/latex.js'
     'dist/latex-parser.js'
+    'dist/symbols.js'
     'dist/html-generator.js'
 
 
@@ -32,6 +33,7 @@ scripts:
     build: "
         mkdirp dist;
         pegjs -o - src/latex-parser.pegjs | uglifyjs -cm -o dist/latex-parser.js;
+        lsc -cp    src/symbols.ls         | uglifyjs -cm -o dist/symbols.js;
         lsc -cp    src/html-generator.ls  | uglifyjs -cm -o dist/html-generator.js;
 
         mkdirp bin;

@@ -19,11 +19,12 @@
   "files": [
     "bin/latex.js",
     "dist/latex-parser.js",
+    "dist/symbols.js",
     "dist/html-generator.js"
   ],
   "scripts": {
     "clean": "rimraf dist bin;",
-    "build": "mkdirp dist;pegjs -o - src/latex-parser.pegjs | uglifyjs -cm -o dist/latex-parser.js;lsc -cp    src/html-generator.ls  | uglifyjs -cm -o dist/html-generator.js;mkdirp bin;lsc -bc --no-header -o bin src/latex.js.ls;",
+    "build": "mkdirp dist;pegjs -o - src/latex-parser.pegjs | uglifyjs -cm -o dist/latex-parser.js;lsc -cp    src/symbols.ls         | uglifyjs -cm -o dist/symbols.js;lsc -cp    src/html-generator.ls  | uglifyjs -cm -o dist/html-generator.js;mkdirp bin;lsc -bc --no-header -o bin src/latex.js.ls;",
     "docs": "npm run build && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;",
     "pgcc": "google-closure-compiler --compilation_level SIMPLE --externs src/externs.js --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;",
     "test": "mocha test/_*.ls test/tests.ls;",
