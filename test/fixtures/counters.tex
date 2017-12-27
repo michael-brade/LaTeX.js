@@ -2,13 +2,13 @@
 .
 \newcounter{c}
 \stepcounter{c}
-\roman{c}
+\thec: \roman{c}
 
 \addtocounter{c}{3 * -(2+1)}    % 1 - 9
 \arabic{c}
 
 \setcounter{c}{ 3*\real{1.6} * \real{1.7 } + -- 2 }
-\Roman{c}
+\thec: \Roman{c}
 
 \the\value{c}
 
@@ -19,9 +19,52 @@
 \arabic{a}          % should be reset now due to stepcounter
 \fnsymbol{c}
 .
-<p>i</p>
+<p>1: i</p>
 <p>-8</p>
-<p>VIII</p>
+<p>8: VIII</p>
 <p>8</p>
 <p>0 ‡‡</p>
+.
+
+
+** clear inner counters
+.
+\newcounter{c}
+\stepcounter{c}
+
+\newcounter{a}[c]	% c -> a,b -> d
+\newcounter{b}[c]
+\newcounter{d}[b]
+
+\setcounter{a}{5}
+\setcounter{b}{6}
+\setcounter{d}{3}
+
+\arabic{a}
+\arabic{b}
+\arabic{c}
+\arabic{d}
+
+\stepcounter{a}
+\arabic{a}
+\arabic{b}
+\arabic{c}
+\arabic{d}
+
+\stepcounter{c}
+\arabic{a}          % should be reset now due to stepcounter
+\arabic{b}          % should be reset now due to stepcounter
+\arabic{c}
+\arabic{d}
+
+\stepcounter{b}
+\arabic{a}
+\arabic{b}
+\arabic{c}
+\arabic{d}
+.
+<p>5 6 1 3</p>
+<p>6 6 1 3</p>
+<p>0 0 2 0</p>
+<p>0 1 2 0</p>
 .

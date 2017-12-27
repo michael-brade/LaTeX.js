@@ -88,8 +88,34 @@ class Macros
         ts.setAttribute 'class', 'negthinspace'
         return ts
 
-    mbox: (arg) ->
-    fbox: (arg) ->
+
+    # sectioning
+
+    contentsname:           "Contents"
+    listfigurename:         "List of Figures"
+    listtablename:          "List of Tables"
+
+    partname:               "Part"
+    chaptername:            "Chapter"   # only book and report in LaTeX
+
+    abstractname:           "Abstract"
+    figurename:             "Figure"
+    tablename:              "Table"
+
+    appendixname:           "Appendix"
+    refname:                "References"
+    indexname:              "Index"
+
+
+    thepart: ->             @g.createText @g.Roman @g.count "part"
+    thechapter: ->          @g.createText @g.arabic @g.count "chapter"
+    thesection: ->          @g.createText (if @g.count("chapter") > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.count "section"
+    thesubsection: ->       @g.createText @thesection!.textContent       + "." + @g.arabic @g.count "subsection"
+    thesubsubsection: ->    @g.createText @thesubsection!.textContent    + "." + @g.arabic @g.count "subsubsection"
+    theparagraph: ->        @g.createText @thesubsubsection!.textContent + "." + @g.arabic @g.count "paragraph"
+    thesubparagraph: ->     @g.createText @theparagraph!.textContent     + "." + @g.arabic @g.count "subparagraph"
+    thefigure: ->           @g.createText (if @g.count("chapter") > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.count "figure"
+    thetable: ->            @g.createText (if @g.count("chapter") > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.count "table"
 
 
     ## not yet...
@@ -192,9 +218,11 @@ export class HtmlGenerator
     _attrs: null        # attribute stack
     _groups: null       # grouping stack, keeps track of difference between opening and closing brackets
 
-    _counters: null
-
     _continue: false
+
+    _counters: null
+    _resets: null
+
 
 
     # CTOR
@@ -217,7 +245,34 @@ export class HtmlGenerator
         @_attrs = [{}]
         @_groups = []
 
-        @_counters = new Map()
+        @_counters = new Map([
+            * \secnumdepth      3       # article (book, report: 2)
+            * \tocdepth         3       # article (book, report: 2)
+            * \part             0
+            * \chapter          0
+            * \section          0
+            * \subsection       0
+            * \subsubsection    0
+            * \paragraph        0
+            * \subparagraph     0
+            * \figure           0
+            * \table            0
+        ])
+
+        @_resets = new Map([
+            * \secnumdepth      []
+            * \tocdepth         []
+            * \part             []
+            * \chapter          [\section, \figure, \table]
+            * \section          [\subsection]
+            * \subsection       [\subsubsection]
+            * \subsubsection    [\paragraph]
+            * \paragraph        [\subparagraph]
+            * \subparagraph     []
+            * \figure           []
+            * \table            []
+        ])
+
 
     setErrorFn: (e) !->
         @_error = e
@@ -464,8 +519,14 @@ export class HtmlGenerator
 
     newCount: (c, parent) !->
         @_error "counter #{c} already defined!" if @hasCount c
-        @_error "no such counter: #{parent}" if parent and not @hasCount parent
+        if parent
+            @_error "no such counter: #{parent}" if not @hasCount parent
+            @_resets.get parent .push c
+
         @_counters.set c, 0
+        @_resets.set c, []
+        @_macros["the" + c] = -> @g.createText @g.arabic @g.count c
+
 
     hasCount: (c) ->
         @_counters.has c
@@ -475,14 +536,18 @@ export class HtmlGenerator
         @_counters.set c, v
 
     stepCount: (c) ->
-        @setCount(c, @count(c) + 1);
-        # TODO: reset child counters
+        @setCount c, @count(c) + 1
+        @clearCount c
 
     count: (c) ->
         @_error "no such counter: #{c}" if not @hasCount c
         @_counters.get c
 
-    refCount: (id) ->
+    # reset all descendants of c to 0
+    clearCount: (c) ->
+        for r in @_resets.get c
+            @clearCount r
+            @setCount r, 0
 
 
     # formatting counters
