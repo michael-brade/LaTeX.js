@@ -232,8 +232,6 @@ export class HtmlGenerator
         if @_options.hyphenate
             @_h = new Hypher(@_options.languagePatterns)
 
-        @_macros = {}
-
         @_error = (e) ->
             console.error(e)
             throw new Error(e)
@@ -244,6 +242,8 @@ export class HtmlGenerator
     reset: ->
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
+
+        @_macros = {}
 
         # stack of text attributes - entering a group adds another entry, leaving a group removes the top entry
         @_attrs = [{}]
