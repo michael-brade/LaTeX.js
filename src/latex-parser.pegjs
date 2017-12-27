@@ -147,6 +147,7 @@ macro =
       / lengths / counters
 
       / logging
+      / ignored
     )
     { return undefined; }
 
@@ -483,6 +484,29 @@ href            =   "href"  skip_space begin_group
 
 // \hyperref[label_name]{''link text''} --- just like \ref{label_name}, only an <a>
 hyperref        =   "hyperref" skip_space optgroup
+
+
+
+
+// pagestyle       =   "pagestyle" id_group
+
+ignored         =   "linebreak" optgroup?
+                /   "nolinebreak" optgroup?
+                /   "fussy"
+                /   "sloppy"
+
+                // these make no sense without pagebreaks
+                /   "no"? "pagebreak" optgroup
+                /   "samepage"
+                /   "enlargethispage" "*"? lengthgroup
+                /   "newpage"
+                /   "clearpage"         // prints floats in LaTeX
+                /   "cleardoublepage"
+
+                /   "vfill"
+
+                /   "thispagestyle" id_group
+
 
 
 /****************/

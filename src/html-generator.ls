@@ -93,29 +93,9 @@ class Macros
 
 
     ## not yet...
-    pagestyle: (arg) ->
-
-    ## ignored macros since not useful in html
     include: (arg) ->
     includeonly: (arg) ->
     input: (arg) ->
-
-
-    # these make no sense without pagebreaks
-    vfill: !->
-
-    break: !->
-    nobreak: !->
-    allowbreak: !->
-    newpage: !->
-    linebreak: !->      # \linebreak[4] actually means \\
-    nolinebreak: !->
-    pagebreak: !->
-    nopagebreak: !->
-
-    samepage: !->
-    enlargethispage: !->
-    thispagestyle: !->
 
 
 
