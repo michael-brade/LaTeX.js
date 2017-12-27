@@ -232,7 +232,11 @@ export class HtmlGenerator
         if @_options.hyphenate
             @_h = new Hypher(@_options.languagePatterns)
 
-        @_macros = new Macros(this)
+        @_macros = {}
+
+        @_error = (e) ->
+            console.error(e)
+            throw new Error(e)
 
         @reset!
 
@@ -245,33 +249,27 @@ export class HtmlGenerator
         @_attrs = [{}]
         @_groups = []
 
-        @_counters = new Map([
-            * \secnumdepth      3       # article (book, report: 2)
-            * \tocdepth         3       # article (book, report: 2)
-            * \part             0
-            * \chapter          0
-            * \section          0
-            * \subsection       0
-            * \subsubsection    0
-            * \paragraph        0
-            * \subparagraph     0
-            * \figure           0
-            * \table            0
-        ])
+        @_counters = new Map()
+        @_resets = new Map()
 
-        @_resets = new Map([
-            * \secnumdepth      []
-            * \tocdepth         []
-            * \part             []
-            * \chapter          [\section, \figure, \table]
-            * \section          [\subsection]
-            * \subsection       [\subsubsection]
-            * \subsubsection    [\paragraph]
-            * \paragraph        [\subparagraph]
-            * \subparagraph     []
-            * \figure           []
-            * \table            []
-        ])
+        @newCount \part
+        @newCount \chapter
+        @newCount \section          \chapter
+        @newCount \subsection       \section
+        @newCount \subsubsection    \subsection
+        @newCount \paragraph        \subsubsection
+        @newCount \subparagraph     \paragraph
+        @newCount \figure           \chapter
+        @newCount \table            \chapter
+
+        # do this after creating the sectioning counters because \thepart etc. are already predefined
+        @_macros = new Macros(this)
+
+        @newCount \secnumdepth
+        @newCount \tocdepth
+
+        @setCount \secnumdepth  3   # article (book, report: 2)
+        @setCount \tocdepth     3   # article (book, report: 2)
 
 
     setErrorFn: (e) !->
@@ -525,6 +523,8 @@ export class HtmlGenerator
 
         @_counters.set c, 0
         @_resets.set c, []
+
+        @_error "macro \\the#{c} already defined!" if @_macros["the" + c]
         @_macros["the" + c] = -> @g.createText @g.arabic @g.count c
 
 
