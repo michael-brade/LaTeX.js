@@ -80,9 +80,8 @@ primitive "primitive" =
 /* macros */
 /**********/
 
-// supports TeX, LaTeX2e and LaTeX3 identifiers
 identifier "identifier" =
-    $(char / "_" / ":")+
+    $char+
 
 
 id_group =
