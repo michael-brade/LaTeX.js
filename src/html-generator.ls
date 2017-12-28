@@ -107,17 +107,22 @@ class Macros
     indexname:              "Index"
 
 
-    thepart: ->             @g.createText @g.Roman @g.count "part"
-    thechapter: ->          @g.createText @g.arabic @g.count "chapter"
-    thesection: ->          @g.createText (if @g.count("chapter") > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.count "section"
-    thesubsection: ->       @g.createText @thesection!.textContent       + "." + @g.arabic @g.count "subsection"
-    thesubsubsection: ->    @g.createText @thesubsection!.textContent    + "." + @g.arabic @g.count "subsubsection"
-    theparagraph: ->        @g.createText @thesubsubsection!.textContent + "." + @g.arabic @g.count "paragraph"
-    thesubparagraph: ->     @g.createText @theparagraph!.textContent     + "." + @g.arabic @g.count "subparagraph"
-    thefigure: ->           @g.createText (if @g.count("chapter") > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.count "figure"
-    thetable: ->            @g.createText (if @g.count("chapter") > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.count "table"
+    thepart: ->             @g.createText @g.Roman @g.counter \part
+    thechapter: ->          @g.createText @g.arabic @g.counter \chapter
+    thesection: ->          @g.createText (if @g.counter(\chapter) > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.counter \section
+    thesubsection: ->       @g.createText @thesection!.textContent       + "." + @g.arabic @g.counter \subsection
+    thesubsubsection: ->    @g.createText @thesubsection!.textContent    + "." + @g.arabic @g.counter \subsubsection
+    theparagraph: ->        @g.createText @thesubsubsection!.textContent + "." + @g.arabic @g.counter \paragraph
+    thesubparagraph: ->     @g.createText @theparagraph!.textContent     + "." + @g.arabic @g.counter \subparagraph
+    thefigure: ->           @g.createText (if @g.counter(\chapter) > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.counter \figure
+    thetable: ->            @g.createText (if @g.counter(\chapter) > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.counter \table
 
+    theenumi: ->            @g.createText @g.arabic @g.counter \enumi
+    theenumii: ->           @g.createText @g.alph @g.counter \enumii
+    theenumiii: ->          @g.createText @g.roman @g.counter \enumiii
+    theenumiv: ->           @g.createText @g.Alph @g.counter \enumiv
 
+    
     ## not yet...
     include: (arg) ->
     includeonly: (arg) ->
@@ -252,24 +257,32 @@ export class HtmlGenerator
         @_counters = new Map()
         @_resets = new Map()
 
-        @newCount \part
-        @newCount \chapter
-        @newCount \section          \chapter
-        @newCount \subsection       \section
-        @newCount \subsubsection    \subsection
-        @newCount \paragraph        \subsubsection
-        @newCount \subparagraph     \paragraph
-        @newCount \figure           \chapter
-        @newCount \table            \chapter
+        @newCounter \part
+        @newCounter \chapter
+        @newCounter \section          \chapter
+        @newCounter \subsection       \section
+        @newCounter \subsubsection    \subsection
+        @newCounter \paragraph        \subsubsection
+        @newCounter \subparagraph     \paragraph
+        @newCounter \figure           \chapter
+        @newCounter \table            \chapter
+
+        @newCounter \enumi
+        @newCounter \enumii
+        @newCounter \enumiii
+        @newCounter \enumiv
 
         # do this after creating the sectioning counters because \thepart etc. are already predefined
         @_macros = new Macros(this)
 
-        @newCount \secnumdepth
-        @newCount \tocdepth
+        @newCounter \secnumdepth
+        @newCounter \tocdepth
 
-        @setCount \secnumdepth  3   # article (book, report: 2)
-        @setCount \tocdepth     3   # article (book, report: 2)
+        @setCounter \secnumdepth  3   # article (book, report: 2)
+        @setCounter \tocdepth     3   # article (book, report: 2)
+
+        @newCounter \footnote
+        @newCounter \mpfootnote
 
 
     setErrorFn: (e) !->
@@ -283,8 +296,8 @@ export class HtmlGenerator
 
     textquote: (q) ->
         switch q
-        | '`'   => symbols.get "textquoteleft"
-        | '\''  => symbols.get "textquoteright"
+        | '`'   => symbols.get \textquoteleft
+        | '\''  => symbols.get \textquoteright
 
     hyphen: ->
         if @_attrs.top.fontFamily == 'tt'
@@ -515,39 +528,39 @@ export class HtmlGenerator
 
     # counters
 
-    newCount: (c, parent) !->
-        @_error "counter #{c} already defined!" if @hasCount c
+    newCounter: (c, parent) !->
+        @_error "counter #{c} already defined!" if @hasCounter c
         if parent
-            @_error "no such counter: #{parent}" if not @hasCount parent
+            @_error "no such counter: #{parent}" if not @hasCounter parent
             @_resets.get parent .push c
 
         @_counters.set c, 0
         @_resets.set c, []
 
-        @_error "macro \\the#{c} already defined!" if @_macros["the" + c]
-        @_macros["the" + c] = -> @g.createText @g.arabic @g.count c
+        @_error "macro \\the#{c} already defined!" if @_macros[\the + c]
+        @_macros[\the + c] = -> @g.createText @g.arabic @g.counter c
 
 
-    hasCount: (c) ->
+    hasCounter: (c) ->
         @_counters.has c
 
-    setCount: (c, v) !->
-        @_error "no such counter: #{c}" if not @hasCount c
+    setCounter: (c, v) !->
+        @_error "no such counter: #{c}" if not @hasCounter c
         @_counters.set c, v
 
-    stepCount: (c) ->
-        @setCount c, @count(c) + 1
-        @clearCount c
+    stepCounter: (c) ->
+        @setCounter c, @counter(c) + 1
+        @clearCounter c
 
-    count: (c) ->
-        @_error "no such counter: #{c}" if not @hasCount c
+    counter: (c) ->
+        @_error "no such counter: #{c}" if not @hasCounter c
         @_counters.get c
 
     # reset all descendants of c to 0
-    clearCount: (c) ->
+    clearCounter: (c) ->
         for r in @_resets.get c
-            @clearCount r
-            @setCount r, 0
+            @clearCounter r
+            @setCounter r, 0
 
 
     # formatting counters

@@ -365,21 +365,21 @@ counters        =   newcounter / stepcounter / addtocounter / setcounter / refst
 
 
 // \newcounter{section}[chapter]
-newcounter      =   "newcounter" c:id_group p:id_optgroup?  { g.newCount(c, p); }
+newcounter      =   "newcounter" c:id_group p:id_optgroup?  { g.newCounter(c, p); }
 
 // \stepcounter{counter}
-stepcounter     =   "stepcounter" c:id_group                { g.stepCount(c); }
+stepcounter     =   "stepcounter" c:id_group                { g.stepCounter(c); }
 
 // \addtocounter{counter}{<expression>}
-addtocounter    =   "addtocounter" c:id_group n:expr_group  { g.setCount(c, g.count(c) + n); }
+addtocounter    =   "addtocounter" c:id_group n:expr_group  { g.setCounter(c, g.counter(c) + n); }
 
 // \setcounter{counter}{<expression>}
-setcounter      =   "setcounter" c:id_group n:expr_group    { g.setCount(c, n); }
+setcounter      =   "setcounter" c:id_group n:expr_group    { g.setCounter(c, n); }
 
 
 // \refstepcounter{counter}     // \stepcounter{counter}, and (locally) define \@currentlabel so that the next \label
                                 // will reference the correct current representation of the value
-refstepcounter  =   "refstepcounter" c:id_group             { g.stepCount(c); g.refCount(c); }
+refstepcounter  =   "refstepcounter" c:id_group             { g.stepCounter(c); g.refCounter(c); }
 
 
 // \value{counter}
@@ -397,7 +397,7 @@ real            =   escape "real" skip_space
 num_value       =   "(" expr:num_expr ")"                   { return expr; }
                   / integer
                   / real
-                  / c:value                                 { return g.count(c); }
+                  / c:value                                 { return g.counter(c); }
 
 num_factor      =   s:("+"/"-") skip_space n:num_factor     { return s == "-" ? -n : n; }
                   / num_value
@@ -439,7 +439,7 @@ expr_group      =   skip_space
 // formatting counters
 
 print_counter   =   escape format:("alph" / "Alph" / "arabic" / "roman" / "Roman" / "fnsymbol") c:id_group
-                    { return g[format](g.count(c)); }
+                    { return g[format](g.counter(c)); }
 
 
 // verb - one-line verbatim text
@@ -920,13 +920,13 @@ float "float value"     = f:$(
 
 // distinguish length/counter: if it's not a counter, it is a length
 the                     = "the" _ t:(
-                            c:value &{ return g.hasCount(c); }  { return g.createText("" + g.count(c)); }
+                            c:value &{ return g.hasCounter(c);} { return g.createText("" + g.counter(c)); }
                             / escape id:identifier skip_space   { return g.theLength(id); }
                         )                                       { return t; }
 
 // logging
 logging                 = "showthe" _ (
-                            c:value &{ return g.hasCount(c); }  { console.log(g.count(c)); }
+                            c:value &{ return g.hasCounter(c);} { console.log(g.counter(c)); }
                             / escape l:identifier skip_space    { console.log(g.length(l)); }
                         )
                         / "message" m:arggroup                  { console.log(m.textContent); }
