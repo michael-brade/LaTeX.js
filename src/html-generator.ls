@@ -157,10 +157,10 @@ export class HtmlGenerator
     section:                    "h2"
     subsection:                 "h3"
     subsubsection:              "h4"
-    #paragraph:                  "h5"
+    paragraph:                  "h5"
     subparagraph:               "h6"
 
-    paragraph:                  "p"
+    par:                        "p"
 
     list:                       do -> create "div", "list"
 

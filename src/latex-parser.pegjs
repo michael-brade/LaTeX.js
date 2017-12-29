@@ -21,7 +21,7 @@ document =
 paragraph =
     vmode_macro
     / (escape noindent)? b:break                { b && g.break(); return undefined; }
-    / skip_space n:(escape noindent)? p:text+   { return g.create(g.paragraph, p, n ? "noindent" : ""); }
+    / skip_space n:(escape noindent)? txt:text+ { return g.create(g.par, txt, n ? "noindent" : ""); }
     // continue: after an environment, it is possible to contine without a new paragraph
     / e:environment                             { g.continue(); return e; }
 
