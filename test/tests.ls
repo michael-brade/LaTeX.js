@@ -16,12 +16,19 @@ describe 'LaTeX.js fixtures', !->
 
     fixtures = load-fixtures fixture_path
 
-    fixtures.forEach (filefixtures) ->
+    fixtures.forEach (filefixtures) !->
         desc = path.relative fixture_path, filefixtures.file
 
-        describe desc, ->
-            filefixtures.fixtures.forEach (fixture) ->
-                test fixture.header || 'line ' + fixture.first.range.0 - 1, ->
+        describe desc, !->
+            filefixtures.fixtures.forEach (fixture) !->
+                # disable a test by prefixing it with !
+                if fixture.header?.charAt(0) == "!"
+                    t = test.skip
+                else
+                    t = test
+
+                # create a test
+                t fixture.header || 'line ' + (fixture.first.range.0 - 1), !->
                     html-is     = latexjs.parse fixture.first.text, {
                         generator: new HtmlGenerator { hyphenate: false }
                     } .html!
