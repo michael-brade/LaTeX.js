@@ -132,7 +132,7 @@ text with {  a group  }  and more text
 
 ** macros without arguments ignore spaces afterwards
 .
-some \echo  text.
+some \empty  text.
 .
 <p>some text.</p>
 .
@@ -140,7 +140,7 @@ some \echo  text.
 
 ** force a space after a macro with {}
 .
-some \echo{} text.
+some \empty{} text.
 .
 <p>some ​ text.</p>
 .
@@ -148,7 +148,7 @@ some \echo{} text.
 
 ** force a space after a macro with \
 .
-some \echo\ text.
+some \empty\ text.
 .
 <p>some ​ text.</p>
 .
@@ -156,7 +156,7 @@ some \echo\ text.
 
 ** \ followed by tab or linebreak is also a space
 .
-some \echo\
+some \empty\
 text. And\	these
 \
 are spaces, but not\
