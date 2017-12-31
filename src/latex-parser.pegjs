@@ -483,11 +483,14 @@ ref             =   "ref" l:key_group       { return g.ref(l); }
 url_charset     =   char/digit/punctuation/"-"/"#"/"&"/escape? "%" { return "%" }
                 /   . &{ error("illegal char in url given"); }
 
-url             =   "url"   skip_space begin_group
+url_group       =   skip_space begin_group
                         url:(!end_group c:url_charset {return c;})+
                     end_group
+                    { return url.join(""); }
+
+url             =   "url" u:url_group
                     {
-                        return g.create(g.link(url.join("")), g.createText(url.join("")));
+                        return g.create(g.link(u), g.createText(u));
                     }
 
 href            =   "href"  skip_space begin_group
