@@ -200,26 +200,25 @@ vmode_test =
       / "addvspace" / ("small"/"med"/"big")"break" / "begin" / "end" / "item"
     ) !char
 
-// user-defined macros have the disadvantage that all groups directly following them will
-// be interpreted as arguments to the macro, so the macro will have to return the unused arguments
-custom_macro "user-defined hmode macro" =
-    name:identifier &{ return g.hasMacro(name); }
-    starred:"*"?
+
+custom_macro =
+    name:identifier &{ if (g.hasMacro(name)) { g.beginArgs(name); return true; } }
     skip_space
-    args:(o:optgroup { return { optional: true, value: o }; } / m:arggroup { return { mandatory: true, value: m }; })*
-    s:space?
+    args:(
+        &{ return g.nextArg("g") }    g:(arggroup / . { error("macro " + name + " is missing a group argument") })              { return g; }
+      / &{ return g.nextArg("i") }    i:(id_group / . { error("macro " + name + " is missing an id group argument") })          { return i; }
+      / &{ return g.nextArg("k") }    k:(key_group / . { error("macro " + name + " is missing a key group argument") })         { return k; }
+      / &{ return g.nextArg("l") }    l:(lengthgroup / . { error("macro " + name + " is missing a length group argument") })    { return l; }
+      / &{ return g.nextArg("m") }    m:(macro_group / . { error("macro " + name + " is missing a macro group argument") })     { return m; }
+      / &{ return g.nextArg("u") }    u:(url_group / . { error("macro " + name + " is missing a url group argument") })         { return u; }
+    //   / &{ return g.nextArg("s") }    s:"*"?                                                                                    { return !!s; }
+    )*
     {
-        var node = g.processMacro(name, starred != undefined, args);
-
-        if (s != undefined) {
-            if (node == undefined)
-                node = g.createText(s);
-            else
-                node = g.createFragment([node, g.createText(s)]);
-        }
-
-        return node;
+        g.endArgs();
+        return g.createFragment(g.macro(name, args));
     }
+
+
 
 unknown_macro =
     m:identifier

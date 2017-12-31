@@ -16,7 +16,10 @@ Object.defineProperty Array.prototype, 'top',
 
 he.decode.options.strict = true
 
-
+# This is where (custom) macros are defined.
+# This class should be independent of HtmlGenerator and just work with the generator interface.
+#
+# A macro must return an array with elements of type node or string (text).
 class Macros
 
     # CTOR
@@ -24,25 +27,37 @@ class Macros
         @g = generator
 
 
-    # make sure only one mandatory arg was given or throw an error
-    _checkOneM: (arg) !->
-        return if arg.length == 1 && arg[0].mandatory
-        macro = /Macros\.(\w+)/.exec(new Error().stack.split('\n')[2])[1]
-        throw new Error("#{macro} expects exactly one mandatory argument!")
+    # args: declaring arguments for a macro. If a macro doesn't take arguments, it can be left undefined.
+    #
+    # syntax
+    #
+    # s: optional star
+    # i: id (group)
+    # i?: optional id group
+    # k: key (group)
+    # u: url (group)
+    # m: macro (group)
+    # l: length (group)
+    # e: expression (group)
+    # f: float expression (group)
+    # g: arggroup
+    # g+: long arggroup
+    # o: optional arg
+    # o+: long optional arg
+    args = {}
+
+    args: args
 
 
-    # all known macros
+    \empty :->
 
-    # inline macros
-
-    echo: (args) ->
-        @g.createFragment args.map (x) ~>
-            if x.value
-                @g.createFragment [
-                    @g.createText if x.mandatory then "+" else "-"
-                    x.value
-                    @g.createText if x.mandatory then "+" else "-"
-                ]
+    args.echo = <[ g ]>
+    \echo : (g) ->
+        [
+            "+"
+            g
+            "+"
+        ]
 
     TeX: ->
         # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
@@ -55,7 +70,7 @@ class Macros
         tex.appendChild e
         tex.appendChild @g.createText 'X'
 
-        return tex
+        return [tex]
 
     LaTeX: ->
         # <span class="latex">L<span>a</span>T<span>e</span>X</span>
@@ -72,61 +87,96 @@ class Macros
         latex.appendChild e
         latex.appendChild @g.createText 'X'
 
-        return latex
+        return [latex]
 
 
     today: ->
-        @g.createText new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        [new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })]
 
 
     newline: ->
-        @g.create @g.linebreak
+        [@g.create @g.linebreak]
 
 
     negthinspace: ->
         ts = @g.create @g.inline-block
         ts.setAttribute 'class', 'negthinspace'
-        return ts
+        return [ts]
 
 
     # sectioning
 
-    contentsname:           "Contents"
-    listfigurename:         "List of Figures"
-    listtablename:          "List of Tables"
+    contentsname:->         [ "Contents" ]
+    listfigurename: ->      [ "List of Figures" ]
+    listtablename: ->       [ "List of Tables" ]
 
-    partname:               "Part"
-    chaptername:            "Chapter"   # only book and report in LaTeX
+    partname: ->            [ "Part" ]
+    chaptername: ->         [ "Chapter" ]   # only book and report in LaTeX
 
-    abstractname:           "Abstract"
-    figurename:             "Figure"
-    tablename:              "Table"
+    abstractname: ->        [ "Abstract" ]
+    figurename: ->          [ "Figure" ]
+    tablename: ->           [ "Table" ]
 
-    appendixname:           "Appendix"
-    refname:                "References"
-    indexname:              "Index"
+    appendixname: ->        [ "Appendix" ]
+    refname: ->             [ "References" ]
+    indexname: ->           [ "Index" ]
+
+    thepart: ->             [ @g.Roman @g.counter \part ]
+    thechapter: ->          [ @g.arabic @g.counter \chapter ]
+    thesection: ->          (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \section
+    thesubsection: ->       @thesection!       ++ "." + @g.arabic @g.counter \subsection
+    thesubsubsection: ->    @thesubsection!    ++ "." + @g.arabic @g.counter \subsubsection
+    theparagraph: ->        @thesubsubsection! ++ "." + @g.arabic @g.counter \paragraph
+    thesubparagraph: ->     @theparagraph!     ++ "." + @g.arabic @g.counter \subparagraph
+    thefigure: ->           (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \figure
+    thetable: ->            (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \table
+
+    # enumerate
+    theenumi: ->            [ @g.arabic @g.counter \enumi ]
+    theenumii: ->           [ @g.alph @g.counter \enumii ]
+    theenumiii: ->          [ @g.roman @g.counter \enumiii ]
+    theenumiv: ->           [ @g.Alph @g.counter \enumiv ]
+
+    labelenumi: ->          @theenumi! ++ "."
+    labelenumii: ->         [ "(", ...@theenumii!, ")" ]
+    labelenumiii: ->        @theenumiii! ++ "."
+    labelenumiv: ->         @theenumiv! ++ "."
+
+    \p@enumii : ->          @theenumi!
+    \p@enumiii : ->         @theenumi! ++ "(" ++ @theenumii! ++ ")"
+    \p@enumiv : ->          @"p@enumiii"! ++ @theenumiii!
+
+    # itemize
+    labelitemi: ->          [ @g.symbol \textbullet ]
+    #labelitemii: ->         \normalfont\bfseries + @g.symbol \textendash
+    labelitemiii: ->        [ @g.symbol \textasteriskcentered ]
+    labelitemiv: ->         [ @g.symbol \textperiodcentered ]
 
 
-    thepart: ->             @g.createText @g.Roman @g.counter \part
-    thechapter: ->          @g.createText @g.arabic @g.counter \chapter
-    thesection: ->          @g.createText (if @g.counter(\chapter) > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.counter \section
-    thesubsection: ->       @g.createText @thesection!.textContent       + "." + @g.arabic @g.counter \subsection
-    thesubsubsection: ->    @g.createText @thesubsection!.textContent    + "." + @g.arabic @g.counter \subsubsection
-    theparagraph: ->        @g.createText @thesubsubsection!.textContent + "." + @g.arabic @g.counter \paragraph
-    thesubparagraph: ->     @g.createText @theparagraph!.textContent     + "." + @g.arabic @g.counter \subparagraph
-    thefigure: ->           @g.createText (if @g.counter(\chapter) > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.counter \figure
-    thetable: ->            @g.createText (if @g.counter(\chapter) > 0 then @thechapter!.textContent + "." else "") + @g.arabic @g.counter \table
+    # article
+    appendix: !->
+        @g.setCounter \section 0
+        @g.setCounter \subsection 0
+        @[\thesection] = -> [ @g.Alph @g.counter \section ]
 
-    theenumi: ->            @g.createText @g.arabic @g.counter \enumi
-    theenumii: ->           @g.createText @g.alph @g.counter \enumii
-    theenumiii: ->          @g.createText @g.roman @g.counter \enumiii
-    theenumiv: ->           @g.createText @g.Alph @g.counter \enumiv
+    # book, report
+    # appendix: !->
+    #     @g.setCounter \chapter 0
+    #     @g.setCounter \section 0
+    #     @[\chaptername] = @[\appendixname]
+    #     @[\thechapter] = -> [ @g.Alph @g.counter \chapter ]
 
-    
+
     ## not yet...
-    include: (arg) ->
-    includeonly: (arg) ->
-    input: (arg) ->
+
+    args.include = <[ g ]>
+    \include : (arg) ->
+
+    args.includeonly = <[ g ]>
+    \includeonly : (arg) ->
+
+    args.input = <[ g ]>
+    \input : (arg) ->
 
 
 
@@ -150,8 +200,6 @@ export class HtmlGenerator
     create =                    (type, classes) -> el = document.createElement type; el.setAttribute "class", classes;  return el
 
     # typographic elements
-    create =                    (type, classes) -> el = document.createElement type; el.setAttribute "class", classes;  return el
-
     part:                       "part"
     chapter:                    "h1"
     section:                    "h2"
@@ -254,6 +302,7 @@ export class HtmlGenerator
         @_dom = document.createDocumentFragment!
 
         @_macros = {}
+        @_curArgs = []  # stack of argument declarations
 
         # stack of text attributes - entering a group adds another entry, leaving a group removes the top entry
         @_attrs = [{}]
@@ -451,11 +500,34 @@ export class HtmlGenerator
 
 
 
+    ### macros
+
     hasMacro: (name) ->
         typeof @_macros[name] == "function"
 
-    processMacro: (name, starred, args) ->
-        @_macros[name](args)
+    beginArgs: (macro) ->
+        @_curArgs.push if @_macros.args[macro] then that.slice! else []
+
+    nextArg: (arg) ->
+        if @_curArgs.top[0] == arg
+            @_curArgs.top.shift!
+            true
+        else
+            false
+
+    endArgs: !->
+        @_curArgs.pop!.length == 0 || error("not all mandatory arguments haven been given")
+
+
+    macro: (name, args) ->
+        @_macros[name]
+            .apply @_macros, args
+            ?.filter (x) -> x != undefined
+            .map (x) ~> if not x.nodeType? then @createText x else x
+
+
+
+
 
 
     ### groups
@@ -530,7 +602,7 @@ export class HtmlGenerator
         # number the section?
         if not star and @counter("secnumdepth") >= 0
             @stepCounter sec
-            el = @create @[sec], [@_macros[\the + sec]!, (@createText @symbol \quad), ttl]   # in LaTeX: \@seccntformat
+            el = @create @[sec], @macro(\the + sec) ++ (@createText @symbol \quad) ++ ttl   # in LaTeX: \@seccntformat
             el.id = "sec-" + @nextId!
             @refCounter sec, el.id
         else
@@ -569,8 +641,8 @@ export class HtmlGenerator
         @_counters.set c, 0
         @_resets.set c, []
 
-        @_error "macro \\the#{c} already defined!" if @_macros[\the + c]
-        @_macros[\the + c] = -> @g.createText @g.arabic @g.counter c
+        @_error "macro \\the#{c} already defined!" if @hasMacro(\the + c)
+        @_macros[\the + c] = -> [ @g.arabic @g.counter c ]
 
 
     hasCounter: (c) ->
@@ -599,8 +671,8 @@ export class HtmlGenerator
         @_attrs.top.currentlabel =
             id: id
             label: @createFragment [
-                if @_macros[\p@ + c] then that!
-                @_macros[\the + c]!
+                ...if @hasMacro(\p@ + c) then @macro(\p@ + c) else []
+                ...@macro(\the + c)
             ]
 
         return el
