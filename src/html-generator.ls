@@ -10,7 +10,7 @@ require! {
 Object.defineProperty Array.prototype, 'top',
     enumerable: false
     configurable: true
-    get: -> @[@length - 1]
+    get: -> @[* - 1]
     set: undefined
 
 
@@ -353,8 +353,8 @@ export class HtmlGenerator
 
     textquote: (q) ->
         switch q
-        | '`'   => symbols.get \textquoteleft
-        | '\''  => symbols.get \textquoteright
+        | '`'   => @symbol \textquoteleft
+        | '\''  => @symbol \textquoteright
 
     hyphen: ->
         if @_attrs.top.fontFamily == 'tt'
@@ -373,16 +373,18 @@ export class HtmlGenerator
         symbols.has name
 
     symbol: (name) ->
+        @_error "no such symbol: #{name}" if not @hasSymbol name
         symbols.get name
 
     hasDiacritic: (d) ->
         diacritics.has d
 
+    # diacritic d for char c
     diacritic: (d, c) ->
         if not c
-            diacritics.get(d)[1]
+            diacritics.get(d)[1]        # if only d is given, use the standalone version of the diacritic
         else
-            c + diacritics.get(d)[0]
+            c + diacritics.get(d)[0]    # otherwise add it to the character c
 
     controlSymbol: (c) ->
         switch c
@@ -772,6 +774,7 @@ export class HtmlGenerator
 
             @_refs.delete label
 
+    # keep a reference to each ref element if no label is known yet, then as we go along, fill it with labels
     ref: (label) ->
         # href is the element id, content is \the<counter>
         if @_labels.get label
