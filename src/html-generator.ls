@@ -225,6 +225,9 @@ export class HtmlGenerator
 
     _continue: false
 
+    _labels: null
+    _refs: null
+
     _counters: null
     _resets: null
 
@@ -245,6 +248,8 @@ export class HtmlGenerator
 
 
     reset: ->
+        @_uid = 1
+
         # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
 
@@ -253,6 +258,9 @@ export class HtmlGenerator
         # stack of text attributes - entering a group adds another entry, leaving a group removes the top entry
         @_attrs = [{}]
         @_groups = []
+
+        @_labels = new Map()
+        @_refs = new Map()
 
         @_counters = new Map()
         @_resets = new Map()
@@ -354,6 +362,9 @@ export class HtmlGenerator
     createDocument: (fs) !->
         @_appendChildrenTo fs, @_dom
 
+
+    nextId: ->
+        @_uid++
 
     create: (type, children, classes = "") ->
         if typeof type == "object"
@@ -513,6 +524,27 @@ export class HtmlGenerator
         [@_attrs.top.align].join(' ').replace(/\s+/g, ' ').trim!
 
 
+    # sections
+
+    startsection: (sec, star, toc, ttl) ->
+        # number the section?
+        if not star and @counter("secnumdepth") >= 0
+            @stepCounter sec
+            el = @create @[sec], [@_macros[\the + sec]!, (@createText @symbol \quad), ttl]   # in LaTeX: \@seccntformat
+            el.id = "sec-" + @nextId!
+            @refCounter sec, el.id
+        else
+            el = @create @[sec], ttl
+
+        # entry in the TOC required?
+        # if not star and @counter("tocdepth")
+        #     TODO
+
+        el
+
+
+
+
     # lengths
 
     setLength: (id, length) !->
@@ -555,6 +587,24 @@ export class HtmlGenerator
     counter: (c) ->
         @_error "no such counter: #{c}" if not @hasCounter c
         @_counters.get c
+
+    refCounter: (c, id) ->
+        # currentlabel is local, the counter is global
+        # we need to store the id of the element as well as the counter (\@currentlabel)
+        # if no id is given, create a new element to link to
+        if not id
+            el = @create @inline-block
+            id = el.id = c + "-" + @nextId!
+
+        @_attrs.top.currentlabel =
+            id: id
+            label: @createFragment [
+                if @_macros[\p@ + c] then that!
+                @_macros[\the + c]!
+            ]
+
+        return el
+
 
     # reset all descendants of c to 0
     clearCounter: (c) ->
@@ -631,6 +681,38 @@ export class HtmlGenerator
         |   9   => @symbol(\textdaggerdbl) + @symbol \textdaggerdbl
         |   _   => @_error "fnsymbol value must be between 1 and 9"
 
+
+    # label, ref
+
+    # labels are possible for: parts, chapters, all sections, \items, footnotes, minipage-footnotes, tables, figures
+    setLabel: (label) !->
+        @_error "label #{label} already defined!" if @_labels.has label
+        @_labels.set label, @_attrs.top.currentlabel
+
+        # fill forward references
+        if @_refs.has label
+            for r in @_refs.get label
+                while r.firstChild
+                    r.removeChild r.firstChild
+
+                r.appendChild @_attrs.top.currentlabel.label.cloneNode true
+                r.setAttribute "href", "#" + @_attrs.top.currentlabel.id
+
+            @_refs.delete label
+
+    ref: (label) ->
+        # href is the element id, content is \the<counter>
+        if @_labels.get label
+            return @create @link("#" + that.id), that.label.cloneNode true
+
+        el = @create (@link "#"), @createText "??"
+
+        if not @_refs.has label
+            @_refs.set label, [el]
+        else
+            @_refs.get label .push el
+
+        el
 
 
     # private helpers

@@ -1,0 +1,96 @@
+** forward- and back-referencing a label
+.
+\newcounter{c}
+
+Here is some text with two forward references: \ref{test} and \ref{test}.
+\refstepcounter{c}
+Now there is more.
+
+This \label{test} is counter c:~\ref{test}. And another~\ref{test}.
+.
+<p>Here is some text with two forward references: <a href="#c-1">1</a> and <a href="#c-1">1</a>. <span id="c-1"></span> Now there is more.</p>
+<p>This  is counter c:&nbsp;<a href="#c-1">1</a>. And another&nbsp;<a href="#c-1">1</a>.</p>
+.
+
+
+** forward-referencing a section
+.
+See Section~\ref{sec:test}.
+
+\section{Section Name}
+\label{sec:test}
+.
+<p>See Section&nbsp;<a href="#sec-1">1</a>.</p>
+<h2 id="sec-1">1 Section Name</h2>
+.
+
+
+** back-referencing a section
+.
+\section{Section Name}
+
+This \label{sec:test} is Section~\ref{sec:test}.
+.
+<h2 id="sec-1">1 Section Name</h2>
+<p>This is Section&nbsp;<a href="#sec-1">1</a>.</p>
+.
+
+
+** forward- and back-referencing a section in a chapter
+.
+\chapter{Labels}
+
+See Section~\ref{sec:test}.
+
+\section{Section Name}
+\label{sec:test}
+This is Section~\ref{sec:test}.
+.
+<h1 id="sec-1">1 Labels</h1>
+<p>See Section&nbsp;<a href="#sec-2">1.1</a>.</p>
+<h2 id="sec-2">1.1 Section Name</h2>
+<p>This is Section&nbsp;<a href="#sec-2">1.1</a>.</p>
+.
+
+
+** labelling an \\item
+.
+The most widely-used format is item number~\ref{popular}.
+\begin{enumerate}
+    \item Plain \TeX
+    \item \label{popular} \LaTeX
+    \item Con\TeX t
+\end{enumerate}
+.
+.
+
+
+
+** referencing subitems
+.
+.
+.
+
+
+** labelling a figure
+.
+\begin{figure}
+    ...
+    \caption{caption text}
+    \label{fig:test}
+\end{figure}
+See Figure~\ref{fig:test}.
+.
+.
+
+
+** labelling a table
+.
+\begin{table}
+    ...
+    \caption{caption text}
+    \label{tab:test}
+\end{table}
+See Table~\ref{tab:test}.
+.
+.

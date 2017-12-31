@@ -143,7 +143,7 @@ macro =
 
       / centering / raggedright / raggedleft
 
-      / lengths / counters
+      / lengths / counters / label
 
       / logging
       / ignored
@@ -162,10 +162,12 @@ hmode_macro =
     / noindent
 
     / textfamily / textweight / textshape
-    / textnormal / emph / underline / url / href
+    / textnormal / emph / underline
+
+    / ref / url / href
 
     / smbskip_hmode / hspace / vspace_hmode
-    / the
+    / refstepcounter / the
 
     / verb
     )
@@ -181,7 +183,9 @@ vmode_macro =
     skip_all_space
     escape
     m:(
-      part / chapter / section / subsection / subsubsection
+      frontmatter / mainmatter / backmatter
+    / tableofcontents
+    / part / sectioning
     / vspace_vmode / addvspace / smbskip_vmode / smbbreak
     )
     skip_all_space
@@ -224,16 +228,19 @@ unknown_macro =
 
 // ** sectioning
 
-tableofcontents =   "tableofcontents" _ {}
+// keep a reference to the TOC element, and fill it as we go along
+tableofcontents =   "tableofcontents" _     { return g.create(g.toc); }
 
-part            =   "part"          s:"*"?  t:arggroup { return g.create(g.part, t); }
-chapter         =   "chapter"       s:"*"?  t:arggroup { return g.create(g.chapter, t); }
-section         =   "section"       s:"*"?  t:arggroup { return g.create(g.section, t); }
-subsection      =   "subsection"    s:"*"?  t:arggroup { return g.create(g.subsection, t); }
-subsubsection   =   "subsubsection" s:"*"?  t:arggroup { return g.create(g.subsubsection, t); }
+part            =   "part"          s:"*"? toc:optgroup? ttl:arggroup { return g.create(g.part, ttl); }
 
-//paragraph       =   "paragraph"     s:"*"?  t:arggroup { return g.create(g.paragraph, t); }
-subparagraph    =   "subparagraph"  s:"*"?  t:arggroup { return g.create(g.subparagraph, t); }
+sectioning      =   sec:$("chapter"/"sub"?("sub"?"section"/"paragraph")) s:"*"? toc:optgroup? ttl:arggroup
+                    {
+                        return g.startsection(sec, !!s, toc, ttl);
+                    }
+
+frontmatter     =   "frontmatter"   _
+mainmatter      =   "mainmatter"    _
+backmatter      =   "backmatter"    _
 
 
 // ** font macros
@@ -361,7 +368,7 @@ addtolength     =   "addtolength" id:macro_group l:lengthgroup
 
 // LaTeX counters (always global)
 
-counters        =   newcounter / stepcounter / addtocounter / setcounter / refstepcounter
+counters        =   newcounter / stepcounter / addtocounter / setcounter // / refstepcounter is extra b/c it returns a node
 
 
 // \newcounter{section}[chapter]
@@ -378,8 +385,9 @@ setcounter      =   "setcounter" c:id_group n:expr_group    { g.setCounter(c, n)
 
 
 // \refstepcounter{counter}     // \stepcounter{counter}, and (locally) define \@currentlabel so that the next \label
-                                // will reference the correct current representation of the value
-refstepcounter  =   "refstepcounter" c:id_group             { g.stepCounter(c); g.refCounter(c); }
+                                // will reference the correct current representation of the value; return an empty node
+                                // for an <a href=...> target
+refstepcounter  =   "refstepcounter" c:id_group             { g.stepCounter(c); return g.refCounter(c); }
 
 
 // \value{counter}
@@ -458,6 +466,16 @@ verb            =   "verb" s:"*"? skip_space !char
 
 
 // label, ref
+
+key_group       =   skip_space begin_group
+                        k:$(char / punctuation / digit)+
+                    end_group
+                    { return k; }
+
+// TODO: label leaves one space, not two if it has a space on either end!
+label           =   "label" l:key_group     { g.setLabel(l); }
+
+ref             =   "ref" l:key_group       { return g.ref(l); }
 
 
 
