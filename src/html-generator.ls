@@ -270,8 +270,9 @@ export class HtmlGenerator
     _macros: null
 
     _dom:   null
-    _attrs: null        # attribute stack
-    _groups: null       # grouping stack, keeps track of difference between opening and closing brackets
+
+    _stack: null
+    _groups: null
 
     _continue: false
 
@@ -302,8 +303,14 @@ export class HtmlGenerator
         @_macros = {}
         @_curArgs = []  # stack of argument declarations
 
-        # stack of text attributes - entering a group adds another entry, leaving a group removes the top entry
-        @_attrs = [{}]
+        # stack for local variables and attributes - entering a group adds another entry,
+        # leaving a group removes the top entry
+        @_stack = [{
+            attrs: {}
+            lengths: new Map()
+        }]
+
+        # grouping stack, keeps track of difference between opening and closing brackets
         @_groups = []
 
         @_labels = new Map()
@@ -360,14 +367,14 @@ export class HtmlGenerator
         | '\''  => @symbol \textquoteright
 
     hyphen: ->
-        if @_attrs.top.fontFamily == 'tt'
+        if @_stack.top.attrs.fontFamily == 'tt'
             '-'                                         # U+002D
         else
             he.decode "&hyphen;"                        # U+2010
 
     ligature: (l) ->
         # no ligatures in tt
-        if @_attrs.top.fontFamily == 'tt'
+        if @_stack.top.attrs.fontFamily == 'tt'
             l
         else
             ligatures.get l
@@ -539,14 +546,16 @@ export class HtmlGenerator
 
     # start a new group
     enterGroup: !->
-        # shallow copy of top, then push again
-        #@_attrs.push @_attrs.top.slice!
-        @_attrs.push Object.assign {}, @_attrs.top
+        # shallow copy of the contents of top is enough because we don't change the elements, only the array and the maps
+        @_stack.push {
+            attrs: Object.assign {}, @_stack.top.attrs
+            lengths: new Map(@_stack.top.lengths)
+        }
         ++@_groups[@_groups.length - 1]
 
     # end the last group - returns false if there was no group to end
     exitGroup: ->
-        @_attrs.pop!
+        @_stack.pop!
         --@_groups[@_groups.length - 1] >= 0
 
 
@@ -575,30 +584,30 @@ export class HtmlGenerator
     # font attributes
 
     setFontFamily: (family) !->
-        @_attrs.top.fontFamily = family
+        @_stack.top.attrs.fontFamily = family
 
     setFontWeight: (weight) !->
-        @_attrs.top.fontWeight = weight
+        @_stack.top.attrs.fontWeight = weight
 
     setFontShape: (shape) !->
-        @_attrs.top.fontShape = shape
+        @_stack.top.attrs.fontShape = shape
 
     setFontSize: (size) !->
-        @_attrs.top.fontSize = size
+        @_stack.top.attrs.fontSize = size
 
     setAlignment: (align) !->
-        @_attrs.top.align = align
+        @_stack.top.attrs.align = align
 
     setTextDecoration: (decoration) !->
-        @_attrs.top.textDecoration = decoration
+        @_stack.top.attrs.textDecoration = decoration
 
 
     _inlineAttributes: ->
-        cur = @_attrs.top
+        cur = @_stack.top.attrs
         [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.textDecoration].join(' ').replace(/\s+/g, ' ').trim!
 
     _blockAttributes: ->
-        [@_attrs.top.align].join(' ').replace(/\s+/g, ' ').trim!
+        [@_stack.top.attrs.align].join(' ').replace(/\s+/g, ' ').trim!
 
 
     # sections
@@ -635,7 +644,8 @@ export class HtmlGenerator
         l.setAttribute "display-var", id
         l
 
-    # counters
+
+    # LaTeX counters (global)
 
     newCounter: (c, parent) !->
         @_error "counter #{c} already defined!" if @hasCounter c
@@ -673,7 +683,7 @@ export class HtmlGenerator
             el = @create @inline-block
             id = el.id = c + "-" + @nextId!
 
-        @_attrs.top.currentlabel =
+        @_stack.top.attrs.currentlabel =
             id: id
             label: @createFragment [
                 ...if @hasMacro(\p@ + c) then @macro(\p@ + c) else []
@@ -764,7 +774,7 @@ export class HtmlGenerator
     # labels are possible for: parts, chapters, all sections, \items, footnotes, minipage-footnotes, tables, figures
     setLabel: (label) !->
         @_error "label #{label} already defined!" if @_labels.has label
-        @_labels.set label, @_attrs.top.currentlabel
+        @_labels.set label, @_stack.top.attrs.currentlabel
 
         # fill forward references
         if @_refs.has label
@@ -772,8 +782,8 @@ export class HtmlGenerator
                 while r.firstChild
                     r.removeChild r.firstChild
 
-                r.appendChild @_attrs.top.currentlabel.label.cloneNode true
-                r.setAttribute "href", "#" + @_attrs.top.currentlabel.id
+                r.appendChild @_stack.top.attrs.currentlabel.label.cloneNode true
+                r.setAttribute "href", "#" + @_stack.top.attrs.currentlabel.id
 
             @_refs.delete label
 
