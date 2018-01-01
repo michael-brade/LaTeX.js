@@ -290,10 +290,6 @@ export class HtmlGenerator
         if @_options.hyphenate
             @_h = new Hypher(@_options.languagePatterns)
 
-        @_error = (e) ->
-            console.error(e)
-            throw new Error(e)
-
         @reset!
 
 
@@ -343,6 +339,11 @@ export class HtmlGenerator
         @newCounter \footnote
         @newCounter \mpfootnote
 
+
+
+    _error: (e) ->
+        console.error e
+        throw new Error e
 
     setErrorFn: (e) !->
         @_error = e
