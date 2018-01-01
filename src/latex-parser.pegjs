@@ -692,7 +692,7 @@ description =
 
 
 item =
-    skip_all_space escape "item" !char og:optgroup? skip_space
+    skip_all_space escape "item" !char og:optgroup? skip_all_space
     { return og; }
 
 
