@@ -49,7 +49,7 @@ class Macros
     args: args
 
 
-    \empty :->
+    \empty :!->
 
     args.echo = <[ g ]>
     \echo : (g) ->
@@ -59,7 +59,7 @@ class Macros
             "+"
         ]
 
-    TeX: ->
+    \TeX :->
         # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
         tex = @g.create @g.inline-block
         tex.setAttribute('class', 'tex')
@@ -72,7 +72,7 @@ class Macros
 
         return [tex]
 
-    LaTeX: ->
+    \LaTeX :->
         # <span class="latex">L<span>a</span>T<span>e</span>X</span>
         latex = @g.create @g.inline-block
         latex.setAttribute('class', 'latex')
@@ -90,81 +90,83 @@ class Macros
         return [latex]
 
 
-    today: ->
+    \today :->
         [new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })]
 
 
-    newline: ->
+    \newline :->
         [@g.create @g.linebreak]
 
 
-    negthinspace: ->
-        ts = @g.create @g.inline-block
-        ts.setAttribute 'class', 'negthinspace'
-        return [ts]
+    \negthinspace :->
+        [@g.create @g.inline-block, undefined, 'negthinspace']
 
 
     # sectioning
 
-    contentsname:->         [ "Contents" ]
-    listfigurename: ->      [ "List of Figures" ]
-    listtablename: ->       [ "List of Tables" ]
+    \contentsname       :-> [ "Contents" ]
+    \listfigurename     :-> [ "List of Figures" ]
+    \listtablename      :-> [ "List of Tables" ]
 
-    partname: ->            [ "Part" ]
-    chaptername: ->         [ "Chapter" ]   # only book and report in LaTeX
+    \partname           :-> [ "Part" ]
+    \chaptername        :-> [ "Chapter" ]   # only book and report in LaTeX
 
-    abstractname: ->        [ "Abstract" ]
-    figurename: ->          [ "Figure" ]
-    tablename: ->           [ "Table" ]
+    \abstractname       :-> [ "Abstract" ]
+    \figurename         :-> [ "Figure" ]
+    \tablename          :-> [ "Table" ]
 
-    appendixname: ->        [ "Appendix" ]
-    refname: ->             [ "References" ]
-    indexname: ->           [ "Index" ]
+    \appendixname       :-> [ "Appendix" ]
+    \refname            :-> [ "References" ]
+    \bibname            :-> [ "Bibliography" ]
+    \indexname          :-> [ "Index" ]
 
-    thepart: ->             [ @g.Roman @g.counter \part ]
-    thechapter: ->          [ @g.arabic @g.counter \chapter ]
-    thesection: ->          (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \section
-    thesubsection: ->       @thesection!       ++ "." + @g.arabic @g.counter \subsection
-    thesubsubsection: ->    @thesubsection!    ++ "." + @g.arabic @g.counter \subsubsection
-    theparagraph: ->        @thesubsubsection! ++ "." + @g.arabic @g.counter \paragraph
-    thesubparagraph: ->     @theparagraph!     ++ "." + @g.arabic @g.counter \subparagraph
-    thefigure: ->           (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \figure
-    thetable: ->            (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \table
+    \thepart            :-> [ @g.Roman @g.counter \part ]
+    \thechapter         :-> [ @g.arabic @g.counter \chapter ]
+    \thesection         :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \section
+    \thesubsection      :-> @thesection!       ++ "." + @g.arabic @g.counter \subsection
+    \thesubsubsection   :-> @thesubsection!    ++ "." + @g.arabic @g.counter \subsubsection
+    \theparagraph       :-> @thesubsubsection! ++ "." + @g.arabic @g.counter \paragraph
+    \thesubparagraph    :-> @theparagraph!     ++ "." + @g.arabic @g.counter \subparagraph
+    \thefigure          :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \figure
+    \thetable           :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \table
+
+    \appendix           :!->
+        # if chapters have been used: book, report
+        if @g.counter(\chapter) > 0
+            @g.setCounter \chapter 0
+            @g.setCounter \section 0
+            @[\chaptername] = @[\appendixname]
+            @[\thechapter] = -> [ @g.Alph @g.counter \chapter ]
+        # otherwise: article
+        else
+            @g.setCounter \section 0
+            @g.setCounter \subsection 0
+            @[\thesection] = -> [ @g.Alph @g.counter \section ]
 
     # enumerate
-    theenumi: ->            [ @g.arabic @g.counter \enumi ]
-    theenumii: ->           [ @g.alph @g.counter \enumii ]
-    theenumiii: ->          [ @g.roman @g.counter \enumiii ]
-    theenumiv: ->           [ @g.Alph @g.counter \enumiv ]
 
-    labelenumi: ->          @theenumi! ++ "."
-    labelenumii: ->         [ "(", ...@theenumii!, ")" ]
-    labelenumiii: ->        @theenumiii! ++ "."
-    labelenumiv: ->         @theenumiv! ++ "."
+    \theenumi           :-> [ @g.arabic @g.counter \enumi ]
+    \theenumii          :-> [ @g.alph @g.counter \enumii ]
+    \theenumiii         :-> [ @g.roman @g.counter \enumiii ]
+    \theenumiv          :-> [ @g.Alph @g.counter \enumiv ]
 
-    \p@enumii : ->          @theenumi!
-    \p@enumiii : ->         @theenumi! ++ "(" ++ @theenumii! ++ ")"
-    \p@enumiv : ->          @"p@enumiii"! ++ @theenumiii!
+    \labelenumi         :-> @theenumi! ++ "."
+    \labelenumii        :-> [ "(", ...@theenumii!, ")" ]
+    \labelenumiii       :-> @theenumiii! ++ "."
+    \labelenumiv        :-> @theenumiv! ++ "."
+
+    \p@enumii           :-> @theenumi!
+    \p@enumiii          :-> @theenumi! ++ "(" ++ @theenumii! ++ ")"
+    \p@enumiv           :-> @"p@enumiii"! ++ @theenumiii!
 
     # itemize
-    labelitemi: ->          [ @g.symbol \textbullet ]
-    #labelitemii: ->         \normalfont\bfseries + @g.symbol \textendash
-    labelitemiii: ->        [ @g.symbol \textasteriskcentered ]
-    labelitemiv: ->         [ @g.symbol \textperiodcentered ]
 
+    \labelitemi         :-> [ @g.symbol \textbullet ]
+    \labelitemii        :-> [ @g.symbol \textendash ]
+    #\labelitemii        :-> \normalfont\bfseries + @g.symbol \textendash   # TODO
+    \labelitemiii       :-> [ @g.symbol \textasteriskcentered ]
+    \labelitemiv        :-> [ @g.symbol \textperiodcentered ]
 
-    # article
-    appendix: !->
-        @g.setCounter \section 0
-        @g.setCounter \subsection 0
-        @[\thesection] = -> [ @g.Alph @g.counter \section ]
-
-    # book, report
-    # appendix: !->
-    #     @g.setCounter \chapter 0
-    #     @g.setCounter \section 0
-    #     @[\chaptername] = @[\appendixname]
-    #     @[\thechapter] = -> [ @g.Alph @g.counter \chapter ]
 
 
     ## not yet...
