@@ -5,17 +5,7 @@
 /* sectioning */
 /**************/
 
-body {
-    /* section is the main counter and will never be reset; it is inherited by all h elements */
-    counter-reset: section subsection;
-}
-
 /* section */
-h2:before {
-    counter-increment: section;
-    content: counter(section) "\0000a0\0000a0";
-}
-
 h2 {
     counter-reset: subsection;
     font-size: 1.4rem;      /* \Large */
@@ -24,12 +14,8 @@ h2 {
     margin-bottom: 2.3ex;
 }
 
-/* subsection */
-h3:before {
-    counter-increment: subsection;
-    content: counter(section) "." counter(subsection) "\0000a0\0000a0";
-}
 
+/* subsection */
 h3 {
     font-size: 1.2rem;      /* \large */
     font-weight: bold;
