@@ -346,6 +346,10 @@ export class HtmlGenerator
         @newCounter \footnote
         @newCounter \mpfootnote
 
+        @newCounter \@listdepth
+        @newCounter \@itemdepth
+        @newCounter \@enumdepth
+
 
 
     _error: (e) ->
@@ -627,6 +631,18 @@ export class HtmlGenerator
         #     TODO
 
         el
+
+    # lists
+
+    startlist: ->
+        @stepCounter \@listdepth
+        if @counter(\@listdepth) > 6
+            @_error "too deeply nested"
+
+        true
+
+    endlist: !->
+        @setCounter \@listdepth, @counter(\@listdepth) - 1
 
 
 

@@ -544,7 +544,9 @@ end_env "\\end" =
 environment "environment" =
     begin_env begin_group                       & { g.enterGroup(); g.startBalanced(); return true; }
     e:(
-        list
+        itemize
+      / enumerate
+      / description
       / quote_quotation_verse
       / font
       / alignment
@@ -573,43 +575,120 @@ unknown_environment =
 
 // lists: itemize, enumerate, description
 
-list "list environment" =
-    name:("itemize"/"enumerate"/"description") end_group
-        items:(
-               item:item  &{ g.break(); return true; }              // break when starting an item
-               pars:(!(item/end_env) p:paragraph { return p; })*    // collect paragraphs in pars
-               { return [item, pars]; }
-              )*
+itemize =
+    name:"itemize" end_group
+    &{
+        g.startlist();
+        g.stepCounter("@itemdepth");
+        if (g.counter("@itemdepth") > 4) {
+            error("too deeply nested");
+        }
+        return true;
+    }
+    items:(
+        label:item &{ g.break(); return true; }             // break when starting an item
+        pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
+        { return [label, pars]; }
+    )*
     {
-        var list, item, term;
+        g.endlist();
 
-        g.break();
-
-        if (name === "itemize")         { list = g.unorderedList;   item = g.listitem; }
-        else if (name === "enumerate")  { list = g.orderedList;     item = g.listitem; }
-        else                            { list = g.descriptionList; item = g.description; term = g.term; }
+        var label = "labelitem" + g.roman(g.counter("@itemdepth"));
+        g.setCounter("@itemdepth", g.counter("@itemdepth") - 1);
 
         return {
             name: name,
-            node: g.create(list,
-                        items.map(function(item_text) {
-                            if (term) {
-                                var dt = g.create(term, item_text[0]);
-                                var dd = g.create(item, item_text[1]);
-                                return g.createFragment([dt, dd]);
-                            }
+            node: g.create(g.unorderedList,
+                        items.map(function(label_text) {
+                            // null means no optgroup was given (\item ...), undefined is an empty one (\item[] ...)
+                            label_text[1].unshift(g.create(g.itemlabel, g.create(g.inlineBlock, label_text[0] !== null ? label_text[0] : g.macro(label))));
 
-                            var css = ""
-                            // null means no optgroup was given, undefined is just be an empty one
-                            if (item_text[0] !== null) {
-                                item_text[1].unshift(g.create(g.itemlabel, g.create(g.inlineBlock, item_text[0])));
-                                css = "customlabel";
-                            }
-
-                            return g.create(item, item_text[1], css);
+                            return g.create(g.listitem, label_text[1]);
                         }))
         }
     }
+
+
+enumerate =
+    name:"enumerate" end_group
+    &{
+        g.startlist();
+        g.stepCounter("@enumdepth");
+        if (g.counter("@enumdepth") > 4) {
+            error("too deeply nested");
+        }
+
+        var itemCounter = "enum" + g.roman(g.counter("@enumdepth"));
+        g.setCounter(itemCounter, 0);
+        return true;
+    }
+    items:(
+        label:(label:item {
+            g.break();                                      // break when starting an item
+            // null is no optgroup (\item ...)
+            // undefined is an empty one (\item[] ...)
+            if (label === null) {
+                var itemCounter = "enum" + g.roman(g.counter("@enumdepth"));
+                var itemId = "item-" + g.nextId();
+                g.stepCounter(itemCounter);
+                g.refCounter(itemCounter, itemId);
+                return {
+                    id:   itemId,
+                    node: g.macro("label" + itemCounter)
+                };
+            }
+            return {
+                id: undefined,
+                node: label
+            };
+        })
+        pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
+        {
+            return {
+                label: label,
+                text: pars
+            };
+        }
+    )*
+    {
+        g.endlist();
+        g.setCounter("@enumdepth", g.counter("@enumdepth") - 1);
+
+        return {
+            name: name,
+            node: g.create(g.orderedList,
+                        items.map(function(item) {
+                            var label = g.create(g.inlineBlock, item.label.node);
+                            if (item.label.id)
+                                label.id = item.label.id;
+                            item.text.unshift(g.create(g.itemlabel, label));
+                            return g.create(g.listitem, item.text);
+                        }))
+        }
+    }
+
+
+description =
+    name:"description" end_group    &{ return g.startlist(); }
+    items:(
+        label:item &{ g.break(); return true; }             // break when starting an item
+        pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
+        { return [label, pars]; }
+    )*
+    {
+        g.endlist();
+
+        return {
+            name: name,
+            node: g.create(g.descriptionList,
+                        items.map(function(label_text) {
+                            var dt = g.create(g.term, label_text[0]);
+                            var dd = g.create(g.description, label_text[1]);
+                            return g.createFragment([dt, dd]);
+                        }))
+        }
+    }
+
 
 
 item =
@@ -619,10 +698,11 @@ item =
 
 // quote, quotation, verse
 quote_quotation_verse =
-    name:("quote"/"quotation"/"verse") end_group
+    name:("quote"/"quotation"/"verse") end_group    &{ return g.startlist(); }
     skip_space
-        p:paragraph*
+    p:paragraph*
     {
+        g.endlist();
         return {
             name: name,
             node: g.create(g[name], p)
