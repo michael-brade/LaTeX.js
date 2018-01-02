@@ -87,18 +87,21 @@ identifier "identifier" =
     $char+
 
 
+// {identifier}
 id_group =
     skip_space begin_group skip_space
         id:identifier
     skip_space end_group
     { return id; }
 
+// {\identifier}
 macro_group =
     skip_space begin_group skip_space
         escape id:identifier
     skip_space end_group
     { return id; }
 
+// [identifier]
 id_optgroup =
     skip_space begin_optgroup skip_space
         id:identifier
@@ -106,13 +109,15 @@ id_optgroup =
     { return id; }
 
 
+// {<LaTeX code/text>}
+//
 // group balancing: groups have to be balanced inside arguments, inside environments, and inside a document.
 // startBalanced() is used to start a new level inside of which groups have to be balanced.
 //
 // In the document and in environments, the default state is unbalanced until end of document or environment.
 // In an argument, the default state is balanced (so that we know when to take } as end of argument),
 // so first enter the group, then start a new level of balancing.
-arggroup "mandatory argument" =
+arg_group "mandatory argument" =
     skip_space
     begin_group                                 & { g.enterGroup(); g.startBalanced(); return true; }
     s:space?
@@ -128,7 +133,9 @@ arggroup "mandatory argument" =
     }
 
 
-optgroup "optional argument" =
+
+// [<LaTeX code/text>]
+opt_group "optional argument" =
     skip_space
     begin_optgroup                              & { g.startBalanced(); return true; }
         p:paragraph_with_linebreak*
@@ -141,7 +148,7 @@ optgroup "optional argument" =
 
 
 // macros that work in horizontal and vertical mode (those that basically don't produce text)
-macro =
+hv_macro =
     escape
     (
         fontfamily / fontweight / fontshape
@@ -161,11 +168,11 @@ macro =
 
 // macros that only work in horizontal mode (include \leavevmode)
 hmode_macro =
-    macro
+    hv_macro
     /
     escape
     m:(
-      custom_macro
+      macro
 
     / noindent
 
@@ -185,7 +192,7 @@ hmode_macro =
 // macros that only work in vertical mode (include \par or check for \ifvmode)
 vmode_macro =
     skip_all_space
-    macro
+    hv_macro
     { return undefined; }
   /
     skip_all_space
@@ -204,22 +211,26 @@ vmode_macro =
 vmode_test =
     skip_all_space
     escape (
-        "part" / "chapter" / "section" / "subsection" / "subsubsection" / "paragraph" / "subparagraph"
+        ("front"/"main"/"back")"matter" / "tableofcontents"
+      / "part" / "chapter" / "section" / "subsection" / "subsubsection" / "paragraph" / "subparagraph"
       / "addvspace" / ("small"/"med"/"big")"break" / "begin" / "end" / "item"
     ) !char
 
 
-custom_macro =
+macro =
     name:identifier &{ if (g.hasMacro(name)) { g.beginArgs(name); return true; } }
     skip_space
     args:(
-        &{ return g.nextArg("g") }    g:(arggroup / . { error("macro " + name + " is missing a group argument") })              { return g; }
-      / &{ return g.nextArg("i") }    i:(id_group / . { error("macro " + name + " is missing an id group argument") })          { return i; }
-      / &{ return g.nextArg("k") }    k:(key_group / . { error("macro " + name + " is missing a key group argument") })         { return k; }
-      / &{ return g.nextArg("l") }    l:(lengthgroup / . { error("macro " + name + " is missing a length group argument") })    { return l; }
-      / &{ return g.nextArg("m") }    m:(macro_group / . { error("macro " + name + " is missing a macro group argument") })     { return m; }
-      / &{ return g.nextArg("u") }    u:(url_group / . { error("macro " + name + " is missing a url group argument") })         { return u; }
-    //   / &{ return g.nextArg("s") }    s:"*"?                                                                                    { return !!s; }
+        &{ return g.nextArg("s") }    s:"*"?                                                                                    { return !!s; }
+      / &{ return g.nextArg("g") }    g:(arg_group      / . { error("macro " + name + " is missing a group argument") })        { return g; }
+      / &{ return g.nextArg("o") }    o: opt_group?                                                                             { return o; }
+      / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { return i; }
+      / &{ return g.nextArg("i?") }   i: id_group?                                                                              { return i; }
+      / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { return k; }
+      / &{ return g.nextArg("e") }    e:(expr_group     / . { error("macro " + name + " is missing a num group argument") })    { return e; }
+      / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { return l; }
+      / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { return m; }
+      / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { return u; }
     )*
     {
         g.endArgs();
@@ -238,9 +249,9 @@ unknown_macro =
 // keep a reference to the TOC element, and fill it as we go along
 tableofcontents =   "tableofcontents" _     { return g.create(g.toc); }
 
-part            =   "part"          s:"*"? toc:optgroup? ttl:arggroup { return g.create(g.part, ttl); }
+part            =   "part"          s:"*"? toc:opt_group? ttl:arg_group { return g.create(g.part, ttl); }
 
-sectioning      =   sec:$("chapter"/"sub"?("sub"?"section"/"paragraph")) s:"*"? toc:optgroup? ttl:arggroup
+sectioning      =   sec:$("chapter"/"sub"?("sub"?"section"/"paragraph")) s:"*"? toc:opt_group? ttl:arg_group
                     {
                         return g.startsection(sec, !!s, toc, ttl);
                     }
@@ -255,30 +266,30 @@ backmatter      =   "backmatter"    _
 // commands
 
 textfamily      =   "text" f:("rm"/"sf"/"tt")       !char   &{ g.enterGroup(); g.setFontFamily(f); return true; }
-                    a:arggroup
+                    a:arg_group
                     { g.exitGroup(); return a; }
 
 textweight      =   "text" w:("md"/"bf")            !char   &{ g.enterGroup(); g.setFontWeight(w); return true; }
-                    a:arggroup
+                    a:arg_group
                     { g.exitGroup(); return a; }
 
 textshape       =   "text" s:("up"/"it"/"sl"/"sc")  !char   &{ g.enterGroup(); g.setFontShape(s); return true; }
-                    a:arggroup
+                    a:arg_group
                     { g.exitGroup(); return a; }
 
 
 textnormal      =   "textnormal"                    !char   &{ g.enterGroup(); g.setFontFamily("rm");
                                                                                g.setFontWeight("md");
                                                                                g.setFontShape("up"); return true; }
-                    a:arggroup
+                    a:arg_group
                     { g.exitGroup(); return a; }
 
 
 underline       =   "underline"                     !char   &{ g.enterGroup(); g.setTextDecoration("underline"); return true; }
-                    a:arggroup
+                    a:arg_group
                     { g.exitGroup(); return a; }
 
-emph            =   "emph"  a:arggroup
+emph            =   "emph"  a:arg_group
                     { return g.create(g.emph, a); }
 
 
@@ -313,14 +324,14 @@ raggedleft      =   "raggedleft"                    _    { g.setAlignment("flush
 // ** spacing macros
 
 // vertical
-vspace_hmode    =   "vspace" "*"?    !char l:lengthgroup { return g.createVSpaceInline(l); }
-vspace_vmode    =   "vspace" "*"?    !char l:lengthgroup { return g.createVSpace(l); }
+vspace_hmode    =   "vspace" "*"?   !char l:length_group { return g.createVSpaceInline(l); }
+vspace_vmode    =   "vspace" "*"?   !char l:length_group { return g.createVSpace(l); }
 
 smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _    { return g.createVSpaceSkipInline(s + "skip"); }
 smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _    { return g.createVSpaceSkip(s + "skip"); }
 
 // only in vmode possible
-addvspace       =   "addvspace"      !char l:lengthgroup { return g.createVSpace(l); }   // TODO not correct?
+addvspace       =   "addvspace"     !char l:length_group { return g.createVSpace(l); }   // TODO not correct?
 smbbreak        =   s:$("small"/"med"/"big")"break" _    { return g.createVSpaceSkip(s + "skip"); }
 
 //  \\[length] is defined in the linebreak rule further down
@@ -328,9 +339,9 @@ smbbreak        =   s:$("small"/"med"/"big")"break" _    { return g.createVSpace
 
 
 // horizontal
-hspace          =   "hspace" "*"?    !char l:lengthgroup { return g.createHSpace(l); }
+hspace          =   "hspace" "*"?   !char l:length_group { return g.createHSpace(l); }
 
-//stretch         =   "stretch"               arggroup
+//stretch         =   "stretch"               arg_group
 //hphantom        =   "hphantom"              _
 
 // hfill           = \hspace{\fill}
@@ -348,16 +359,16 @@ length          =   l:float u:length_unit (plus float length_unit)? (minus float
                     { return l + u; }
 
 // TODO: should be able to use variables and maths: 2\parskip etc.
-lengthgroup     =   skip_space begin_group skip_space l:length end_group
+length_group     =   skip_space begin_group skip_space l:length end_group
                     { return l; }
 
 newlength       =   "newlength" id:macro_group
                     { g.newLength(id); }
 
-setlength       =   "setlength"  id:macro_group l:lengthgroup
+setlength       =   "setlength"  id:macro_group l:length_group
                     { g.setLength(id, l); }
 
-addtolength     =   "addtolength" id:macro_group l:lengthgroup
+addtolength     =   "addtolength" id:macro_group l:length_group
                     { g.setLength(id, g.length(id) + l); }
 
 
@@ -479,7 +490,6 @@ key_group       =   skip_space begin_group
                     end_group
                     { return k; }
 
-// TODO: label leaves one space, not two if it has a space on either end!
 label           =   "label" l:key_group     { g.setLabel(l); }
 
 ref             =   "ref" l:key_group       { return g.ref(l); }
@@ -504,28 +514,28 @@ url             =   "url" u:url_group
 href            =   "href"  skip_space begin_group
                         url:(!end_group c:url_charset {return c;})+
                     end_group
-                    txt:arggroup
+                    txt:arg_group
                     {
                         return g.create(g.link(url.join("")), txt);
                     }
 
 // \hyperref[label_name]{''link text''} --- just like \ref{label_name}, only an <a>
-hyperref        =   "hyperref" skip_space optgroup
+hyperref        =   "hyperref" skip_space opt_group
 
 
 
 
 // pagestyle       =   "pagestyle" id_group
 
-ignored         =   "linebreak" optgroup?
-                /   "nolinebreak" optgroup?
+ignored         =   "linebreak" opt_group?
+                /   "nolinebreak" opt_group?
                 /   "fussy"
                 /   "sloppy"
 
                 // these make no sense without pagebreaks
-                /   "no"? "pagebreak" optgroup
+                /   "no"? "pagebreak" opt_group
                 /   "samepage"
-                /   "enlargethispage" "*"? lengthgroup
+                /   "enlargethispage" "*"? length_group
                 /   "newpage"
                 /   "clearpage"         // prints floats in LaTeX
                 /   "cleardoublepage"
@@ -609,7 +619,7 @@ itemize =
             name: name,
             node: g.create(g.unorderedList,
                         items.map(function(label_text) {
-                            // null means no optgroup was given (\item ...), undefined is an empty one (\item[] ...)
+                            // null means no opt_group was given (\item ...), undefined is an empty one (\item[] ...)
                             label_text[1].unshift(g.create(g.itemlabel, g.create(g.inlineBlock, label_text[0] !== null ? label_text[0] : g.macro(label))));
 
                             return g.create(g.listitem, label_text[1]);
@@ -634,7 +644,7 @@ enumerate =
     items:(
         label:(label:item {
             g.break();                                      // break when starting an item
-            // null is no optgroup (\item ...)
+            // null is no opt_group (\item ...)
             // undefined is an empty one (\item[] ...)
             if (label === null) {
                 var itemCounter = "enum" + g.roman(g.counter("@enumdepth"));
@@ -701,7 +711,7 @@ description =
 
 
 item =
-    skip_all_space escape "item" !char og:optgroup? skip_all_space
+    skip_all_space escape "item" !char og:opt_group? skip_all_space
     { return og; }
 
 
@@ -765,12 +775,12 @@ alignment =
 onecolumn = "onecolumn" !char
 
 // switch to twocolumn layout from now on
-twocolumn = "twocolumn" !char o:optgroup?
+twocolumn = "twocolumn" !char o:opt_group?
 
 // \begin{multicols}{number}[pretext][premulticols size]
 multicols =
     name:("multicols") end_group
-    conf:(begin_group c:digit end_group o:optgroup? optgroup? { return { cols: c, pre: o } }
+    conf:(begin_group c:digit end_group o:opt_group? opt_group? { return { cols: c, pre: o } }
          / &{ error("multicols error, required syntax: \\begin{multicols}{number}[pretext][premulticols size]") }
          )
     pars:paragraph*
@@ -1038,4 +1048,4 @@ logging                 = "showthe" _ (
                             c:value &{ return g.hasCounter(c);} { console.log(g.counter(c)); }
                             / escape l:identifier skip_space    { console.log(g.length(l)); }
                         )
-                        / "message" m:arggroup                  { console.log(m.textContent); }
+                        / "message" m:arg_group                  { console.log(m.textContent); }

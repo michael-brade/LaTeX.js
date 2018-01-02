@@ -7,14 +7,14 @@ some text \empty\ inside.
 
 ** custom macros with a mandatory argument
 .
-some text \echo{with a macro}
+some text \echoOGO{with a macro}
 .
 <p>some text +with a macro+</p>
 .
 
 ** custom macros with an optional argument
 .
-some text \echo[with a macro]
+some text \echoO[with a macro]
 .
 <p>some text -with a macro-</p>
 .
@@ -22,28 +22,28 @@ some text \echo[with a macro]
 
 ** custom macros with optional and mandatory arguments, mixed with space and comments
 .
-some text, \echo{mandatory arg} [%
+some text, \echoGOG{mandatory arg} [%
 ,  % another comment
  ]
  {more mandatory} inside.
 .
-<p>some text, +mandatory arg+-, -+more mandatory+​ inside.</p>
+<p>some text, +mandatory arg+-, -+more mandatory+ inside.</p>
 .
 
 
 ** brackets can be used in optional arguments when protected by a group
 .
-% echo simply outputs all its arguments, delimited by + (mandatory args) or - (optional args)
-\echo[{t]}t]{ext} more
+% echo simply outputs its arguments delimited by + (mandatory args) or - (optional args)
+\echoOGO[{t]}t]{ext} more
 .
-<p>-t]t-+ext+​ more</p>
+<p>-t]t-+ext+ more</p>
 .
 
 
 
 ** custom macros with optional and mandatory arguments, mixed with newlines
 .
-some text \echo{again} [ % test
+some text \echoOGO{again} [ % test
 
  ]% another comment
 

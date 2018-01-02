@@ -16,10 +16,10 @@ Object.defineProperty Array.prototype, 'top',
 
 he.decode.options.strict = true
 
-# This is where (custom) macros are defined.
+# This is where (custom) horizontal-mode macros are defined.
 # This class should be independent of HtmlGenerator and just work with the generator interface.
 #
-# A macro must return an array with elements of type node or string (text).
+# A macro must return an array with elements of type Node or String (text).
 class Macros
 
     # CTOR
@@ -45,19 +45,33 @@ class Macros
     # o: optional arg
     # o+: long optional arg
     args = {}
-
     args: args
 
 
-    \empty :!->
+    args.echoO = <[ o ]>
 
-    args.echo = <[ g ]>
-    \echo : (g) ->
-        [
-            "+"
-            g
-            "+"
-        ]
+    \echoO : (o) ->
+        [ "-", o, "-" ]
+
+
+    args.echoOGO = <[ o g o ]>
+
+    \echoOGO : (o1, g, o2) ->
+        []
+            ..push "-", o1, "-" if o1
+            ..push "+", g,  "+"
+            ..push "-", o2, "-" if o2
+
+
+    args.echoGOG = <[ g o g ]>
+
+    \echoGOG : (g1, o, g2) ->
+        [ "+", g1, "+" ]
+            ..push "-", o,  "-" if o
+            ..push "+", g2, "+"
+
+
+    \empty :!->
 
     \TeX :->
         # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
@@ -167,6 +181,12 @@ class Macros
     \labelitemiii       :-> [ @g.symbol \textasteriskcentered ]
     \labelitemiv        :-> [ @g.symbol \textperiodcentered ]
 
+
+
+    # boxes
+
+    args.mbox = <[ g ]>
+    \mbox : (g)         ->
 
 
     ## not yet...
