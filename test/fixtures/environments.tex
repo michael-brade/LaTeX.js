@@ -20,13 +20,13 @@ this belongs to paragraph with itemize
 .
 <p>a paragraph of text</p>
 <ul class="list">
-<li><p>ﬁrst item</p><p>with a new paragraph</p></li>
-<li><p>second item</p></li>
+<li><span class="itemlabel"><span>•</span></span><p>ﬁrst item</p><p>with a new paragraph</p></li>
+<li><span class="itemlabel"><span>•</span></span><p>second item</p></li>
 </ul>
 <p>more text</p>
 <ul class="list">
-<li><p>ﬁrst item</p></li>
-<li><p>second item</p></li>
+<li><span class="itemlabel"><span>•</span></span><p>ﬁrst item</p></li>
+<li><span class="itemlabel"><span>•</span></span><p>second item</p></li>
 </ul>
 <p class="continue">this belongs to paragraph with itemize</p>
 .
@@ -42,7 +42,7 @@ this belongs to paragraph with itemize
 .
 <ul class="list"></ul>
 <ul class="list">
-<li><p>text that doesn’t continue</p></li>
+<li><span class="itemlabel"><span>•</span></span><p>text that doesn’t continue</p></li>
 </ul>
 .
 
@@ -60,11 +60,11 @@ text after
 .
 <p>text before</p>
 <ul class="list">
-<li>
-<p>ﬁrst item</p>
+<li><span class="itemlabel"><span>•</span></span><p>ﬁrst item</p>
 <ul class="list">
-<li><p>ﬁrst nested item</p></li>
-</ul></li>
+<li><span class="itemlabel"><span>•</span></span><p>ﬁrst nested item</p></li>
+</ul>
+</li>
 </ul>
 <p class="continue">text after</p>
 .
@@ -84,29 +84,29 @@ text after
 .
 <p>text before</p>
 <ul class="list">
-<li><p>ﬁrst item</p>
+<li><span class="itemlabel"><span>•</span></span><p>ﬁrst item</p>
 <ul class="list">
-<li><p>ﬁrst nested item</p></li>
+<li><span class="itemlabel"><span>–</span></span><p>ﬁrst nested item</p></li>
 </ul>
 </li>
-<li><p>second item</p></li>
+<li><span class="itemlabel"><span>•</span></span><p>second item</p></li>
 </ul>
 <p class="continue">text after</p>
 .
 
 
-** single environment
+** single environment, custom labels
 .
 \begin{itemize}
-    \item first item
-    \item second item
+    \item[\textendash] first item
+    \item[] second item
     \item third item
 \end{itemize}
 .
 <ul class="list">
-<li><p>ﬁrst item</p></li>
-<li><p>second item</p></li>
-<li><p>third item</p></li>
+<li><span class="itemlabel"><span>–</span></span><p>ﬁrst item</p></li>
+<li><span class="itemlabel"><span></span></span><p>second item</p></li>
+<li><span class="itemlabel"><span>•</span></span><p>third item</p></li>
 </ul>
 .
 
@@ -126,11 +126,14 @@ this belongs to paragraph with enumerate
 .
 <p>a paragraph of text</p>
 <ol class="list">
-<li class="customlabel">
+<li>
 <span class="itemlabel"><span>label</span></span>
 <p>ﬁrst item</p><p>with a new paragraph</p>
 </li>
-<li><p>second item</p></li>
+<li>
+<span class="itemlabel"><span id="item-1">1.</span></span>
+<p>second item</p>
+</li>
 </ol>
 <p class="continue">this belongs to paragraph with enumerate</p>
 .
