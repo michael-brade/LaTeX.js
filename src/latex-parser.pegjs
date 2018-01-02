@@ -105,7 +105,10 @@ id_optgroup =
 
 // group balancing: groups have to be balanced inside arguments, inside environments, and inside a document.
 // startBalanced() is used to start a new level inside of which groups have to be balanced.
-
+//
+// In the document and in environments, the default state is unbalanced until end of document or environment.
+// In an argument, the default state is balanced (so that we know when to take } as end of argument),
+// so first enter the group, then start a new level of balancing.
 arggroup "mandatory argument" =
     skip_space
     begin_group                                 & { g.enterGroup(); g.startBalanced(); return true; }
@@ -127,6 +130,7 @@ optgroup "optional argument" =
         p:paragraph_with_linebreak*
     end_optgroup                                & { return g.isBalanced(); }
     {
+        g.isBalanced() || error("groups inside an optional argument need to be balanced!");
         g.endBalanced();
         return g.createFragment(p);
     }
@@ -542,7 +546,7 @@ end_env "\\end" =
     begin_group id:identifier end_group         { return id; }
 
 environment "environment" =
-    begin_env begin_group                       & { g.enterGroup(); g.startBalanced(); return true; }
+    begin_env begin_group                       & { g.startBalanced(); g.enterGroup(); return true; }
     e:(
         itemize
       / enumerate
@@ -560,8 +564,9 @@ environment "environment" =
         if (e.name != id)
             error("environment <b>" + e.name + "</b> is missing its end, found " + id + " instead");
 
-        g.endBalanced() || error(e.name + ": groups need to be balanced in environments!");
-        g.exitGroup()   || error("there was no group to end");
+        g.exitGroup();
+        g.isBalanced() || error(e.name + ": groups need to be balanced in environments!");
+        g.endBalanced();
 
         return e.node;
     }
