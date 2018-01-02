@@ -11,7 +11,10 @@ document =
     skip_all_space EOF        // drop spaces at the end of the document
     {
         g.exitGroup();
-        g.endBalanced() || error("groups need to be balanced!");
+        g.isBalanced() || error("groups need to be balanced!");
+        var l = g.endBalanced();
+        // this error should be impossible, it's just to be safe
+        l == 0 || error("grammar error: " + l + " levels of balancing are remaining!");
         g.createDocument(pars);
         return g;
     }
@@ -50,7 +53,7 @@ text "text" =
     // groups
     / begin_group                             & { g.enterGroup(); return true; }
       s:space?                                  { return g.createText(s); }
-    / end_group                               & { return !g.isBalanced() && g.exitGroup(); }
+    / end_group                               & { if (!g.isBalanced()) { g.exitGroup(); return true; } } // end group only in unbalanced state
       s:space?                                  { return g.createText(s); }
 
 
@@ -116,8 +119,9 @@ arggroup "mandatory argument" =
         p:paragraph_with_linebreak*
     end_group
     {
-        g.endBalanced() || error("groups inside an argument need to be balanced!");
-        g.exitGroup()   || error("there was no group to end");
+        g.isBalanced() || error("groups inside an argument need to be balanced!");
+        g.endBalanced();
+        g.exitGroup();
 
         s != undefined && p.unshift(g.createText(s));
         return g.createFragment(p);

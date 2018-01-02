@@ -11,7 +11,7 @@ Object.defineProperty Array.prototype, 'top',
     enumerable: false
     configurable: true
     get: -> @[* - 1]
-    set: undefined
+    set: (v) !-> @[* - 1] = v
 
 
 he.decode.options.strict = true
@@ -555,25 +555,26 @@ export class HtmlGenerator
             attrs: Object.assign {}, @_stack.top.attrs
             lengths: new Map(@_stack.top.lengths)
         }
-        ++@_groups[@_groups.length - 1]
+        ++@_groups.top
 
-    # end the last group - returns false if there was no group to end
-    exitGroup: ->
+    # end the last group - throws if there was no group to end
+    exitGroup: !->
+        --@_groups.top >= 0 || @_error "there is no group to end here"
         @_stack.pop!
-        --@_groups[@_groups.length - 1] >= 0
 
 
     # start a new level of grouping
     startBalanced: !->
         @_groups.push 0
 
-    # exit a level of grouping and return true if it was balanced
+    # exit a level of grouping and return the levels of balancing still left
     endBalanced: ->
-        @_groups.pop! == 0
+        @_groups.pop!
+        @_groups.length
 
     # check if the current level of grouping is balanced
     isBalanced: ->
-        @_groups[@_groups.length - 1] == 0
+        @_groups.top == 0
 
 
     ### attributes (CSS classes)
