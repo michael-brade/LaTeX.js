@@ -520,6 +520,9 @@ export class HtmlGenerator
 
     hasMacro: (name) ->
         typeof @_macros[name] == "function"
+        and name !== "constructor"
+        and (@_macros.hasOwnProperty name or Macros.prototype.hasOwnProperty name)
+
 
     beginArgs: (macro) ->
         @_curArgs.push if @_macros.args[macro] then that.slice! else []
