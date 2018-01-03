@@ -88,7 +88,9 @@ primitive "primitive" =
 hv_macro =
     escape
     (
-        fontfamily / fontweight / fontshape
+      &is_hvmode macro
+
+      / fontfamily / fontweight / fontshape
       / normalfont / em
 
       / fontsize
@@ -109,7 +111,7 @@ hmode_macro =
   /
     escape
     m:(
-      macro
+      &is_hmode m:macro { return m; }
 
     / noindent
 
@@ -122,6 +124,9 @@ hmode_macro =
     / refstepcounter / the
 
     / verb
+
+    // now we have checked hv-macros and h-macros - if it's not a v-macro it is undefined
+    / !is_vmode unknown_macro
     )
     { return m; }
 
@@ -135,7 +140,8 @@ vmode_macro =
     skip_all_space
     escape
     m:(
-      frontmatter / mainmatter / backmatter
+      &is_vmode m:macro { return m; }
+    / frontmatter / mainmatter / backmatter
     / tableofcontents
     / part / sectioning
     / vspace_vmode / addvspace / smbskip_vmode / smbbreak
@@ -144,14 +150,16 @@ vmode_macro =
     { g.break(); return m; }
 
 
-// test: does a vertical mode follow next? then don't add a space!
-vmode_test =
-    skip_all_space
-    escape (
-        ("front"/"main"/"back")"matter" / "tableofcontents"
-      / "part" / "chapter" / "section" / "subsection" / "subsubsection" / "paragraph" / "subparagraph"
-      / "addvspace" / ("small"/"med"/"big")"break" / "begin" / "end" / "item"
-    ) !char
+
+is_vmode =
+    id:identifier &{ return g.isVmode(id); }
+
+is_hmode =
+    id:identifier &{ return g.isHmode(id); }
+
+is_hvmode =
+    id:identifier &{ return g.isHVmode(id); }
+
 
 
 macro =
@@ -928,7 +936,9 @@ comment         "comment"   = "%"  (!nl .)* (nl sp* / EOF)                      
 skip_space      "spaces"    = (!break (nl / sp / comment))*     { return undefined; }
 skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefined; }
 
-space           "spaces"    = !break !linebreak !vmode_test
+space           "spaces"    = !break
+                              !linebreak
+                              !(skip_all_space escape is_vmode)
                               (sp / nl)+                        { return g.brsp; }
 
 ctrl_space  "control space" = escape (&nl &break / nl / sp)     { return g.brsp; }          // latex.ltx, line 540

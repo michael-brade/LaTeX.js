@@ -65,13 +65,13 @@ class Macros
     args: args
 
 
-    args.echoO = <[ o ]>
+    args.echoO = <[ H o ]>
 
     \echoO : (o) ->
         [ "-", o, "-" ]
 
 
-    args.echoOGO = <[ o g o ]>
+    args.echoOGO = <[ H o g o ]>
 
     \echoOGO : (o1, g, o2) ->
         []
@@ -80,7 +80,7 @@ class Macros
             ..push "-", o2, "-" if o2
 
 
-    args.echoGOG = <[ g o g ]>
+    args.echoGOG = <[ H g o g ]>
 
     \echoGOG : (g1, o, g2) ->
         [ "+", g1, "+" ]
@@ -88,7 +88,9 @@ class Macros
             ..push "+", g2, "+"
 
 
+    args.\empty = <[ HV ]>
     \empty :!->
+
 
     \TeX :->
         # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
@@ -128,7 +130,18 @@ class Macros
     \negthinspace       :-> [ @g.create @g.inline-block, undefined, 'negthinspace' ]
 
 
-    # sectioning
+
+    # vertical mode declarations
+    args.\par           = <[ V ]>
+    args.\begin         = <[ V ]>
+    args.\end           = <[ V ]>
+    args.\item          = <[ V ]>
+
+    
+
+    ##############
+    # sectioning #
+    ##############
 
     \contentsname       :-> [ "Contents" ]
     \listfigurename     :-> [ "List of Figures" ]
@@ -169,6 +182,11 @@ class Macros
             @g.setCounter \subsection 0
             @[\thesection] = -> [ @g.Alph @g.counter \section ]
 
+
+    ################
+    # environments #
+    ################
+
     # enumerate
 
     \theenumi           :-> [ @g.arabic @g.counter \enumi ]
@@ -195,22 +213,36 @@ class Macros
 
 
 
-    # boxes
+    #########
+    # boxes #
+    #########
 
-    args.mbox = <[ g ]>
+    # \mbox{text} - not broken into lines
+    args.mbox = <[ H g ]>
     \mbox : (g)         ->
 
 
     ## not yet...
 
-    args.include = <[ g ]>
+    args.\input = <[ g ]>
+    \input : (arg) ->
+
+    args.\include = <[ g ]>
     \include : (arg) ->
 
-    args.includeonly = <[ g ]>
+
+    ############
+    # preamble #
+    ############
+
+    args.\includeonly = <[ P g ]>
     \includeonly : (arg) ->
 
-    args.input = <[ g ]>
-    \input : (arg) ->
+    args.\makeatletter = <[ P ]>
+    \makeatletter   :->
+
+    args.\makeatother = <[ P ]>
+    \makeatother   :->
 
 
 
@@ -563,8 +595,14 @@ export class HtmlGenerator
         and (@_macros.hasOwnProperty name or Macros.prototype.hasOwnProperty name)
 
 
+    isHmode:    (name) -> @_macros.args[name]?.0 == \H  or not @_macros.args[name]
+    isVmode:    (name) -> @_macros.args[name]?.0 == \V
+    isHVmode:   (name) -> @_macros.args[name]?.0 == \HV
+    isPreamble: (name) -> @_macros.args[name]?.0 == \P
+
+
     beginArgs: (macro) ->
-        @_curArgs.push if @_macros.args[macro] then that.slice! else []
+        @_curArgs.push if @_macros.args[macro] then that.slice 1 else []
 
     nextArg: (arg) ->
         if @_curArgs.top[0] == arg
