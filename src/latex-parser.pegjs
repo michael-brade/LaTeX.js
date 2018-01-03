@@ -57,7 +57,7 @@ text "text" =
       s:space?                                  { return g.createText(s); }
 
 
-
+// this rule must always return a string
 primitive "primitive" =
       char
     / space                                     { return g.sp; }
@@ -83,69 +83,6 @@ primitive "primitive" =
 /* macros */
 /**********/
 
-identifier "identifier" =
-    $char+
-
-
-// {identifier}
-id_group =
-    skip_space begin_group skip_space
-        id:identifier
-    skip_space end_group
-    { return id; }
-
-// {\identifier}
-macro_group =
-    skip_space begin_group skip_space
-        escape id:identifier
-    skip_space end_group
-    { return id; }
-
-// [identifier]
-id_optgroup =
-    skip_space begin_optgroup skip_space
-        id:identifier
-    skip_space end_optgroup
-    { return id; }
-
-
-// {<LaTeX code/text>}
-//
-// group balancing: groups have to be balanced inside arguments, inside environments, and inside a document.
-// startBalanced() is used to start a new level inside of which groups have to be balanced.
-//
-// In the document and in environments, the default state is unbalanced until end of document or environment.
-// In an argument, the default state is balanced (so that we know when to take } as end of argument),
-// so first enter the group, then start a new level of balancing.
-arg_group "mandatory argument" =
-    skip_space
-    begin_group                                 & { g.enterGroup(); g.startBalanced(); return true; }
-    s:space?
-        p:paragraph_with_linebreak*
-    end_group
-    {
-        g.isBalanced() || error("groups inside an argument need to be balanced!");
-        g.endBalanced();
-        g.exitGroup();
-
-        s != undefined && p.unshift(g.createText(s));
-        return g.createFragment(p);
-    }
-
-
-
-// [<LaTeX code/text>]
-opt_group "optional argument" =
-    skip_space
-    begin_optgroup                              & { g.startBalanced(); return true; }
-        p:paragraph_with_linebreak*
-    end_optgroup                                & { return g.isBalanced(); }
-    {
-        g.isBalanced() || error("groups inside an optional argument need to be balanced!");
-        g.endBalanced();
-        return g.createFragment(p);
-    }
-
 
 // macros that work in horizontal and vertical mode (those that basically don't produce text)
 hv_macro =
@@ -169,7 +106,7 @@ hv_macro =
 // macros that only work in horizontal mode (include \leavevmode)
 hmode_macro =
     hv_macro
-    /
+  /
     escape
     m:(
       macro
@@ -227,7 +164,7 @@ macro =
       / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { return i; }
       / &{ return g.nextArg("i?") }   i: id_group?                                                                              { return i; }
       / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { return k; }
-      / &{ return g.nextArg("e") }    e:(expr_group     / . { error("macro " + name + " is missing a num group argument") })    { return e; }
+      / &{ return g.nextArg("n") }    e:(expr_group     / . { error("macro " + name + " is missing n num group argument") })    { return n; }
       / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { return l; }
       / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { return m; }
       / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { return u; }
@@ -243,6 +180,77 @@ unknown_macro =
     m:identifier
     { error("unknown macro: " + m); }
 
+
+
+/************************/
+/* macro argument rules */
+/************************/
+
+
+identifier "identifier" =
+    $char+
+
+key "key" =
+    $(char / punctuation / digit)+
+
+
+// {identifier}
+id_group        =   skip_space begin_group skip_space
+                        id:identifier
+                    skip_space end_group
+                    { return id; }
+
+// {\identifier}
+macro_group     =   skip_space begin_group skip_space
+                        escape id:identifier
+                    skip_space end_group
+                    { return id; }
+
+// [identifier]
+id_optgroup     =   skip_space begin_optgroup skip_space
+                        id:identifier
+                    skip_space end_optgroup
+                    { return id; }
+
+// {key}
+key_group       =   skip_space begin_group
+                        k:key
+                    end_group
+                    { return k; }
+
+
+// {<LaTeX code/text>}
+//
+// group balancing: groups have to be balanced inside arguments, inside environments, and inside a document.
+// startBalanced() is used to start a new level inside of which groups have to be balanced.
+//
+// In the document and in environments, the default state is unbalanced until end of document or environment.
+// In an argument, the default state is balanced (so that we know when to take } as end of argument),
+// so first enter the group, then start a new level of balancing.
+arg_group       =   skip_space begin_group      & { g.enterGroup(); g.startBalanced(); return true; }
+                        s:space?
+                        p:paragraph_with_linebreak*
+                    end_group
+                    {
+                        g.isBalanced() || error("groups inside an argument need to be balanced!");
+                        g.endBalanced();
+                        g.exitGroup();
+
+                        s != undefined && p.unshift(g.createText(s));
+                        return g.createFragment(p);
+                    }
+
+
+
+// [<LaTeX code/text>]
+opt_group       =   skip_space begin_optgroup   & { g.startBalanced(); return true; }
+                        p:paragraph_with_linebreak*
+                    end_optgroup                & { return g.isBalanced(); }
+                    {
+                        g.isBalanced() || error("groups inside an optional argument need to be balanced!");
+                        g.endBalanced();
+                        return g.createFragment(p);
+                    }
 
 // ** sectioning
 
@@ -324,11 +332,11 @@ raggedleft      =   "raggedleft"                    _    { g.setAlignment("flush
 // ** spacing macros
 
 // vertical
-vspace_hmode    =   "vspace" "*"?   !char l:length_group { return g.createVSpaceInline(l); }
-vspace_vmode    =   "vspace" "*"?   !char l:length_group { return g.createVSpace(l); }
+vspace_hmode    =   "vspace" "*"?   l:length_group      { return g.createVSpaceInline(l); }
+vspace_vmode    =   "vspace" "*"?   l:length_group      { return g.createVSpace(l); }
 
-smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _    { return g.createVSpaceSkipInline(s + "skip"); }
-smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _    { return g.createVSpaceSkip(s + "skip"); }
+smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkipInline(s + "skip"); }
+smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkip(s + "skip"); }
 
 // only in vmode possible
 addvspace       =   "addvspace"     !char l:length_group { return g.createVSpace(l); }   // TODO not correct?
@@ -339,7 +347,7 @@ smbbreak        =   s:$("small"/"med"/"big")"break" _    { return g.createVSpace
 
 
 // horizontal
-hspace          =   "hspace" "*"?   !char l:length_group { return g.createHSpace(l); }
+hspace          =   "hspace" "*"?   l:length_group      { return g.createHSpace(l); }
 
 //stretch         =   "stretch"               arg_group
 //hphantom        =   "hphantom"              _
@@ -389,7 +397,7 @@ addtolength     =   "addtolength" id:macro_group l:length_group
 counters        =   newcounter / stepcounter / addtocounter / setcounter // / refstepcounter is extra b/c it returns a node
 
 
-// \newcounter{section}[chapter]
+// \newcounter{counter}[parent]
 newcounter      =   "newcounter" c:id_group p:id_optgroup?  { g.newCounter(c, p); }
 
 // \stepcounter{counter}
@@ -484,11 +492,6 @@ verb            =   "verb" s:"*"? skip_space !char
 
 
 // label, ref
-
-key_group       =   skip_space begin_group
-                        k:$(char / punctuation / digit)+
-                    end_group
-                    { return k; }
 
 label           =   "label" l:key_group     { g.setLabel(l); }
 

@@ -16,7 +16,11 @@ Object.defineProperty Array.prototype, 'top',
 
 he.decode.options.strict = true
 
-# This is where (custom) horizontal-mode macros are defined.
+# This is where (custom) macros are defined.
+#
+# By default, a macro takes no arguments and is a horizontal-mode macro.
+# See below for the description of how to declare arguments.
+#
 # This class should be independent of HtmlGenerator and just work with the generator interface.
 #
 # A macro must return an array with elements of type Node or String (text).
@@ -27,23 +31,36 @@ class Macros
         @g = generator
 
 
-    # args: declaring arguments for a macro. If a macro doesn't take arguments, it can be left undefined.
+    # args: declaring arguments for a macro. If a macro doesn't take arguments and is a
+    #       horizontal-mode macro, args can be left undefined for it.
     #
-    # syntax
+    # syntax:
     #
-    # s: optional star
-    # i: id (group)
-    # i?: optional id group
-    # k: key (group)
-    # u: url (group)
-    # m: macro (group)
-    # l: length (group)
-    # e: expression (group)
-    # f: float expression (group)
-    # g: arggroup
-    # g+: long arggroup
-    # o: optional arg
-    # o+: long optional arg
+    # first entry declares the macro type:
+    #   H:  horizontal-mode macro
+    #   V:  vertical-mode macro - ends the current paragraph
+    #   HV: horizontal-vertical-mode macro: must return nothing, i.e., doesn't create output
+    #   P:  only in preamble
+    #
+    # rest of the list declares the arguments:
+    #   s: optional star
+    #
+    #   i: id (group)
+    #   i?: optional id (group)
+    #   k: key (group)
+    #   u: url (group)
+    #   m: macro (group)
+    #   l: length (group)
+    #   n: num expression (group)
+    #   f: float expression (group)
+    #   c: coordinate
+    #   p: position
+    #
+    #   g: arggroup
+    #   g+: long arggroup
+    #   o: optional arg
+    #   o+: long optional arg
+
     args = {}
     args: args
 
@@ -104,16 +121,11 @@ class Macros
         return [latex]
 
 
-    \today :->
-        [new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })]
+    \today              :-> [ new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) ]
 
+    \newline            :-> [ @g.create @g.linebreak ]
 
-    \newline :->
-        [@g.create @g.linebreak]
-
-
-    \negthinspace :->
-        [@g.create @g.inline-block, undefined, 'negthinspace']
+    \negthinspace       :-> [ @g.create @g.inline-block, undefined, 'negthinspace' ]
 
 
     # sectioning
@@ -645,7 +657,7 @@ export class HtmlGenerator
         [@_stack.top.attrs.align].join(' ').replace(/\s+/g, ' ').trim!
 
 
-    # sections
+    # sectioning
 
     startsection: (sec, star, toc, ttl) ->
         # number the section?
