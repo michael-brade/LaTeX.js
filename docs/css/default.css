@@ -242,13 +242,6 @@ h1, h2, h3, h4 {
     text-align: left;
 }
 
-h1.nocount::before,
-h2.nocount::before,
-h3.nocount::before {
-    content: none;
-    counter-increment: none;
-}
-
 
 
 /*************/
@@ -381,11 +374,11 @@ h4 + p, h4 + div.multicols > p:first-child,
 
 /* labels */
 
-li.customlabel {
+li {
     list-style: none;
 }
 
-li.customlabel > .itemlabel {
+li > .itemlabel {
     position: relative;
 }
 
@@ -395,23 +388,6 @@ li .itemlabel > span {
     white-space: nowrap;
 }
 
-/* itemize */
-
-ul li {
-    list-style-type: '• ';  /* works only in Firefox */
-}
-
-ul li ul li {
-    list-style-type: '– ';
-}
-
-ul li ul li ul li {
-    list-style-type: '∗ ';
-}
-
-ul li ul li ul li ul li {
-    list-style-type: '· ';
-}
 
 
 

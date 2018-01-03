@@ -5,10 +5,6 @@
 /* sectioning */
 /**************/
 
-body {
-    counter-reset: chapter section subsection;
-}
-
 /* chapter */
 h1:before {
     counter-increment: chapter;
@@ -29,12 +25,6 @@ h1 {
 }
 
 /* section */
-h2:before {
-    counter-increment: section;
-    counter-reset: subsection;
-    content: counter(chapter) "." counter(section) "\0000a0\0000a0";
-}
-
 h2 {
     font-size: 1.4rem;      /* \Large */
     font-weight: bold;
@@ -43,18 +33,12 @@ h2 {
 }
 
 /* subsection */
-h3:before {
-    counter-increment: subsection;
-    content: counter(chapter) "." counter(section) "." counter(subsection) "\0000a0\0000a0";
-}
-
 h3 {
     font-size: 1.2rem;      /* \large */
     font-weight: bold;
     margin-top: 3.25ex;
     margin-bottom: 1.5ex;
 }
-
 
 /* subsubsection */
 h4 {
