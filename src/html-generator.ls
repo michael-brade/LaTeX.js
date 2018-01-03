@@ -259,6 +259,13 @@ export class HtmlGenerator
 
     emph:                       "em"
     linebreak:                  "br"
+
+    anchor:                     do ->
+                                    el = document.createElement "a"
+                                    return (id) ->
+                                        el.id? = id
+                                        return el
+
     link:                       do ->
                                     el = document.createElement "a"
                                     return (u) ->
@@ -720,9 +727,10 @@ export class HtmlGenerator
         # we need to store the id of the element as well as the counter (\@currentlabel)
         # if no id is given, create a new element to link to
         if not id
-            el = @create @inline-block
-            id = el.id = c + "-" + @nextId!
+            id = c + "-" + @nextId!
+            el = @create @anchor id
 
+        # currentlabel stores the id of the anchor to link to, as well as the label to display in a \ref{}
         @_stack.top.attrs.currentlabel =
             id: id
             label: @createFragment [
