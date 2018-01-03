@@ -9,9 +9,10 @@ var generator = new HtmlGenerator({
     languagePatterns: en
 })
 
+var scrollY = 0
 
 /* function to compile latex source into the HTML element preview */
-module.exports.compile = function(latex, preview) {
+module.exports.compile = function(latex, window, preview) {
     try {
         generator.reset()
         var result = latexjs.parse(latex, { generator: generator })
@@ -20,7 +21,16 @@ module.exports.compile = function(latex, preview) {
             preview.removeChild(preview.firstChild)
 
         preview.appendChild(result.dom())
+
+        if (scrollY) {
+            window.scrollTo(0, scrollY)
+            scrollY = 0
+        }
     } catch (e) {
+        // save scrolling position and restore on next successful compile
+        if (!scrollY)
+            scrollY = window.pageYOffset
+
         var error
         if (e instanceof latexjs.SyntaxError) {
             error = {

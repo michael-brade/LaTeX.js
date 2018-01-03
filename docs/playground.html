@@ -380,12 +380,12 @@
     var iframe = document.getElementById('preview')
 
     iframe.addEventListener("load", function() {
-      Playground.compile(editor.getValue(), iframe.contentDocument.body)
+      Playground.compile(editor.getValue(), iframe.contentWindow, iframe.contentDocument.body)
       editor.refresh()
     })
 
     editor.on('change', function(e) {
-      Playground.compile(editor.getValue(), iframe.contentDocument.body)
+      Playground.compile(editor.getValue(), iframe.contentWindow, iframe.contentDocument.body)
       iframe.contentDocument.dispatchEvent(new Event('change'))
     })
   </script>
