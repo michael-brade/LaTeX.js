@@ -137,7 +137,32 @@ class Macros
     args.\end           = <[ V ]>
     args.\item          = <[ V ]>
 
-    
+
+    # switch to onecolumn layout from now on
+    args.\onecolumn     = <[ V ]>
+    \onecolumn :->
+
+    # switch to twocolumn layout from now on
+    args.\twocolumn     = <[ V o ]>
+    \twocolumn :->
+
+
+    # spacing
+
+    args
+     ..\smallbreak      = <[ V ]>
+     ..\medbreak        = <[ V ]>
+     ..\bigbreak        = <[ V ]>
+
+    \smallbreak         :-> [ @g.createVSpaceSkip "smallskip" ]
+    \medbreak           :-> [ @g.createVSpaceSkip "medskip" ]
+    \bigbreak           :-> [ @g.createVSpaceSkip "bigskip" ]
+
+    args.\addvspace     = <[ V l ]>
+
+    \addvspace          : (l) -> @g.createVSpace l          # TODO not correct?
+
+
 
     ##############
     # sectioning #
@@ -159,6 +184,32 @@ class Macros
     \bibname            :-> [ "Bibliography" ]
     \indexname          :-> [ "Index" ]
 
+
+    args.\tableofcontents = <[ V ]>
+
+    # keep a reference to the TOC element, and fill it as we go along
+    \tableofcontents    : ->    # g.create(g.toc)
+
+
+    args
+     ..\part =          \
+     ..\chapter =       \
+     ..\section =       \
+     ..\subsection =    \
+     ..\subsubsection = \
+     ..\paragraph =     \
+     ..\subparagraph =  <[ V s o g ]>
+
+    \part               : (s, toc, ttl) ->  # g.create(g.part, ttl) # TODO
+    \chapter            : (s, toc, ttl) ->
+
+    \section            : (s, toc, ttl) -> [ @g.startsection \section,        1, s, toc, ttl ]
+    \subsection         : (s, toc, ttl) -> [ @g.startsection \subsection,     2, s, toc, ttl ]
+    \subsubsection      : (s, toc, ttl) -> [ @g.startsection \subsubsection,  3, s, toc, ttl ]
+    \paragraph          : (s, toc, ttl) -> [ @g.startsection \paragraph,      4, s, toc, ttl ]
+    \subparagraph       : (s, toc, ttl) -> [ @g.startsection \subparagraph,   5, s, toc, ttl ]
+
+
     \thepart            :-> [ @g.Roman @g.counter \part ]
     \thechapter         :-> [ @g.arabic @g.counter \chapter ]
     \thesection         :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \section
@@ -168,6 +219,17 @@ class Macros
     \thesubparagraph    :-> @theparagraph!     ++ "." + @g.arabic @g.counter \subparagraph
     \thefigure          :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \figure
     \thetable           :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \table
+
+
+    args
+     ..\frontmatter =   \
+     ..\mainmatter =    \
+     ..\backmatter =    \
+     ..\appendix =      <[ HV ]>
+
+    \frontmatter        :!->
+    \mainmatter         :!->
+    \backmatter         :!->
 
     \appendix           :!->
         # if chapters have been used: book, report
@@ -211,6 +273,18 @@ class Macros
     \labelitemiii       :-> [ @g.symbol \textasteriskcentered ]
     \labelitemiv        :-> [ @g.symbol \textperiodcentered ]
 
+
+
+    # block level: alignment   TODO: LaTeX doesn't allow hyphenation, but with e.g. \RaggedRight, it does. (package ragged2e)
+
+    args
+     ..\centering =     \
+     ..\raggedright =   \
+     ..\raggedleft =    <[ HV ]>
+
+    \centering          :-> @g.setAlignment "center"
+    \raggedright        :-> @g.setAlignment "flushleft"
+    \raggedleft         :-> @g.setAlignment "flushright"
 
 
     #########
@@ -697,9 +771,9 @@ export class HtmlGenerator
 
     # sectioning
 
-    startsection: (sec, star, toc, ttl) ->
+    startsection: (sec, level, star, toc, ttl) ->
         # number the section?
-        if not star and @counter("secnumdepth") >= 0
+        if not star and @counter("secnumdepth") >= level
             @stepCounter sec
             el = @create @[sec], @macro(\the + sec) ++ (@createText @symbol \quad) ++ ttl   # in LaTeX: \@seccntformat
             el.id = "sec-" + @nextId!

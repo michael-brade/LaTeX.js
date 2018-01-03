@@ -95,9 +95,9 @@ hv_macro =
 
       / fontsize
 
-      / centering / raggedright / raggedleft
+      / lengths / counters
 
-      / lengths / counters / label
+      / label
 
       / logging
       / ignored
@@ -140,11 +140,7 @@ vmode_macro =
     skip_all_space
     escape
     m:(
-      &is_vmode m:macro { return m; }
-    / frontmatter / mainmatter / backmatter
-    / tableofcontents
-    / part / sectioning
-    / vspace_vmode / addvspace / smbskip_vmode / smbbreak
+      &is_vmode m:macro { return m; } / vspace_vmode / smbskip_vmode
     )
     skip_all_space
     { g.break(); return m; }
@@ -260,22 +256,6 @@ opt_group       =   skip_space begin_optgroup   & { g.startBalanced(); return tr
                         return g.createFragment(p);
                     }
 
-// ** sectioning
-
-// keep a reference to the TOC element, and fill it as we go along
-tableofcontents =   "tableofcontents" _     { return g.create(g.toc); }
-
-part            =   "part"          s:"*"? toc:opt_group? ttl:arg_group { return g.create(g.part, ttl); }
-
-sectioning      =   sec:$("chapter"/"sub"?("sub"?"section"/"paragraph")) s:"*"? toc:opt_group? ttl:arg_group
-                    {
-                        return g.startsection(sec, !!s, toc, ttl);
-                    }
-
-frontmatter     =   "frontmatter"   _
-mainmatter      =   "mainmatter"    _
-backmatter      =   "backmatter"    _
-
 
 // ** font macros
 
@@ -325,17 +305,6 @@ fontsize        =   s:("tiny"/"scriptsize"/"footnotesize"/"small"/"normalsize"/"
 em              =   "em"                            _    { g.setFontShape("em"); }       // TODO: TOGGLE em?!
 
 
-// color
-
-
-
-// block level: alignment
-
-centering       =   "centering"                     _    { g.setAlignment("center"); }
-raggedright     =   "raggedright"                   _    { g.setAlignment("flushleft"); }
-raggedleft      =   "raggedleft"                    _    { g.setAlignment("flushright"); }
-
-
 
 // ** spacing macros
 
@@ -346,9 +315,6 @@ vspace_vmode    =   "vspace" "*"?   l:length_group      { return g.createVSpace(
 smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkipInline(s + "skip"); }
 smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkip(s + "skip"); }
 
-// only in vmode possible
-addvspace       =   "addvspace"     !char l:length_group { return g.createVSpace(l); }   // TODO not correct?
-smbbreak        =   s:$("small"/"med"/"big")"break" _    { return g.createVSpaceSkip(s + "skip"); }
 
 //  \\[length] is defined in the linebreak rule further down
 
@@ -780,13 +746,6 @@ alignment =
 
 
 // multicolumns
-
-
-// switch to onecolumn layout from now on
-onecolumn = "onecolumn" !char
-
-// switch to twocolumn layout from now on
-twocolumn = "twocolumn" !char o:opt_group?
 
 // \begin{multicols}{number}[pretext][premulticols size]
 multicols =
