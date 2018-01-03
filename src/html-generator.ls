@@ -339,6 +339,11 @@ export class HtmlGenerator
     ### private static vars
     create =                    (type, classes) -> el = document.createElement type; el.setAttribute "class", classes;  return el
 
+    # generic elements
+    inline-block:               "span"
+    block:                      "div"
+
+
     # typographic elements
     part:                       "part"
     chapter:                    "h1"
@@ -350,7 +355,7 @@ export class HtmlGenerator
 
     par:                        "p"
 
-    list:                       do -> create "div", "list"
+    list:                       do -> create ::block, "list"
 
     unordered-list:             do -> create "ul",  "list"
     ordered-list:               do -> create "ol",  "list"
@@ -360,20 +365,17 @@ export class HtmlGenerator
     term:                       "dt"
     description:                "dd"
 
-    itemlabel:                  do -> create "span", "itemlabel"
+    itemlabel:                  do -> create ::inline-block, "itemlabel"
 
-    quote:                      do -> create "div", "list quote"
-    quotation:                  do -> create "div", "list quotation"
-    verse:                      do -> create "div", "list verse"
+    quote:                      do -> create ::block, "list quote"
+    quotation:                  do -> create ::block, "list quotation"
+    verse:                      do -> create ::block, "list verse"
 
     multicols:                  do ->
-                                    el = create "div", "multicols"
+                                    el = create ::block, "multicols"
                                     return (c) ->
                                         el.setAttribute "style", "column-count:" + c
                                         return el
-
-    inline-block:               "span"
-    block:                      "div"
 
     emph:                       "em"
     linebreak:                  "br"
