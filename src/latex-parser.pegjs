@@ -90,11 +90,6 @@ hv_macro =
     (
       &is_hvmode macro
 
-      / fontfamily / fontweight / fontshape
-      / normalfont / em
-
-      / fontsize
-
       / logging
       / ignored
     )
@@ -110,9 +105,6 @@ hmode_macro =
       &is_hmode m:macro { return m; }
 
     / noindent
-
-    / textfamily / textweight / textshape
-    / textnormal / emph / underline
 
     / url / href
 
@@ -272,53 +264,6 @@ opt_group       =   skip_space begin_optgroup   & { g.startBalanced(); return tr
                         return g.createFragment(p);
                     }
 
-
-// ** font macros
-
-// commands
-
-textfamily      =   "text" f:("rm"/"sf"/"tt")       !char   &{ g.enterGroup(); g.setFontFamily(f); return true; }
-                    a:arg_group
-                    { g.exitGroup(); return a; }
-
-textweight      =   "text" w:("md"/"bf")            !char   &{ g.enterGroup(); g.setFontWeight(w); return true; }
-                    a:arg_group
-                    { g.exitGroup(); return a; }
-
-textshape       =   "text" s:("up"/"it"/"sl"/"sc")  !char   &{ g.enterGroup(); g.setFontShape(s); return true; }
-                    a:arg_group
-                    { g.exitGroup(); return a; }
-
-
-textnormal      =   "textnormal"                    !char   &{ g.enterGroup(); g.setFontFamily("rm");
-                                                                               g.setFontWeight("md");
-                                                                               g.setFontShape("up"); return true; }
-                    a:arg_group
-                    { g.exitGroup(); return a; }
-
-
-underline       =   "underline"                     !char   &{ g.enterGroup(); g.setTextDecoration("underline"); return true; }
-                    a:arg_group
-                    { g.exitGroup(); return a; }
-
-emph            =   "emph"  a:arg_group
-                    { return g.create(g.emph, a); }
-
-
-// declarations
-
-fontfamily      =   f:("rm"/"sf"/"tt")     "family" _    { g.setFontFamily(f); }
-fontweight      =   w:("md"/"bf")          "series" _    { g.setFontWeight(w); }
-fontshape       =   s:("up"/"it"/"sl"/"sc") "shape" _    { g.setFontShape(s); }
-
-normalfont      =   "normalfont"                    _    { g.setFontFamily("rm");
-                                                           g.setFontWeight("md");
-                                                           g.setFontShape("up"); }
-
-fontsize        =   s:("tiny"/"scriptsize"/"footnotesize"/"small"/"normalsize"/"large"/"Large"/"LARGE"/"huge"/"Huge") _
-                    { g.setFontSize(s); }
-
-em              =   "em"                            _    { g.setFontShape("em"); }       // TODO: TOGGLE em?!
 
 
 

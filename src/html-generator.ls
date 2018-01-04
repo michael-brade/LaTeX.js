@@ -16,6 +16,7 @@ Object.defineProperty Array.prototype, 'top',
 
 he.decode.options.strict = true
 
+
 # This is where (custom) macros are defined.
 #
 # By default, a macro takes no arguments and is a horizontal-mode macro.
@@ -252,6 +253,75 @@ class Macros
             @g.setCounter \section 0
             @g.setCounter \subsection 0
             @[\thesection] = -> [ @g.Alph @g.counter \section ]
+
+
+    ###############
+    # font macros #
+    ###############
+
+    # commands
+
+    [ args[\text + ..]  = <[ H X g ]> for <[ rm sf tt md bf up it sl sc normal ]> ]
+
+
+    \textrm             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "rm" else @g.exitGroup!; [ arg ]
+    \textsf             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "sf" else @g.exitGroup!; [ arg ]
+    \texttt             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "tt" else @g.exitGroup!; [ arg ]
+
+    \textmd             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontWeight "md" else @g.exitGroup!; [ arg ]
+    \textbf             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontWeight "bf" else @g.exitGroup!; [ arg ]
+
+    \textup             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "up" else @g.exitGroup!; [ arg ]
+    \textit             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "it" else @g.exitGroup!; [ arg ]
+    \textsl             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "sl" else @g.exitGroup!; [ arg ]
+    \textsc             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "sc" else @g.exitGroup!; [ arg ]
+
+    \textnormal         : (arg) ->
+                                    if &length == 0
+                                        @g.enterGroup!
+                                        @g.setFontFamily "rm"
+                                        @g.setFontWeight "md"
+                                        @g.setFontShape "up"
+                                    else
+                                        @g.exitGroup!
+                                        [ arg ]
+
+
+    args.\underline     = <[ H X g ]>
+    \underline          : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setTextDecoration "underline" else @g.exitGroup!; [ arg ]
+
+
+    args.\emph          = <[ H g ]>
+    \emph               : (arg) -> [ @g.create @g.emph, arg ]
+
+
+    # declarations
+
+    [ args[.. + "family"] = [ \HV ] for <[ rm sf tt    ]> ]
+    [ args[.. + "series"] = [ \HV ] for <[ md bf       ]> ]
+    [ args[.. + "shape" ] = [ \HV ] for <[ up it sl sc ]> ]
+    [ args[..]            = [ \HV ] for <[ normalfont em ]> ]
+    [ args[..]            = [ \HV ] for <[ tiny scriptsize footnotesize small normalsize large Large LARGE huge Huge ]> ]
+
+
+    \rmfamily           :!-> @g.setFontFamily "rm"
+    \sffamily           :!-> @g.setFontFamily "sf"
+    \ttfamily           :!-> @g.setFontFamily "tt"
+
+    \mdseries           :!-> @g.setFontWeight "md"
+    \bfseries           :!-> @g.setFontWeight "bf"
+
+    \upshape            :!-> @g.setFontShape "up"
+    \itshape            :!-> @g.setFontShape "it"
+    \slshape            :!-> @g.setFontShape "sl"
+    \scshape            :!-> @g.setFontShape "sc"
+
+    \normalfont         :!-> @g.setFontFamily "rm"; @g.setFontWeight "md"; @g.setFontShape "up"
+
+    [ ::[..] = ((f) -> -> @g.setFontSize(f))(..) for <[ tiny scriptsize footnotesize small normalsize large Large LARGE huge Huge ]> ]
+
+    \em                 :!-> @g.setFontShape "em"       # TODO: TOGGLE em?!
+
 
 
     ################
