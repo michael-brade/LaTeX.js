@@ -24,6 +24,7 @@ bin:
 files:
     'bin/latex.js'
     'dist/latex-parser.js'
+    'dist/macros.js'
     'dist/symbols.js'
     'dist/html-generator.js'
 
@@ -32,9 +33,10 @@ scripts:
     clean: 'rimraf dist bin;'
     build: "
         mkdirp dist;
-        lsc -cp    src/plugin.pegjs.ls          | uglifyjs -cm -o dist/plugin.pegjs.js;
-        pegjs --plugin ./dist/plugin.pegjs \
+        lsc -cp    src/plugin-pegjs.ls          | uglifyjs -cm -o dist/plugin-pegjs.js;
+        pegjs --plugin ./dist/plugin-pegjs \
               -o - src/latex-parser.pegjs       | uglifyjs -cm -o dist/latex-parser.js;
+        lsc -cp    src/macros.ls                | uglifyjs -cm -o dist/macros.js;
         lsc -cp    src/symbols.ls               | uglifyjs -cm -o dist/symbols.js;
         lsc -cp    src/html-generator.ls        | uglifyjs -cm -o dist/html-generator.js;
 
@@ -43,8 +45,8 @@ scripts:
     "
     devbuild: "
         mkdirp dist;
-        lsc -c -o dist src/plugin.pegjs.ls src/symbols.ls src/html-generator.ls;
-        pegjs -o dist/latex-parser.js --plugin ./dist/plugin.pegjs src/latex-parser.pegjs;
+        lsc -c -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
+        pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
     "
     docs:  'npm run devbuild && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
@@ -86,7 +88,7 @@ devDependencies:
     'pegjs': '0.10.x'
     'mkdirp': '0.5.x'
     'rimraf': '2.6.x'
-    'uglify-js': '3.2.x'
+    'uglify-js': '3.3.x'
 
 
     ### bundling
