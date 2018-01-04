@@ -193,15 +193,20 @@ class Macros
 
     args
      ..\part =          \
-     ..\chapter =       \
+     ..\chapter =       \                   # only book and report in LaTeX
      ..\section =       \
      ..\subsection =    \
      ..\subsubsection = \
      ..\paragraph =     \
      ..\subparagraph =  <[ V s o g ]>
 
-    \part               : (s, toc, ttl) ->  # g.create(g.part, ttl) # TODO
-    \chapter            : (s, toc, ttl) ->
+
+    # article
+    \part               : (s, toc, ttl) -> [ @g.startsection \part,           0, s, toc, ttl ]
+
+    # book/report
+    # \part               : (s, toc, ttl) -> [ @g.startsection \part,          -1, s, toc, ttl ]
+    \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter,        0, s, toc, ttl ]
 
     \section            : (s, toc, ttl) -> [ @g.startsection \section,        1, s, toc, ttl ]
     \subsection         : (s, toc, ttl) -> [ @g.startsection \subsection,     2, s, toc, ttl ]
@@ -777,7 +782,13 @@ export class HtmlGenerator
         # number the section?
         if not star and @counter("secnumdepth") >= level
             @stepCounter sec
-            el = @create @[sec], @macro(\the + sec) ++ (@createText @symbol \quad) ++ ttl   # in LaTeX: \@seccntformat
+
+            if sec == \chapter
+                chaphead = @create @block, @macro(\chaptername) ++ (@createText @symbol \space) ++ @macro(\the + sec)
+                el = @create @[sec], [chaphead, ttl]
+            else
+                el = @create @[sec], @macro(\the + sec) ++ (@createText @symbol \quad) ++ ttl   # in LaTeX: \@seccntformat
+
             el.id = "sec-" + @nextId!
             @refCounter sec, el.id
         else
