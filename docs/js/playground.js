@@ -31,9 +31,8 @@ module.exports.compile = function(latex, window, preview) {
         if (!scrollY)
             scrollY = window.pageYOffset
 
-        var error
         if (e instanceof latexjs.SyntaxError) {
-            error = {
+            var error = {
                 line:     definedOrElse(e.location.start.line, 0),
                 column:   definedOrElse(e.location.start.column, 0),
                 message:  e.message,

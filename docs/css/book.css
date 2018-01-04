@@ -6,13 +6,7 @@
 /**************/
 
 /* chapter */
-h1:before {
-    counter-increment: chapter;
-    counter-reset: section;
-
-    content: "Chaper\0000a0" counter(chapter);
-
-    display: block;
+h1 div {
     font-size: 2rem;        /* \huge */
     margin-bottom: 2rem;
 }
@@ -20,7 +14,7 @@ h1:before {
 h1 {
     font-size: 2.5rem;      /* \Huge */
     font-weight: bold;
-    margin-top: 5rem;
+    margin-top: calc(5rem + 1em);       /* \vspace*{} in LaTeX adds an additional line */
     margin-bottom: 4rem;
 }
 
