@@ -95,10 +95,6 @@ hv_macro =
 
       / fontsize
 
-      / lengths / counters
-
-      / label
-
       / logging
       / ignored
     )
@@ -118,10 +114,10 @@ hmode_macro =
     / textfamily / textweight / textshape
     / textnormal / emph / underline
 
-    / ref / url / href
+    / url / href
 
-    / smbskip_hmode / hspace / vspace_hmode
-    / refstepcounter / the
+    / smbskip_hmode / vspace_hmode
+    / the
 
     / verb
 
@@ -166,9 +162,9 @@ macro =
       / &{ return g.nextArg("g") }    g:(arg_group      / . { error("macro " + name + " is missing a group argument") })        { return g; }
       / &{ return g.nextArg("o") }    o: opt_group?                                                                             { return o; }
       / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { return i; }
-      / &{ return g.nextArg("i?") }   i: id_group?                                                                              { return i; }
+      / &{ return g.nextArg("i?") }   i: id_optgroup?                                                                           { return i; }
       / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { return k; }
-      / &{ return g.nextArg("n") }    e:(expr_group     / . { error("macro " + name + " is missing n num group argument") })    { return n; }
+      / &{ return g.nextArg("n") }    n:(expr_group     / . { error("macro " + name + " is missing n num group argument") })    { return n; }
       / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { return l; }
       / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { return m; }
       / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { return u; }
@@ -221,6 +217,24 @@ key_group       =   skip_space begin_group
                         k:key
                     end_group
                     { return k; }
+
+// lengths
+length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") _
+                    { return u; }
+
+length          =   l:float u:length_unit (plus float length_unit)? (minus float length_unit)?
+                    { return l + u; }
+
+// {length}
+length_group    =   skip_space begin_group skip_space l:length end_group  // TODO: should be able to use variables and maths: 2\parskip etc.
+                    { return l; }
+
+
+// {num expression}
+expr_group      =   skip_space begin_group
+                        n:num_expr
+                    end_group
+                    { return n; }
 
 
 // {<LaTeX code/text>}
@@ -315,79 +329,10 @@ vspace_vmode    =   "vspace" "*"?   l:length_group      { return g.createVSpace(
 smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkipInline(s + "skip"); }
 smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkip(s + "skip"); }
 
-
 //  \\[length] is defined in the linebreak rule further down
 
 
 
-// horizontal
-hspace          =   "hspace" "*"?   l:length_group      { return g.createHSpace(l); }
-
-//stretch         =   "stretch"               arg_group
-//hphantom        =   "hphantom"              _
-
-// hfill           = \hspace{\fill}
-// dotfill         =
-// hrulefill       =
-
-
-// lengths (scoped)
-lengths         =   newlength / setlength / addtolength
-
-length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") _
-                    { return u; }
-
-length          =   l:float u:length_unit (plus float length_unit)? (minus float length_unit)?
-                    { return l + u; }
-
-// TODO: should be able to use variables and maths: 2\parskip etc.
-length_group     =   skip_space begin_group skip_space l:length end_group
-                    { return l; }
-
-newlength       =   "newlength" id:macro_group
-                    { g.newLength(id); }
-
-setlength       =   "setlength"  id:macro_group l:length_group
-                    { g.setLength(id, l); }
-
-addtolength     =   "addtolength" id:macro_group l:length_group
-                    { g.setLength(id, g.length(id) + l); }
-
-
-// settoheight     =
-// settowidth      =
-// settodepth      =
-
-
-// get the natural size of a box
-// width           =
-// height          =
-// depth           =
-// totalheight     =
-
-
-// LaTeX counters (always global)
-
-counters        =   newcounter / stepcounter / addtocounter / setcounter // / refstepcounter is extra b/c it returns a node
-
-
-// \newcounter{counter}[parent]
-newcounter      =   "newcounter" c:id_group p:id_optgroup?  { g.newCounter(c, p); }
-
-// \stepcounter{counter}
-stepcounter     =   "stepcounter" c:id_group                { g.stepCounter(c); }
-
-// \addtocounter{counter}{<expression>}
-addtocounter    =   "addtocounter" c:id_group n:expr_group  { g.setCounter(c, g.counter(c) + n); }
-
-// \setcounter{counter}{<expression>}
-setcounter      =   "setcounter" c:id_group n:expr_group    { g.setCounter(c, n); }
-
-
-// \refstepcounter{counter}     // \stepcounter{counter}, and (locally) define \@currentlabel so that the next \label
-                                // will reference the correct current representation of the value; return an empty node
-                                // for an <a href=...> target
-refstepcounter  =   "refstepcounter" c:id_group             { g.stepCounter(c); return g.refCounter(c); }
 
 
 // \value{counter}
@@ -437,11 +382,6 @@ num_expr        =   skip_space
                 }
 
 
-// grouped expression
-expr_group      =   skip_space
-                    begin_group n:num_expr end_group        { return n; }
-
-
 
 
 // formatting counters
@@ -464,12 +404,6 @@ verb            =   "verb" s:"*"? skip_space !char
                         return g.create(g.verb, g.createVerbatim(v, true));
                     }
 
-
-// label, ref
-
-label           =   "label" l:key_group     { g.setLabel(l); }
-
-ref             =   "ref" l:key_group       { return g.ref(l); }
 
 
 

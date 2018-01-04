@@ -292,6 +292,32 @@ class Macros
     \raggedleft         :-> @g.setAlignment "flushright"
 
 
+
+    ##############
+
+    # horizontal spacing
+    args.\hspace =      <[ H s l ]>
+    \hspace             : (s, l) -> [ @g.createHSpace l ]
+
+    # stretch     arg_group
+    # hphantom
+    #
+    # hfill           = \hspace{\fill}
+    # dotfill         =
+    # hrulefill       =
+
+
+
+    # label, ref
+
+    args.\label =       <[ HV k ]>
+    \label              : (label) !-> @g.setLabel label
+
+    args.\ref =         <[ H k ]>
+    \ref                : (label) -> [ @g.ref label ]
+
+
+
     #########
     # boxes #
     #########
@@ -299,6 +325,71 @@ class Macros
     # \mbox{text} - not broken into lines
     args.mbox = <[ H g ]>
     \mbox : (g)         ->
+
+
+
+
+    ####################
+    # lengths (scoped) #
+    ####################
+
+
+    args.\newlength = <[ HV m ]>
+    \newlength          : (id) !-> @g.newLength id
+
+    args.\setlength = <[ HV m l ]>
+    \setlength          : (id, l) !-> @g.setLength id, l
+
+    args.\addtolength = <[ HV m l ]>
+    \addtolength        : (id, l) !-> @g.setLength id, @g.length(id) + l
+
+
+    # settoheight     =
+    # settowidth      =
+    # settodepth      =
+
+
+    # get the natural size of a box
+    # width           =
+    # height          =
+    # depth           =
+    # totalheight     =
+
+
+
+    ##################################
+    # LaTeX counters (always global) #
+    ##################################
+
+
+    # \newcounter{counter}[parent]
+    args.\newcounter =  <[ HV i i? ]>
+    \newcounter         : (c, p) !-> @g.newCounter c, p
+
+
+    # \stepcounter{counter}
+    args.\stepcounter = <[ HV i ]>
+    \stepcounter        : (c) !-> @g.stepCounter c
+
+
+    # \addtocounter{counter}{<expression>}
+    args.\addtocounter = <[ HV i n ]>
+    \addtocounter       : (c, n) !-> @g.setCounter c, @g.counter(c) + n
+
+
+    # \setcounter{counter}{<expression>}
+    args.\setcounter =  <[ HV i n ]>
+    \setcounter         : (c, n) !-> @g.setCounter c, n
+
+
+    # \refstepcounter{counter}
+    #       \stepcounter{counter}, and (locally) define \@currentlabel so that the next \label
+    #       will reference the correct current representation of the value; return an empty node
+    #       for an <a href=...> target
+    args.\refstepcounter = <[ H i ]>
+    \refstepcounter     : (c) -> @g.stepCounter c; return [ @g.refCounter c ]
+
+
 
 
     ## not yet...
