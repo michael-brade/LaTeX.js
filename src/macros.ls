@@ -376,6 +376,29 @@ export class MacrosBase
 
 
 
+
+    # package: hyperref
+
+    args.\href =        <[ H o u g ]>
+    \href               : (opts, url, txt) -> [ @g.create @g.link(url), txt ]
+
+    args.\url =         <[ H u ]>
+    \url                : (url) -> [ @g.create @g.link(url), @g.createText(url) ]
+
+    args.\nolinkurl =   <[ H u ]>
+    \nolinkurl          : (url) -> [ @g.create @g.link(), @g.createText(url) ]
+
+
+    # TODO
+    # \hyperbaseurl  HV u
+
+    # \hyperref[label]{link text} --- like \ref{label}, but use "link text" for display
+    # args.\hyperref =    <[ H o g ]>
+    # \hyperref           : (label, txt) -> [ @g.ref label ]
+
+
+
+
     #########
     # boxes #
     #########
@@ -447,15 +470,32 @@ export class MacrosBase
     \refstepcounter     : (c) -> @g.stepCounter c; return [ @g.refCounter c ]
 
 
+    # formatting counters
+
+    args
+     ..\alph =          \
+     ..\Alph =          \
+     ..\arabic =        \
+     ..\roman =         \
+     ..\Roman =         \
+     ..\fnsymbol =      <[ H i ]>
+
+    \alph               : (c) -> [ @g[\alph]     @g.counter c ]
+    \Alph               : (c) -> [ @g[\Alph]     @g.counter c ]
+    \arabic             : (c) -> [ @g[\arabic]   @g.counter c ]
+    \roman              : (c) -> [ @g[\roman]    @g.counter c ]
+    \Roman              : (c) -> [ @g[\Roman]    @g.counter c ]
+    \fnsymbol           : (c) -> [ @g[\fnsymbol] @g.counter c ]
+
 
 
     ## not yet...
 
-    args.\input = <[ g ]>
-    \input : (arg) ->
+    args.\input = <[ V g ]>
+    \input : (file) ->
 
-    args.\include = <[ g ]>
-    \include : (arg) ->
+    args.\include = <[ V g ]>
+    \include : (file) ->
 
 
     ############
@@ -463,10 +503,58 @@ export class MacrosBase
     ############
 
     args.\includeonly = <[ P g ]>
-    \includeonly : (arg) ->
+    \includeonly : (filelist) ->
 
     args.\makeatletter = <[ P ]>
     \makeatletter   :->
 
     args.\makeatother = <[ P ]>
     \makeatother   :->
+
+
+
+
+    ###########
+    # ignored #
+    ###########
+
+    args
+     ..\pagestyle =     <[ HV i ]>
+    \pagestyle          : (s) !->
+
+
+    args
+     ..\linebreak =     <[ HV o ]>
+     ..\nolinebreak =   <[ HV o ]>
+     ..\fussy =         <[ HV ]>
+     ..\sloppy =        <[ HV ]>
+
+
+    \linebreak          : (o) !->
+    \nolinebreak        : (o) !->
+
+    \fussy              :!->
+    \sloppy             :!->
+
+    # these make no sense without pagebreaks
+
+    args
+     ..\pagebreak =     <[ HV o ]>
+     ..\nopagebreak =   <[ HV o ]>
+     ..\samepage =      <[ HV ]>
+     ..\enlargethispage = <[ HV s l ]>
+     ..\newpage =       <[ HV ]>
+     ..\clearpage =     <[ HV ]>
+     ..\cleardoublepage = <[ HV ]>
+     ..\vfill =         <[ HV ]>
+     ..\thispagestyle = <[ HV i ]>
+
+    \pagebreak          : (o) !->
+    \nopagebreak        : (o) !->
+    \samepage           :!->
+    \enlargethispage    : (s, l) !->
+    \newpage            :!->
+    \clearpage          :!->    # prints floats in LaTeX
+    \cleardoublepage    :!->
+    \vfill              :!->
+    \thispagestyle      : (s) !->

@@ -86,7 +86,10 @@ export class HtmlGenerator
     link:                       do ->
                                     el = document.createElement "a"
                                     return (u) ->
-                                        el.setAttribute "href", u
+                                        if u
+                                            el.setAttribute "href", u
+                                        else
+                                            el.removeAttribute "href"
                                         return el
 
     verb:                       "code"

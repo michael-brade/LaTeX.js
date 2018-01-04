@@ -73,7 +73,6 @@ primitive "primitive" =
     / diacritic
     / ctrl_sym
     / symbol
-    / print_counter
     / charsym
     / utf8_char
 
@@ -89,9 +88,7 @@ hv_macro =
     escape
     (
       &is_hvmode macro
-
       / logging
-      / ignored
     )
     { return undefined; }
 
@@ -105,8 +102,6 @@ hmode_macro =
       &is_hmode m:macro { return m; }
 
     / noindent
-
-    / url / href
 
     / smbskip_hmode / vspace_hmode
     / the
@@ -231,6 +226,18 @@ expr_group      =   skip_space begin_group
                     { return n; }
 
 
+
+url_char        =   char/digit/punctuation/"-"/"#"/"&"/escape? "%" { return "%" }
+                    / . &{ error("illegal char in url given"); }
+
+// {url}
+url_group       =   skip_space begin_group
+                        url:(!end_group c:url_char {return c;})+
+                    end_group
+                    { return url.join(""); }
+
+
+
 // {<LaTeX code/text>}
 //
 // group balancing: groups have to be balanced inside arguments, inside environments, and inside a document.
@@ -266,20 +273,7 @@ opt_group       =   skip_space begin_optgroup   & { g.startBalanced(); return tr
 
 
 
-
-// ** spacing macros
-
-// vertical
-vspace_hmode    =   "vspace" "*"?   l:length_group      { return g.createVSpaceInline(l); }
-vspace_vmode    =   "vspace" "*"?   l:length_group      { return g.createVSpace(l); }
-
-smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkipInline(s + "skip"); }
-smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkip(s + "skip"); }
-
-//  \\[length] is defined in the linebreak rule further down
-
-
-
+// calc expressions //
 
 
 // \value{counter}
@@ -292,7 +286,6 @@ real            =   escape "real" skip_space
                     end_group                               { return f; }
 
 
-// calc expressions
 
 num_value       =   "(" expr:num_expr ")"                   { return expr; }
                   / integer
@@ -331,10 +324,18 @@ num_expr        =   skip_space
 
 
 
-// formatting counters
+// ** spacing macros
 
-print_counter   =   escape format:("alph" / "Alph" / "arabic" / "roman" / "Roman" / "fnsymbol") c:id_group
-                    { return g[format](g.counter(c)); }
+// vertical
+vspace_hmode    =   "vspace" "*"?   l:length_group      { return g.createVSpaceInline(l); }
+vspace_vmode    =   "vspace" "*"?   l:length_group      { return g.createVSpace(l); }
+
+smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkipInline(s + "skip"); }
+smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkip(s + "skip"); }
+
+//  \\[length] is defined in the linebreak rule further down
+
+
 
 
 // verb - one-line verbatim text
@@ -351,56 +352,6 @@ verb            =   "verb" s:"*"? skip_space !char
                         return g.create(g.verb, g.createVerbatim(v, true));
                     }
 
-
-
-
-// hyperref
-
-url_charset     =   char/digit/punctuation/"-"/"#"/"&"/escape? "%" { return "%" }
-                /   . &{ error("illegal char in url given"); }
-
-url_group       =   skip_space begin_group
-                        url:(!end_group c:url_charset {return c;})+
-                    end_group
-                    { return url.join(""); }
-
-url             =   "url" u:url_group
-                    {
-                        return g.create(g.link(u), g.createText(u));
-                    }
-
-href            =   "href"  skip_space begin_group
-                        url:(!end_group c:url_charset {return c;})+
-                    end_group
-                    txt:arg_group
-                    {
-                        return g.create(g.link(url.join("")), txt);
-                    }
-
-// \hyperref[label_name]{''link text''} --- just like \ref{label_name}, only an <a>
-hyperref        =   "hyperref" skip_space opt_group
-
-
-
-
-// pagestyle       =   "pagestyle" id_group
-
-ignored         =   "linebreak" opt_group?
-                /   "nolinebreak" opt_group?
-                /   "fussy"
-                /   "sloppy"
-
-                // these make no sense without pagebreaks
-                /   "no"? "pagebreak" opt_group
-                /   "samepage"
-                /   "enlargethispage" "*"? length_group
-                /   "newpage"
-                /   "clearpage"         // prints floats in LaTeX
-                /   "cleardoublepage"
-
-                /   "vfill"
-
-                /   "thispagestyle" id_group
 
 
 
