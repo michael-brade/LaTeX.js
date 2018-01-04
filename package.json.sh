@@ -46,7 +46,7 @@ scripts:
         lsc -c -o dist src/plugin.pegjs.ls src/symbols.ls src/html-generator.ls;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin.pegjs src/latex-parser.pegjs;
     "
-    docs:  'npm run build && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
+    docs:  'npm run devbuild && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
                                     --externs src/externs.js \
                                     --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;"
