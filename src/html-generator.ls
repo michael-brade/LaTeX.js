@@ -42,6 +42,10 @@ class Macros
     #   HV: horizontal-vertical-mode macro: must return nothing, i.e., doesn't create output
     #   P:  only in preamble
     #
+    # one special entry:
+    #   X: execute action (macro body) already now with whatever arguments have been parsed so far;
+    #      this is needed when things should be done before the next arguments are parsed
+    #
     # rest of the list declares the arguments:
     #   s: optional star
     #
@@ -198,7 +202,7 @@ class Macros
      ..\subsection =    \
      ..\subsubsection = \
      ..\paragraph =     \
-     ..\subparagraph =  <[ V s o g ]>
+     ..\subparagraph =  <[ V s X o g ]>
 
 
     # article
@@ -775,26 +779,38 @@ export class HtmlGenerator
     isHVmode:   (name) -> @_macros.args[name]?.0 == \HV
     isPreamble: (name) -> @_macros.args[name]?.0 == \P
 
-
-    beginArgs: (macro) ->
-        @_curArgs.push if @_macros.args[macro] then that.slice 1 else []
-
-    nextArg: (arg) ->
-        if @_curArgs.top[0] == arg
-            @_curArgs.top.shift!
-            true
-        else
-            false
-
-    endArgs: !->
-        @_curArgs.pop!.length == 0 || error("not all mandatory arguments haven been given")
-
-
     macro: (name, args) ->
         @_macros[name]
             .apply @_macros, args
             ?.filter (x) -> x != undefined
             .map (x) ~> if not x.nodeType? then @createText x else x
+
+
+    # macro arguments
+
+    beginArgs: (macro) !->
+        @_curArgs.push if @_macros.args[macro] then { args: that.slice(1), parsed: [] } else { args: [], parsed: [] }
+
+    # check the next argument type to parse
+    nextArg: (arg) ->
+        if @_curArgs.top.args.0 == arg
+            @_curArgs.top.args.shift!
+            true
+
+    # add the result of a parsed argument
+    addParsedArg: (a) !->
+        @_curArgs.top.parsed.push a
+
+    # get the parsed arguments so far
+    parsedArgs: ->
+        @_curArgs.top.parsed
+
+    # remove arguments of a completely parsed macro from the stack
+    endArgs: !->
+        @_curArgs.pop!.args
+            ..length == 0 || error "grammar error - mandatory arguments missing: #{..}"
+
+
 
 
 
@@ -874,18 +890,24 @@ export class HtmlGenerator
     # sectioning
 
     startsection: (sec, level, star, toc, ttl) ->
+        # call before the arguments are parsed to refstep the counter
+        if toc == ttl == undefined
+            if not star and @counter("secnumdepth") >= level
+                @stepCounter sec
+                @refCounter sec, "sec-" + @nextId!
+
+            return
+
         # number the section?
         if not star and @counter("secnumdepth") >= level
-            @stepCounter sec
-
             if sec == \chapter
                 chaphead = @create @block, @macro(\chaptername) ++ (@createText @symbol \space) ++ @macro(\the + sec)
                 el = @create @[sec], [chaphead, ttl]
             else
                 el = @create @[sec], @macro(\the + sec) ++ (@createText @symbol \quad) ++ ttl   # in LaTeX: \@seccntformat
 
-            el.id = "sec-" + @nextId!
-            @refCounter sec, el.id
+            # take the id from currentlabel.id
+            el.id? = @_stack.top.currentlabel.id
         else
             el = @create @[sec], ttl
 

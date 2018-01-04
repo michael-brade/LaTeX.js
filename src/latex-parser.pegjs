@@ -157,19 +157,21 @@ is_hvmode =
 macro =
     name:identifier &{ if (g.hasMacro(name)) { g.beginArgs(name); return true; } }
     skip_space
-    args:(
-        &{ return g.nextArg("s") }    s:"*"?                                                                                    { return !!s; }
-      / &{ return g.nextArg("g") }    g:(arg_group      / . { error("macro " + name + " is missing a group argument") })        { return g; }
-      / &{ return g.nextArg("o") }    o: opt_group?                                                                             { return o; }
-      / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { return i; }
-      / &{ return g.nextArg("i?") }   i: id_optgroup?                                                                           { return i; }
-      / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { return k; }
-      / &{ return g.nextArg("n") }    n:(expr_group     / . { error("macro " + name + " is missing n num group argument") })    { return n; }
-      / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { return l; }
-      / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { return m; }
-      / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { return u; }
+    (
+        &{ return g.nextArg("X") }                                                                                              { g.macro(name, g.parsedArgs()); }
+      / &{ return g.nextArg("s") }    s:"*"?                                                                                    { g.addParsedArg(!!s); }
+      / &{ return g.nextArg("g") }    a:(arg_group      / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
+      / &{ return g.nextArg("o") }    o: opt_group?                                                                             { g.addParsedArg(o); }
+      / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { g.addParsedArg(i); }
+      / &{ return g.nextArg("i?") }   i: id_optgroup?                                                                           { g.addParsedArg(i); }
+      / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { g.addParsedArg(k); }
+      / &{ return g.nextArg("n") }    n:(expr_group     / . { error("macro " + name + " is missing a num group argument") })    { g.addParsedArg(n); }
+      / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { g.addParsedArg(l); }
+      / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { g.addParsedArg(m); }
+      / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { g.addParsedArg(u); }
     )*
     {
+        var args = g.parsedArgs();
         g.endArgs();
         return g.createFragment(g.macro(name, args));
     }
