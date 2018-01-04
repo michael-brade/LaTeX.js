@@ -457,10 +457,13 @@ export class HtmlGenerator
 
         # stack for local variables and attributes - entering a group adds another entry,
         # leaving a group removes the top entry
-        @_stack = [{
+        @_stack = [
             attrs: {}
+            currentlabel:
+                id: ""
+                label: document.createTextNode ""
             lengths: new Map()
-        }]
+        ]
 
         # grouping stack, keeps track of difference between opening and closing brackets
         @_groups = []
@@ -714,6 +717,7 @@ export class HtmlGenerator
         # shallow copy of the contents of top is enough because we don't change the elements, only the array and the maps
         @_stack.push {
             attrs: Object.assign {}, @_stack.top.attrs
+            currentlabel: Object.assign {}, @_stack.top.currentlabel
             lengths: new Map(@_stack.top.lengths)
         }
         ++@_groups.top
@@ -868,7 +872,7 @@ export class HtmlGenerator
             el = @create @anchor id
 
         # currentlabel stores the id of the anchor to link to, as well as the label to display in a \ref{}
-        @_stack.top.attrs.currentlabel =
+        @_stack.top.currentlabel =
             id: id
             label: @createFragment [
                 ...if @hasMacro(\p@ + c) then @macro(\p@ + c) else []
@@ -959,7 +963,11 @@ export class HtmlGenerator
     # labels are possible for: parts, chapters, all sections, \items, footnotes, minipage-footnotes, tables, figures
     setLabel: (label) !->
         @_error "label #{label} already defined!" if @_labels.has label
-        @_labels.set label, @_stack.top.attrs.currentlabel
+
+        if not @_stack.top.currentlabel.id
+            console.warn "warning: no \\@currentlabel available for label #{label}!"
+
+        @_labels.set label, @_stack.top.currentlabel
 
         # fill forward references
         if @_refs.has label
@@ -967,8 +975,8 @@ export class HtmlGenerator
                 while r.firstChild
                     r.removeChild r.firstChild
 
-                r.appendChild @_stack.top.attrs.currentlabel.label.cloneNode true
-                r.setAttribute "href", "#" + @_stack.top.attrs.currentlabel.id
+                r.appendChild @_stack.top.currentlabel.label.cloneNode true
+                r.setAttribute "href", "#" + @_stack.top.currentlabel.id
 
             @_refs.delete label
 
