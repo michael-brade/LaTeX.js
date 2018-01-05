@@ -29,9 +29,14 @@ describe 'LaTeX.js fixtures', !->
 
                 # create a test
                 t fixture.header || 'line ' + (fixture.first.range.0 - 1), !->
-                    html-is     = latexjs.parse fixture.first.text, {
-                        generator: new HtmlGenerator { hyphenate: false }
-                    } .html!
-                    html-should = fixture.second.text.replace //\n//g, ""
+                    try
+                        html-is     = latexjs.parse fixture.first.text, { generator: new HtmlGenerator { hyphenate: false } } .html!
+                        html-should = fixture.second.text.replace //\n//g, ""
+                    catch
+                        if e.location
+                            e.message = "#{e.message} at line #{e.location.start.line} (column #{e.location.start.column}): " +
+                                        fixture.first.text.split(/\r\n|\n|\r/)[e.location.start.line - 1]
+                        throw e
+
                     #html-is = html-beautify html-is
                     expect html-is .to.equal html-should
