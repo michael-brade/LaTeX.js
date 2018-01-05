@@ -331,8 +331,7 @@ export class MacrosBase
     # itemize
 
     \labelitemi         :-> [ @g.symbol \textbullet ]
-    \labelitemii        :-> [ @g.symbol \textendash ]
-    #\labelitemii        :-> \normalfont\bfseries + @g.symbol \textendash   # TODO
+    \labelitemii        :-> @normalfont!; @bfseries!; [ @g.symbol \textendash ]
     \labelitemiii       :-> [ @g.symbol \textasteriskcentered ]
     \labelitemiv        :-> [ @g.symbol \textperiodcentered ]
 

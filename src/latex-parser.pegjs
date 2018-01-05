@@ -262,12 +262,13 @@ arg_group       =   skip_space begin_group      & { g.enterGroup(); g.startBalan
 
 
 // [<LaTeX code/text>]
-opt_group       =   skip_space begin_optgroup   & { g.startBalanced(); return true; }
+opt_group       =   skip_space begin_optgroup   & { g.enterGroup(); g.startBalanced(); return true; }
                         p:paragraph_with_linebreak*
                     end_optgroup                & { return g.isBalanced(); }
                     {
                         g.isBalanced() || error("groups inside an optional argument need to be balanced!");
                         g.endBalanced();
+                        g.exitGroup();
                         return g.createFragment(p);
                     }
 
