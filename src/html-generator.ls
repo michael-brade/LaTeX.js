@@ -487,7 +487,7 @@ export class HtmlGenerator
         [@_stack.top.attrs.align].join(' ').replace(/\s+/g, ' ').trim!
 
 
-    # sectioning
+    ### sectioning
 
     startsection: (sec, level, star, toc, ttl) ->
         # call before the arguments are parsed to refstep the counter
@@ -517,7 +517,7 @@ export class HtmlGenerator
 
         el
 
-    # lists
+    ### lists
 
     startlist: ->
         @stepCounter \@listdepth
@@ -532,7 +532,7 @@ export class HtmlGenerator
 
 
 
-    # lengths
+    ### lengths
 
     setLength: (id, length) !->
         console.log "LENGTH:", id, length
@@ -546,7 +546,7 @@ export class HtmlGenerator
         l
 
 
-    # LaTeX counters (global)
+    ### LaTeX counters (global)
 
     newCounter: (c, parent) !->
         @_error "counter #{c} already defined!" if @hasCounter c
@@ -671,7 +671,7 @@ export class HtmlGenerator
         |   _   => @_error "fnsymbol value must be between 1 and 9"
 
 
-    # label, ref
+    ### label, ref
 
     # labels are possible for: parts, chapters, all sections, \items, footnotes, minipage-footnotes, tables, figures
     setLabel: (label) !->
@@ -709,7 +709,17 @@ export class HtmlGenerator
         el
 
 
-    # private helpers
+    logUndefinedRefs: !->
+        return if @_refs.size == 0
+
+        keys = @_refs.keys!
+        while not (ref = keys.next!).done
+            console.warn "warning: reference '#{ref.value}' undefined"
+
+        console.warn "There were undefined references."
+
+
+    ### private helpers
 
     _appendChildrenTo: (children, parent) ->
         if children

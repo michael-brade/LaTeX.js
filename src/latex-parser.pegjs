@@ -32,7 +32,9 @@ document =
         var l = g.endBalanced();
         // this error should be impossible, it's just to be safe
         l == 1 && g.isBalanced() || error("grammar error: " + l + " levels of balancing are remaining, or the last level is unbalanced!");
+
         g.createDocument(pars);
+        g.logUndefinedRefs();
         return g;
     }
 
@@ -204,7 +206,7 @@ identifier "identifier" =
     $char+
 
 key "key" =
-    $(char / punctuation / digit)+
+    $(char / sp / digit / punctuation  / [$&_\-/@] / utf8_char)+
 
 
 // {identifier}
