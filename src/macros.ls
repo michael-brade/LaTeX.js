@@ -275,8 +275,8 @@ export class MacrosBase
     \underline          : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setTextDecoration "underline" else @g.exitGroup!; [ arg ]
 
 
-    args.\emph          = <[ H g ]>
-    \emph               : (arg) -> [ @g.create @g.emph, arg ]
+    args.\emph          = <[ H X g ]>
+    \emph               : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "em" else @g.exitGroup!; [ arg ]
 
 
     # declarations
@@ -304,7 +304,7 @@ export class MacrosBase
 
     [ ::[..] = ((f) -> -> @g.setFontSize(f))(..) for <[ tiny scriptsize footnotesize small normalsize large Large LARGE huge Huge ]> ]
 
-    \em                 :!-> @g.setFontShape "em"       # TODO: TOGGLE em?!
+    \em                 :!-> @g.setFontShape "em"
 
 
 

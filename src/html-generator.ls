@@ -1,3 +1,5 @@
+'use strict'
+
 require! {
     './symbols': { ligatures, diacritics, symbols }
     './macros': { MacrosBase: Macros }
@@ -50,6 +52,8 @@ export class HtmlGenerator
     paragraph:                  "h5"
     subparagraph:               "h6"
 
+    linebreak:                  "br"
+
     par:                        "p"
 
     list:                       do -> create ::block, "list"
@@ -74,8 +78,6 @@ export class HtmlGenerator
                                         el.setAttribute "style", "column-count:" + c
                                         return el
 
-    emph:                       "em"
-    linebreak:                  "br"
 
     anchor:                     do ->
                                     el = document.createElement "a"
@@ -101,7 +103,6 @@ export class HtmlGenerator
     _isPhrasingContent: (type) ->
         type in [
             @inline-block
-            @emph
             @verb
             @linebreak
             @link
@@ -467,6 +468,12 @@ export class HtmlGenerator
         @_stack.top.attrs.fontWeight = weight
 
     setFontShape: (shape) !->
+        if shape == "em"
+            if @_stack.top.attrs.fontShape == "it"
+                shape = "up"
+            else
+                shape = "it"
+
         @_stack.top.attrs.fontShape = shape
 
     setFontSize: (size) !->

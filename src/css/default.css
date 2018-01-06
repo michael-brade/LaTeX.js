@@ -158,7 +158,6 @@ html {
 }
 
 .it {
-    font-family: "Computer Modern Classical Serif Italic";
     font-style: italic;
     font-variant-caps: normal;
 }
@@ -169,15 +168,19 @@ html {
     font-variant-caps: normal;
 }
 
+.tt.sl {
+    font-family: "Computer Modern Typewriter", monospace;
+    font-style: oblique;
+    font-variant-caps: normal;
+}
+
 .sc {
     font-family: "Computer Modern Serif", serif;
     font-style: normal;
     font-variant-caps: small-caps;
 }
 
-.em, em {
-    font-style: italic; /* TODO: what if nested? */
-}
+
 
 .underline {
     text-decoration: underline;
