@@ -161,7 +161,7 @@ export class HtmlGenerator
         ]
 
         # grouping stack, keeps track of difference between opening and closing brackets
-        @_groups = []
+        @_groups = [ 0 ]
 
         @_labels = new Map()
         @_refs = new Map()

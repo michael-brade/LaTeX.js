@@ -4,17 +4,34 @@
 }
 
 
+preamble =
+    // preamble starts with P macro, then only HV and P macros in preamble
+    (skip_all_space escape &is_preamble macro)+
+    (skip_all_space escape (&is_hvmode / &is_preamble) macro)*
+    skip_all_space
+    (escape begin skip_space begin_group "document" end_group / &{ error("expected \\begin{document}") })
+        d:document
+    escape end skip_space begin_group "document" end_group
+    EOF
+    { return d; }
+    /
+    // or, if no preamble was given, start an article
+    d:document
+    EOF
+    { return d; }
+
+
 document =
     & { g.startBalanced(); g.enterGroup(); return true; }
     skip_all_space            // drop spaces at the beginning of the document
     pars:paragraph*
-    skip_all_space EOF        // drop spaces at the end of the document
+    skip_all_space            // drop spaces at the end of the document
     {
         g.exitGroup();
         g.isBalanced() || error("groups need to be balanced!");
         var l = g.endBalanced();
         // this error should be impossible, it's just to be safe
-        l == 0 || error("grammar error: " + l + " levels of balancing are remaining!");
+        l == 1 && g.isBalanced() || error("grammar error: " + l + " levels of balancing are remaining, or the last level is unbalanced!");
         g.createDocument(pars);
         return g;
     }
@@ -108,8 +125,8 @@ hmode_macro =
 
     / verb
 
-    // now we have checked hv-macros and h-macros - if it's not a v-macro it is undefined
-    / !is_vmode unknown_macro
+    / &is_preamble only_preamble
+    / !is_vmode unknown_macro       // now we have checked hv-macros and h-macros - if it's not a v-macro it is undefined
     )
     { return m; }
 
@@ -129,6 +146,9 @@ vmode_macro =
     { g.break(); return m; }
 
 
+
+is_preamble =
+    id:identifier &{ return g.isPreamble(id); }
 
 is_vmode =
     id:identifier &{ return g.isVmode(id); }
@@ -164,6 +184,10 @@ macro =
     }
 
 
+
+only_preamble =
+    m:identifier
+    { error("macro only allowed in preamble: " + m); }
 
 unknown_macro =
     m:identifier

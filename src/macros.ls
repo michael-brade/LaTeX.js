@@ -490,25 +490,33 @@ export class MacrosBase
 
     ## not yet...
 
-    args.\input = <[ V g ]>
-    \input : (file) ->
+    args.\input =       <[ V g ]>
+    \input              : (file) ->
 
-    args.\include = <[ V g ]>
-    \include : (file) ->
+    args.\include =     <[ V g ]>
+    \include            : (file) ->
 
 
     ############
     # preamble #
     ############
 
-    args.\includeonly = <[ P g ]>
-    \includeonly : (filelist) ->
+    args.\documentclass =  <[ P o g o ]>
+    \documentclass      : (opts, documentclass, version) !->
 
-    args.\makeatletter = <[ P ]>
-    \makeatletter   :->
+    args.\usepackage    =  <[ P o g o ]>
+    \usepackage         : (opts, packages, version) !->
 
-    args.\makeatother = <[ P ]>
-    \makeatother   :->
+
+    args.\includeonly   = <[ P g ]>
+    \includeonly        : (filelist) !->
+
+
+    args.\makeatletter  = <[ P ]>
+    \makeatletter       :!->
+
+    args.\makeatother   = <[ P ]>
+    \makeatother        :!->
 
 
 
