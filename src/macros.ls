@@ -623,6 +623,37 @@ export class MacrosBase
     #   if xslope != 0 then length is horizontal, else it is vertical
     #   if xslope == yslope == 0 then error
     args.\line =        <[ H v l ]>
+    \line               : (v, l) ->
+        if v.x.value == v.y.value == 0 then @g._error "illegal slope (0,0)"
+
+        linethickness = 1
+
+        if v.x.value == 0
+            x = 0
+            y = l.value
+
+            sx = linethickness
+            sy = Math.abs y
+        else
+            x = l.value
+            y = x * v.y.value / v.x.value
+
+            sx = Math.abs x
+            sy = Math.max linethickness, Math.abs y
+
+        svg = @g.createFragment()
+        draw = @g.SVG(svg).size sx, sy
+
+        draw.viewbox Math.min(0, x), Math.min(0, y), sx, sy
+
+        draw.line(0, 0, x, y).stroke { width: linethickness }
+
+        # last, put the origin into the lower left
+        draw.flip 'y', 0
+
+        # TODO: now use position: absolute to move it left/down by (Math.min(0, x), Math.min(0, y))
+        @rlap svg
+
 
     # \vector(xslope,yslope){length}
     args.\vector =      <[ H v l ]>

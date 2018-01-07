@@ -275,10 +275,10 @@ float_group     =   skip_space begin_group
 // picture coordinates and vectors
 
 coordinate      =   skip_space c:(
+                        length
+                        /
                         f:float { return { value: f * g.length("unitlength").value,
                                             unit:     g.length("unitlength").unit };    }
-                        /
-                        length
                     ) skip_space
                     { return c; }
 
