@@ -202,6 +202,15 @@ export class HtmlGenerator
         @newCounter \@enumdepth
 
 
+        # picture lengths
+        @newLength \unitlength
+        @setLength \unitlength    { value: 1, unit: "pt" }
+
+        @newLength \@wholewidth
+        @setLength \@wholewidth   { value: 0.4, unit: "pt" }
+
+
+
 
     _error: (e) ->
         console.error e
@@ -331,28 +340,29 @@ export class HtmlGenerator
         span.setAttribute "class", "vspace-inline " + skip
         return span
 
+
     createVSpace: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "vspace"
-        span.setAttribute "style", "margin-bottom:" + length
+        span.setAttribute "style", "margin-bottom:" + length.value + length.unit
         return span
 
     createVSpaceInline: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "vspace-inline"
-        span.setAttribute "style", "margin-bottom:" + length
+        span.setAttribute "style", "margin-bottom:" + length.value + length.unit
         return span
 
     # create a linebreak with a given vspace between the lines
     createBreakSpace: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "breakspace"
-        span.setAttribute "style", "margin-bottom:" + length
+        span.setAttribute "style", "margin-bottom:" + length.value + length.unit
         return span
 
     createHSpace: (length) ->
         span = document.createElement "span"
-        span.setAttribute "style", "margin-right:" + length
+        span.setAttribute "style", "margin-right:" + length.value + length.unit
         return span
 
 
@@ -409,7 +419,7 @@ export class HtmlGenerator
     # remove arguments of a completely parsed macro from the stack
     endArgs: !->
         @_curArgs.pop!.args
-            ..length == 0 || error "grammar error - mandatory arguments missing: #{..}"
+            ..length == 0 || @_error "grammar error - mandatory arguments missing: #{..}"
 
 
 
@@ -540,6 +550,8 @@ export class HtmlGenerator
 
 
     ### lengths
+
+    newLength: (id) !->
 
     setLength: (id, length) !->
         console.log "LENGTH:", id, length

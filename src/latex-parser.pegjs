@@ -12,6 +12,7 @@ preamble =
     (escape begin skip_space begin_group "document" end_group / &{ error("expected \\begin{document}") })
         d:document
     escape end skip_space begin_group "document" end_group
+    .*
     EOF
     { return d; }
     /
@@ -176,8 +177,11 @@ macro =
       / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { g.addParsedArg(k); }
       / &{ return g.nextArg("n") }    n:(expr_group     / . { error("macro " + name + " is missing a num group argument") })    { g.addParsedArg(n); }
       / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { g.addParsedArg(l); }
+      / &{ return g.nextArg("l?") }   l: length_optgroup?                                                                       { g.addParsedArg(l); }
       / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { g.addParsedArg(m); }
       / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { g.addParsedArg(u); }
+      / &{ return g.nextArg("v") }    v:(vector         / . { error("macro " + name + " is missing a coordinate pair") })       { g.addParsedArg(v); }
+      / &{ return g.nextArg("v?") }   v: vector?                                                                                { g.addParsedArg(v); }
     )*
     {
         var args = g.parsedArgs();
@@ -237,11 +241,20 @@ key_group       =   skip_space begin_group
 length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") _
                     { return u; }
 
+  // TODO: should be able to use variables and maths: 2\parskip etc.
 length          =   l:float u:length_unit (plus float length_unit)? (minus float length_unit)?
-                    { return l + u; }
+                    { return { value: l, unit: u }; }
 
 // {length}
-length_group    =   skip_space begin_group skip_space l:length end_group  // TODO: should be able to use variables and maths: 2\parskip etc.
+length_group    =   skip_space begin_group skip_space
+                        l:length
+                    end_group
+                    { return l; }
+
+// [length]
+length_optgroup =   skip_space begin_optgroup skip_space
+                        l:length
+                    end_optgroup
                     { return l; }
 
 
@@ -250,6 +263,27 @@ expr_group      =   skip_space begin_group
                         n:num_expr
                     end_group
                     { return n; }
+
+
+// {float expression}
+float_group     =   skip_space begin_group
+
+                    end_group
+                    { return f; }
+
+
+// picture coordinates and vectors
+
+coordinate      =   skip_space c:(
+                        f:float { return { value: f * g.length("unitlength").value,
+                                            unit:     g.length("unitlength").unit };    }
+                        /
+                        length
+                    ) skip_space
+                    { return c; }
+
+vector          =   skip_space "(" x:coordinate "," y:coordinate ")" skip_space
+                    { return { x: x, y: y }; }
 
 
 
@@ -628,10 +662,10 @@ multicols =
 // \begin{picture}(width,height)(xoffset,yoffset)
 picture =
     name:("picture") end_group
-    conf:(size:position offset:position? { return { size: size, offset: offset } }
+    conf:(size:vector offset:vector? { return { size: size, offset: offset } }
          / &{ error("picture error, required syntax: \\begin{picture}(width,height)[(xoffset,yoffset)]") }
          )
-    pics:put*
+    // TODO: rule for picture content??? LaTeX allows anything, Lamport says: HV macros and picture commands
     {
         var svg = g.createFragment();
         var draw = g.SVG(svg)
@@ -652,17 +686,6 @@ picture =
         }
     }
 
-coordinate  = skip_space c:float skip_space
-            { return c; }
-
-position    = skip_space "(" x:coordinate "," y:coordinate ")" skip_space
-            { return { x: x, y: y }; }
-
-put = escape "put" position begin_group end_group
-
-
-pic_macro =
-    put
 
 
 

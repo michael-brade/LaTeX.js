@@ -35,15 +35,18 @@ export class MacrosBase
     #   s: optional star
     #
     #   i: id (group)
-    #   i?: optional id (group)
+    #  i?: optional id (optgroup)
     #   k: key (group)
+    #  kv: key-value list (optgroup)
     #   u: url (group)
+    #   c: color specification (group), that is: <name> or <float> or <float,float,float>
     #   m: macro (group)
     #   l: length (group)
+    #  l?: optional length (optgroup)
     #   n: num expression (group)
     #   f: float expression (group)
-    #   c: coordinate
-    #   p: position
+    #   v: vector, a pair of coordinates: (float, float)
+    #  v?: optional vector
     #
     #   g: arggroup
     #   g+: long arggroup
@@ -174,6 +177,13 @@ export class MacrosBase
     \indexname          :-> [ "Index" ]
 
 
+    args.\title =       <[ HV g ]>
+    args.\author =      <[ HV g ]>
+    args.\and =         <[ H ]>
+    args.\date =        <[ HV g ]>
+
+    args.\maketitle =   <[ V ]>
+
     args.\tableofcontents = <[ V ]>
 
     # keep a reference to the TOC element, and fill it as we go along
@@ -271,9 +281,6 @@ export class MacrosBase
                                         [ arg ]
 
 
-    args.\underline     = <[ H X g ]>
-    \underline          : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setTextDecoration "underline" else @g.exitGroup!; [ arg ]
-
 
     args.\emph          = <[ H X g ]>
     \emph               : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "em" else @g.exitGroup!; [ arg ]
@@ -357,7 +364,6 @@ export class MacrosBase
     \hspace             : (s, l) -> [ @g.createHSpace l ]
 
     # stretch     arg_group
-    # hphantom
     #
     # hfill           = \hspace{\fill}
     # dotfill         =
@@ -402,10 +408,242 @@ export class MacrosBase
     # boxes #
     #########
 
-    # \mbox{text} - not broken into lines
-    args.mbox = <[ H g ]>
-    \mbox : (g)         ->
+    ### hboxes
 
+    # TODO: \par, \\ etc. should not do anything in those hboxes directly!
+    #       create special argument?
+    #       or check if argument txt is already a box then and create span or div accordingly??
+
+    # lowlevel macros...
+    args
+     ..\llap =          \
+     ..\rlap =          \
+     ..\clap =          \
+     ..\smash =         \
+     ..\hphantom =      \
+     ..\vphantom =      \
+     ..\phantom =       <[ H g ]>   # TODO: not true, these should be usable in V-mode as well, they don't \leavevmode :(
+
+    \llap               : (txt) -> [ @g.create @g.inline-block, txt, "hbox llap" ]
+    \rlap               : (txt) -> [ @g.create @g.inline-block, txt, "hbox rlap" ]
+    \clap               : (txt) -> [ @g.create @g.inline-block, txt, "hbox clap" ]
+    \smash              : (txt) -> [ @g.create @g.inline-block, txt, "hbox smash" ]
+
+    \hphantom           : (txt) -> [ @g.create @g.inline-block, txt, "phantom hbox smash" ]
+    \vphantom           : (txt) -> [ @g.create @g.inline-block, txt, "phantom hbox rlap" ]
+    \phantom            : (txt) -> [ @g.create @g.inline-block, txt, "phantom hbox" ]
+
+
+    # LaTeX
+
+    args.\underline     = <[ H g ]>
+    \underline          : (txt) -> [ @g.create @g.inline-block, txt, "hbox underline" ]
+
+
+    # \mbox{text} - not broken into lines
+    args.\mbox =        <[ H g ]>
+    \mbox               : (txt) -> @makebox undefined, undefined, undefined, txt
+
+
+    # \makebox[0pt][r]{...} behaves like \leavevmode\llap{...}
+    # \makebox[0pt][l]{...} behaves like \leavevmode\rlap{...}
+    # \makebox[0pt][c]{...} behaves like \leavevmode\clap{...}
+
+    # \makebox[width][position]{text}
+    #   position: c,l,r,s
+    # \makebox(width,height)[position]{text}
+    #   position: t,b,l,r (one or two)
+    args.\makebox =     <[ H v? l? i? g ]>
+    \makebox            : (vec, width, pos, txt) ->
+        if vec
+            # picture version
+            @g._error "expected \\makebox(width,height)[position]{text} but got two optional arguments!" if width and pos
+            pos = width
+
+            [ txt ]
+        else
+            # normal makebox
+            @_box width, pos, txt, "hbox"
+
+
+    # \fbox{text}
+    # \framebox[width][position]{text}
+    #
+    # these add \fboxsep (default ‘3pt’) padding to "text" and draw a frame with linewidth \fboxrule (default ‘.4pt’)
+    args.\fbox =        <[ H g ]>
+    args.\framebox =    <[ H l? i? g ]>
+
+    \fbox               : (txt) -> @framebox undefined, undefined, txt
+    \framebox           : (width, pos, txt) -> @_box width, pos, txt, "hbox frame"
+
+
+
+    # helper for mbox, fbox, makebox, framebox
+    _box: (width, pos, txt, classes) ->
+        if width
+            pos = "c" if not pos
+
+            switch pos
+            | "s" => classes += " stretch"           # @g._error "position 's' (stretch) is not supported for text!"
+            | "c" => classes += " clap"
+            | "l" => classes += " rlap"
+            | "r" => classes += " llap"
+            |  _  => @g._error "unknown position: #{pos}"
+
+        box = @g.create @g.inline-block, txt, classes
+
+        if width
+            box.setAttribute "style", "width:" + width.value + width.unit
+
+        [ box ]
+
+
+
+    # \raisebox{distance}[height][depth]{text}
+
+    # \rule[raise]{width}{thickness}
+
+
+    # \newsavebox{\name}
+    # \savebox{\boxcmd}[width][pos]{text}
+    # \sbox{\boxcmd}{text}
+    # \usebox{\boxcmd}
+
+    # \begin{lrbox}{\boxcmd}
+    #   text
+    # \end{lrbox}
+
+
+
+    ### parboxes
+
+    /*
+
+    \parbox[pos][height][inner-pos]{width}{text}
+
+    \shortstack[pos]{...\\...\\...}, pos: r,l,c (horizontal alignment)
+
+
+    \begin{minipage}[pos][height][inner-pos]{width}
+
+    */
+
+
+
+    ############
+    # graphics #
+    ############
+
+
+    # graphicx
+
+
+    # TODO: restrict to just one path?
+    # { {path1/} {path2/} }
+    args.\graphicspath = <[ HV gl ]>
+    \graphicspath       : (paths) !->
+
+    # \includegraphics*[key-val list]{file}
+    args.\includegraphics = <[ H s kv g ]>
+
+
+    # color
+
+    # \definecolor{name}{model}{color specification}
+    args.\definecolor = <[ HV i? c ]>
+
+
+    # {name} or [model]{color specification}
+    args.\color =       <[ HV i? c ]>
+
+    # {name}{text} or [model]{color specification}{text}
+    args.\textcolor =   <[ H i? c g ]>
+
+
+    args.\colorbox =    <[ H i? c g ]>
+    args.\fcolorbox =   <[ H i? c c g ]>
+
+
+    # rotation
+
+    # \rotatebox[key-val list]{angle}{text}
+    args.\rotatebox =   <[ H kv f g ]>
+
+
+    # scaling
+
+    # \scalebox{h-scale}[v-scale]{text}
+    # \reflectbox{text}
+    # \resizebox*{h-length}{v-length}{text}
+
+
+    # xcolor
+
+
+    ### picture environment (pspicture, calc, picture and pict2e packages)
+
+    # line thickness in a picture (not multiplied by \unitlength)
+
+    args.\thicklines =  <[ HV ]>
+    args.\thinlines =   <[ HV ]>
+    args.\linethickness = <[ HV l ]>
+
+    \thinlines          :!->        @g.setLength \@wholewidth { value: 0.4, unit: "pt" }
+    \thicklines         :!->        @g.setLength \@wholewidth { value: 0.8, unit: "pt" }
+    \linethickness      : (l) !->   @g.setLength \@wholewidth l
+
+    args.\arrowlength = <[ HV l ]>
+
+
+    # picture commands
+
+    # \put(x,y){obj}
+    args.\put =         <[ H v g ]>
+
+    # \multiput(x,y)(delta_x,delta_y){n}{obj}
+    args.\multiput =    <[ H v v n g ]>
+
+    # \qbezier[N](x1, y1)(x, y)(x2, y2)
+    args.\qbezier =     <[ H n? v v v ]>
+
+    # \cbezier[N](x1, y1)(x, y)(x2, y2)(x3, y3)
+    args.\cbezier =     <[ H n? v v v v ]>
+
+    #args.\graphpaper =  <[  ]>
+
+
+    # picture objects
+
+    # TODO: lengths here have to be multiplied with unitlength! create another argument type!
+
+    # \circle[*]{diameter}
+    args.\circle =      <[ H s l ]>
+
+    # \line(xslope,yslope){length}
+    #   if xslope != 0 then length is horizontal, else it is vertical
+    #   if xslope == yslope == 0 then error
+    args.\line =        <[ H v l ]>
+
+    # \vector(xslope,yslope){length}
+    args.\vector =      <[ H v l ]>
+
+    # \line(x2,y2)
+    args.\Line =        <[ H v ]>
+    args.\Vector =      <[ H v ]>
+
+    # \oval[radius](width,height)[portion]
+    #   uses circular arcs of radius min(radius, width/2, heigth/2)
+    args.\oval =        <[ H f? v i? ]>
+
+    # \dashbox{dashlen}(width,height)[pos]{text}
+    args.\dashbox =     <[ H f v i? g ]>
+
+    # \frame{text} - frame without padding, line width given by picture linethickness
+    args.\frame =       <[ H g ]>
+    \frame              : (txt) ->
+        el = @g.create @g.inline-block, txt, "hbox pframe"
+        el.setAttribute "style" "border-width:" + @g.lengthStr \@wholewidth
+        [ el ]
 
 
     ####################

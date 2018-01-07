@@ -203,10 +203,6 @@ html {
 
 
 
-.underline {
-    text-decoration: underline;
-}
-
 
 /* size */
 
@@ -292,6 +288,73 @@ h1, h2, h3, h4 {
 
 .list.center, .list.flushleft, .list.flushright {
     padding-left: 0 !important;
+}
+
+
+
+/*********/
+/* boxes */
+/*********/
+
+
+.hbox {
+    display: inline-block;
+    white-space: nowrap;
+    text-indent: 0;
+}
+
+.phantom {
+    visibility: hidden;
+}
+
+
+.llap {
+    display: inline-flex;
+    flex-direction: column;
+    width: 0;
+    align-items: flex-end;
+}
+
+.clap {
+    display: inline-flex;
+    flex-direction: column;
+    width: 0;
+    align-items: center;
+}
+
+.rlap {
+    display: inline-block;
+    width: 0;
+}
+
+
+.stretch {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.smash {
+    display: inline-flex;
+    flex-direction: row;
+    height: 0px;
+    align-items: flex-end;
+}
+
+
+.underline {
+    border-bottom: 0.4pt solid;
+}
+
+
+.frame {
+    padding: var(--fboxsep);
+    border: var(--fboxrule) solid;
+}
+
+
+.pframe {
+    border-style: solid;
 }
 
 
