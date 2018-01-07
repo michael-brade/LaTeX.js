@@ -30,6 +30,18 @@
     --leftmargin: var(--leftmargini);
 
     --labelsep: 0.5rem;
+
+    --fboxrule: 0.4pt;
+    --fboxsep: 3pt;
+
+    /* multicols */
+    --columnwidth: ;
+
+    --columnsep: 35pt;
+    --columnseprule: 0pt;
+    --columnseprulecolor: black;
+
+    --multicolsep: 12pt;
 }
 
 
@@ -100,8 +112,11 @@ body {
 }
 
 .multicols {
-    column-gap: 3em;
-    column-rule: 1px solid;
+    margin-top: var(--multicolsep);
+    margin-bottom: var(--multicolsep);
+
+    column-gap: var(--columnsep);
+    column-rule: var(--columnseprule) solid var(--columnseprulecolor);
     column-fill: balance;
 }
 
