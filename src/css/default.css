@@ -183,6 +183,12 @@ html {
     font-variant-caps: normal;
 }
 
+.sf.sl {
+    font-family: "Computer Modern Sans", sans-serif;
+    font-style: oblique;
+    font-variant-caps: normal;
+}
+
 .tt.sl {
     font-family: "Computer Modern Typewriter Slanted", monospace;
     font-style: oblique;
