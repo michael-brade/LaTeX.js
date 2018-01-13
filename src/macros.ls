@@ -493,7 +493,8 @@ export class MacrosBase
             | "r" => classes += " llap"
             |  _  => @g._error "unknown position: #{pos}"
 
-        box = @g.create @g.inline-block, txt, classes
+        content = @g.create @g.inline-block, txt
+        box = @g.create @g.inline-block, content, classes
 
         if width
             box.setAttribute "style", "width:" + width.value + width.unit
@@ -504,7 +505,7 @@ export class MacrosBase
 
     # \raisebox{distance}[height][depth]{text}
 
-    # \rule[raise]{width}{thickness}
+    # \rule[raise]{width}{height}
 
 
     # \newsavebox{\name}

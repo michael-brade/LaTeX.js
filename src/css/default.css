@@ -350,7 +350,10 @@ h1, h2, h3, h4 {
 .frame {
     padding: var(--fboxsep);
     border: var(--fboxrule) solid;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
+
 
 /****************/
 /* environments */
