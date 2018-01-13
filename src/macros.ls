@@ -15,6 +15,8 @@ export class MacrosBase
     (generator) ->
         @g = generator
 
+        @[\@mainmatter] = true  # book
+
 
     # args: declaring arguments for a macro. If a macro doesn't take arguments and is a
     #       horizontal-mode macro, args can be left undefined for it.
@@ -206,7 +208,7 @@ export class MacrosBase
 
     # book/report
     # \part               : (s, toc, ttl) -> [ @g.startsection \part,          -1, s, toc, ttl ]
-    \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter,        0, s, toc, ttl ]
+    \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter,        0, s or not @"@mainmatter", toc, ttl ]
 
     \section            : (s, toc, ttl) -> [ @g.startsection \section,        1, s, toc, ttl ]
     \subsection         : (s, toc, ttl) -> [ @g.startsection \subsection,     2, s, toc, ttl ]
@@ -230,11 +232,11 @@ export class MacrosBase
      ..\frontmatter =   \
      ..\mainmatter =    \
      ..\backmatter =    \
-     ..\appendix =      <[ HV ]>
+     ..\appendix =      <[ V ]>
 
-    \frontmatter        :!->
-    \mainmatter         :!->
-    \backmatter         :!->
+    \frontmatter        :!-> @[\@mainmatter] = false    # book; TODO: in frontmatter, sections should be named 0.1, 0.2,...
+    \mainmatter         :!-> @[\@mainmatter] = true
+    \backmatter         :!-> @[\@mainmatter] = false
 
     \appendix           :!->
         # if chapters have been used: book, report
