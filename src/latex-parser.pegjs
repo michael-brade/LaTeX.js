@@ -180,6 +180,7 @@ macro =
       / &{ return g.nextArg("l?") }   l: length_optgroup?                                                                       { g.addParsedArg(l); }
       / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { g.addParsedArg(m); }
       / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { g.addParsedArg(u); }
+      / &{ return g.nextArg("cl") }   c:(coord_group    / . { error("macro " + name + " is missing a coordinate/length group") })   { g.addParsedArg(c); }
       / &{ return g.nextArg("v") }    v:(vector         / . { error("macro " + name + " is missing a coordinate pair") })       { g.addParsedArg(v); }
       / &{ return g.nextArg("v?") }   v: vector?                                                                                { g.addParsedArg(v); }
     )*
@@ -238,12 +239,12 @@ key_group       =   skip_space begin_group
                     { return k; }
 
 // lengths
-length_unit     =   skip_space u:("pt" / "mm" / "cm" / "in" / "ex" / "em") _
+length_unit     =   skip_space u:("sp" / "pt" / "px" / "dd" / "mm" / "pc" / "cc" / "cm" / "in" / "ex" / "em") _
                     { return u; }
 
   // TODO: should be able to use variables and maths: 2\parskip etc.
 length          =   l:float u:length_unit (plus float length_unit)? (minus float length_unit)?
-                    { return { value: l, unit: u }; }
+                    { return g.toPx({ value: l, unit: u }); }
 
 // {length}
 length_group    =   skip_space begin_group skip_space
@@ -274,6 +275,7 @@ float_group     =   skip_space begin_group
 
 // picture coordinates and vectors
 
+// float or length
 coordinate      =   skip_space c:(
                         length
                         /
@@ -282,8 +284,16 @@ coordinate      =   skip_space c:(
                     ) skip_space
                     { return c; }
 
+// (coord, coord)
 vector          =   skip_space "(" x:coordinate "," y:coordinate ")" skip_space
                     { return { x: x, y: y }; }
+
+
+// {coord}
+coord_group     =   skip_space begin_group
+                        c:coordinate
+                    end_group
+                    { return c; }
 
 
 

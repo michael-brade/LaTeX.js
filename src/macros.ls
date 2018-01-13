@@ -43,9 +43,10 @@ export class MacrosBase
     #   m: macro (group)
     #   l: length (group)
     #  l?: optional length (optgroup)
+    #  cl: coordinate/length (group)
     #   n: num expression (group)
     #   f: float expression (group)
-    #   v: vector, a pair of coordinates: (float, float)
+    #   v: vector, a pair of coordinates: (float/length, float/length)
     #  v?: optional vector
     #
     #   g: arggroup
@@ -582,17 +583,21 @@ export class MacrosBase
 
     ### picture environment (pspicture, calc, picture and pict2e packages)
 
-    # line thickness in a picture (not multiplied by \unitlength)
+    # line thickness and arrowlength in a picture (not multiplied by \unitlength)
 
-    args.\thicklines =  <[ HV ]>
-    args.\thinlines =   <[ HV ]>
-    args.\linethickness = <[ HV l ]>
+    args
+     ..\thicklines =    <[ HV ]>
+     ..\thinlines =     <[ HV ]>
+     ..\linethickness = <[ HV l ]>
+     ..\arrowlength =   <[ HV l ]>
 
     \thinlines          :!->        @g.setLength \@wholewidth { value: 0.4, unit: "pt" }
     \thicklines         :!->        @g.setLength \@wholewidth { value: 0.8, unit: "pt" }
-    \linethickness      : (l) !->   @g.setLength \@wholewidth l
+    \linethickness      : (l) !->
+        @g._error "relative units for \\linethickness not supported!" if l.unit != "px"
+        @g.setLength \@wholewidth l
 
-    args.\arrowlength = <[ HV l ]>
+    \arrowlength        : (l) !->   @g.setLength \@arrowlength l
 
 
     # picture commands
@@ -614,49 +619,49 @@ export class MacrosBase
 
     # picture objects
 
-    # TODO: lengths here have to be multiplied with unitlength! create another argument type!
-
     # \circle[*]{diameter}
-    args.\circle =      <[ H s l ]>
+    args.\circle =      <[ H s cl ]>
 
     # \line(xslope,yslope){length}
     #   if xslope != 0 then length is horizontal, else it is vertical
     #   if xslope == yslope == 0 then error
-    args.\line =        <[ H v l ]>
+    args.\line =        <[ H v cl ]>
     \line               : (v, l) ->
-        if v.x.value == v.y.value == 0 then @g._error "illegal slope (0,0)"
+        @g._error "illegal slope (0,0)" if v.x.value == v.y.value == 0
+        @g._error "relative units not allowed for slope" if v.x.unit != v.y.unit or v.x.unit != "px"
 
-        linethickness = 1
+        linethickness = @g.length \@wholewidth
 
         if v.x.value == 0
             x = 0
             y = l.value
 
-            sx = linethickness
+            sx = linethickness.value
             sy = Math.abs y
         else
             x = l.value
             y = x * v.y.value / v.x.value
 
             sx = Math.abs x
-            sy = Math.max linethickness, Math.abs y
+            sy = Math.max linethickness.value, Math.abs y
 
-        svg = @g.createFragment()
+        svg = @g.create @g.inline-block, undefined, "picture-object"
+        svg.setAttribute "style", "left:#{Math.min(0, x)}px;bottom:#{Math.min(0, y)}px"
+
         draw = @g.SVG(svg).size sx, sy
 
         draw.viewbox Math.min(0, x), Math.min(0, y), sx, sy
 
-        draw.line(0, 0, x, y).stroke { width: linethickness }
+        draw.line(0, 0, x, y).stroke { width: linethickness.value + linethickness.unit }
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        # TODO: now use position: absolute to move it left/down by (Math.min(0, x), Math.min(0, y))
-        @rlap svg
+        [ @g.create @g.inline-block, svg, "picture" ]
 
 
     # \vector(xslope,yslope){length}
-    args.\vector =      <[ H v l ]>
+    args.\vector =      <[ H v cl ]>
 
     # \line(x2,y2)
     args.\Line =        <[ H v ]>
@@ -667,13 +672,14 @@ export class MacrosBase
     args.\oval =        <[ H f? v i? ]>
 
     # \dashbox{dashlen}(width,height)[pos]{text}
-    args.\dashbox =     <[ H f v i? g ]>
+    args.\dashbox =     <[ H cl v i? g ]>
 
     # \frame{text} - frame without padding, line width given by picture linethickness
     args.\frame =       <[ H g ]>
     \frame              : (txt) ->
         el = @g.create @g.inline-block, txt, "hbox pframe"
-        el.setAttribute "style" "border-width:" + @g.lengthStr \@wholewidth
+        w = @g.length \@wholewidth
+        el.setAttribute "style" "border-width:" + w.value + w.unit
         [ el ]
 
 
@@ -682,10 +688,10 @@ export class MacrosBase
     ####################
 
 
-    args.\newlength = <[ HV m ]>
+    args.\newlength =   <[ HV m ]>
     \newlength          : (id) !-> @g.newLength id
 
-    args.\setlength = <[ HV m l ]>
+    args.\setlength =   <[ HV m l ]>
     \setlength          : (id, l) !-> @g.setLength id, l
 
     args.\addtolength = <[ HV m l ]>

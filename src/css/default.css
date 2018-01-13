@@ -352,9 +352,28 @@ h1, h2, h3, h4 {
     border: var(--fboxrule) solid;
 }
 
+/****************/
+/* environments */
+/****************/
 
 .pframe {
     border-style: solid;
+}
+
+.picture {
+    display: inline-block;
+    position: relative;
+    line-height: 0px;
+}
+
+.picture-canvas {
+    display: inline-block;
+    position: relative;
+}
+
+
+.picture-object {
+    position: absolute;
 }
 
 

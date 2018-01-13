@@ -201,6 +201,11 @@ export class HtmlGenerator
         @newCounter \@itemdepth
         @newCounter \@enumdepth
 
+        @newLength \hsize
+        @setLength \hsize         { value: 100, unit: "%" }
+
+        @newLength \textwidth
+        @setLength \textwidth     { value: 100, unit: "%" }
 
         # picture lengths
         @newLength \unitlength
@@ -551,18 +556,59 @@ export class HtmlGenerator
 
     ### lengths
 
-    newLength: (id) !->
+    newLength: (l) !->
+        @_error "length #{l} already defined!" if @hasLength l
+        @_stack.top.lengths.set l, { value: 0; unit: "px" }
+
+    hasLength: (l) ->
+        @_stack.top.lengths.has l
 
     setLength: (id, length) !->
-        console.log "LENGTH:", id, length
+        @_error "no such length: #{id}" if not @hasLength id
+        # console.log "set length:", id, length
+        @_stack.top.lengths.set id, @toPx length
 
-    length: (id) !->
-        console.log "get length: #{id}"         # TODO
+    length: (l) ->
+        @_error "no such length: #{l}" if not @hasLength l
+        # console.log "get length: #{l} -> #{}"
+        @_stack.top.lengths.get l
 
     theLength: (id) ->
         l = @create @inline-block, undefined, "the"
         l.setAttribute "display-var", id
         l
+
+
+    # in TeX pt
+    unitsPt = new Map([
+        * 'sp'  0.000015259     # 1sp = 1/65536pt = 0.000015259pt
+        * 'dd'  1.07
+        * 'mm'  2.84527559
+        * 'pc'  12
+        * 'cc'  12.84           # 1cc = 12dd
+        * 'cm'  28.4527559
+        * 'in'  72.27
+    ])
+
+    # TeX unit to Browser px (assuming 96dpi)
+    unitsPx = new Map([
+        * 'sp'  0.000020345     # 1sp = 1/65536pt
+        * 'pt'  1.333333
+        * 'dd'  1.420875
+        * 'mm'  3.779528
+        * 'pc'  16
+        * 'cc'  17.0505         # 1cc = 12dd
+        * 'cm'  37.79528
+        * 'in'  96
+    ])
+
+    # convert to px if possible
+    toPx: (l) ->
+        return l if not unitsPx.has l.unit
+
+        value: l.value * unitsPx.get l.unit
+        unit: 'px'
+
 
 
     ### LaTeX counters (global)
