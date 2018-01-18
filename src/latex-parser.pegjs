@@ -442,7 +442,9 @@ end_env "\\end" =
 environment "environment" =
     begin_env begin_group                       & { g.startBalanced(); g.enterGroup(); return true; }
     e:(
-        itemize
+        titlepage
+      / abstract
+      / itemize
       / enumerate
       / description
       / quote_quotation_verse
@@ -470,6 +472,40 @@ unknown_environment =
     e:identifier
     { error("unknown environment: " + e); }
 
+
+    
+
+// titling
+
+titlepage = name:"titlepage" end_group
+    skip_space
+    p:paragraph*
+    {
+        return {
+            name: name,
+            node: g.create(g[name], p)
+        }
+    }
+
+
+abstract = name:"abstract" end_group        &{ g.setFontSize("small"); return true; }
+    skip_space
+    p:paragraph*
+    {
+        g.enterGroup();
+        g.setFontWeight("bf");
+        var head = g.create(g.list, g.macro("abstractname"), "center");
+        g.exitGroup();
+
+        g.startlist();
+        var body = g.create(g.quotation, p);
+        g.endlist();
+
+        return {
+            name: name,
+            node: g.create(g[name], [head, body])
+        }
+    }
 
 
 // lists: itemize, enumerate, description

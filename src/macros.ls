@@ -9,7 +9,15 @@
 # A macro must return an array with elements of type Node or String (text).
 #
 # This class should be independent of HtmlGenerator and just work with the generator interface.
+#
+# State is held that is relevant to the particular macros and/or documentclass.
 export class MacrosBase
+
+    _title: null
+    _author: null
+    _date: null
+    _thanks: null
+
 
     # CTOR
     (generator) ->
@@ -179,13 +187,38 @@ export class MacrosBase
     \bibname            :-> [ "Bibliography" ]
     \indexname          :-> [ "Index" ]
 
+    # title
 
     args.\title =       <[ HV g ]>
     args.\author =      <[ HV g ]>
     args.\and =         <[ H ]>
     args.\date =        <[ HV g ]>
+    args.\thanks =      <[ HV g ]>
 
     args.\maketitle =   <[ V ]>
+
+    \title              : (t) !-> @_title = t
+    \author             : (a) !-> @_author = a
+    \date               : (d) !-> @_date = d
+    \thanks             : @\footnote
+
+    \maketitle          :->
+        title = @g.create @g.title
+
+        # reset footnote back to 0
+        @g.setCounter \footnote 0
+
+        # reset - maketitle can only be used once
+        @_title = null
+        @_author = null
+        @_date = null
+        @_thanks = null
+
+        @\title = @\author = @\date = @\thanks = @\and = @\maketitle = !->
+
+        [ title ]
+
+    # toc
 
     args.\tableofcontents = <[ V ]>
 
