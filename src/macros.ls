@@ -814,6 +814,8 @@ export class MacrosBase
 
     args.\documentclass =  <[ P o g o ]>
     \documentclass      : (opts, documentclass, version) !->
+        @\documentclass = !-> @g._error "Two \\documentclass commands. The document may only declare one class."
+
 
     args.\usepackage    =  <[ P o g o ]>
     \usepackage         : (opts, packages, version) !->
