@@ -185,6 +185,19 @@ export symbols = new Map([
     * \textohm              '\u2126'                # Ω
     * \textmho              '\u2127'                # ℧
 
+    # cards
+
+    * \spadesuit            he.decode '&spades;'    # ♠  U+2660
+    * \heartsuit            '\u2661'                # ♡
+    * \diamondsuit          '\u2662'                # ♢
+    * \clubsuit             he.decode '&clubs;'     # ♣  U+2663
+
+    * \varspadesuit         '\u2664'                # ♤
+    * \varheartsuit         he.decode '&hearts;'    # ♥  U+2665     \varheart
+    * \varheart             he.decode '&hearts;'
+    * \vardiamondsuit       he.decode '&diams;'     # ♦  U+2666
+    * \varclubsuit          '\u2667'                # ♧
+
 
     # arrows
     * \textleftarrow        he.decode '&larr;'      # ←   U+2190

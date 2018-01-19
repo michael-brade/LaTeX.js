@@ -401,6 +401,9 @@ export class HtmlGenerator
     isPreamble: (name) -> @_macros.args[name]?.0 == \P
 
     macro: (name, args) ->
+        if symbols.has name
+            return [ @createText symbols.get name ]
+
         @_macros[name]
             .apply @_macros, args
             ?.filter (x) -> x != undefined
