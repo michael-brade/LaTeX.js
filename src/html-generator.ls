@@ -295,7 +295,7 @@ export class HtmlGenerator
     ### content creation
 
     createDocument: (fs) !->
-        @_appendChildrenTo fs, @_dom
+        appendChildrenTo fs, @_dom
 
 
     nextId: ->
@@ -320,7 +320,7 @@ export class HtmlGenerator
         if classes.trim!
             el.setAttribute "class", classes.replace(/\s+/g, ' ').trim!
 
-        @_appendChildrenTo children, el
+        appendChildrenTo children, el
 
     # create a text node that has font attributes set and allows for hyphenation
     createText: (t) ->
@@ -336,7 +336,7 @@ export class HtmlGenerator
         # only create an empty fragment if explicitely requested: no arguments given
         return if arguments.length > 0 and (not children or !children.length)
         f = document.createDocumentFragment!
-        @_appendChildrenTo children, f
+        appendChildrenTo children, f
 
 
     # for smallskip, medskip, bigskip
@@ -794,7 +794,7 @@ export class HtmlGenerator
 
     ### private helpers
 
-    _appendChildrenTo: (children, parent) ->
+    appendChildrenTo = (children, parent) ->
         if children
             if Array.isArray children
                 for i to children.length
