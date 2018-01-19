@@ -263,6 +263,20 @@ h1, h2, h3, h4 {
 }
 
 
+.titlepage {
+    height: 100vh;
+    min-height: 20rem;
+}
+
+.title {
+    font-size: 1.7rem;  /* LARGE */
+}
+
+.author, .date {
+    font-size: 1.2rem;  /* large */
+}
+
+
 
 /*************/
 /* alignment */

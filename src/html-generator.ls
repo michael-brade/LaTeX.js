@@ -46,6 +46,8 @@ export class HtmlGenerator
     # typographic elements
     titlepage:                  do -> create ::block, "titlepage"
     title:                      do -> create ::block, "title"
+    author:                     do -> create ::block, "author"
+    date:                       do -> create ::block, "date"
 
     abstract:                   do -> create ::block, "abstract"
 

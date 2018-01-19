@@ -200,10 +200,25 @@ export class MacrosBase
     \title              : (t) !-> @_title = t
     \author             : (a) !-> @_author = a
     \date               : (d) !-> @_date = d
+
+    \and                :-> @g.macro \quad
     \thanks             : @\footnote
 
     \maketitle          :->
-        title = @g.create @g.title
+        title = @g.create @g.title, @_title
+        author = @g.create @g.author, @_author
+        date = @g.create @g.date, if @_date then that else @g.macro \today
+
+        maketitle = @g.create @g.list, [
+            @g.createVSpace({ value: 2, unit: "em"})
+            title
+            @g.createVSpace({ value: 1.5, unit: "em"})
+            author
+            @g.createVSpace({ value: 1, unit: "em"})
+            date
+            @g.createVSpace({ value: 1.5, unit: "em"})
+        ], "center"
+
 
         # reset footnote back to 0
         @g.setCounter \footnote 0
@@ -216,7 +231,7 @@ export class MacrosBase
 
         @\title = @\author = @\date = @\thanks = @\and = @\maketitle = !->
 
-        [ title ]
+        [ maketitle ]
 
     # toc
 
