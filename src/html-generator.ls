@@ -39,11 +39,13 @@ export class HtmlGenerator
     create =                    (type, classes) -> el = document.createElement type; el.setAttribute "class", classes;  return el
 
     # generic elements
+
     inline-block:               "span"
     block:                      "div"
 
 
     # typographic elements
+
     titlepage:                  do -> create ::block, "titlepage"
     title:                      do -> create ::block, "title"
     author:                     do -> create ::block, "author"
@@ -104,6 +106,23 @@ export class HtmlGenerator
     verb:                       "code"
     verbatim:                   "pre"
 
+    picture:                    do ->
+                                    pic = create ::inline-block, "picture"
+                                    canvas = create ::inline-block, "picture-canvas"
+
+                                    pic.appendChild canvas
+
+                                    return (size, offset, content) ->
+                                        pic.setAttribute "style",  "width:#{size.x.value + size.x.unit};
+                                                                    height:#{size.y.value + size.y.unit}"
+
+                                        appendChildrenTo content, canvas
+
+                                        if offset
+                                            canvas.setAttribute "style", "left:#{offset.x.value + offset.x.unit};
+                                                                        bottom:#{offset.y.value + offset.y.unit}"
+
+                                        return pic
 
 
     # true if it is an inline element, something that makes up paragraphs

@@ -651,10 +651,39 @@ export class MacrosBase
     \arrowlength        : (l) !->   @g.setLength \@arrowlength l
 
 
-    # picture commands
+    # frames
+
+    # \dashbox{dashlen}(width,height)[pos]{text}
+    args.\dashbox =     <[ H cl v i? g ]>
+
+    # \frame{text} - frame without padding, line width given by picture linethickness
+    args.\frame =       <[ H g ]>
+    \frame              : (txt) ->
+        el = @g.create @g.inline-block, txt, "hbox pframe"
+        w = @g.length \@wholewidth
+        el.setAttribute "style" "border-width:" + w.value + w.unit
+        [ el ]
+
+
+    ## picture commands
+
+    # these commands create a box with width 0 and height abs(y) + height of {obj} if y positive
 
     # \put(x,y){obj}
     args.\put =         <[ H v g ]>
+    \put                : (v, obj) ->
+        x = v.x.value
+        y = v.y.value
+
+        wrapper = @g.create @g.inline-block, obj, "put-obj"
+        wrapper.setAttribute "style", "left:#{x + v.x.unit}"
+
+        strut = @g.create @g.inline-block, undefined, "strut"
+        strut.setAttribute "style", "height:#{Math.abs(y) + v.y.unit}"
+
+        put = @g.create @g.inline-block, [wrapper, strut], "picture"
+
+        @llap put
 
     # \multiput(x,y)(delta_x,delta_y){n}{obj}
     args.\multiput =    <[ H v v n g ]>
@@ -668,7 +697,9 @@ export class MacrosBase
     #args.\graphpaper =  <[  ]>
 
 
-    # picture objects
+    ## picture objects
+
+    # the boxes created by picture objects do not have a height or width
 
     # \circle[*]{diameter}
     args.\circle =      <[ H s cl ]>
@@ -696,13 +727,36 @@ export class MacrosBase
             sx = Math.abs x
             sy = Math.max linethickness.value, Math.abs y
 
+        @_line x, y, sx, sy
+
+
+    # \vector(xslope,yslope){length}
+    args.\vector =      <[ H v cl ]>
+
+    # \Line(x2,y2)
+    args.\Line =        <[ H v ]>
+    \Line               : (v) ->
+        linethickness = @g.length \@wholewidth
+        x = v.x.value
+        y = v.y.value
+        sx = Math.abs x
+        sy = Math.max linethickness.value, Math.abs y
+
+        @_line x, y, sx, sy
+
+
+    args.\Vector =      <[ H v ]>
+
+
+    # helper: draw line to x, y; SVG size is (sx, sy)
+    _line: (x, y, sx, sy) ->
         svg = @g.create @g.inline-block, undefined, "picture-object"
         svg.setAttribute "style", "left:#{Math.min(0, x)}px;bottom:#{Math.min(0, y)}px"
 
         draw = @g.SVG(svg).size sx, sy
-
         draw.viewbox Math.min(0, x), Math.min(0, y), sx, sy
 
+        linethickness = @g.length \@wholewidth
         draw.line(0, 0, x, y).stroke { width: linethickness.value + linethickness.unit }
 
         # last, put the origin into the lower left
@@ -711,27 +765,9 @@ export class MacrosBase
         [ @g.create @g.inline-block, svg, "picture" ]
 
 
-    # \vector(xslope,yslope){length}
-    args.\vector =      <[ H v cl ]>
-
-    # \line(x2,y2)
-    args.\Line =        <[ H v ]>
-    args.\Vector =      <[ H v ]>
-
     # \oval[radius](width,height)[portion]
     #   uses circular arcs of radius min(radius, width/2, heigth/2)
     args.\oval =        <[ H f? v i? ]>
-
-    # \dashbox{dashlen}(width,height)[pos]{text}
-    args.\dashbox =     <[ H cl v i? g ]>
-
-    # \frame{text} - frame without padding, line width given by picture linethickness
-    args.\frame =       <[ H g ]>
-    \frame              : (txt) ->
-        el = @g.create @g.inline-block, txt, "hbox pframe"
-        w = @g.length \@wholewidth
-        el.setAttribute "style" "border-width:" + w.value + w.unit
-        [ el ]
 
 
     ####################

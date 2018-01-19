@@ -344,7 +344,9 @@ h1, h2, h3, h4 {
 
 .stretch {
     display: inline-flex;
-    flex-direction: column;
+    flex-direction: row;
+
+    justify-content: stretch;
     align-items: stretch;
 }
 
@@ -366,6 +368,7 @@ h1, h2, h3, h4 {
     border: var(--fboxrule) solid;
     margin-top: 2px;
     margin-bottom: 2px;
+    bottom: calc(-1 * (var(--fboxsep) + var(--fboxrule) + 2px));
 }
 
 
@@ -378,19 +381,32 @@ h1, h2, h3, h4 {
 }
 
 .picture {
-    display: inline-block;
+    display: inline-block;  /* so that it can be given a fixed size */
     position: relative;
-    line-height: 0px;
 }
 
+/* the coordinate system of the picture */
 .picture-canvas {
-    display: inline-block;
+    display: flex;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+/* objects in a picture */
+.put-obj {
+    display: block;
     position: relative;
 }
 
+.strut {
+    display: block;
+}
 
 .picture-object {
     position: absolute;
+    display: flex;          /* to align text and boxes at the bottom */
+                            /* line-height: 0px; works for boxes, but breaks text */
 }
 
 

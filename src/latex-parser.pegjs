@@ -712,23 +712,13 @@ picture =
          / &{ error("picture error, required syntax: \\begin{picture}(width,height)[(xoffset,yoffset)]") }
          )
     // TODO: rule for picture content??? LaTeX allows anything, Lamport says: HV macros and picture commands
+    content:text*
     {
-        var svg = g.createFragment();
-        var draw = g.SVG(svg)
-                    .size(conf.size.x, conf.size.y);
-
-        if (conf.offset)
-            draw.viewbox(conf.offset.x, conf.offset.y, conf.size.x, conf.size.y)
-
-        // here should the drawing happen
-        //draw.line(10, 20, 100, 30).stroke({ width: 1 })
-
-        // last, put the origin into the lower left
-        draw.flip('y', 0);
+        var picture = g.create(g.picture(conf.size, conf.offset, content));
 
         return {
             name: name,
-            node: svg
+            node: picture
         }
     }
 
