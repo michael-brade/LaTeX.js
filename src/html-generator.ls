@@ -368,6 +368,14 @@ export class HtmlGenerator
         appendChildrenTo children, f
 
 
+    # add attributes to an element - in HTML, those are CSS classes
+    addAttribute: (el, c) !->
+        if el.hasAttribute "class"
+            c = el.getAttribute("class") + " " + c
+        el.setAttribute "class", c
+
+
+
     # for smallskip, medskip, bigskip
     createVSpaceSkip: (skip) ->
         span = document.createElement "span"

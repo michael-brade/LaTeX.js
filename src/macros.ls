@@ -538,9 +538,9 @@ export class MacrosBase
             @g._error "expected \\framebox(width,height)[position]{text} but got two optional arguments!" if width and pos
         else
             # normal framebox
-            # TODO: txt can be a document fragment (11)
+            # add the frame if it is a simple node, otherwise create a new box
             if txt.hasAttribute? and not width and not pos
-                txt.setAttribute "style", txt.getAttribute("style") + " frame"
+                @g.addAttribute txt, "frame"
                 [ txt ]
             else
                 @_box width, pos, txt, "hbox frame"
