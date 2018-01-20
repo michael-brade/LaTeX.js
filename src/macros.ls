@@ -256,7 +256,7 @@ export class MacrosBase
 
     # book/report
     # \part               : (s, toc, ttl) -> [ @g.startsection \part,          -1, s, toc, ttl ]
-    \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter,        0, s or not @"@mainmatter", toc, ttl ]
+    \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter,        0, (s or not @"@mainmatter"), toc, ttl ]
 
     \section            : (s, toc, ttl) -> [ @g.startsection \section,        1, s, toc, ttl ]
     \subsection         : (s, toc, ttl) -> [ @g.startsection \subsection,     2, s, toc, ttl ]
