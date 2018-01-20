@@ -501,9 +501,9 @@ export class MacrosBase
     # \makebox[0pt][c]{...} behaves like \leavevmode\clap{...}
 
     # \makebox[width][position]{text}
-    #   position: c,l,r,s
+    #   position: c,l,r,s (default = c)
     # \makebox(width,height)[position]{text}
-    #   position: t,b,l,r (one or two)
+    #   position: c,l,r,s (default = c) and t,b or combinations of the two
     args.\makebox =     <[ H v? l? i? g ]>
     \makebox            : (vec, width, pos, txt) ->
         if vec
@@ -519,13 +519,31 @@ export class MacrosBase
 
     # \fbox{text}
     # \framebox[width][position]{text}
+    #   position: c,l,r,s
     #
     # these add \fboxsep (default ‘3pt’) padding to "text" and draw a frame with linewidth \fboxrule (default ‘.4pt’)
+    #
+    # \framebox(width,height)[position]{text}
+    #   position: t,b,l,r (one or two)
+    # this one uses the picture line thickness
     args.\fbox =        <[ H g ]>
-    args.\framebox =    <[ H l? i? g ]>
+    args.\framebox =    <[ H v? l? i? g ]>
 
-    \fbox               : (txt) -> @framebox undefined, undefined, txt
-    \framebox           : (width, pos, txt) -> @_box width, pos, txt, "hbox frame"
+    \fbox               : (txt) ->
+        @framebox undefined, undefined, undefined, txt
+
+    \framebox           : (vec, width, pos, txt) ->
+        if vec
+            # picture version
+            @g._error "expected \\framebox(width,height)[position]{text} but got two optional arguments!" if width and pos
+        else
+            # normal framebox
+            # TODO: txt can be a document fragment (11)
+            if txt.hasAttribute? and not width and not pos
+                txt.setAttribute "style", txt.getAttribute("style") + " frame"
+                [ txt ]
+            else
+                @_box width, pos, txt, "hbox frame"
 
 
 
@@ -569,15 +587,47 @@ export class MacrosBase
 
     ### parboxes
 
+    # \parbox[pos][height][inner-pos]{width}{text}
+    #  pos: c,t,b
+    #  inner-pos: t,c,b,s (or pos if not given)
+    args.\parbox =      <[ H i? l? i? l g ]>
+    \parbox             : (pos, height, inner-pos, width, txt) ->
+        pos = "c" if not pos
+        inner-pos = pos if not inner-pos
+        classes = "parbox"
+        style = "width:#{width.value + width.unit};"
+
+        if height
+            classes += " pbh"
+            style += "height:#{height.value + height.unit};"
+
+        switch pos
+        | "c" => classes += " p-c"
+        | "t" => classes += " p-t"
+        | "b" => classes += " p-b"
+        |  _  => @g._error "unknown position: #{pos}"
+
+        switch inner-pos
+        | "s" => classes += " stretch"
+        | "c" => classes += " p-cc"
+        | "t" => classes += " p-ct"
+        | "b" => classes += " p-cb"
+        |  _  => @g._error "unknown inner-pos: #{inner-pos}"
+
+        content = @g.create @g.inline-block, txt
+        box = @g.create @g.inline-block, content, classes
+
+        box.setAttribute "style", style
+
+        [ box ]
+
+
+
     /*
-
-    \parbox[pos][height][inner-pos]{width}{text}
-
     \shortstack[pos]{...\\...\\...}, pos: r,l,c (horizontal alignment)
 
 
     \begin{minipage}[pos][height][inner-pos]{width}
-
     */
 
 

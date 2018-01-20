@@ -358,6 +358,60 @@ h1, h2, h3, h4 {
 }
 
 
+/* parbox/minipage */
+
+.parbox {
+    display: inline-block;
+    text-indent: 0;
+}
+
+/* pos: t (top) */
+.p-t {
+    display: inline-flex;
+}
+
+/* pos: c (center) */
+.p-c {
+    vertical-align: middle;
+}
+
+/* pos: b (bottom) */
+.p-b {
+    /* default */
+    vertical-align: baseline;       /* TODO: what if llap inside?? */
+}
+
+
+
+/* if we want a fixed height *and* bottom alignment */
+.pbh.p-b {
+    vertical-align: bottom;
+}
+
+/* pos: top, inner-pos: bottom (only possible if height was given, too) */
+.p-t.p-cb {
+    display: inline-flex;
+    vertical-align: top;
+    align-items: flex-end;
+}
+
+/* pos: bottom, inner-pos: bottom (only possible if height was given, too) */
+.p-b.p-cb {
+    display: inline-flex;
+    align-items: flex-end;
+}
+
+.p-b.p-cb::before {
+    /* move the baseline to the bottom of a flex item */
+    content: "x";
+    display: inline-block;
+    width: 0;
+    visibility: hidden;
+}
+
+
+
+
 .underline {
     border-bottom: 0.4pt solid;
 }
