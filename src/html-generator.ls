@@ -356,6 +356,14 @@ export class HtmlGenerator
     createFragment: (children) ->
         # only create an empty fragment if explicitely requested: no arguments given
         return if arguments.length > 0 and (not children or !children.length)
+
+        # don't wrap a single node
+        if Array.isArray children
+            children = children.filter (c) -> c !~= undefined
+            return children.0 if children.length == 1 and children.0.nodeType
+        else
+            return children if children.nodeType
+
         f = document.createDocumentFragment!
         appendChildrenTo children, f
 
@@ -427,7 +435,7 @@ export class HtmlGenerator
 
         @_macros[name]
             .apply @_macros, args
-            ?.filter (x) -> x != undefined
+            ?.filter (x) -> x !~= undefined
             .map (x) ~> if not x.nodeType? then @createText x else x
 
 
@@ -542,7 +550,7 @@ export class HtmlGenerator
 
     startsection: (sec, level, star, toc, ttl) ->
         # call before the arguments are parsed to refstep the counter
-        if toc == ttl == undefined
+        if toc ~= ttl ~= undefined
             if not star and @counter("secnumdepth") >= level
                 @stepCounter sec
                 @refCounter sec, "sec-" + @nextId!
@@ -860,7 +868,7 @@ export class HtmlGenerator
 
     debugNode = (n) !->
         return if not n
-        if typeof n.nodeName != "undefined"
+        if typeof n.nodeName !~= "undefined"
             console.log n.nodeName + ":", n.textContent
         else
             console.log "not a node:", n
