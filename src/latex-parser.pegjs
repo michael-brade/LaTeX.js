@@ -715,7 +715,7 @@ picture =
     // TODO: rule for picture content??? LaTeX allows anything, Lamport says: HV macros and picture commands
     content:text*
     {
-        var picture = g.create(g.picture(conf.size, conf.offset, content));
+        var picture = g.createPicture(conf.size, conf.offset, content);
 
         return {
             name: name,

@@ -106,23 +106,8 @@ export class HtmlGenerator
     verb:                       "code"
     verbatim:                   "pre"
 
-    picture:                    do ->
-                                    pic = create ::inline-block, "picture"
-                                    canvas = create ::inline-block, "picture-canvas"
-
-                                    pic.appendChild canvas
-
-                                    return (size, offset, content) ->
-                                        pic.setAttribute "style",  "width:#{size.x.value + size.x.unit};
-                                                                    height:#{size.y.value + size.y.unit}"
-
-                                        appendChildrenTo content, canvas
-
-                                        if offset
-                                            canvas.setAttribute "style", "left:#{offset.x.value + offset.x.unit};
-                                                                        bottom:#{offset.y.value + offset.y.unit}"
-
-                                        return pic
+    picture:                    do -> create ::inline-block, "picture"
+    picture-canvas:             do -> create ::inline-block, "picture-canvas"
 
 
     # true if it is an inline element, something that makes up paragraphs
@@ -374,6 +359,25 @@ export class HtmlGenerator
 
         f = document.createDocumentFragment!
         appendChildrenTo children, f
+
+
+    createPicture: (size, offset, content) ->
+        # canvas
+        canvas = @create @picture-canvas            # TODO: this might add CSS classes... ok?
+        appendChildrenTo content, canvas
+
+        if offset
+            canvas.setAttribute "style", "left:#{offset.x.value + offset.x.unit};
+                                        bottom:#{offset.y.value + offset.y.unit}"
+
+        # picture
+        pic = @create @picture
+        pic.appendChild canvas
+        pic.setAttribute "style", "width:#{size.x.value + size.x.unit};
+                                   height:#{size.y.value + size.y.unit}"
+
+        pic
+
 
 
     # add attributes to an element - in HTML, those are CSS classes
