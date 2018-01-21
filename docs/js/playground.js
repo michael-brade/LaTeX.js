@@ -6,30 +6,37 @@ var latexjs = require('latex-parser')
 
 var generator = new HtmlGenerator({
     hyphenate: true,
-    languagePatterns: en
+    languagePatterns: en,
+    styles: ['css/error.css']
 })
 
 var scrollY = 0
 
 /* function to compile latex source into the HTML element preview */
-module.exports.compile = function(latex, window, preview) {
+module.exports.compile = function(latex, _window) {
+    var doc = _window.document
+
     try {
         generator.reset()
-        var result = latexjs.parse(latex, { generator: generator })
+        var newDoc = latexjs.parse(latex, { generator: generator }).dom()
 
-        while (preview.firstChild)
-            preview.removeChild(preview.firstChild)
-
-        preview.appendChild(result.dom())
+        // don't reload all the styles and fonts if not needed!
+        if (doc.head.innerHTML == newDoc.head.innerHTML) {
+            var newBody = doc.adoptNode(newDoc.body)
+            doc.documentElement.replaceChild(newBody, doc.body)
+        } else {
+            var newDocumentElement = doc.adoptNode(newDoc.documentElement)
+            doc.replaceChild(newDocumentElement, doc.documentElement)
+        }
 
         if (scrollY) {
-            window.scrollTo(0, scrollY)
+            _window.scrollTo(0, scrollY)
             scrollY = 0
         }
     } catch (e) {
         // save scrolling position and restore on next successful compile
         if (!scrollY)
-            scrollY = window.pageYOffset
+            scrollY = _window.pageYOffset
 
         if (e instanceof latexjs.SyntaxError) {
             var error = {
@@ -41,9 +48,9 @@ module.exports.compile = function(latex, window, preview) {
                 location: excerpt(latex, definedOrElse(e.location.start.offset, 0))
             };
 
-            preview.innerHTML = '<pre class="error">ERROR: Parsing failure:\n\n' + errorMessage(error, true) + '</pre>'
+            doc.body.innerHTML = '<pre class="error">ERROR: Parsing failure:\n\n' + errorMessage(error, true) + '</pre>'
         } else {
-            preview.innerHTML = '<pre class="error">ERROR: ' + e.message + '</pre>';
+            doc.body.innerHTML = '<pre class="error">ERROR: ' + e.message + '</pre>';
         }
         console.error(e)
     }
