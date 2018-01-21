@@ -2,7 +2,7 @@
 
 require! {
     './symbols': { ligatures, diacritics, symbols }
-    './macros': { MacrosBase: Macros }
+    './macros': { LaTeXBase: Macros }
     he
     katex: { default: katex }
     hypher: Hypher
@@ -159,11 +159,18 @@ export class HtmlGenerator
 
 
     # CTOR
+    #
+    # options:
+    #  - documentClass: the default document class if a document without preamble is parsed
+    #  - hyphenate: boolean, enable or disable automatic hyphenation
+    #  - languagePatterns: language patterns object to use for hyphenation if it is enabled
     (options) ->
         @_options = options
 
         if @_options.hyphenate
             @_h = new Hypher(@_options.languagePatterns)
+
+        @documentClass = if @_options.documentClass then that else "article"
 
         @reset!
 
@@ -196,15 +203,6 @@ export class HtmlGenerator
         @_counters = new Map()
         @_resets = new Map()
 
-        @newCounter \part
-        @newCounter \chapter
-        @newCounter \section          \chapter
-        @newCounter \subsection       \section
-        @newCounter \subsubsection    \subsection
-        @newCounter \paragraph        \subsubsection
-        @newCounter \subparagraph     \paragraph
-        @newCounter \figure           \chapter
-        @newCounter \table            \chapter
 
         @newCounter \enumi
         @newCounter \enumii
@@ -214,33 +212,6 @@ export class HtmlGenerator
         # do this after creating the sectioning counters because \thepart etc. are already predefined
         @_macros = new Macros(this)
 
-        @newCounter \secnumdepth
-        @newCounter \tocdepth
-
-        @setCounter \secnumdepth  3   # article (book, report: 2)
-        @setCounter \tocdepth     3   # article (book, report: 2)
-
-        @newCounter \footnote
-        @newCounter \mpfootnote
-
-        @newCounter \@listdepth
-        @newCounter \@itemdepth
-        @newCounter \@enumdepth
-
-        @newLength \hsize
-        @setLength \hsize         { value: 100, unit: "%" }
-
-        @newLength \textwidth
-        @setLength \textwidth     { value: 100, unit: "%" }
-
-        # picture lengths
-        @newLength \unitlength
-        @setLength \unitlength    { value: 1, unit: "pt" }
-
-        @newLength \@wholewidth
-        @setLength \@wholewidth   { value: 0.4, unit: "pt" }
-
-
 
 
     _error: (e) !->
@@ -249,7 +220,6 @@ export class HtmlGenerator
 
     setErrorFn: (e) !->
         @_error = e
-
 
 
 
@@ -432,10 +402,10 @@ export class HtmlGenerator
         and (@_macros.hasOwnProperty name or Macros.prototype.hasOwnProperty name)
 
 
-    isHmode:    (name) -> @_macros.args[name]?.0 == \H  or not @_macros.args[name]
-    isVmode:    (name) -> @_macros.args[name]?.0 == \V
-    isHVmode:   (name) -> @_macros.args[name]?.0 == \HV
-    isPreamble: (name) -> @_macros.args[name]?.0 == \P
+    isHmode:    (marco) -> Macros.args[marco]?.0 == \H  or not Macros.args[marco]
+    isVmode:    (marco) -> Macros.args[marco]?.0 == \V
+    isHVmode:   (marco) -> Macros.args[marco]?.0 == \HV
+    isPreamble: (marco) -> Macros.args[marco]?.0 == \P
 
     macro: (name, args) ->
         if symbols.has name
@@ -450,7 +420,7 @@ export class HtmlGenerator
     # macro arguments
 
     beginArgs: (macro) !->
-        @_curArgs.push if @_macros.args[macro] then { args: that.slice(1), parsed: [] } else { args: [], parsed: [] }
+        @_curArgs.push if Macros.args[macro] then { args: that.slice(1), parsed: [] } else { args: [], parsed: [] }
 
     # check the next argument type to parse
     nextArg: (arg) ->

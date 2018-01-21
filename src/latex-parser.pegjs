@@ -16,7 +16,8 @@ preamble =
     EOF
     { return d; }
     /
-    // or, if no preamble was given, start an article
+    // or, if no preamble was given, start default documentclass
+    &{ g.macro("documentclass", [null, g.documentClass, null]); return true; }
     d:document
     EOF
     { return d; }

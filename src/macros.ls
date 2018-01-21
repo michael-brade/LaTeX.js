@@ -1,7 +1,5 @@
 
-
-
-# This is where (custom) macros are defined.
+# This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
 # By default, a macro takes no arguments and is a horizontal-mode macro.
 # See below for the description of how to declare arguments.
@@ -11,7 +9,7 @@
 # This class should be independent of HtmlGenerator and just work with the generator interface.
 #
 # State is held that is relevant to the particular macros and/or documentclass.
-export class MacrosBase
+export class LaTeXBase
 
     _title: null
     _author: null
@@ -23,7 +21,29 @@ export class MacrosBase
     (generator) ->
         @g = generator
 
-        @[\@mainmatter] = true  # book
+        @g.newCounter \secnumdepth
+        @g.newCounter \tocdepth
+
+        @g.newCounter \footnote
+        @g.newCounter \mpfootnote
+
+        @g.newCounter \@listdepth
+        @g.newCounter \@itemdepth
+        @g.newCounter \@enumdepth
+
+        @g.newLength \hsize
+        @g.setLength \hsize         { value: 100, unit: "%" }
+
+        @g.newLength \textwidth
+        @g.setLength \textwidth     { value: 100, unit: "%" }
+
+        # picture lengths
+        @g.newLength \unitlength
+        @g.setLength \unitlength    { value: 1, unit: "pt" }
+
+        @g.newLength \@wholewidth
+        @g.setLength \@wholewidth   { value: 0.4, unit: "pt" }
+
 
 
     # args: declaring arguments for a macro. If a macro doesn't take arguments and is a
@@ -64,10 +84,10 @@ export class MacrosBase
     #   o: optional arg
     #   o+: long optional arg
 
-    args = {}
-    args: args
+    args = @args = {}
 
 
+    # echo macros just for testing
     args.echoO = <[ H o ]>
 
     \echoO : (o) ->
@@ -167,35 +187,18 @@ export class MacrosBase
 
 
 
-    ##############
-    # sectioning #
-    ##############
-
-    \contentsname       :-> [ "Contents" ]
-    \listfigurename     :-> [ "List of Figures" ]
-    \listtablename      :-> [ "List of Tables" ]
-
-    \partname           :-> [ "Part" ]
-    \chaptername        :-> [ "Chapter" ]   # only book and report in LaTeX
+    ###########
+    # titling #
+    ###########
 
     \abstractname       :-> [ "Abstract" ]
-    \figurename         :-> [ "Figure" ]
-    \tablename          :-> [ "Table" ]
 
-    \appendixname       :-> [ "Appendix" ]
-    \refname            :-> [ "References" ]
-    \bibname            :-> [ "Bibliography" ]
-    \indexname          :-> [ "Index" ]
-
-    # title
 
     args.\title =       <[ HV g ]>
     args.\author =      <[ HV g ]>
     args.\and =         <[ H ]>
     args.\date =        <[ HV g ]>
     args.\thanks =      <[ HV g ]>
-
-    args.\maketitle =   <[ V ]>
 
     \title              : (t) !-> @_title = t
     \author             : (a) !-> @_author = a
@@ -204,100 +207,6 @@ export class MacrosBase
     \and                :-> @g.macro \quad
     \thanks             : @\footnote
 
-    \maketitle          :->
-        title = @g.create @g.title, @_title
-        author = @g.create @g.author, @_author
-        date = @g.create @g.date, if @_date then that else @g.macro \today
-
-        maketitle = @g.create @g.list, [
-            @g.createVSpace({ value: 2, unit: "em"})
-            title
-            @g.createVSpace({ value: 1.5, unit: "em"})
-            author
-            @g.createVSpace({ value: 1, unit: "em"})
-            date
-            @g.createVSpace({ value: 1.5, unit: "em"})
-        ], "center"
-
-
-        # reset footnote back to 0
-        @g.setCounter \footnote 0
-
-        # reset - maketitle can only be used once
-        @_title = null
-        @_author = null
-        @_date = null
-        @_thanks = null
-
-        @\title = @\author = @\date = @\thanks = @\and = @\maketitle = !->
-
-        [ maketitle ]
-
-    # toc
-
-    args.\tableofcontents = <[ V ]>
-
-    # keep a reference to the TOC element, and fill it as we go along
-    \tableofcontents    : ->    # g.create(g.toc)
-
-
-    args
-     ..\part =          \
-     ..\chapter =       \                   # only book and report in LaTeX
-     ..\section =       \
-     ..\subsection =    \
-     ..\subsubsection = \
-     ..\paragraph =     \
-     ..\subparagraph =  <[ V s X o g ]>
-
-
-    # article
-    \part               : (s, toc, ttl) -> [ @g.startsection \part,           0, s, toc, ttl ]
-
-    # book/report
-    # \part               : (s, toc, ttl) -> [ @g.startsection \part,          -1, s, toc, ttl ]
-    \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter,        0, (s or not @"@mainmatter"), toc, ttl ]
-
-    \section            : (s, toc, ttl) -> [ @g.startsection \section,        1, s, toc, ttl ]
-    \subsection         : (s, toc, ttl) -> [ @g.startsection \subsection,     2, s, toc, ttl ]
-    \subsubsection      : (s, toc, ttl) -> [ @g.startsection \subsubsection,  3, s, toc, ttl ]
-    \paragraph          : (s, toc, ttl) -> [ @g.startsection \paragraph,      4, s, toc, ttl ]
-    \subparagraph       : (s, toc, ttl) -> [ @g.startsection \subparagraph,   5, s, toc, ttl ]
-
-
-    \thepart            :-> [ @g.Roman @g.counter \part ]
-    \thechapter         :-> [ @g.arabic @g.counter \chapter ]
-    \thesection         :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \section
-    \thesubsection      :-> @thesection!       ++ "." + @g.arabic @g.counter \subsection
-    \thesubsubsection   :-> @thesubsection!    ++ "." + @g.arabic @g.counter \subsubsection
-    \theparagraph       :-> @thesubsubsection! ++ "." + @g.arabic @g.counter \paragraph
-    \thesubparagraph    :-> @theparagraph!     ++ "." + @g.arabic @g.counter \subparagraph
-    \thefigure          :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \figure
-    \thetable           :-> (if @g.counter(\chapter) > 0 then @thechapter! ++ "." else []) ++ @g.arabic @g.counter \table
-
-
-    args
-     ..\frontmatter =   \
-     ..\mainmatter =    \
-     ..\backmatter =    \
-     ..\appendix =      <[ V ]>
-
-    \frontmatter        :!-> @[\@mainmatter] = false    # book; TODO: in frontmatter, sections should be named 0.1, 0.2,...
-    \mainmatter         :!-> @[\@mainmatter] = true
-    \backmatter         :!-> @[\@mainmatter] = false
-
-    \appendix           :!->
-        # if chapters have been used: book, report
-        if @g.counter(\chapter) > 0
-            @g.setCounter \chapter 0
-            @g.setCounter \section 0
-            @[\chaptername] = @[\appendixname]
-            @[\thechapter] = -> [ @g.Alph @g.counter \chapter ]
-        # otherwise: article
-        else
-            @g.setCounter \section 0
-            @g.setCounter \subsection 0
-            @[\thesection] = -> [ @g.Alph @g.counter \section ]
 
 
     ###############
@@ -913,9 +822,16 @@ export class MacrosBase
     # preamble #
     ############
 
-    args.\documentclass =  <[ P o g o ]>
+    args.\documentclass =  <[ P o k o ]>
     \documentclass      : (opts, documentclass, version) !->
         @\documentclass = !-> @g._error "Two \\documentclass commands. The document may only declare one class."
+
+        ClassName = documentclass.charAt(0).toUpperCase() + documentclass.slice(1)
+        Class = (require "./documentclasses/" + documentclass)[ClassName]
+
+        import all new Class(@g)
+        args import Class.args
+
 
 
     args.\usepackage    =  <[ P o g o ]>

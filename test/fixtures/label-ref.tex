@@ -57,6 +57,8 @@ This \label{sec:test} is Section~\ref{sec:test}.
 
 ** forward- and back-referencing a section in a chapter
 .
+\documentclass{book}
+\begin{document}
 \chapter{Labels}
 
 See Section~\ref{sec:test}.
@@ -64,6 +66,7 @@ See Section~\ref{sec:test}.
 \section{Section Name}
 \label{sec:test}
 This is Section~\ref{sec:test}.
+\end{document}
 .
 <h1 id="sec-1"><div>Chapter 1</div>Labels</h1>
 <p>See Section&nbsp;<a href="#sec-2">1.1</a>.</p>

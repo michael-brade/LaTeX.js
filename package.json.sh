@@ -32,20 +32,25 @@ files:
 scripts:
     clean: 'rimraf dist bin;'
     build: "
-        mkdirp dist;
+        mkdirp dist/documentclasses;
         lsc -cp    src/plugin-pegjs.ls          | uglifyjs -cm -o dist/plugin-pegjs.js;
-        pegjs --plugin ./dist/plugin-pegjs \
-              -o - src/latex-parser.pegjs       | uglifyjs -cm -o dist/latex-parser.js;
-        lsc -cp    src/macros.ls                | uglifyjs -cm -o dist/macros.js;
-        lsc -cp    src/symbols.ls               | uglifyjs -cm -o dist/symbols.js;
-        lsc -cp    src/html-generator.ls        | uglifyjs -cm -o dist/html-generator.js;
+        pegjs --plugin ./dist/plugin-pegjs -o - \
+                 src/latex-parser.pegjs         | uglifyjs -cm -o dist/latex-parser.js;
+        lsc -cp  src/macros.ls                  | uglifyjs -cm -o dist/macros.js;
+        lsc -cp  src/symbols.ls                 | uglifyjs -cm -o dist/symbols.js;
+        lsc -cp  src/html-generator.ls          | uglifyjs -cm -o dist/html-generator.js;
+        lsc -cp  src/documentclasses/base.ls    | uglifyjs -cm -o dist/documentclasses/base.js;
+        lsc -cp  src/documentclasses/article.ls | uglifyjs -cm -o dist/documentclasses/article.js;
+        lsc -cp  src/documentclasses/book.ls    | uglifyjs -cm -o dist/documentclasses/book.js;
+        lsc -cp  src/documentclasses/report.ls  | uglifyjs -cm -o dist/documentclasses/report.js;
 
         mkdirp bin;
         lsc -bc --no-header -o bin src/latex.js.ls;
     "
     devbuild: "
-        mkdirp dist;
+        mkdirp dist/documentclasses;
         lsc -c -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
+        lsc -c -o dist/documentclasses src/documentclasses/;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
     "
     docs:  'npm run devbuild && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
