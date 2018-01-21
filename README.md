@@ -18,7 +18,6 @@ You can play with it here:
 npm install -g latex.js
 ```
 
-
 ## Usage
 
 LaTeX.js is divided into a parser and a generator, so that in theory you could switch the
@@ -52,7 +51,6 @@ Options:
 If no input files are given, STDIN is read.
 ```
 
-
 ## Tests
 
 To build it and run the tests, execute:
@@ -68,23 +66,27 @@ To build the playground, execute:
 npm run docs
 ```
 
-LaTeX.js only translates LaTeX's structure, you will have to write your CSS yourself or use some of the predefined
-CSS I started to provide. Think of a documentclass in LaTeX as a CSS file in LaTeX.js.
 
+## Architecture
 
-## Features
+The generated PEG parser parses the LaTeX code. While doing so, it calls appropriate generator functions.
+The generator then uses the Macros class to execute the macros that the parser encounters.
 
-See the showcase on the [playground](http://michael-brade.github.io/LaTeX.js/playground.html) for a description of
-most of the features. If you want to see all the obscure edge cases LaTeX.js supports, you will have to look at the
-unit tests.
+Both, the parser and the macros create the resulting HTML DOM tree by calling the HtmlGenerator functions.
 
+The generator also holds the stack, the lengths, counters, fonts, references, etc. It provides some of
+TeX's primitives and basic functionality, so to speak.
+
+## Definition of Custom Macros
+
+TODO: write documentation
 
 ## Limitations
 
 * I don't create an intermediate AST yet, so TeX's conditional expressions are impossible
 * deprecated macros, or macros that are not supposed to be used in LaTeX, won't even exist in LaTeX.js.
   Examples include: eqnarray, the old LaTeX 2.09 font macros \it, \sl, etc. Also missing are most of the plainTeX macros.
-  See also `l2tabuen.pdf`.
+  See also [`l2tabuen.pdf`](ftp://ftp.dante.de/tex-archive/info/l2tabu/english/l2tabuen.pdf).
 * incorrect but legal markup in LaTeX won't produce the same result in LaTeX.js - like when using \raggedleft in the
   middle of a paragraph; but the LaTeX.js result should be intuitively correct.
 * because of the limitations when parsing TeX as a context-free grammar (see [below](#parsing-tex)), native LaTeX packages
@@ -190,9 +192,13 @@ that most people will probably never need.
 
 ## TODO
 
+* [ ] implement the documentclasses `slides`, `beamer` (using `reveal.js`), and `memoir`
+* [ ] implement `\usepackage`; macros in separate classes for each package, then import them
+* [ ] implement `newcommand` and `renewcommand`, should be quite easy by now...
+
 Maybe:
 
- * [ ] implement the output using TeX's original linebreaking algorithm: https://github.com/bramstein/typeset
+* [ ] implement the output using TeX's original linebreaking algorithm: https://github.com/bramstein/typeset
 
 
 
