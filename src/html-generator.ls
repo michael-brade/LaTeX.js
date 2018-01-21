@@ -344,6 +344,10 @@ export class HtmlGenerator
             c = el.getAttribute("class") + " " + c
         el.setAttribute "class", c
 
+    hasAttribute: (el, c) ->
+        el.hasAttribute "class" and new RegExp("\\b#{c}\\b").test el.getAttribute "class"
+
+
 
 
     # for smallskip, medskip, bigskip

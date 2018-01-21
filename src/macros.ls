@@ -448,7 +448,7 @@ export class LaTeXBase
         else
             # normal framebox
             # add the frame if it is a simple node, otherwise create a new box
-            if txt.hasAttribute? and not width and not pos
+            if txt.hasAttribute? and not width and not pos and not @g.hasAttribute txt, "frame"
                 @g.addAttribute txt, "frame"
                 [ txt ]
             else
