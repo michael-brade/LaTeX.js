@@ -140,7 +140,7 @@ export class HtmlGenerator
 
     SVG: SVG
     documentClass: null     # name of the default document class until \documentclass{}, then the actual class
-    title: null
+    documentTitle: null
 
     _options: null
     _macros: null
@@ -185,7 +185,7 @@ export class HtmlGenerator
 
     reset: !->
         @documentClass = @_options.documentClass
-        @title = "untitled"
+        @documentTitle = "untitled"
 
         @_uid = 1
 
@@ -288,7 +288,7 @@ export class HtmlGenerator
 
     /* set the title of the document, usually called by the \maketitle macro */
     setTitle: (title) ->
-        @title = title.textContent
+        @documentTitle = title.textContent
 
 
     /* @return the DOM representation (DocumentFrament or HTMLDocument) for immediate use */
@@ -303,7 +303,7 @@ export class HtmlGenerator
             link.href = url
             link
 
-        doc = document.implementation.createHTMLDocument @title
+        doc = document.implementation.createHTMLDocument @documentTitle
 
         doc.head.appendChild createStyleSheet "css/katex.css"
         doc.head.appendChild createStyleSheet @documentClass.css
