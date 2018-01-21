@@ -309,7 +309,7 @@ export class HtmlGenerator
     ### element creation
 
     createDocument: (fs) !->
-        appendChildrenTo fs, @_dom
+        appendChildren @_dom, fs
 
 
     nextId: ->
@@ -334,7 +334,7 @@ export class HtmlGenerator
         if classes.trim!
             el.setAttribute "class", classes.replace(/\s+/g, ' ').trim!
 
-        appendChildrenTo children, el
+        appendChildren el, children
 
     # create a text node that has font attributes set and allows for hyphenation
     createText: (t) ->
@@ -358,13 +358,13 @@ export class HtmlGenerator
             return children if children.nodeType
 
         f = document.createDocumentFragment!
-        appendChildrenTo children, f
+        appendChildren f, children
 
 
     createPicture: (size, offset, content) ->
         # canvas
         canvas = @create @picture-canvas            # TODO: this might add CSS classes... ok?
-        appendChildrenTo content, canvas
+        appendChildren canvas, content
 
         if offset
             canvas.setAttribute "style", "left:#{offset.x.value + offset.x.unit};
@@ -852,7 +852,7 @@ export class HtmlGenerator
 
     ### private helpers
 
-    appendChildrenTo = (children, parent) ->
+    appendChildren = (parent, children) ->
         if children
             if Array.isArray children
                 for i to children.length
