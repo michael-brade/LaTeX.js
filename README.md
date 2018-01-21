@@ -3,9 +3,10 @@
 This is a LaTeX to HTML5 translator written in JavaScript using PEG.js.
 `latex.js` for LaTeX is similar in spirit to `marked` for Markdown.
 
-LaTeX.js is absolutely and uncompromisingly exact and compatible with LaTeX.
+LaTeX.js tries to be absolutely and uncompromisingly exact and compatible with LaTeX.
 The generated HTML is exactly what is meant to be output, down to the last
-space&mdash;except where impossible in principle, see limitations.
+space. The CSS makes it look like LaTeX output&mdash;except where impossible in principle,
+see limitations.
 
 You can play with it here:
 [http://latex.js.org/playground.html](http://latex.js.org/playground.html)
@@ -37,21 +38,34 @@ translate a LaTeX document to HTML5
 Options:
 
   -V, --version            output the version number
-  -b, --beautify           beautify the html (this may add/remove spaces unintentionally)
+  -o, --output <file>    specify output file, otherwise STDOUT will be used
+  -b, --bare             don't include HTML boilerplate and CSS, only output the contents of body
   -e, --entities           encode HTML entities in the output instead of using UTF-8 characters
-  -s, --no-soft-hyphenate  don'insert soft hyphens (disables automatic hyphenation in the browser) (default: true)
-  -l, --language <lang>    set hyphenation language (default en) (default: en)
-  -o, --output <file>      specify output file, otherwise STDOUT will be used
+  -p, --pretty           beautify the html (this may add/remove spaces unintentionally)
+  -c, --class <class>    set a default documentclass for documents without a preamble (default: article)
+  -m, --macros <file>    load a JavaScript file with additional custom macros
+  -s, --style <url>      specify an additional style sheet to use (can be repeated)
+  -n, --no-hyphenation   don't insert soft hyphens (disables automatic hyphenation in the browser)
+  -l, --language <lang>  set hyphenation language (default: en)
   -h, --help               output usage information
+
+If no input files are given, STDIN is read.
 ```
 
 
 ## Tests
 
 To build it and run the tests, execute:
+
 ```
 npm run build
 npm test
+```
+
+To build the playground, execute:
+
+```
+npm run docs
 ```
 
 LaTeX.js only translates LaTeX's structure, you will have to write your CSS yourself or use some of the predefined
@@ -197,4 +211,4 @@ There is no such alternative in JavaScript yet, though, which is why I started t
 
 MIT
 
-Copyright (c) 2015-2017 Michael Brade
+Copyright (c) 2015-2018 Michael Brade

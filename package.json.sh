@@ -77,8 +77,8 @@ dependencies:
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
-    'commander': '2.12.x'
-    'get-stdin': '5.x'
+    'commander': '2.13.x'
+    'stdin': '*'
     'js-beautify': '1.7.x'
 
     #'lodash': '4.x'
