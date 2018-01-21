@@ -168,7 +168,7 @@ export class HtmlGenerator
         @reset!
 
 
-    reset: ->
+    reset: !->
         @_uid = 1
 
         # initialize only in CTOR, otherwise the objects end up in the prototype
@@ -243,7 +243,7 @@ export class HtmlGenerator
 
 
 
-    _error: (e) ->
+    _error: (e) !->
         console.error e
         throw new Error e
 
@@ -678,7 +678,7 @@ export class HtmlGenerator
         @_error "no such counter: #{c}" if not @hasCounter c
         @_counters.set c, v
 
-    stepCounter: (c) ->
+    stepCounter: (c) !->
         @setCounter c, @counter(c) + 1
         @clearCounter c
 
@@ -711,7 +711,7 @@ export class HtmlGenerator
         @_resets.get parent .push c
 
     # reset all descendants of c to 0
-    clearCounter: (c) ->
+    clearCounter: (c) !->
         for r in @_resets.get c
             @clearCounter r
             @setCounter r, 0
