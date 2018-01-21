@@ -76,6 +76,8 @@ export class Base
     args.\maketitle =   <[ V ]>
 
     \maketitle          :->
+        @g.setTitle @_title
+
         title = @g.create @g.title, @_title
         author = @g.create @g.author, @_author
         date = @g.create @g.date, if @_date then that else @g.macro \today

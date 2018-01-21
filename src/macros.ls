@@ -18,7 +18,11 @@ export class LaTeXBase
 
 
     # CTOR
-    (generator) ->
+    (generator, CustomMacros) ->
+        if CustomMacros
+            import all new CustomMacros(generator)
+            args import CustomMacros.args
+
         @g = generator
 
         @g.newCounter \secnumdepth
@@ -831,6 +835,8 @@ export class LaTeXBase
 
         import all new Class(@g)
         args import Class.args
+
+        @g.documentClass = Class
 
 
 

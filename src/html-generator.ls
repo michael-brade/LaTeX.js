@@ -139,6 +139,8 @@ export class HtmlGenerator
     ### public instance vars (vars beginning with "_" are meant to be private!)
 
     SVG: SVG
+    documentClass: null     # name of the default document class until \documentclass{}, then the actual class
+    title: null
 
     _options: null
     _macros: null
@@ -162,20 +164,29 @@ export class HtmlGenerator
     #
     # options:
     #  - documentClass: the default document class if a document without preamble is parsed
+    #  - CustomMacros: a constructor (class/function) with additional custom macros
     #  - hyphenate: boolean, enable or disable automatic hyphenation
     #  - languagePatterns: language patterns object to use for hyphenation if it is enabled
+    #  - bare: if true, only output the contents of body
+    #  - styles: array with additional CSS stylesheets
     (options) ->
-        @_options = options
+        @_options = Object.assign {
+            documentClass: "article"
+            styles: []
+            bare: false
+            hyphenate: true
+        }, options
 
         if @_options.hyphenate
             @_h = new Hypher(@_options.languagePatterns)
-
-        @documentClass = if @_options.documentClass then that else "article"
 
         @reset!
 
 
     reset: !->
+        @documentClass = @_options.documentClass
+        @title = "untitled"
+
         @_uid = 1
 
         # initialize only in CTOR, otherwise the objects end up in the prototype
@@ -203,6 +214,7 @@ export class HtmlGenerator
         @_counters = new Map()
         @_resets = new Map()
 
+        @_continue = false
 
         @newCounter \enumi
         @newCounter \enumii
@@ -210,7 +222,7 @@ export class HtmlGenerator
         @newCounter \enumiv
 
         # do this after creating the sectioning counters because \thepart etc. are already predefined
-        @_macros = new Macros(this)
+        @_macros = new Macros @, @_options.CustomMacros
 
 
 
@@ -222,6 +234,8 @@ export class HtmlGenerator
         @_error = e
 
 
+
+    ### character/text creation
 
     character: (c) ->
         c
@@ -270,20 +284,44 @@ export class HtmlGenerator
         | _                     => @character c
 
 
-    # get the result
+    ### get the result
 
-    /* @return the DOM representation (DocumentFrament) for immediate use */
+    /* set the title of the document, usually called by the \maketitle macro */
+    setTitle: (title) ->
+        @title = title.textContent
+
+
+    /* @return the DOM representation (DocumentFrament or HTMLDocument) for immediate use */
     dom: ->
-        @_dom
+        if @_options.bare
+            return @_dom
+
+        createStyleSheet = (url) ->
+            link = document.createElement("link")
+            link.type = "text/css"
+            link.rel = "stylesheet"
+            link.href = url
+            link
+
+        doc = document.implementation.createHTMLDocument @title
+
+        doc.head.appendChild createStyleSheet "css/katex.css"
+        doc.head.appendChild createStyleSheet @documentClass.css
+
+        for style in @_options.styles
+            doc.head.appendChild createStyleSheet style
+
+        doc.body.appendChild @_dom
+        doc
 
 
     /* @return the HTML representation */
     html: ->
-        serializeFragment @_dom
+        @dom!.outerHTML
 
 
 
-    ### content creation
+    ### element creation
 
     createDocument: (fs) !->
         appendChildrenTo fs, @_dom
@@ -835,14 +873,6 @@ export class HtmlGenerator
 
 
     # private utilities
-
-    serializeFragment = (f) ->
-        c = document.createElement "container"
-        c.appendChild f.cloneNode(true)
-        # c.appendChild f     # for speed; however: if this fragment is to be serialized more often -> cloneNode(true) !!
-        c.innerHTML
-
-
 
     debugDOM = (oParent, oCallback) !->
         if oParent.hasChildNodes()
