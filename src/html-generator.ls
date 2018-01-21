@@ -660,12 +660,12 @@ export class HtmlGenerator
 
     newCounter: (c, parent) !->
         @_error "counter #{c} already defined!" if @hasCounter c
-        if parent
-            @_error "no such counter: #{parent}" if not @hasCounter parent
-            @_resets.get parent .push c
 
         @_counters.set c, 0
         @_resets.set c, []
+
+        if parent
+            @addToReset c, parent
 
         @_error "macro \\the#{c} already defined!" if @hasMacro(\the + c)
         @_macros[\the + c] = -> [ @g.arabic @g.counter c ]
@@ -704,6 +704,11 @@ export class HtmlGenerator
 
         return el
 
+
+    addToReset: (c, parent) !->
+        @_error "no such counter: #{parent}" if not @hasCounter parent
+        @_error "no such counter: #{c}" if not @hasCounter c
+        @_resets.get parent .push c
 
     # reset all descendants of c to 0
     clearCounter: (c) ->
