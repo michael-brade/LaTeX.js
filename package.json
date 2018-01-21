@@ -62,7 +62,7 @@
     "@babel/core": "7.0.0-beta.33",
     "@babel/register": "7.0.0-beta.33",
     "@babel/plugin-syntax-object-rest-spread": "7.0.0-beta.33",
-    "mocha": "4.x",
+    "mocha": "5.x",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "istanbul": ">= 0.4.x"

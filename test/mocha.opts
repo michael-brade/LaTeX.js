@@ -1,4 +1,5 @@
 --require livescript
+--file test/_setup.ls
 --reporter spec
 --ui bdd
 --check-leaks

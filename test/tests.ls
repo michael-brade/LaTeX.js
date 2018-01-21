@@ -30,7 +30,7 @@ describe 'LaTeX.js fixtures', !->
                 # create a test
                 t fixture.header || 'line ' + (fixture.first.range.0 - 1), !->
                     try
-                        html-is     = latexjs.parse fixture.first.text, { generator: new HtmlGenerator { hyphenate: false } } .html!
+                        html-is     = latexjs.parse fixture.first.text, { generator: new HtmlGenerator { hyphenate: false, bare: true } } .html!
                         html-should = fixture.second.text.replace //\n//g, ""
                     catch
                         if e.location

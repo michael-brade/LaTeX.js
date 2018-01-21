@@ -109,7 +109,7 @@ devDependencies:
 
     ### testing
 
-    'mocha': '4.x'
+    'mocha': '5.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
 
