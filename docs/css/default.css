@@ -30,6 +30,18 @@
     --leftmargin: var(--leftmargini);
 
     --labelsep: 0.5rem;
+
+    --fboxrule: 0.4pt;
+    --fboxsep: 3pt;
+
+    /* multicols */
+    --columnwidth: ;
+
+    --columnsep: 35pt;
+    --columnseprule: 0pt;
+    --columnseprulecolor: black;
+
+    --multicolsep: 12pt;
 }
 
 
@@ -100,8 +112,11 @@ body {
 }
 
 .multicols {
-    column-gap: 3em;
-    column-rule: 1px solid;
+    margin-top: var(--multicolsep);
+    margin-bottom: var(--multicolsep);
+
+    column-gap: var(--columnsep);
+    column-rule: var(--columnseprule) solid var(--columnseprulecolor);
     column-fill: balance;
 }
 
@@ -168,6 +183,12 @@ html {
     font-variant-caps: normal;
 }
 
+.sf.sl {
+    font-family: "Computer Modern Sans", sans-serif;
+    font-style: oblique;
+    font-variant-caps: normal;
+}
+
 .tt.sl {
     font-family: "Computer Modern Typewriter Slanted", monospace;
     font-style: oblique;
@@ -181,10 +202,6 @@ html {
 }
 
 
-
-.underline {
-    text-decoration: underline;
-}
 
 
 /* size */
@@ -246,6 +263,20 @@ h1, h2, h3, h4 {
 }
 
 
+.titlepage {
+    height: 100vh;
+    min-height: 20rem;
+}
+
+.title {
+    font-size: 1.7rem;  /* LARGE */
+}
+
+.author, .date {
+    font-size: 1.2rem;  /* large */
+}
+
+
 
 /*************/
 /* alignment */
@@ -271,6 +302,165 @@ h1, h2, h3, h4 {
 
 .list.center, .list.flushleft, .list.flushright {
     padding-left: 0 !important;
+}
+
+
+
+/*********/
+/* boxes */
+/*********/
+
+
+.hbox {
+    display: inline-block;
+    white-space: nowrap;
+    text-indent: 0;
+}
+
+.phantom {
+    visibility: hidden;
+}
+
+
+.llap {
+    display: inline-flex;
+    flex-direction: column;
+    width: 0;
+    align-items: flex-end;
+}
+
+.clap {
+    display: inline-flex;
+    flex-direction: column;
+    width: 0;
+    align-items: center;
+}
+
+.rlap {
+    display: inline-block;
+    width: 0;
+}
+
+
+.stretch {
+    display: inline-flex;
+    flex-direction: row;
+
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.smash {
+    display: inline-flex;
+    flex-direction: row;
+    height: 0px;
+    align-items: flex-end;
+}
+
+
+/* parbox/minipage */
+
+.parbox {
+    display: inline-block;
+    text-indent: 0;
+}
+
+/* pos: t (top) */
+.p-t {
+    display: inline-flex;
+}
+
+/* pos: c (center) */
+.p-c {
+    vertical-align: middle;
+}
+
+/* pos: b (bottom) */
+.p-b {
+    /* default */
+    vertical-align: baseline;       /* TODO: what if llap inside?? */
+}
+
+
+
+/* if we want a fixed height *and* bottom alignment */
+.pbh.p-b {
+    vertical-align: bottom;
+}
+
+/* pos: top, inner-pos: bottom (only possible if height was given, too) */
+.p-t.p-cb {
+    display: inline-flex;
+    vertical-align: top;
+    align-items: flex-end;
+}
+
+/* pos: bottom, inner-pos: bottom (only possible if height was given, too) */
+.p-b.p-cb {
+    display: inline-flex;
+    align-items: flex-end;
+}
+
+.p-b.p-cb::before {
+    /* move the baseline to the bottom of a flex item */
+    content: "x";
+    display: inline-block;
+    width: 0;
+    visibility: hidden;
+}
+
+
+
+
+.underline {
+    border-bottom: 0.4pt solid;
+}
+
+
+.frame {
+    padding: var(--fboxsep);
+    border: var(--fboxrule) solid;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    bottom: calc(-1 * (var(--fboxsep) + var(--fboxrule) + 2px));
+}
+
+
+/****************/
+/* environments */
+/****************/
+
+.pframe {
+    border-style: solid;
+}
+
+.picture {
+    display: inline-block;  /* so that it can be given a fixed size */
+    position: relative;
+}
+
+/* the coordinate system of the picture */
+.picture-canvas {
+    display: flex;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+/* objects in a picture */
+.put-obj {
+    display: block;
+    position: relative;
+}
+
+.strut {
+    display: block;
+}
+
+.picture-object {
+    position: absolute;
+    display: flex;          /* to align text and boxes at the bottom */
+                            /* line-height: 0px; works for boxes, but breaks text */
 }
 
 
