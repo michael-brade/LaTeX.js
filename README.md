@@ -37,17 +37,17 @@ translate a LaTeX document to HTML5
 
 Options:
 
-  -V, --version            output the version number
+  -V, --version          output the version number
   -o, --output <file>    specify output file, otherwise STDOUT will be used
   -b, --bare             don't include HTML boilerplate and CSS, only output the contents of body
-  -e, --entities           encode HTML entities in the output instead of using UTF-8 characters
+  -e, --entities         encode HTML entities in the output instead of using UTF-8 characters
   -p, --pretty           beautify the html (this may add/remove spaces unintentionally)
   -c, --class <class>    set a default documentclass for documents without a preamble (default: article)
   -m, --macros <file>    load a JavaScript file with additional custom macros
   -s, --style <url>      specify an additional style sheet to use (can be repeated)
   -n, --no-hyphenation   don't insert soft hyphens (disables automatic hyphenation in the browser)
   -l, --language <lang>  set hyphenation language (default: en)
-  -h, --help               output usage information
+  -h, --help             output usage information
 
 If no input files are given, STDIN is read.
 ```
@@ -81,11 +81,15 @@ unit tests.
 
 ## Limitations
 
-The following features I am just not interested in to implement (yet):
-
-* macro (re)definition
+* I don't create an intermediate AST yet, so TeX's conditional expressions are impossible
+* deprecated macros, or macros that are not supposed to be used in LaTeX, won't even exist in LaTeX.js.
+  Examples include: eqnarray, the old LaTeX 2.09 font macros \it, \sl, etc. Also missing are most of the plainTeX macros.
+  See also `l2tabuen.pdf`.
 * incorrect but legal markup in LaTeX won't produce the same result in LaTeX.js - like when using \raggedleft in the
-  middle of a paragraph; but the LaTeX.js result should be intuitively correct
+  middle of a paragraph; but the LaTeX.js result should be intuitively correct.
+* because of the limitations when parsing TeX as a context-free grammar (see [below](#parsing-tex)), native LaTeX packages
+  cannot be parsed and loaded. Instead, the macros those packages (and documentclasses) provide have to be implemented in
+  JavaScript.
 
 
 ## Limitations of LaTeX.js due to HTML and CSS
@@ -95,7 +99,7 @@ The following features in LaTeX just cannot be translated to HTML, not even when
 * TeX removes any whitespace from the beginning and end of a line, even consecutive ones that would be printed in the middle
   of a line, like `\ ` or `~` or ^^0020. This is not possible in HTML (yet - maybe it will be with CSS4).
 * horizontal glue, like `\hfill` in a paragraph of text, is not possible
-* vertical glue makes no sense in HTML, and is impossible to emulate
+* vertical glue makes no sense in HTML, and is impossible to emulate, except in boxes with fixed height
 * `\vspace{}` with a negative value in horizontal mode, i.e. in the middle of a paragraph of text, is not possible
   (but this feature is useless anyway)
 
@@ -106,9 +110,7 @@ like on a real page.
 
 
 
-## Limitations when parsing TeX as a context-free grammar
-
-
+## <a name="parsing-tex"></a> Limitations when parsing TeX as a context-free grammar
 
 This is a PEG parser, which means it interprets LaTeX as a context-free language. However, TeX (and therefore LaTeX) is
 Turing complete, so TeX can only really be parsed by a complete Turing machine. It is not possible to parse the full
@@ -186,7 +188,7 @@ This also means that you cannot use `\vs^^+ip` to have LaTeX.js interpret it as 
 that most people will probably never need.
 
 
-#### TODO
+## TODO
 
 Maybe:
 
@@ -194,10 +196,9 @@ Maybe:
 
 
 
-
 ## Alternatives
 
-If you need a more complete LaTeX to HTML translator that really understands TeX, take a look at
+If you need a LaTeX to HTML translator that also understands TeX to some extent, take a look at
 
 * [LaTeXML](https://github.com/brucemiller/LaTeXML) (Perl) or
 * [HEVEA](http://hevea.inria.fr/) (OCaml) or
