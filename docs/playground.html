@@ -43,10 +43,12 @@
 
       \begin{document}
 
+      \maketitle
+
       This document will show most of the supported features of \LaTeX.js.
 
 
-      \subsection{Characters}
+      \section{Characters}
 
       It is possible to input any UTF-8 character either directly or by character code
       using one of the following:
@@ -72,7 +74,7 @@
 
 
 
-      \subsection{Spaces and Comments}
+      \section{Spaces and Comments}
 
       Spaces and comments, of course, work just as they do in \LaTeX.
       This is an            % stupid
@@ -97,24 +99,26 @@
 
 
 
-      \subsection{Dashes and Hyphens}
+      \section{Dashes and Hyphens}
 
       \LaTeX\ knows four kinds of dashes. Access three of them with different numbers
       of consecutive dashes. The fourth sign is actually not a dash at all---it is the
-      mathematical minus sign:\\
-      \\
-      daughter-in-law, X-rated\\
-      pages 13--67\\
-      yes---or no? \\
-      $0$, $1$ and $-1$\\
-      \\
+      mathematical minus sign:
+
+      \begin{quote}
+        daughter-in-law, X-rated\\
+        pages 13--67\\
+        yes---or no? \\
+        $0$, $1$ and $-1$
+      \end{quote}
+      %
       The names for these dashes are: ‘-’ hyphen, ‘--’ en-dash, ‘---’ em-dash,
       and ‘$-$’ minus sign. \LaTeX.js outputs the actual true unicode character for those
       instead of using the hypen-minus.
 
 
 
-      \subsection{Text and Paragraphs, Ligatures}
+      \section{Text and Paragraphs, Ligatures}
 
       An empty line starts a new paragraph, and so does \verb|\par|.
       \par Like this. A new line usually starts automatically when the previous one is
@@ -148,7 +152,7 @@
 
 
 
-      \subsection{Spacing}
+      \section{Spacing}
 
       The following horizontal spaces are supported:
       \\[8pt]
@@ -165,7 +169,7 @@
 
 
 
-      \subsection{Environments}
+      \section{Environments}
 
       \subsubsection{Lists: Itemize, Enumerate, and Description}
 
@@ -178,7 +182,7 @@
                   \item But it might start to look silly.
                   \item[-] With a dash.
               \end{itemize}
-          \item Therefore remember:
+          \item Therefore remember: \label{remember}
               \begin{description}
                   \item[Stupid] things will not become smart because they are in a list.
                   \item[Smart] things, though, can be presented beautifully in a list.
@@ -217,7 +221,7 @@
       \end{itemize}
 
 
-      \subsubsection{Flushleft, Flushright, and Center}
+      \subsection{Flushleft, Flushright, and Center}
 
       The \texttt{flushleft} environment:
       %
@@ -243,7 +247,7 @@
 
 
 
-      \subsubsection{Quote, Quotation, and Verse}
+      \subsection{Quote, Quotation, and Verse}
 
       The \texttt{quote} environment is useful for quotes, important phrases and examples.
       A typographical rule of thumb for the line length is:
@@ -269,8 +273,39 @@
       \end{verse}
 
 
+      \section{Labels and References}
 
-      \subsection{Mathematical Formulae}
+      Labels can be attached to parts, chapters, sections, items of enumerations, footnotes, tables and figures.
+      For instance: item~\ref{remember} was important, and regarding fonts, read Section~\ref{sec:advice}. And
+      below, we can reference item~\ref{key-1} and \ref{key-2}.
+
+      \begin{enumerate}
+        \item list text, level one
+          \begin{enumerate}
+            \item list text, level two
+              \begin{enumerate}
+                \item list text, level three
+
+                  And a new paragraph can be started, too.
+                  \begin{enumerate}
+                    \item list text, level four
+
+                      And a new paragraph can be started, too.
+                      This is the maximum level.
+
+                    \item list text, level four \label{key-1}
+                  \end{enumerate}
+
+                \item list text, level three
+              \end{enumerate}
+            \item\label{key-2} list text, level two
+          \end{enumerate}
+        \item list text, level one
+        \item list text, level one
+      \end{enumerate}
+
+
+      \section{Mathematical Formulae}
 
       Math is typeset using KaTeX. Inline math:
       $
@@ -282,7 +317,7 @@
       $$
 
 
-      \subsection{Groups}
+      \section{Groups}
 
 
       Today is \today.
@@ -321,6 +356,7 @@
 
 
       \subsection{An advice}
+      \label{sec:advice}
       \begin{center}
         \underline{\textbf{Remember\Huge!}} \textit{The}
         \textsf{M\textbf{\LARGE O}\texttt{R}\textsl{E}} fonts \Huge you
@@ -329,6 +365,8 @@
         \textsl{\textsf{beautiful} it bec\large o\Large m\LARGE e\huge s}.
       \end{center}
 
+
+      \appendix
 
       \section{Source}
 
