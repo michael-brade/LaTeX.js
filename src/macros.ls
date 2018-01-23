@@ -125,8 +125,7 @@ export class LaTeXBase
         tex.setAttribute('class', 'tex')
 
         tex.appendChild @g.createText 'T'
-        e = @g.create @g.inline-block
-        e.appendChild @g.createText 'e'
+        e = @g.create @g.inline-block, (@g.createText 'e'), 'e'
         tex.appendChild e
         tex.appendChild @g.createText 'X'
 
@@ -138,12 +137,10 @@ export class LaTeXBase
         latex.setAttribute('class', 'latex')
 
         latex.appendChild @g.createText 'L'
-        a = @g.create @g.inline-block
-        a.appendChild @g.createText 'a'
+        a = @g.create @g.inline-block, (@g.createText 'a'), 'a'
         latex.appendChild a
         latex.appendChild @g.createText 'T'
-        e = @g.create @g.inline-block
-        e.appendChild @g.createText 'e'
+        e = @g.create @g.inline-block, (@g.createText 'e'), 'e'
         latex.appendChild e
         latex.appendChild @g.createText 'X'
 
