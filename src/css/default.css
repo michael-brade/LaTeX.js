@@ -488,10 +488,10 @@ p {
 }
 
 
-h1 + p, h1 + div.multicols > p:first-child,
-h2 + p, h2 + div.multicols > p:first-child,
-h3 + p, h3 + div.multicols > p:first-child,
-h4 + p, h4 + div.multicols > p:first-child,
+h1 + p, h1 + * p:first-child,
+h2 + p, h2 + * p:first-child,
+h3 + p, h3 + * p:first-child,
+h4 + p, h4 + * p:first-child,
 .noindent,
 .continue {
     text-indent: 0;
