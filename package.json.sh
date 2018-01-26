@@ -86,7 +86,7 @@ dependencies:
     #'xmldom': '^0.1.19'
 
 devDependencies:
-    'livescript': '1.5.x'
+    'livescript': 'https://github.com/gkz/LiveScript'
 
     ### building
 
@@ -112,6 +112,9 @@ devDependencies:
     'mocha': '5.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
+
+    'puppeteer': '^1.0.0'
+    'resemblejs': '^2.6.0'
 
     'istanbul': '>= 0.4.x'
 

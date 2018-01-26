@@ -1,6 +1,9 @@
 'use strict'
 
-require! path
+require! {
+    path
+    puppeteer
+}
 
 # on the server we need to include a DOM implementation
 global.document = require 'domino' .createDocument!
@@ -9,6 +12,18 @@ const HtmlGenerator   = require '../dist/html-generator' .HtmlGenerator
 const html-beautify   = require 'js-beautify' .html
 const latexjs         = require '../dist/latex-parser'
 const load-fixtures   = require './load-fixtures' .load
+
+
+var browser, page
+
+before !->>
+    browser := await puppeteer.launch { devtools: false, dumpio: false }
+    page := await browser.newPage!
+    await page.goto "file://" + process.cwd! + "/src"
+
+    page.on 'console', (msg) ->
+        for i til msg.args.length
+            console.log "#{i}: #{msg.args[i]}"
 
 
 describe 'LaTeX.js fixtures', !->
@@ -20,14 +35,25 @@ describe 'LaTeX.js fixtures', !->
 
         describe desc, !->
             filefixtures.fixtures.forEach (fixture) !->
-                # disable a test by prefixing it with !
+
+                _test = test
+
+                # disable a test by prefixing it with "!", run only some tests by prefixing them with "+"
                 if fixture.header?.charAt(0) == "!"
-                    t = test.skip
-                else
-                    t = test
+                    _test = test.skip
+                    fixture.header = fixture.header.substr 1
+                else if fixture.header?.charAt(0) == "+"
+                    _test = test.only
+                    fixture.header = fixture.header.substr 1
+
+                # make a screenshot by prefixing it with "s"
+                if fixture.header?.charAt(0) == "s"
+                    screenshot = true
+                    fixture.header = fixture.header.substr 1
+
 
                 # create syntax test
-                t fixture.header || 'line ' + (fixture.source.range.0 - 1), !->
+                _test fixture.header || 'line ' + (fixture.source.range.0 - 1), !->
                     try
                         html-is     = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false, bare: true } } .html!
                         html-should = fixture.result.text.replace //\n//g, ""
@@ -39,3 +65,14 @@ describe 'LaTeX.js fixtures', !->
 
                     #html-is = html-beautify html-is
                     expect html-is .to.equal html-should
+
+                # create screenshot test
+                if screenshot
+                    _test '   - screenshot', !->>
+                        html = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .html!
+                        page.setContent html
+                        await page.screenshot { path: path.join __dirname, "screenshots", desc + ' ' + fixture.header + '.new.png' }
+
+
+after !->>
+    await browser.close!

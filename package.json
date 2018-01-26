@@ -51,7 +51,7 @@
     "js-beautify": "1.7.x"
   },
   "devDependencies": {
-    "livescript": "1.5.x",
+    "livescript": "https://github.com/gkz/LiveScript",
     "pegjs": "0.10.x",
     "mkdirp": "0.5.x",
     "rimraf": "2.6.x",
@@ -65,6 +65,8 @@
     "mocha": "5.x",
     "chai": "4.x",
     "chai-as-promised": "7.x",
+    "puppeteer": "^1.0.0",
+    "resemblejs": "^2.6.0",
     "istanbul": ">= 0.4.x"
   },
   "repository": {
