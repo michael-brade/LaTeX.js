@@ -24,17 +24,17 @@ parse = (input, separators) ->
 
         fixture =
             header: ''
-            first:
+            source:
                 text: ''
                 range: []
 
-            second:
+            result:
                 text: ''
                 range: []
 
 
         # seek end of first and second blocks
-        for block in ['first', 'second']
+        for block in <[ source result ]>
             blockStart = ++line
 
             while line < max and lines[line] isnt currentSep
@@ -47,9 +47,9 @@ parse = (input, separators) ->
 
         line++
 
-        # look for header on the two lines before the fixture.first block
-        i = fixture.first.range.0 - 2
-        while i >= Math.max(min, fixture.first.range.0 - 3)
+        # look for header on the two lines before the fixture.source block
+        i = fixture.source.range.0 - 2
+        while i >= Math.max(min, fixture.source.range.0 - 3)
             l = lines[i]
             break if (separators.indexOf l) >= 0
 
@@ -60,8 +60,7 @@ parse = (input, separators) ->
 
         result.fixtures.push fixture
 
-    return if result.fixtures.length then result else null
-
+    return result
 
 /* Read fixtures (recursively).
     @separator (String|Array) - allowed fixture separator(s)
