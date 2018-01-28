@@ -1,6 +1,8 @@
 'use strict'
 
 require! {
+    execa
+    fs
     path
     puppeteer
 }
@@ -18,12 +20,17 @@ var browser, page
 
 before !->>
     browser := await puppeteer.launch { devtools: false, dumpio: false }
-    page := await browser.newPage!
-    await page.goto "file://" + process.cwd! + "/src"
+    page := (await browser.pages!).0                    # there is always one page available
+    await page.goto "file://" + process.cwd! + "/src"   # set the base url
 
     page.on 'console', (msg) ->
         for i til msg.args.length
             console.log "#{i}: #{msg.args[i]}"
+
+    await page.setViewport { width: 0, height: 0, deviceScaleFactor: 2 }
+
+after !->>
+    await browser.close!
 
 
 describe 'LaTeX.js fixtures', !->
@@ -66,13 +73,32 @@ describe 'LaTeX.js fixtures', !->
                     #html-is = html-beautify html-is
                     expect html-is .to.equal html-should
 
+
                 # create screenshot test
                 if screenshot
                     _test '   - screenshot', !->>
                         html = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .html!
-                        page.setContent html
-                        await page.screenshot { path: path.join __dirname, "screenshots", desc + ' ' + fixture.header + '.new.png' }
+                        await page.setContent html
 
+                        filename = path.join __dirname, 'screenshots', desc + ' ' + fixture.header
 
-after !->>
-    await browser.close!
+                        await page.screenshot {
+                            omitBackground: true
+                            path: filename  + '.new.png'
+                        }
+
+                        if fs.existsSync filename + '.png'
+                            # now compare the screenshots and delete the new one if they match
+                            try
+                                const result = await execa 'compare', ['-metric', 'rmse', filename + '.png', filename + '.new.png', filename + '.diff.png']
+                                fs.unlinkSync filename  + '.new.png'
+                                fs.unlinkSync filename  + '.diff.png'
+                            catch
+                                if e.code == "ENOENT"
+                                    throw new Error "ImageMagick not installed! Cannot compare screenshots."
+
+                                throw new Error "screenshots differ by #{e.stderr} - see #{filename + '.*.png'}"
+                        else
+                            # if no screenshot exists yet, use this new one
+                            fs.renameSync filename  + '.new.png', filename  + '.png'
+

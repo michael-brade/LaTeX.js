@@ -114,7 +114,7 @@ devDependencies:
     'chai-as-promised': '7.x'
 
     'puppeteer': '^1.0.0'
-    'resemblejs': '^2.6.0'
+    'execa': '0.7.x'
 
     'istanbul': '>= 0.4.x'
 
