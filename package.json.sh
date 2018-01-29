@@ -77,11 +77,11 @@ dependencies:
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
+    'lodash': '4.x'
     'commander': '2.13.x'
     'stdin': '*'
     'js-beautify': '1.7.x'
 
-    #'lodash': '4.x'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
 

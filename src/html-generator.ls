@@ -3,10 +3,13 @@
 require! {
     './symbols': { ligatures, diacritics, symbols }
     './macros': { LaTeXBase: Macros }
-    he
     katex: { default: katex }
     hypher: Hypher
     'svg.js': SVG
+    he
+
+    'lodash/flattenDeep'
+    'lodash/compact'
 }
 
 
@@ -346,16 +349,15 @@ export class HtmlGenerator
         return if not t
         document.createTextNode t
 
-    createFragment: (children) ->
+    # create a fragment; arguments may be Node(s) and/or arrays of Node(s)
+    createFragment: ->
+        children = compact flattenDeep arguments
+
         # only create an empty fragment if explicitely requested: no arguments given
         return if arguments.length > 0 and (not children or !children.length)
 
         # don't wrap a single node
-        if Array.isArray children
-            children = children.filter (c) -> c !~= undefined
-            return children.0 if children.length == 1 and children.0.nodeType
-        else
-            return children if children.nodeType
+        return children.0 if children.length == 1 and children.0.nodeType
 
         f = document.createDocumentFragment!
         appendChildren f, children

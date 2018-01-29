@@ -46,6 +46,7 @@
     "hypher": "0.x",
     "hyphenation.en-us": "*",
     "hyphenation.de": "*",
+    "lodash": "4.x",
     "commander": "2.13.x",
     "stdin": "*",
     "js-beautify": "1.7.x"
