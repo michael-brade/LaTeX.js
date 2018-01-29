@@ -23,8 +23,9 @@ npm install -g latex.js
 LaTeX.js is divided into a parser and a generator, so that in theory you could switch the
 generator to create e.g. plain text instead of HTML. Currently, only a HTML generator exists.
 
-LaTeX.js parses only text that comes between `\begin{document}` and `\end{document}`
-in a normal LaTeX document.
+LaTeX.js can parse full LaTeX documents as well as documents without a preamble and only the
+text that comes between `\begin{document}` and `\end{document}` in a full LaTeX document. In
+that latter case, the default documentclass is used, which is article unless specified otherwise.
 
 The CLI has the following options:
 
@@ -53,12 +54,20 @@ If no input files are given, STDIN is read.
 
 ## Tests
 
-To build it and run the tests, execute:
+To build it and run the tests, clone this repository and execute:
 
 ```
-npm run build
+npm run build   # or devbuild
 npm test
 ```
+
+To verify the screenshots (the CSS tests), ImageMagick needs to be installed. Screenshots are taken
+with Chromium using `puppeteer`.
+
+
+
+
+## Playground
 
 To build the playground, execute:
 
@@ -151,13 +160,6 @@ I therefore take a slightly different approach:
 
 * Second, for now there is no way of defining macros, only expanding macros is supported. So if a new
   LaTeX macro is needed, reimplement it in JavaScript directly, thus circumventing the problem altogether.
-
-* Third, I don't care about formal correctness of my syntax tree. If a custom macro, say, takes only one argument and
-  `\foo{a}{b}` is encountered, both arguments are passed to the JavaScript function `foo`, which then leaves `b`
-  untouched, simply returning it along with its own result. This parser does not know about the arity of custom macros
-  (defined only in JavaScript), it assumes that the author of a macro call knows it. So ideally, macros should be
-  defined in the PEG.js grammar.
-
 
 
 ### Expansion and Execution
