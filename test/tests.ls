@@ -19,7 +19,12 @@ const load-fixtures   = require './load-fixtures' .load
 var browser, page
 
 before !->>
-    browser := await puppeteer.launch { devtools: false, dumpio: false }
+    browser := await puppeteer.launch {
+        devtools: false
+        dumpio: false
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    }
+
     page := (await browser.pages!).0                    # there is always one page available
     await page.goto "file://" + process.cwd! + "/src"   # set the base url
 
@@ -101,4 +106,3 @@ describe 'LaTeX.js fixtures', !->
                         else
                             # if no screenshot exists yet, use this new one
                             fs.renameSync filename  + '.new.png', filename  + '.png'
-
