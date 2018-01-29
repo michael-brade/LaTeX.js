@@ -29,9 +29,9 @@
     "devbuild": "mkdirp dist/documentclasses;lsc -c -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;lsc -c -o dist/documentclasses src/documentclasses/;pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;",
     "docs": "npm run devbuild && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;",
     "pgcc": "google-closure-compiler --compilation_level SIMPLE --externs src/externs.js --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;",
-    "test": "mocha test/_*.ls test/tests.ls;",
-    "iron": "iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;",
-    "cover": "istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;"
+    "test": "mocha test/tests.ls;",
+    "iron": "iron-node node_modules/.bin/_mocha test/tests.ls;",
+    "cover": "istanbul cover --dir test/coverage _mocha test/tests.ls;"
   },
   "babel": {
     "plugins": [

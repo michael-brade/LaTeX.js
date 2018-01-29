@@ -57,9 +57,9 @@ scripts:
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
                                     --externs src/externs.js \
                                     --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;"
-    test:  'mocha test/_*.ls test/tests.ls;'
-    iron:  'iron-node node_modules/.bin/_mocha test/_*.ls test/tests.ls;'
-    cover: 'istanbul cover --dir test/coverage _mocha test/_*.ls test/tests.ls;'
+    test:  'mocha test/tests.ls;'
+    iron:  'iron-node node_modules/.bin/_mocha test/tests.ls;'
+    cover: 'istanbul cover --dir test/coverage _mocha test/tests.ls;'
 
 babel:
     plugins:
