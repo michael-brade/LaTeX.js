@@ -468,7 +468,15 @@ export class HtmlGenerator
     # macro arguments
 
     beginArgs: (macro) !->
-        @_curArgs.push if Macros.args[macro] then { args: that.slice(1), parsed: [] } else { args: [], parsed: [] }
+        @_curArgs.push if Macros.args[macro]
+            then {
+                name: macro
+                args: that.slice(1)
+                parsed: []
+            } else {
+                args: []
+                parsed: []
+            }
 
     # check the next argument type to parse
     nextArg: (arg) ->
@@ -484,10 +492,15 @@ export class HtmlGenerator
     parsedArgs: ->
         @_curArgs.top.parsed
 
+    # execute macro with parsed arguments so far
+    preExecMacro: !->
+        @macro @_curArgs.top.name, @parsedArgs!
+
     # remove arguments of a completely parsed macro from the stack
     endArgs: !->
-        @_curArgs.pop!.args
-            ..length == 0 || @_error "grammar error - mandatory arguments missing: #{..}"
+        @_curArgs.pop!
+            ..args.length == 0 || error "grammar error: arguments for #{..name} have not been parsed: #{..args}"
+            return ..parsed
 
 
 

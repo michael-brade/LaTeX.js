@@ -63,7 +63,8 @@ export class LaTeXBase
     #
     # one special entry:
     #   X: execute action (macro body) already now with whatever arguments have been parsed so far;
-    #      this is needed when things should be done before the next arguments are parsed
+    #      this is needed when things should be done before the next arguments are parsed - no value
+    #      should be returned by the macro in this case, for it will just be ignored
     #
     # rest of the list declares the arguments:
     #   s: optional star
@@ -83,10 +84,9 @@ export class LaTeXBase
     #   v: vector, a pair of coordinates: (float/length, float/length)
     #  v?: optional vector
     #
-    #   g: arggroup
-    #   g+: long arggroup
+    #   g: arggroup (possibly long - TeX allows \endgraf, but not \par... so allow \par as well)
+    #   gr: arggroup in restricted horizontal mode
     #   o: optional arg
-    #   o+: long optional arg
 
     args = @args = {}
 
@@ -556,7 +556,7 @@ export class LaTeXBase
     \graphicspath       : (paths) !->
 
     # \includegraphics*[key-val list]{file}
-    args.\includegraphics = <[ H s kv g ]>
+    args.\includegraphics = <[ H s kv k ]>
 
 
     # color

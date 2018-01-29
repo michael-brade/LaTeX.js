@@ -166,25 +166,8 @@ is_hvmode =
 
 
 macro =
-    name:identifier &{ if (g.hasMacro(name)) { g.beginArgs(name); return true; } }
-    skip_space
-    (
-        &{ return g.nextArg("X") }                                                                                              { g.macro(name, g.parsedArgs()); }
-      / &{ return g.nextArg("s") }    s:"*"?                                                                                    { g.addParsedArg(!!s); }
-      / &{ return g.nextArg("g") }    a:(arg_group      / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
-      / &{ return g.nextArg("o") }    o: opt_group?                                                                             { g.addParsedArg(o); }
-      / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { g.addParsedArg(i); }
-      / &{ return g.nextArg("i?") }   i: id_optgroup?                                                                           { g.addParsedArg(i); }
-      / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { g.addParsedArg(k); }
-      / &{ return g.nextArg("n") }    n:(expr_group     / . { error("macro " + name + " is missing a num group argument") })    { g.addParsedArg(n); }
-      / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { g.addParsedArg(l); }
-      / &{ return g.nextArg("l?") }   l: length_optgroup?                                                                       { g.addParsedArg(l); }
-      / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { g.addParsedArg(m); }
-      / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { g.addParsedArg(u); }
-      / &{ return g.nextArg("cl") }   c:(coord_group    / . { error("macro " + name + " is missing a coordinate/length group") })   { g.addParsedArg(c); }
-      / &{ return g.nextArg("v") }    v:(vector         / . { error("macro " + name + " is missing a coordinate pair") })       { g.addParsedArg(v); }
-      / &{ return g.nextArg("v?") }   v: vector?                                                                                { g.addParsedArg(v); }
-    )*
+    name:identifier skip_space &{ if (g.hasMacro(name)) { g.beginArgs(name); return true; } }
+    macro_args
     {
         var args = g.parsedArgs();
         g.endArgs();
@@ -213,6 +196,28 @@ identifier "identifier" =
 
 key "key" =
     $(char / sp / digit / punctuation  / [$&_\-/@] / utf8_char)+
+
+
+
+macro_args =
+    (
+        &{ return g.nextArg("X") }                                                                                              { g.preExecMacro(); }
+      / &{ return g.nextArg("s") }    skip_space s:"*"?                                                                         { g.addParsedArg(!!s); }
+      / &{ return g.nextArg("g") }    a:(arg_group      / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
+      / &{ return g.nextArg("gr") }   a:(restr_hgroup   / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
+      / &{ return g.nextArg("o") }    o: opt_group?                                                                             { g.addParsedArg(o); }
+      / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { g.addParsedArg(i); }
+      / &{ return g.nextArg("i?") }   i: id_optgroup?                                                                           { g.addParsedArg(i); }
+      / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { g.addParsedArg(k); }
+      / &{ return g.nextArg("n") }    n:(expr_group     / . { error("macro " + name + " is missing a num group argument") })    { g.addParsedArg(n); }
+      / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { g.addParsedArg(l); }
+      / &{ return g.nextArg("l?") }   l: length_optgroup?                                                                       { g.addParsedArg(l); }
+      / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { g.addParsedArg(m); }
+      / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { g.addParsedArg(u); }
+      / &{ return g.nextArg("cl") }   c:(coord_group    / . { error("macro " + name + " is missing a coordinate/length group") })   { g.addParsedArg(c); }
+      / &{ return g.nextArg("v") }    v:(vector         / . { error("macro " + name + " is missing a coordinate pair") })       { g.addParsedArg(v); }
+      / &{ return g.nextArg("v?") }   v: vector?                                                                                { g.addParsedArg(v); }
+    )*
 
 
 // {identifier}
@@ -331,6 +336,8 @@ arg_group       =   skip_space begin_group      & { g.enterGroup(); g.startBalan
                     }
 
 
+restr_hgroup    =   skip_space // restricted horizontal mode group
+
 
 // [<LaTeX code/text>]
 opt_group       =   skip_space begin_optgroup   & { g.enterGroup(); g.startBalanced(); return true; }
@@ -395,8 +402,10 @@ num_expr        =   skip_space
 
 
 
+// **** macros the parser has to know about due to special parsing that is neccessary **** //
 
-// ** spacing macros
+
+// spacing macros
 
 // vertical
 vspace_hmode    =   "vspace" "*"?   l:length_group      { return g.createVSpaceInline(l); }
