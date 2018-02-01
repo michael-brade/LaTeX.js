@@ -643,7 +643,7 @@ export class LaTeXBase
 
         put = @g.create @g.inline-block, [wrapper, strut], "picture"
 
-        @llap put
+        @smash @rlap put
 
     # \multiput(x,y)(delta_x,delta_y){n}{obj}
     args.\multiput =    <[ H v v n g ]>
