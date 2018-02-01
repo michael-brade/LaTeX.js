@@ -418,7 +418,7 @@ export class LaTeXBase
     \makebox            : (vec, width, pos, txt) ->
         if vec
             # picture version
-            @g._error "expected \\makebox(width,height)[position]{text} but got two optional arguments!" if width and pos
+            @g.error "expected \\makebox(width,height)[position]{text} but got two optional arguments!" if width and pos
             pos = width
 
             [ txt ]
@@ -445,7 +445,7 @@ export class LaTeXBase
     \framebox           : (vec, width, pos, txt) ->
         if vec
             # picture version
-            @g._error "expected \\framebox(width,height)[position]{text} but got two optional arguments!" if width and pos
+            @g.error "expected \\framebox(width,height)[position]{text} but got two optional arguments!" if width and pos
         else
             # normal framebox
             # add the frame if it is a simple node, otherwise create a new box
@@ -463,11 +463,11 @@ export class LaTeXBase
             pos = "c" if not pos
 
             switch pos
-            | "s" => classes += " stretch"           # @g._error "position 's' (stretch) is not supported for text!"
+            | "s" => classes += " stretch"           # @g.error "position 's' (stretch) is not supported for text!"
             | "c" => classes += " clap"
             | "l" => classes += " rlap"
             | "r" => classes += " llap"
-            |  _  => @g._error "unknown position: #{pos}"
+            |  _  => @g.error "unknown position: #{pos}"
 
         content = @g.create @g.inline-block, txt
         box = @g.create @g.inline-block, content, classes
@@ -515,14 +515,14 @@ export class LaTeXBase
         | "c" => classes += " p-c"
         | "t" => classes += " p-t"
         | "b" => classes += " p-b"
-        |  _  => @g._error "unknown position: #{pos}"
+        |  _  => @g.error "unknown position: #{pos}"
 
         switch inner-pos
         | "s" => classes += " stretch"
         | "c" => classes += " p-cc"
         | "t" => classes += " p-ct"
         | "b" => classes += " p-cb"
-        |  _  => @g._error "unknown inner-pos: #{inner-pos}"
+        |  _  => @g.error "unknown inner-pos: #{inner-pos}"
 
         content = @g.create @g.inline-block, txt
         box = @g.create @g.inline-block, content, classes
@@ -605,7 +605,7 @@ export class LaTeXBase
     \thinlines          :!->        @g.setLength \@wholewidth { value: 0.4, unit: "pt" }
     \thicklines         :!->        @g.setLength \@wholewidth { value: 0.8, unit: "pt" }
     \linethickness      : (l) !->
-        @g._error "relative units for \\linethickness not supported!" if l.unit != "px"
+        @g.error "relative units for \\linethickness not supported!" if l.unit != "px"
         @g.setLength \@wholewidth l
 
     \arrowlength        : (l) !->   @g.setLength \@arrowlength l
@@ -669,8 +669,8 @@ export class LaTeXBase
     #   if xslope == yslope == 0 then error
     args.\line =        <[ H v cl ]>
     \line               : (v, l) ->
-        @g._error "illegal slope (0,0)" if v.x.value == v.y.value == 0
-        @g._error "relative units not allowed for slope" if v.x.unit != v.y.unit or v.x.unit != "px"
+        @g.error "illegal slope (0,0)" if v.x.value == v.y.value == 0
+        @g.error "relative units not allowed for slope" if v.x.unit != v.y.unit or v.x.unit != "px"
 
         linethickness = @g.length \@wholewidth
 
@@ -830,7 +830,7 @@ export class LaTeXBase
 
     args.\documentclass =  <[ P o k o ]>
     \documentclass      : (opts, documentclass, version) !->
-        @\documentclass = !-> @g._error "Two \\documentclass commands. The document may only declare one class."
+        @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
         ClassName = documentclass.charAt(0).toUpperCase() + documentclass.slice(1)
         Class = (require "./documentclasses/" + documentclass)[ClassName]

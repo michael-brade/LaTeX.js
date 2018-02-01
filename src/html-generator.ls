@@ -214,12 +214,15 @@ export class HtmlGenerator
 
 
 
-    _error: (e) !->
+    # private static for easy access
+    error = (e) !->
         console.error e
         throw new Error e
 
+    error: (e) !-> error e
+
     setErrorFn: (e) !->
-        @_error = e
+        error = e
 
 
 
@@ -250,7 +253,7 @@ export class HtmlGenerator
         symbols.has name
 
     symbol: (name) ->
-        @_error "no such symbol: #{name}" if not @hasSymbol name
+        error "no such symbol: #{name}" if not @hasSymbol name
         symbols.get name
 
     hasDiacritic: (d) ->
@@ -523,7 +526,7 @@ export class HtmlGenerator
 
     # end the last group - throws if there was no group to end
     exitGroup: !->
-        --@_groups.top >= 0 || @_error "there is no group to end here"
+        --@_groups.top >= 0 || error "there is no group to end here"
         @_stack.pop!
 
 
@@ -620,7 +623,7 @@ export class HtmlGenerator
     startlist: ->
         @stepCounter \@listdepth
         if @counter(\@listdepth) > 6
-            @_error "too deeply nested"
+            error "too deeply nested"
 
         true
 
@@ -633,19 +636,19 @@ export class HtmlGenerator
     ### lengths
 
     newLength: (l) !->
-        @_error "length #{l} already defined!" if @hasLength l
+        error "length #{l} already defined!" if @hasLength l
         @_stack.top.lengths.set l, { value: 0; unit: "px" }
 
     hasLength: (l) ->
         @_stack.top.lengths.has l
 
     setLength: (id, length) !->
-        @_error "no such length: #{id}" if not @hasLength id
+        error "no such length: #{id}" if not @hasLength id
         # console.log "set length:", id, length
         @_stack.top.lengths.set id, @toPx length
 
     length: (l) ->
-        @_error "no such length: #{l}" if not @hasLength l
+        error "no such length: #{l}" if not @hasLength l
         # console.log "get length: #{l} -> #{}"
         @_stack.top.lengths.get l
 
@@ -690,7 +693,7 @@ export class HtmlGenerator
     ### LaTeX counters (global)
 
     newCounter: (c, parent) !->
-        @_error "counter #{c} already defined!" if @hasCounter c
+        error "counter #{c} already defined!" if @hasCounter c
 
         @_counters.set c, 0
         @_resets.set c, []
@@ -698,7 +701,7 @@ export class HtmlGenerator
         if parent
             @addToReset c, parent
 
-        @_error "macro \\the#{c} already defined!" if @hasMacro(\the + c)
+        error "macro \\the#{c} already defined!" if @hasMacro(\the + c)
         @_macros[\the + c] = -> [ @g.arabic @g.counter c ]
 
 
@@ -706,7 +709,7 @@ export class HtmlGenerator
         @_counters.has c
 
     setCounter: (c, v) !->
-        @_error "no such counter: #{c}" if not @hasCounter c
+        error "no such counter: #{c}" if not @hasCounter c
         @_counters.set c, v
 
     stepCounter: (c) !->
@@ -714,7 +717,7 @@ export class HtmlGenerator
         @clearCounter c
 
     counter: (c) ->
-        @_error "no such counter: #{c}" if not @hasCounter c
+        error "no such counter: #{c}" if not @hasCounter c
         @_counters.get c
 
     refCounter: (c, id) ->
@@ -737,8 +740,8 @@ export class HtmlGenerator
 
 
     addToReset: (c, parent) !->
-        @_error "no such counter: #{parent}" if not @hasCounter parent
-        @_error "no such counter: #{c}" if not @hasCounter c
+        error "no such counter: #{parent}" if not @hasCounter parent
+        error "no such counter: #{c}" if not @hasCounter c
         @_resets.get parent .push c
 
     # reset all descendants of c to 0
@@ -814,14 +817,14 @@ export class HtmlGenerator
         |   7   => @symbol(\textasteriskcentered) + @symbol \textasteriskcentered
         |   8   => @symbol(\textdagger) + @symbol \textdagger
         |   9   => @symbol(\textdaggerdbl) + @symbol \textdaggerdbl
-        |   _   => @_error "fnsymbol value must be between 1 and 9"
+        |   _   => error "fnsymbol value must be between 1 and 9"
 
 
     ### label, ref
 
     # labels are possible for: parts, chapters, all sections, \items, footnotes, minipage-footnotes, tables, figures
     setLabel: (label) !->
-        @_error "label #{label} already defined!" if @_labels.has label
+        error "label #{label} already defined!" if @_labels.has label
 
         if not @_stack.top.currentlabel.id
             console.warn "warning: no \\@currentlabel available for label #{label}!"

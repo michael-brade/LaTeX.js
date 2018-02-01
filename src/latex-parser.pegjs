@@ -129,7 +129,7 @@ hmode_macro =
 
     / verb
 
-    / &is_preamble only_preamble
+    / &is_preamble only_preamble    // preamble macros are not allowed
     / !is_vmode unknown_macro       // now we have checked hv-macros and h-macros - if it's not a v-macro it is undefined
     )
     { return m; }
