@@ -682,10 +682,15 @@ export class LaTeXBase
             sy = Math.abs y
         else
             x = l.value
-            y = x * v.y.value / v.x.value
+            y = x * Math.abs v.y.value / v.x.value
 
             sx = Math.abs x
             sy = Math.max linethickness.value, Math.abs y
+
+        if v.x.value < 0
+            x *= -1
+        if v.y.value < 0
+            y *= -1
 
         @_line x, y, sx, sy
 
