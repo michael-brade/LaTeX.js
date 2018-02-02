@@ -95,7 +95,7 @@ text after
 .
 
 
-s** single environment, custom labels
+s** single itemize environment, custom labels
 .
 \begin{itemize}
     \item[\textendash] first item
@@ -161,7 +161,7 @@ this belongs to paragraph with description
 <p class="continue">this belongs to paragraph with description</p>
 .
 
-** quote, quotation, verse
+s** quote, quotation, verse
 .
 \begin{quote}
     Here are some centered\\
@@ -213,16 +213,26 @@ Afterwards, we continue as usual.
     The same is true\\
     for a flushleft environment.
 \end{flushleft}
+Afterwards, we continue as usual.
+\begin{flushright}
+    The same is true\\
+    for a flushright environment.
+\end{flushright}
 
 Yes, this is the last line.
 .
 <p>text</p>
 <div class="list center">
 <p>Here are some centered<br>lines of text</p>
-<p>as well as a paragraph.</p></div>
+<p>as well as a paragraph.</p>
+</div>
 <p class="continue">Afterwards, we continue as usual.</p>
 <div class="list flushleft">
 <p>The same is true<br>for a ﬂushleft environment.</p>
+</div>
+<p class="continue">Afterwards, we continue as usual.</p>
+<div class="list flushright">
+<p>The same is true<br>for a ﬂushright environment.</p>
 </div>
 <p>Yes, this is the last line.</p>
 .

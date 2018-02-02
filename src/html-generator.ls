@@ -113,16 +113,6 @@ export class HtmlGenerator
     picture-canvas:             do -> create ::inline-block, "picture-canvas"
 
 
-    # true if it is an inline element, something that makes up paragraphs
-    _isPhrasingContent: (type) ->
-        type in [
-            @inline-block
-            @verb
-            @linebreak
-            @link
-        ]
-
-
 
     ### public instance vars (vars beginning with "_" are meant to be private!)
 
@@ -130,6 +120,7 @@ export class HtmlGenerator
     documentClass: null     # name of the default document class until \documentclass{}, then the actual class
     documentTitle: null
 
+    # initialize only in CTOR, otherwise the objects end up in the prototype
     _options: null
     _macros: null
 
@@ -177,7 +168,6 @@ export class HtmlGenerator
 
         @_uid = 1
 
-        # initialize only in CTOR, otherwise the objects end up in the prototype
         @_dom = document.createDocumentFragment!
 
         @_macros = {}
@@ -187,6 +177,7 @@ export class HtmlGenerator
         # leaving a group removes the top entry
         @_stack = [
             attrs: {}
+            align: null
             currentlabel:
                 id: ""
                 label: document.createTextNode ""
@@ -329,8 +320,9 @@ export class HtmlGenerator
         else
             el = document.createElement type
 
-        if not @_isPhrasingContent type
-            classes += " " + @_blockAttributes!
+        if @alignment!
+            classes += " " + @alignment!
+
 
         # if continue then do not add parindent or parskip, we are not supposed to start a new paragraph
         if @_continue
@@ -519,6 +511,7 @@ export class HtmlGenerator
         # shallow copy of the contents of top is enough because we don't change the elements, only the array and the maps
         @_stack.push {
             attrs: Object.assign {}, @_stack.top.attrs
+            align: null                                                 # alignment is set only per level where it was changed
             currentlabel: Object.assign {}, @_stack.top.currentlabel
             lengths: new Map(@_stack.top.lengths)
         }
@@ -528,7 +521,6 @@ export class HtmlGenerator
     exitGroup: !->
         --@_groups.top >= 0 || error "there is no group to end here"
         @_stack.pop!
-
 
     # start a new level of grouping
     startBalanced: !->
@@ -553,6 +545,15 @@ export class HtmlGenerator
         @_continue = false
 
 
+    # alignment
+
+    setAlignment: (align) !->
+        @_stack.top.align = align
+
+    alignment: ->
+        @_stack.top.align
+
+
     # font attributes
 
     setFontFamily: (family) !->
@@ -573,9 +574,6 @@ export class HtmlGenerator
     setFontSize: (size) !->
         @_stack.top.attrs.fontSize = size
 
-    setAlignment: (align) !->
-        @_stack.top.attrs.align = align
-
     setTextDecoration: (decoration) !->
         @_stack.top.attrs.textDecoration = decoration
 
@@ -584,8 +582,6 @@ export class HtmlGenerator
         cur = @_stack.top.attrs
         [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.textDecoration].join(' ').replace(/\s+/g, ' ').trim!
 
-    _blockAttributes: ->
-        [@_stack.top.attrs.align].join(' ').replace(/\s+/g, ' ').trim!
 
 
     ### sectioning

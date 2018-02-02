@@ -282,17 +282,17 @@ h1, h2, h3, h4 {
 /* alignment */
 /*************/
 
-.center {
+.centering, .list.center {
     text-indent: 0;
     text-align: center;
 }
 
-.flushleft {
+.raggedright, .list.flushleft {
     text-indent: 0;
     text-align: left;
 }
 
-.flushright {
+.raggedleft, .list.flushright {
     text-indent: 0;
     text-align: right;
 }

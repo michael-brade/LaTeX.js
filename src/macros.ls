@@ -305,16 +305,18 @@ export class LaTeXBase
 
 
 
-    # block level: alignment   TODO: LaTeX doesn't allow hyphenation, but with e.g. \RaggedRight, it does. (package ragged2e)
+    # TODO: LaTeX doesn't allow hyphenation in alignment, but with e.g. \RaggedRight, it does. (package ragged2e)
+
+    # alignment
 
     args
      ..\centering =     \
      ..\raggedright =   \
      ..\raggedleft =    <[ HV ]>
 
-    \centering          :-> @g.setAlignment "center"
-    \raggedright        :-> @g.setAlignment "flushleft"
-    \raggedleft         :-> @g.setAlignment "flushright"
+    \centering          :!-> @g.setAlignment "centering"
+    \raggedright        :!-> @g.setAlignment "raggedright"
+    \raggedleft         :!-> @g.setAlignment "raggedleft"
 
 
 
