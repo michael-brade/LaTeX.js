@@ -444,6 +444,7 @@ h1, h2, h3, h4 {
 /* the coordinate system of the picture */
 .picture-canvas {
     display: flex;
+    align-items: flex-end;
     position: absolute;
     left: 0;
     bottom: 0;

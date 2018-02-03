@@ -643,9 +643,8 @@ export class LaTeXBase
         strut = @g.create @g.inline-block, undefined, "strut"
         strut.setAttribute "style", "height:#{Math.abs(y) + v.y.unit}"
 
-        put = @g.create @g.inline-block, [wrapper, strut], "picture"
+        @rlap @g.create @g.inline-block, [wrapper, strut], "picture"
 
-        @smash @rlap put
 
     # \multiput(x,y)(delta_x,delta_y){n}{obj}
     args.\multiput =    <[ H v v n g ]>
