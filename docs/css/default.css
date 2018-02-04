@@ -99,6 +99,8 @@ body {
     max-width: 40rem;
     margin: 1em auto;
     padding: 0 5em;
+
+    font-size: var(--size);
 }
 
 
@@ -282,17 +284,17 @@ h1, h2, h3, h4 {
 /* alignment */
 /*************/
 
-.center {
+.centering, .list.center {
     text-indent: 0;
     text-align: center;
 }
 
-.flushleft {
+.raggedright, .list.flushleft {
     text-indent: 0;
     text-align: left;
 }
 
-.flushright {
+.raggedleft, .list.flushright {
     text-indent: 0;
     text-align: right;
 }
@@ -414,6 +416,7 @@ h1, h2, h3, h4 {
 
 .underline {
     border-bottom: 0.4pt solid;
+    line-height: 1;
 }
 
 
@@ -442,6 +445,7 @@ h1, h2, h3, h4 {
 /* the coordinate system of the picture */
 .picture-canvas {
     display: flex;
+    align-items: flex-end;
     position: absolute;
     left: 0;
     bottom: 0;
@@ -451,7 +455,18 @@ h1, h2, h3, h4 {
 .put-obj {
     display: block;
     position: relative;
+    line-height: 0;
+    /* width: 0; */         /* picture objects only have a height, but we cannot set the
+                               width to 0 directly because it breaks vertical baseline alignment of text */
 }
+
+/* make text align on the baseline in the \put - needs line-height: 0 in .put-obj! */
+.put-obj:after {
+    content: '';
+    height: 100%;
+    display: inline-block;
+}
+
 
 .strut {
     display: block;
@@ -488,10 +503,10 @@ p {
 }
 
 
-h1 + p, h1 + div.multicols > p:first-child,
-h2 + p, h2 + div.multicols > p:first-child,
-h3 + p, h3 + div.multicols > p:first-child,
-h4 + p, h4 + div.multicols > p:first-child,
+h1 + p, h1 + * p:first-child,
+h2 + p, h2 + * p:first-child,
+h3 + p, h3 + * p:first-child,
+h4 + p, h4 + * p:first-child,
 .noindent,
 .continue {
     text-indent: 0;
@@ -639,20 +654,20 @@ dd {
 
 /* the TeX and LaTeX logos */
 
-span.tex span,
-span.latex span {
+span.tex,
+span.latex {
     text-transform: uppercase;
 }
 
-span.latex span:first-child {
+span.latex > .a {
     font-size: 0.8em;
     vertical-align: 0.2em;
     margin-left:  -0.45em;
     margin-right: -0.15em;
 }
 
-span.tex span:first-child,
-span.latex span:last-child {
+span.tex > .e,
+span.latex > .e {
     margin-left: -0.2em;
     margin-right: -0.2em;
     position: relative;
