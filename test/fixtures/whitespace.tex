@@ -44,14 +44,30 @@ first paragraph
 <p>second paragraph</p>
 .
 
-** \\ newline does not add space
+
+** \\ and \newline do not add spaces (they \unskip)
 .
 first line \\
  second line
+
+first line \newline
+ second line
 .
+<p>ﬁrst line<br>second line</p>
 <p>ﬁrst line<br>second line</p>
 .
 
+
+** \mbox: restricted horizontal mode eats all paragraphs
+.
+x\mbox{ one \\[4cm] space, no white \newline space \linebreak[4] me
+
+xx\par
+
+{xx \\  x}}x
+.
+<p>x<span class="hbox"><span> one space, no whitespace me xxxxx</span></span>x</p>
+.
 
 
 ** more than two newlines, including spaces, equal two newlines
