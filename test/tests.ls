@@ -84,6 +84,7 @@ describe 'LaTeX.js fixtures', !->
                     _test '   - screenshot', !->>
                         html = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .html!
                         await page.setContent html
+                        await page.addStyleTag content: "body { border: .4px solid; }"
 
                         filename = path.join __dirname, 'screenshots', desc + ' ' + fixture.header
 
