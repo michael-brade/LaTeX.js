@@ -452,6 +452,12 @@ h1, h2, h3, h4 {
     bottom: 0;
 }
 
+.picture-canvas > .hbox::after {
+    content: "";
+    display: inline;
+}
+
+
 /* objects in a picture */
 .put-obj {
     display: block;
@@ -461,10 +467,9 @@ h1, h2, h3, h4 {
                                width to 0 directly because it breaks vertical baseline alignment of text */
 }
 
-/* make text align on the baseline in the \put - needs line-height: 0 in .put-obj! */
+/* make text align on the baseline in \put - needs line-height: 0 in .put-obj! */
 .put-obj:after {
     content: '';
-    height: 100%;
     display: inline-block;
 }
 
