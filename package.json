@@ -1,7 +1,7 @@
 {
   "name": "latex.js",
   "description": "JavaScript LaTeX to HTML5 translator",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "author": {
     "name": "Michael Brade",
     "email": "brade@kde.org"
@@ -21,7 +21,8 @@
     "dist/latex-parser.js",
     "dist/macros.js",
     "dist/symbols.js",
-    "dist/html-generator.js"
+    "dist/html-generator.js",
+    "dist/documentclasses/"
   ],
   "scripts": {
     "clean": "rimraf dist bin;",

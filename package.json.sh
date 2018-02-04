@@ -2,7 +2,7 @@
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.8.0'
+version: '0.9.0'
 
 author:
     'name': 'Michael Brade'
@@ -27,6 +27,7 @@ files:
     'dist/macros.js'
     'dist/symbols.js'
     'dist/html-generator.js'
+    'dist/documentclasses/'
 
 
 scripts:
