@@ -416,6 +416,7 @@ h1, h2, h3, h4 {
 
 .underline {
     border-bottom: 0.4pt solid;
+    line-height: 1;
 }
 
 
