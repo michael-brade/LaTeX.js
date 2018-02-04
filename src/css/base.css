@@ -99,8 +99,6 @@ body {
     max-width: 40rem;
     margin: 1em auto;
     padding: 0 5em;
-
-    font-size: var(--size);
 }
 
 
@@ -133,6 +131,8 @@ body {
 
 html {
     font-family: "Computer Modern Serif", serif;
+    font-size: var(--size);
+
     text-align: justify;
     line-height: var(--line-height);
     hyphens: auto;
