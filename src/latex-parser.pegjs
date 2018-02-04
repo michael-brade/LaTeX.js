@@ -59,6 +59,12 @@ paragraph_with_linebreak =
     / break                                     { return g.create(g.linebreak); }
 
 
+line =
+    linebreak                                   { return undefined; }
+    / break                                     { return undefined; }
+    / text
+
+
 text "text" =
     p:(
         ligature
@@ -204,7 +210,8 @@ macro_args =
         &{ return g.nextArg("X") }                                                                                              { g.preExecMacro(); }
       / &{ return g.nextArg("s") }    skip_space s:"*"?                                                                         { g.addParsedArg(!!s); }
       / &{ return g.nextArg("g") }    a:(arg_group      / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
-      / &{ return g.nextArg("gr") }   a:(restr_hgroup   / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
+      / &{ return g.nextArg("hg") }   a:(arg_hgroup     / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
+      / &{ return g.nextArg("h") }    h:(horizontal     / . { error("expected horizontal material") })                          { g.addParsedArg(h); }
       / &{ return g.nextArg("o") }    o: opt_group?                                                                             { g.addParsedArg(o); }
       / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { g.addParsedArg(i); }
       / &{ return g.nextArg("i?") }   i: id_optgroup?                                                                           { g.addParsedArg(i); }
@@ -336,7 +343,20 @@ arg_group       =   skip_space begin_group      & { g.enterGroup(); g.startBalan
                     }
 
 
-restr_hgroup    =   skip_space // restricted horizontal mode group
+// restricted horizontal material
+horizontal      =   l:line*
+                    { return g.createFragment(l); }
+
+// restricted horizontal mode group
+arg_hgroup      =   skip_space begin_group      & { g.enterGroup(); g.startBalanced(); return true; }
+                        h:horizontal
+                    end_group
+                    {
+                        g.isBalanced() || error("groups inside an argument need to be balanced!");
+                        g.endBalanced();
+                        g.exitGroup();
+                        return h;
+                    }
 
 
 // [<LaTeX code/text>]

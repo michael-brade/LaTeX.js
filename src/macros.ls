@@ -85,8 +85,10 @@ export class LaTeXBase
     #  v?: optional vector
     #
     #   g: arggroup (possibly long - TeX allows \endgraf, but not \par... so allow \par as well)
-    #   gr: arggroup in restricted horizontal mode
+    #  hg: arggroup in restricted horizontal mode
     #   o: optional arg
+    #
+    #   h: restricted horizontal material
 
     args = @args = {}
 
@@ -373,10 +375,6 @@ export class LaTeXBase
 
     ### hboxes
 
-    # TODO: \par, \\ etc. should not do anything in those hboxes directly!
-    #       create special argument?
-    #       or check if argument txt is already a box then and create span or div accordingly??
-
     # lowlevel macros...
     args
      ..\llap =          \
@@ -385,7 +383,7 @@ export class LaTeXBase
      ..\smash =         \
      ..\hphantom =      \
      ..\vphantom =      \
-     ..\phantom =       <[ H g ]>   # TODO: not true, these should be usable in V-mode as well, they don't \leavevmode :(
+     ..\phantom =       <[ H hg ]>   # TODO: not true, these should be usable in V-mode as well, they don't \leavevmode :(
 
     \llap               : (txt) -> [ @g.create @g.inline-block, txt, "hbox llap" ]
     \rlap               : (txt) -> [ @g.create @g.inline-block, txt, "hbox rlap" ]
@@ -399,12 +397,12 @@ export class LaTeXBase
 
     # LaTeX
 
-    args.\underline     = <[ H g ]>
+    args.\underline     = <[ H hg ]>
     \underline          : (txt) -> [ @g.create @g.inline-block, txt, "hbox underline" ]
 
 
     # \mbox{text} - not broken into lines
-    args.\mbox =        <[ H g ]>
+    args.\mbox =        <[ H hg ]>
     \mbox               : (txt) -> @makebox undefined, undefined, undefined, txt
 
 
@@ -416,10 +414,10 @@ export class LaTeXBase
     #   position: c,l,r,s (default = c)
     # \makebox(width,height)[position]{text}
     #   position: c,l,r,s (default = c) and t,b or combinations of the two
-    args.\makebox =     <[ H v? l? i? g ]>
+    args.\makebox =     <[ H v? l? i? hg ]>
     \makebox            : (vec, width, pos, txt) ->
         if vec
-            # picture version
+            # picture version TODO
             @g.error "expected \\makebox(width,height)[position]{text} but got two optional arguments!" if width and pos
             pos = width
 
@@ -438,15 +436,15 @@ export class LaTeXBase
     # \framebox(width,height)[position]{text}
     #   position: t,b,l,r (one or two)
     # this one uses the picture line thickness
-    args.\fbox =        <[ H g ]>
-    args.\framebox =    <[ H v? l? i? g ]>
+    args.\fbox =        <[ H hg ]>
+    args.\framebox =    <[ H v? l? i? hg ]>
 
     \fbox               : (txt) ->
         @framebox undefined, undefined, undefined, txt
 
     \framebox           : (vec, width, pos, txt) ->
         if vec
-            # picture version
+            # picture version TODO
             @g.error "expected \\framebox(width,height)[position]{text} but got two optional arguments!" if width and pos
         else
             # normal framebox
