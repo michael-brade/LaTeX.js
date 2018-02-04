@@ -99,6 +99,8 @@ body {
     max-width: 40rem;
     margin: 1em auto;
     padding: 0 5em;
+
+    font-size: var(--size);
 }
 
 
