@@ -664,12 +664,68 @@ export class LaTeXBase
 
     # \circle[*]{diameter}
     args.\circle =      <[ H s cl ]>
+    \circle             : (s, d) ->
+        # increase border by linewidth
+        linethickness = @g.length \@wholewidth
+        lw = linethickness.value
+
+        svg = @g.create @g.inline-block, undefined, "picture-object"
+        svg.setAttribute "style", "left:#{-d.value/2 - lw}px;bottom:#{-d.value/2 - lw}px"
+
+        draw = @g.SVG(svg).size (d.value + lw*2) + d.unit, (d.value + lw*2) + d.unit
+
+        draw.circle(d.value + d.unit)
+            .cx((d.value/2 + lw) + d.unit)
+            .cy((d.value/2 + lw) + d.unit)
+            .stroke { width: linethickness.value + linethickness.unit }
+            .fill(if s then "" else "none")
+
+        # last, put the origin into the lower left
+        draw.flip 'y', 0
+
+        [ @g.create @g.inline-block, svg, "picture" ]
+
 
     # \line(xslope,yslope){length}
     #   if xslope != 0 then length is horizontal, else it is vertical
     #   if xslope == yslope == 0 then error
     args.\line =        <[ H v cl ]>
     \line               : (v, l) ->
+        [ x, y, sx, sy ] = @_slopeLengthToCoords v, l
+        [ @_line x, y, sx, sy ]
+
+
+    # \vector(xslope,yslope){length}
+    args.\vector =      <[ H v cl ]>
+    \vector             : (v, l) ->
+        [ x, y, sx, sy ] = @_slopeLengthToCoords v, l
+        [ @_vector x, y, sx, sy ]
+
+
+    # \Line(x2,y2)
+    args.\Line =        <[ H v ]>
+    \Line               : (v) ->
+        linethickness = @g.length \@wholewidth
+        x = v.x.value
+        y = v.y.value
+        sx = Math.abs x
+        sy = Math.max linethickness.value, Math.abs y
+
+        [ @_line x, y, sx, sy ]
+
+
+    args.\Vector =      <[ H v ]>
+    \Vector             : (v) ->
+        linethickness = @g.length \@wholewidth
+        x = v.x.value
+        y = v.y.value
+        sx = Math.abs x
+        sy = Math.max linethickness.value, Math.abs y
+
+        [ @_vector x, y, sx, sy ]
+
+
+    _slopeLengthToCoords: (v, l) ->
         @g.error "illegal slope (0,0)" if v.x.value == v.y.value == 0
         @g.error "relative units not allowed for slope" if v.x.unit != v.y.unit or v.x.unit != "px"
 
@@ -693,25 +749,7 @@ export class LaTeXBase
         if v.y.value < 0
             y *= -1
 
-        @_line x, y, sx, sy
-
-
-    # \vector(xslope,yslope){length}
-    args.\vector =      <[ H v cl ]>
-
-    # \Line(x2,y2)
-    args.\Line =        <[ H v ]>
-    \Line               : (v) ->
-        linethickness = @g.length \@wholewidth
-        x = v.x.value
-        y = v.y.value
-        sx = Math.abs x
-        sy = Math.max linethickness.value, Math.abs y
-
-        @_line x, y, sx, sy
-
-
-    args.\Vector =      <[ H v ]>
+        [ x, y, sx, sy ]
 
 
     # helper: draw line to x, y; SVG size is (sx, sy)
@@ -723,12 +761,40 @@ export class LaTeXBase
         draw.viewbox Math.min(0, x), Math.min(0, y), sx, sy
 
         linethickness = @g.length \@wholewidth
-        draw.line(0, 0, x, y).stroke { width: linethickness.value + linethickness.unit }
+        draw.line(0, 0, x, y)
+            .stroke { width: linethickness.value + linethickness.unit }
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        [ @g.create @g.inline-block, svg, "picture" ]
+        @g.create @g.inline-block, svg, "picture"
+
+
+    # helper: draw arrow to x, y; SVG size is (sx+10, sy+10) so as not to clip the arrow head
+    _vector: (x, y, sx, sy) ->
+        svg = @g.create @g.inline-block, undefined, "picture-object"
+        svg.setAttribute "style", "left:#{Math.min(0, x)}px;bottom:#{Math.min(0, y)}px"
+
+        sx += 10
+        sy += 10
+
+        draw = @g.SVG(svg).size sx, sy
+        draw.viewbox Math.min(0, x), Math.min(0, y), sx, sy
+
+        linethickness = @g.length \@wholewidth
+        draw.line(0, 0, x, y)
+            .stroke { width: linethickness.value + linethickness.unit }
+            # marker width and height
+            .marker 'end', 10, 5, (add) ->
+                add.polyline [[0, 0], [10, 2.5], [0, 5]]
+                   .move(-5, 0)
+                   .stroke { width: linethickness.value + linethickness.unit }
+
+        # last, put the origin into the lower left
+        draw.flip 'y', 0
+
+        @g.create @g.inline-block, svg, "picture"
+
 
 
     # \oval[radius](width,height)[portion]
