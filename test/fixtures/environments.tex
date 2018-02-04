@@ -163,39 +163,46 @@ this belongs to paragraph with description
 
 s** quote, quotation, verse
 .
+\noindent quote:
 \begin{quote}
-    Here are some centered\\
+    Here are some quote\\
     lines of text
 
     as well as a paragraph with special chars [].
 \end{quote}
-
+quotation:
 \begin{quotation}
-    Here are some centered\\
+    Here are some quotation\\
     lines of text
 
     as well as a paragraph.
 \end{quotation}
-
+verse:
 \begin{verse}
-    Here are some centered\\
-    lines of text
+    Here are some verse lines of text lines of text lines of text lines of text lines of text \\
+    lines of text lines of text lines of text lines of text lines of text lines of text
 
-    as well as a paragraph.
+    as well as a paragraph with trailing newline.\\
 \end{verse}
+And now we continue without indentation.
 .
+<p class="noindent">quote:</p>
 <div class="list quote">
-<p>Here are some centered<br>lines of text</p>
+<p>Here are some quote<br>lines of text</p>
 <p>as well as a paragraph with special chars [].</p>
 </div>
+<p class="continue">quotation:</p>
 <div class="list quotation">
-<p>Here are some centered<br>lines of text</p>
+<p>Here are some quotation<br>lines of text</p>
 <p>as well as a paragraph.</p>
 </div>
+<p class="continue">verse:</p>
 <div class="list verse">
-<p>Here are some centered<br>lines of text</p>
-<p>as well as a paragraph.</p>
+<p>Here are some verse lines of text lines of text lines of text lines of text lines of text<br>
+lines of text lines of text lines of text lines of text lines of text lines of text</p>
+<p>as well as a paragraph with trailing newline.<br></p>
 </div>
+<p class="continue">And now we continue without indentation.</p>
 .
 
 
@@ -237,6 +244,17 @@ Yes, this is the last line.
 <p>Yes, this is the last line.</p>
 .
 
+
+** abstract and fonts
+.
+\begin{abstract}
+\itshape
+The title must not be italic.
+\end{abstract}
+.
+<div class="list center"><span class="bf small">Abstract</span></div>
+<div class="list quotation"><p><span class="it small">The title must not be italic.</span></p></div>
+.
 
 
 ** comment environment

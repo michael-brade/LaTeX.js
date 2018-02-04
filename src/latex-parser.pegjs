@@ -224,6 +224,9 @@ macro_args =
       / &{ return g.nextArg("cl") }   c:(coord_group    / . { error("macro " + name + " is missing a coordinate/length group") })   { g.addParsedArg(c); }
       / &{ return g.nextArg("v") }    v:(vector         / . { error("macro " + name + " is missing a coordinate pair") })       { g.addParsedArg(v); }
       / &{ return g.nextArg("v?") }   v: vector?                                                                                { g.addParsedArg(v); }
+
+      / &{ return g.nextArg("items") }      i:items                                                                             { g.addParsedArg(i); }
+      / &{ return g.nextArg("enumitems") }  i:enumitems                                                                         { g.addParsedArg(i); }
     )*
 
 
@@ -461,133 +464,73 @@ verb            =   "verb" s:"*"? skip_space !char
 /****************/
 
 begin_env "\\begin" =
-    skip_all_space
-    escape begin                                { g.break(); }
+    skip_all_space      // TODO: true for inline envs?? NOOO!!
+    escape begin
+    begin_group id:identifier end_group
+    {
+        return g.begin(id);
+    }
 
 end_env "\\end" =
     skip_all_space
     escape end
-    begin_group id:identifier end_group         { return id; }
-
-environment "environment" =
-    begin_env begin_group                       & { g.startBalanced(); g.enterGroup(); return true; }
-    e:(
-        titlepage
-      / abstract
-      / itemize
-      / enumerate
-      / description
-      / quote_quotation_verse
-      / font
-      / alignment
-      / multicols
-      / picture
-      / unknown_environment
-    )
-    id:end_env
+    begin_group id:identifier end_group
     {
-        // each environment has to return a json object: { name: <name in begin>, node: <content node> }
-        if (e.name != id)
-            error("environment <b>" + e.name + "</b> is missing its end, found " + id + " instead");
-
-        g.exitGroup();
-        g.isBalanced() || error(e.name + ": groups need to be balanced in environments!");
-        g.endBalanced();
-
-        return e.node;
+        return id;
     }
 
 
-unknown_environment =
-    e:identifier
-    { error("unknown environment: " + e); }
 
-
-    
-
-// titling
-
-titlepage = name:"titlepage" end_group
-    skip_space
-    p:paragraph*
+environment =
+    id:begin_env
+    macro_args                                          // parse macro args (which now become environment args)
+    node:( &. { return g.macro(id, g.endArgs()); })     // then execute macro with args without consuming input
+    p:paragraph*                                        // then parse environment contents (if macro left some)
+    end_id:end_env
     {
-        return {
-            name: name,
-            node: g.create(g[name], p)
+        if (id != end_id)
+            error("environment '" + id + "' is missing its end, found '" + end_id + "' instead");
+
+        var end = g.end(end_id);
+
+        // if nodes are created by macro, add content as children to the last element
+        // if node is a text node, just add it
+
+        if (p.length > 0 && node && node.length > 0 && node[node.length - 1].nodeType === 1) {
+            node[node.length - 1].appendChild(g.createFragment(p));
+            return g.createFragment(node, end);
         }
+
+        return g.createFragment(node, p, end);
     }
 
 
-abstract = name:"abstract" end_group        &{ g.setFontSize("small"); return true; }
-    skip_space
-    p:paragraph*
-    {
-        g.enterGroup();
-        g.setFontWeight("bf");
-        var head = g.create(g.list, g.macro("abstractname"), "center");
-        g.exitGroup();
-
-        g.startlist();
-        var body = g.create(g.quotation, p);
-        g.endlist();
-
-        return {
-            name: name,
-            node: g.create(g[name], [head, body])
-        }
-    }
 
 
-// lists: itemize, enumerate, description
 
-itemize =
-    name:"itemize" end_group
-    &{
-        g.startlist();
-        g.stepCounter("@itemdepth");
-        if (g.counter("@itemdepth") > 4) {
-            error("too deeply nested");
-        }
-        return true;
-    }
-    items:(
+// lists: items, enumerated items
+
+
+item =
+    skip_all_space escape "item" !char og:opt_group? skip_all_space
+    { return og; }
+
+// items without a counter
+items =
+    (
         label:item &{ g.break(); return true; }             // break when starting an item
         pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
-        { return [label, pars]; }
+        {
+            return {
+                label: label,
+                text: pars
+            };
+        }
     )*
-    {
-        g.endlist();
 
-        var label = "labelitem" + g.roman(g.counter("@itemdepth"));
-        g.setCounter("@itemdepth", g.counter("@itemdepth") - 1);
-
-        return {
-            name: name,
-            node: g.create(g.unorderedList,
-                        items.map(function(label_text) {
-                            // null means no opt_group was given (\item ...), undefined is an empty one (\item[] ...)
-                            label_text[1].unshift(g.create(g.itemlabel, g.create(g.inlineBlock, label_text[0] !== null ? label_text[0] : g.macro(label))));
-
-                            return g.create(g.listitem, label_text[1]);
-                        }))
-        }
-    }
-
-
-enumerate =
-    name:"enumerate" end_group
-    &{
-        g.startlist();
-        g.stepCounter("@enumdepth");
-        if (g.counter("@enumdepth") > 4) {
-            error("too deeply nested");
-        }
-
-        var itemCounter = "enum" + g.roman(g.counter("@enumdepth"));
-        g.setCounter(itemCounter, 0);
-        return true;
-    }
-    items:(
+// enumerated items
+enumitems =
+    (
         label:(label:item {
             g.break();                                      // break when starting an item
             // null is no opt_group (\item ...)
@@ -615,144 +558,6 @@ enumerate =
             };
         }
     )*
-    {
-        g.endlist();
-        g.setCounter("@enumdepth", g.counter("@enumdepth") - 1);
-
-        return {
-            name: name,
-            node: g.create(g.orderedList,
-                        items.map(function(item) {
-                            var label = g.create(g.inlineBlock, item.label.node);
-                            if (item.label.id)
-                                label.id = item.label.id;
-                            item.text.unshift(g.create(g.itemlabel, label));
-                            return g.create(g.listitem, item.text);
-                        }))
-        }
-    }
-
-
-description =
-    name:"description" end_group    &{ return g.startlist(); }
-    items:(
-        label:item &{ g.break(); return true; }             // break when starting an item
-        pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
-        { return [label, pars]; }
-    )*
-    {
-        g.endlist();
-
-        return {
-            name: name,
-            node: g.create(g.descriptionList,
-                        items.map(function(label_text) {
-                            var dt = g.create(g.term, label_text[0]);
-                            var dd = g.create(g.description, label_text[1]);
-                            return g.createFragment([dt, dd]);
-                        }))
-        }
-    }
-
-
-
-item =
-    skip_all_space escape "item" !char og:opt_group? skip_all_space
-    { return og; }
-
-
-// quote, quotation, verse
-quote_quotation_verse =
-    name:("quote"/"quotation"/"verse") end_group    &{ return g.startlist(); }
-    skip_space
-    p:paragraph*
-    {
-        g.endlist();
-        return {
-            name: name,
-            node: g.create(g[name], p)
-        }
-    }
-
-
-// font environments
-
-font =
-    name:$
-    ( size:  ("tiny"/"scriptsize"/"footnotesize"/"small"/
-              "normalsize"/"large"/"Large"/"LARGE"/"huge"/"Huge")   &{ g.setFontSize(size); return true; }
-    / family:("rm"/"sf"/"tt")"family"                               &{ g.setFontFamily(family); return true; }
-    / weight:("md"/"bf")"series"                                    &{ g.setFontWeight(weight); return true; }
-    / shape: ("up"/"it"/"sl"/"sc")"shape"                           &{ g.setFontShape(shape); return true; }
-    / "normalfont"                                                  &{ g.setFontFamily("rm");
-                                                                       g.setFontWeight("md");
-                                                                       g.setFontShape("up"); return true; }
-    ) end_group skip_space
-    p:paragraph*
-    {
-        return {
-            name: name,
-            node: g.create(g.block, p)
-        }
-    }
-
-
-
-// alignment:  flushleft, flushright, center
-
-alignment =
-    align:("flushleft"/"flushright"/"center")
-    end_group
-    skip_space
-        p:paragraph*
-    {
-        // only set alignment on the g.list
-        return {
-            name: align,
-            node: g.create(g.list, p, align)
-        }
-    }
-
-
-// multicolumns
-
-// \begin{multicols}{number}[pretext][premulticols size]
-multicols =
-    name:("multicols") end_group
-    conf:(begin_group c:digit end_group o:opt_group? opt_group? { return { cols: c, pre: o } }
-         / &{ error("multicols error, required syntax: \\begin{multicols}{number}[pretext][premulticols size]") }
-         )
-    pars:paragraph*
-    {
-        var node = g.create(g.multicols(conf.cols), pars)
-        return {
-            name: name,
-            node: g.createFragment([conf.pre, node])
-        }
-    }
-
-
-
-// graphics
-
-// \begin{picture}(width,height)(xoffset,yoffset)
-picture =
-    name:("picture") end_group
-    conf:(size:vector offset:vector? { return { size: size, offset: offset } }
-         / &{ error("picture error, required syntax: \\begin{picture}(width,height)[(xoffset,yoffset)]") }
-         )
-    // TODO: rule for picture content??? LaTeX allows anything, Lamport says: HV macros and picture commands
-    content:text*
-    {
-        var picture = g.createPicture(conf.size, conf.offset, content);
-
-        return {
-            name: name,
-            node: picture
-        }
-    }
-
-
 
 
 

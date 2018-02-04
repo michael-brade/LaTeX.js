@@ -321,6 +321,155 @@ export class LaTeXBase
     \raggedleft         :!-> @g.setAlignment "raggedleft"
 
 
+    # alignment environments using a list:  flushleft, flushright, center
+
+    args
+     ..\center =        \
+     ..\flushleft =     \
+     ..\flushright =    <[ HV ]>
+
+    \center             :-> [ @g.create @g.list, null, "center" ]
+    \flushleft          :-> [ @g.create @g.list, null, "flushleft" ]
+    \flushright         :-> [ @g.create @g.list, null, "flushright" ]
+
+
+
+    # titling
+
+    args
+     ..\titlepage =     <[ V ]>
+
+    \titlepage          :-> [ @g.create @g.titlepage ]
+
+
+    args
+     ..\quote =         \
+     ..\quotation =     \
+     ..\verse =         <[ V ]>
+
+     ..\abstract =      <[ H ]>
+
+
+    # TODO: only in article, report
+    \abstract           :->
+        # onecolumn, no titlepage
+        @g.setFontSize "small"
+
+        # TODO use center env directly instead...
+        @g.enterGroup!
+        @g.setFontWeight("bf")
+        head = @g.create @g.list, @g.macro("abstractname"), "center"
+        @g.exitGroup!
+
+        [ head ] ++ @quotation!
+
+    \endabstract        :!-> @endquotation!
+
+
+    # quote, quotation, verse
+
+    \quote              :->  @g.startlist!; [ @g.create @g.quote ]
+    \endquote           :!-> @g.endlist!
+
+    \quotation          :->  @g.startlist!; [ @g.create @g.quotation ]
+    \endquotation       :!-> @g.endlist!
+
+    \verse              :->  @g.startlist!; [ @g.create @g.verse ]
+    \endverse           :!-> @g.endlist!
+
+
+    # lists: itemize, enumerate, description
+
+    args.\itemize =     <[ V X items ]>
+    \itemize            : (items) ->
+        if &length == 0
+            @g.startlist!
+            @g.stepCounter \@itemdepth
+            @g.error "too deeply nested" if @g.counter(\@itemdepth) > 4
+            return
+
+        label = "labelitem" + @g.roman @g.counter \@itemdepth
+
+        [
+        @g.create @g.unorderedList, items.map (item) ~>
+            # null means no opt_group was given (\item ...), undefined is an empty one (\item[] ...)
+            item.text.unshift(@g.create(@g.itemlabel, @g.create @g.inline-block, if item.label != null then item.label else @g.macro(label)))
+
+            @g.create @g.listitem, item.text
+        ]
+
+
+    \enditemize         :!->
+        @g.endlist!
+        @g.setCounter \@itemdepth, @g.counter(\@itemdepth) - 1
+
+
+
+    args.\enumerate =   <[ V X enumitems ]>
+    \enumerate          : (items) ->
+        if &length == 0
+            @g.startlist!
+            @g.stepCounter \@enumdepth
+            @g.error "too deeply nested" if @g.counter(\@enumdepth) > 4
+            return
+
+        itemCounter = "enum" + @g.roman @g.counter \@enumdepth
+        @g.setCounter itemCounter, 0
+
+        [
+        @g.create @g.orderedList, items.map (item) ~>
+            label = @g.create @g.inlineBlock, item.label.node
+            if item.label.id
+                label.id = item.label.id
+
+            item.text.unshift(@g.create @g.itemlabel, label)
+
+            @g.create @g.listitem, item.text
+        ]
+
+
+    \endenumerate       :!->
+        @g.endlist!
+        @g.setCounter \@enumdepth, @g.counter(\@enumdepth) - 1
+
+
+    args.\description = <[ V X items ]>
+    \description        : (items) ->
+        if &length == 0
+            @g.startlist!
+            return
+
+        [
+        @g.create @g.descriptionList, items.map (item) ~>
+            dt = @g.create @g.term, item.label
+            dd = @g.create @g.description, item.text
+            @g.createFragment [dt, dd]
+        ]
+
+    \enddescription     :!-> @g.endlist!
+
+
+
+    # multicolumns
+
+    # \begin{multicols}{number}[pretext][premulticols size]
+    args.\multicols =   <[ V n o o ]>
+
+    \multicols          : (cols, pre) -> [ pre, @g.create @g.multicols cols ]
+
+
+    # picture
+
+    # \begin{picture}(width,height)(xoffset,yoffset)
+    args.\picture =     <[ H v v? h ]>
+
+    \picture            : (size, offset, content) ->
+        # TODO: rule for picture content??? LaTeX allows anything, Lamport says: HV macros and picture commands
+        # content:text*
+        [ @g.createPicture(size, offset, content) ]
+
+
+
 
     ##############
 

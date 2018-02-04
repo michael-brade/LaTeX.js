@@ -498,9 +498,30 @@ export class HtmlGenerator
             return ..parsed
 
 
+    ### environments
+
+    begin: (env_id) ->
+        if not @hasMacro env_id
+            error "unknown environment: #{env_id}"
+
+        @break!                 # TODO: only if Vmode...
+
+        @startBalanced!
+        @enterGroup!
+        @beginArgs env_id
+
+        env_id
 
 
+    end: (env_id) ->
+        if @hasMacro "end" + env_id
+            end = @macro "end" + env_id
 
+        @exitGroup!
+        @isBalanced! or error "#{env_id}: groups need to be balanced in environments!"
+        @endBalanced!
+
+        end
 
 
 
