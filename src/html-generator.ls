@@ -106,7 +106,7 @@ export class HtmlGenerator
                                             el.removeAttribute "href"
                                         return el
 
-    verb:                       "code"
+    verb:                       do -> create "code", "tt"
     verbatim:                   "pre"
 
     picture:                    do -> create ::inline-block, "picture"
