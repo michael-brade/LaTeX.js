@@ -20,12 +20,12 @@
     --listparindent: 0px;
     --itemindent: 0px;
 
-    --leftmargini: 2.5rem;
-    --leftmarginii: 2.2rem;
-    --leftmarginiii: 1.87rem;
-    --leftmarginiv: 1.7rem;
-    --leftmarginv: 1rem;
-    --leftmarginvi: 1rem;
+    --leftmargini: 2.5em;
+    --leftmarginii: 2.2em;
+    --leftmarginiii: 1.87em;
+    --leftmarginiv: 1.7em;
+    --leftmarginv: 1em;
+    --leftmarginvi: 1em;
 
     --leftmargin: var(--leftmargini);
 
@@ -49,9 +49,10 @@
     --parindent: 1em;
 
     --marginparsep: 1rem;
-    --leftmargini: 2rem;
-    --leftmarginv: 0.5rem;
-    --leftmarginvi: 0.5rem;
+
+    --leftmargini: 2em;
+    --leftmarginv: 0.5em;
+    --leftmarginvi: 0.5em;
 }
 
 
@@ -300,10 +301,10 @@ h1, h2, h3, h4 {
 }
 
 
-/* alignment environments are lists (trivlist), so padding has to be removed */
+/* alignment environments are lists (trivlist), so margin has to be removed */
 
 .list.center, .list.flushleft, .list.flushright {
-    padding-left: 0 !important;
+    margin-left: 0 !important;
 }
 
 
@@ -497,9 +498,10 @@ code {
 /* spaces */
 /**********/
 
-
+/* reset */
 p, ul, ol, dl, div {
     margin: 0;
+    padding: 0;
 }
 
 p {
@@ -567,7 +569,7 @@ h4 + p, h4 + * p:first-child,
 
 .list {
     margin: calc(var(--topsep) + var(--parskip)) 0;
-    padding-left: var(--leftmargin);
+    margin-left: var(--leftmargin);
 }
 
 .list p:first-of-type {
@@ -635,9 +637,8 @@ dd {
 /* quote, quotation, verse */
 
 .quote, .quotation, .verse {
-    margin-left: 4rem  !important;       /* \leftmargin */
-    margin-right: 4rem !important;
-    padding: 0 !important;
+    margin-left: var(--leftmargin);
+    margin-right: var(--leftmargin);
 }
 
 .quotation {
@@ -649,6 +650,7 @@ dd {
 .verse {
     text-align: left;
 
+    margin-left: calc(1.5em + var(--leftmargin));
     --itemindent: -1.5em;
     --listparindent: var(--itemindent);
 }
