@@ -20,13 +20,13 @@ this belongs to paragraph with itemize
 .
 <p>a paragraph of text</p>
 <ul class="list">
-<li><span class="itemlabel"><span>•</span></span><p>ﬁrst item</p><p>with a new paragraph</p></li>
-<li><span class="itemlabel"><span>•</span></span><p>second item</p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>ﬁrst item</p><p>with a new paragraph</p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>second item</p></li>
 </ul>
 <p>more text</p>
 <ul class="list">
-<li><span class="itemlabel"><span>•</span></span><p>ﬁrst item</p></li>
-<li><span class="itemlabel"><span>•</span></span><p>second item</p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>ﬁrst item</p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>second item</p></li>
 </ul>
 <p class="continue">this belongs to paragraph with itemize</p>
 .
@@ -42,7 +42,7 @@ this belongs to paragraph with itemize
 .
 <ul class="list"></ul>
 <ul class="list">
-<li><span class="itemlabel"><span>•</span></span><p>text that doesn’t continue</p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>text that doesn’t continue</p></li>
 </ul>
 .
 
@@ -60,9 +60,9 @@ text after
 .
 <p>text before</p>
 <ul class="list">
-<li><span class="itemlabel"><span>•</span></span><p>ﬁrst item</p>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>ﬁrst item</p>
 <ul class="list">
-<li><span class="itemlabel"><span>•</span></span><p>ﬁrst nested item</p></li>
+<li><span class="itemlabel"><span class="hbox llap"><span class="rm bf up">–</span></span></span><p>ﬁrst nested item</p></li>
 </ul>
 </li>
 </ul>
@@ -84,12 +84,15 @@ text after
 .
 <p>text before</p>
 <ul class="list">
-<li><span class="itemlabel"><span>•</span></span><p>ﬁrst item</p>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span>
+<p>ﬁrst item</p>
 <ul class="list">
-<li><span class="itemlabel"><span><span class="rm bf up">–</span></span></span><p>ﬁrst nested item</p></li>
+<li><span class="itemlabel"><span class="hbox llap"><span class="rm bf up">–</span></span></span><p>ﬁrst nested item</p></li>
 </ul>
 </li>
-<li><span class="itemlabel"><span>•</span></span><p>second item</p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span>
+<p>second item</p>
+</li>
 </ul>
 <p class="continue">text after</p>
 .
@@ -104,9 +107,9 @@ s** single itemize environment, custom labels
 \end{itemize}
 .
 <ul class="list">
-<li><span class="itemlabel"><span>–</span></span><p>ﬁrst item</p></li>
-<li><span class="itemlabel"><span></span></span><p>second item</p></li>
-<li><span class="itemlabel"><span>•</span></span><p>third item</p></li>
+<li><span class="itemlabel"><span class="hbox llap">–</span></span><p>ﬁrst item</p></li>
+<li><span class="itemlabel"><span class="hbox llap"></span></span><p>second item</p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>third item</p></li>
 </ul>
 .
 
@@ -127,11 +130,11 @@ this belongs to paragraph with enumerate
 <p>a paragraph of text</p>
 <ol class="list">
 <li>
-<span class="itemlabel"><span><span class="it">label</span></span></span>
+<span class="itemlabel"><span class="hbox llap"><span><span class="it">label</span></span></span></span>
 <p>ﬁrst item</p><p>with a new paragraph</p>
 </li>
 <li>
-<span class="itemlabel"><span id="item-1">1.</span></span>
+<span class="itemlabel"><span class="hbox llap"><span id="item-1">1.</span></span></span>
 <p>second item</p>
 </li>
 </ol>
