@@ -248,6 +248,41 @@ Yes, this is the last line.
 .
 
 
+s** alignment of lists
+.
+\begin{center}
+    Center environment should not center the list.
+    \begin{itemize}
+        \item first item
+        \item second item
+    \end{itemize}
+\end{center}
+But centering command should:
+\begin{itemize}
+    \centering
+    \item[\textendash] first item
+    \item[] second item
+    \item third item
+\end{itemize}
+Afterwards, we continue as usual.
+.
+<div class="list center">
+<p>Center environment should not center the list.</p>
+<ul class="list">
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>ﬁrst item</p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>second item</p></li>
+</ul>
+</div>
+<p class="continue">But centering command should:</p>
+<ul class="list centering">
+<li class="centering"><span class="itemlabel centering"><span class="hbox llap centering">–</span></span><p class="centering">ﬁrst item</p></li>
+<li class="centering"><span class="itemlabel centering"><span class="hbox llap centering"></span></span><p class="centering">second item</p></li>
+<li class="centering"><span class="itemlabel centering"><span class="hbox llap centering">•</span></span><p class="centering">third item</p></li>
+</ul>
+<p class="continue">Afterwards, we continue as usual.</p>
+.
+
+
 ** abstract and fonts
 .
 \begin{abstract}

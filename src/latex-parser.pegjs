@@ -518,6 +518,7 @@ item =
 // items without a counter
 items =
     (
+        (skip_all_space hv_macro)*
         label:item &{ g.break(); return true; }             // break when starting an item
         pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
         {
@@ -531,6 +532,7 @@ items =
 // enumerated items
 enumitems =
     (
+        (skip_all_space hv_macro)*
         label:(label:item {
             g.break();                                      // break when starting an item
             // null is no opt_group (\item ...)

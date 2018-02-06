@@ -307,6 +307,10 @@ h1, h2, h3, h4 {
     margin-left: 0 !important;
 }
 
+/* a list on its own justifies */
+.list {
+    text-align: justify;
+}
 
 
 
