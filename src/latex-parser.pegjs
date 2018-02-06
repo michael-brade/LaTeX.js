@@ -523,7 +523,7 @@ items =
         {
             return {
                 label: label,
-                text: pars
+                text: g.createFragment(pars)
             };
         }
     )*
@@ -554,7 +554,7 @@ enumitems =
         {
             return {
                 label: label,
-                text: pars
+                text: g.createFragment(pars)
             };
         }
     )*

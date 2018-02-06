@@ -591,14 +591,14 @@ li {
     list-style: none;
 }
 
-li > .itemlabel {
-    position: relative;
+/* label should be next to the item, so the first element after the label needs to be inline */
+.itemlabel + * {
+    display: inline;
 }
 
-li .itemlabel > span {
-    position: absolute;
+.itemlabel > * {
+    position: relative;
     right: var(--labelsep);
-    white-space: nowrap;
 }
 
 
@@ -610,7 +610,7 @@ dd, dd > p:first-child {
     display: inline;
 }
 
-
+/* start a new line after dd and before dt */
 dd::after {
     content: "";
     display: block;

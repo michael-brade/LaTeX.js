@@ -392,10 +392,10 @@ export class LaTeXBase
 
         [
         @g.create @g.unorderedList, items.map (item) ~>
-            # null means no opt_group was given (\item ...), undefined is an empty one (\item[] ...)
-            item.text.unshift(@g.create(@g.itemlabel, @g.create @g.inline-block, if item.label != null then item.label else @g.macro(label)))
+            # label: null means no opt_group was given (\item ...), undefined is an empty one (\item[] ...)
 
-            @g.create @g.listitem, item.text
+            makelabel = @g.create @g.itemlabel, @\llap (if item.label != null then item.label else @g.macro label)
+            @g.create @g.listitem, [ makelabel, item.text ]
         ]
 
 
@@ -422,9 +422,8 @@ export class LaTeXBase
             if item.label.id
                 label.id = item.label.id
 
-            item.text.unshift(@g.create @g.itemlabel, label)
-
-            @g.create @g.listitem, item.text
+            makelabel = @g.create @g.itemlabel, @\llap label
+            @g.create @g.listitem, [ makelabel, item.text ]
         ]
 
 
