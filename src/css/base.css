@@ -426,7 +426,6 @@ h1, h2, h3, h4 {
     border: var(--fboxrule) solid;
     margin-top: 2px;
     margin-bottom: 2px;
-    bottom: calc(-1 * (var(--fboxsep) + var(--fboxrule) + 2px));
 }
 
 
