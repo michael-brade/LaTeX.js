@@ -159,8 +159,6 @@ export class LaTeXBase
 
     # vertical mode declarations
     args.\par           = <[ V ]>
-    args.\begin         = <[ V ]>
-    args.\end           = <[ V ]>
     args.\item          = <[ V ]>
 
 
@@ -326,7 +324,7 @@ export class LaTeXBase
     args
      ..\center =        \
      ..\flushleft =     \
-     ..\flushright =    <[ HV ]>
+     ..\flushright =    <[ V ]>
 
     \center             :-> [ @g.create @g.list, null, "center" ]
     \flushleft          :-> [ @g.create @g.list, null, "flushleft" ]

@@ -500,25 +500,26 @@ export class HtmlGenerator
 
     ### environments
 
-    begin: (env_id) ->
+    begin: (env_id) !->
         if not @hasMacro env_id
             error "unknown environment: #{env_id}"
 
-        @break!                 # TODO: only if Vmode...
+        # @break!     # TODO: only if Vmode...
 
         @startBalanced!
         @enterGroup!
         @beginArgs env_id
 
-        env_id
 
+    end: (id, end_id) ->
+        if id != end_id
+            error "environment '#{id}' is missing its end, found '#{end_id}' instead"
 
-    end: (env_id) ->
-        if @hasMacro "end" + env_id
-            end = @macro "end" + env_id
+        if @hasMacro "end" + id
+            end = @macro "end" + id
 
         @exitGroup!
-        @isBalanced! or error "#{env_id}: groups need to be balanced in environments!"
+        @isBalanced! or error "#{id}: groups need to be balanced in environments!"
         @endBalanced!
 
         end

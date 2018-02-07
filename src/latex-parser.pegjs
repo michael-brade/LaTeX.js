@@ -52,8 +52,6 @@ paragraph =
     vmode_macro
     / (escape noindent)? b:break                { b && g.break(); return undefined; }
     / skip_space n:(escape noindent)? txt:text+ { return g.create(g.par, txt, n ? "noindent" : ""); }
-    // continue: after an environment, it is possible to contine without a new paragraph
-    / e:environment                             { g.continue(); return e; }
 
 
 
@@ -132,7 +130,8 @@ hmode_macro =
   /
     escape
     m:(
-      &is_hmode m:macro { return m; }
+      &is_hmode     m:macro         { return m; }
+    / &is_hmode_env e:h_environment { return e; }
 
     / noindent
 
@@ -141,8 +140,8 @@ hmode_macro =
 
     / verb
 
-    / &is_preamble only_preamble    // preamble macros are not allowed
-    / !is_vmode unknown_macro       // now we have checked hv-macros and h-macros - if it's not a v-macro it is undefined
+    / &is_preamble only_preamble            // preamble macros are not allowed
+    / !begin !end !is_vmode unknown_macro   // now we have checked hv-macros and h-macros - if it's not a v-macro it is undefined
     )
     { return m; }
 
@@ -156,7 +155,10 @@ vmode_macro =
     skip_all_space
     escape
     m:(
-      &is_vmode m:macro { return m; } / vspace_vmode / smbskip_vmode
+        &is_vmode     m:macro       { return m; }
+      / &is_vmode_env e:environment { return e; }
+      / vspace_vmode
+      / smbskip_vmode
     )
     skip_all_space
     { g.break(); return m; }
@@ -174,6 +176,13 @@ is_hmode =
 
 is_hvmode =
     id:identifier &{ return g.isHVmode(id); }
+
+
+is_vmode_env =
+    begin begin_group id:identifier &{ return g.isVmode(id); }
+
+is_hmode_env =
+    begin begin_group id:identifier &{ return g.isHmode(id) || g.isHVmode(id); }
 
 
 
@@ -470,11 +479,12 @@ verb            =   "verb" s:"*"? skip_space !char
 /****************/
 
 begin_env "\\begin" =
-    skip_all_space      // TODO: true for inline envs?? NOOO!!
-    escape begin
+    // escape already eaten by macro rule
+    begin
     begin_group id:identifier end_group
     {
-        return g.begin(id);
+        g.begin(id);
+        return id;
     }
 
 end_env "\\end" =
@@ -486,18 +496,38 @@ end_env "\\end" =
     }
 
 
+h_environment =
+    id:begin_env
+        macro_args                                          // parse macro args (which now become environment args)
+        node:( &. { return g.macro(id, g.endArgs()); })     // then execute macro with args without consuming input
+        sb:(s:space? {return g.createText(s); })
+        p:paragraph_with_linebreak*                         // then parse environment contents (if macro left some)
+    end_id:end_env se:(s:space? {return g.createText(s); })
+    {
+        var end = g.end(id, end_id);
+
+        // if nodes are created by macro, add content as children to the last element
+        // if node is a text node, just add it
+        // potential spaces after \begin and \end have to be added explicitely
+
+        if (p.length > 0 && node && node.length > 0 && node[node.length - 1].nodeType === 1) {
+            node[node.length - 1].appendChild(g.createFragment(sb, p));
+            return g.createFragment(node, end, se);
+        }
+
+        return g.createFragment(node, sb, p, end, se);
+    }
+
+
 
 environment =
     id:begin_env
-    macro_args                                          // parse macro args (which now become environment args)
-    node:( &. { return g.macro(id, g.endArgs()); })     // then execute macro with args without consuming input
-    p:paragraph*                                        // then parse environment contents (if macro left some)
+        macro_args                                          // parse macro args (which now become environment args)
+        node:( &. { return g.macro(id, g.endArgs()); })     // then execute macro with args without consuming input
+        p:paragraph*                                        // then parse environment contents (if macro left some)
     end_id:end_env
     {
-        if (id != end_id)
-            error("environment '" + id + "' is missing its end, found '" + end_id + "' instead");
-
-        var end = g.end(end_id);
+        var end = g.end(id, end_id);
 
         // if nodes are created by macro, add content as children to the last element
         // if node is a text node, just add it

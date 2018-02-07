@@ -209,6 +209,24 @@ lines of text lines of text lines of text lines of text lines of text lines of t
 .
 
 
+** font environments
+.
+normal text \begin{small}
+    small text
+    \begin{bfseries}
+        bold text
+    \end{bfseries}
+\end{small}
+  three spaces!
+.
+<p>
+normal text <span class="small">​ </span><span class="small">small text </span>
+<span class="bf small">​ </span><span class="bf small">bold text </span><span class="bf small">​ </span>
+<span class="small">​ </span>three spaces!
+</p>
+.
+
+
 s** alignment
 .
 text
