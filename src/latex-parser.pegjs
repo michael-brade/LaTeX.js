@@ -8,9 +8,9 @@ latex =
     &with_preamble
     (skip_all_space escape (&is_hvmode / &is_preamble) macro)*
     skip_all_space
-    (escape begin skip_space begin_group "document" end_group / &{ error("expected \\begin{document}") })
+    (begin_doc / &{ error("expected \\begin{document}") })
         d:document
-    (escape end skip_space begin_group "document" end_group / &{ error("\\end{document} missing") })
+    (end_doc / &{ error("\\end{document} missing") })
     .*
     EOF
     { return d; }
@@ -27,6 +27,11 @@ latex =
 with_preamble =
     skip_all_space escape &is_preamble
 
+begin_doc =
+    escape begin skip_space begin_group "document" end_group
+
+end_doc =
+    escape end skip_space begin_group "document" end_group
 
 
 document =
@@ -59,7 +64,6 @@ paragraph =
 paragraph_with_linebreak =
     text
     / vmode_macro
-    / environment
     / break                                     { return g.create(g.linebreak); }
 
 
@@ -179,10 +183,10 @@ is_hvmode =
 
 
 is_vmode_env =
-    begin begin_group id:identifier &{ return g.isVmode(id); }
+    (begin/end) begin_group id:identifier   &{ return g.isVmode(id); }
 
 is_hmode_env =
-    begin begin_group id:identifier &{ return g.isHmode(id) || g.isHVmode(id); }
+    begin begin_group id:identifier         &{ return g.isHmode(id) || g.isHVmode(id); }
 
 
 
@@ -688,7 +692,7 @@ skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefin
 
 space           "spaces"    = !break
                               !linebreak
-                              !(skip_all_space escape is_vmode)
+                              !(skip_all_space escape (is_vmode/is_vmode_env))
                               (sp / nl)+                        { return g.brsp; }
 
 ctrl_space  "control space" = escape (&nl &break / nl / sp)     { return g.brsp; }          // latex.ltx, line 540
@@ -699,7 +703,7 @@ break     "paragraph break" = (skip_all_space escape par skip_all_space)+   // a
                               /                                             // or
                               sp*
                               (nl comment* / comment+)                      // a paragraph break is a newline...
-                              ((sp* nl)+ / EOF)                             // ...followed by one or more newlines, mixed with spaces,...
+                              ((sp* nl)+ / &end_doc / EOF)                  // ...followed by one or more newlines, mixed with spaces,...
                               (sp / nl / comment)*                          // ...and optionally followed by any whitespace and/or comment
 
 linebreak       "linebreak" = skip_space escape "\\" skip_space '*'?
@@ -811,4 +815,4 @@ logging                 = "showthe" _ (
                             c:value &{ return g.hasCounter(c);} { console.log(g.counter(c)); }
                             / escape l:identifier skip_space    { console.log(g.length(l)); }
                         )
-                        / "message" m:arg_group                  { console.log(m.textContent); }
+                        / "message" m:arg_group                 { console.log(m.textContent); }
