@@ -4,23 +4,29 @@
 }
 
 
-preamble =
-    // preamble starts with P macro, then only HV and P macros in preamble
-    (skip_all_space escape &is_preamble macro)+
+latex =
+    &with_preamble
     (skip_all_space escape (&is_hvmode / &is_preamble) macro)*
     skip_all_space
     (escape begin skip_space begin_group "document" end_group / &{ error("expected \\begin{document}") })
         d:document
-    escape end skip_space begin_group "document" end_group
+    (escape end skip_space begin_group "document" end_group / &{ error("\\end{document} missing") })
     .*
     EOF
     { return d; }
     /
-    // or, if no preamble was given, start default documentclass
+    !with_preamble
+    // if no preamble was given, start default documentclass
     &{ g.macro("documentclass", [null, g.documentClass, null]); return true; }
     d:document
     EOF
     { return d; }
+
+
+// preamble starts with P macro, then only HV and P macros in preamble
+with_preamble =
+    skip_all_space escape &is_preamble
+
 
 
 document =
