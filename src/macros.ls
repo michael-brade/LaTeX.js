@@ -342,31 +342,12 @@ export class LaTeXBase
     \titlepage          :-> [ @g.create @g.titlepage ]
 
 
+    # quote, quotation, verse
+
     args
      ..\quote =         \
      ..\quotation =     \
      ..\verse =         <[ V ]>
-
-     ..\abstract =      <[ H ]>
-
-
-    # TODO: only in article, report
-    \abstract           :->
-        # onecolumn, no titlepage
-        @g.setFontSize "small"
-
-        # TODO use center env directly instead...
-        @g.enterGroup!
-        @g.setFontWeight("bf")
-        head = @g.create @g.list, @g.macro("abstractname"), "center"
-        @g.exitGroup!
-
-        [ head ] ++ @quotation!
-
-    \endabstract        :!-> @endquotation!
-
-
-    # quote, quotation, verse
 
     \quote              :->  @g.startlist!; [ @g.create @g.quote ]
     \endquote           :!-> @g.endlist!

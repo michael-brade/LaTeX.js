@@ -30,6 +30,23 @@ export class Article extends Base
     \tableofcontents    : -> @section(true, undefined, @g.macro(\contentsname)) ++ [ @g._toc ]
 
 
+    args.\abstract =    <[ V ]>
+
+    \abstract           :->
+        # onecolumn, no titlepage
+        @g.setFontSize "small"
+
+        # TODO use center env directly instead...
+        @g.enterGroup!
+        @g.setFontWeight("bf")
+        head = @g.create @g.list, @g.macro("abstractname"), "center"
+        @g.exitGroup!
+
+        [ head ] ++ @quotation!
+
+    \endabstract        :!-> @endquotation!
+
+
     args.\appendix =    <[ V ]>
 
     \appendix           :!->
