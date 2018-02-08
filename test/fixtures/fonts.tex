@@ -35,12 +35,16 @@ outer { text \bfseries {what} more text } end outer
 
 ** fonts reach across paragraphs if no group ends
 .
-hello, \bfseries what
+hello, \itshape what
 
 are we going to do here?
+
+\slshape
+Wrap all the paragraphs.
 .
-<p>hello, <span class="bf">what</span></p>
-<p><span class="bf">are we going to do here?</span></p>
+<p>hello, <span class="it">what</span></p>
+<p><span class="it">are we going to do here?</span></p>
+<p><span class="sl">Wrap all the paragraphs.</span></p>
 .
 
 

@@ -159,13 +159,12 @@ vmode_macro =
     skip_all_space
     escape
     m:(
-        &is_vmode     m:macro       { return m; }
+        &is_vmode     m:macro       { g.break(); return m; }
       / &is_vmode_env e:environment { return e; }
       / vspace_vmode
       / smbskip_vmode
     )
-    skip_all_space
-    { g.break(); return m; }
+    { return m; }
 
 
 
@@ -500,6 +499,14 @@ end_env "\\end" =
     }
 
 
+// trivlists: center, flushleft, flushright, verbatim, tabbing, theorem
+// lists: itemize, enumerate, description, verse, quotation, quote, thebibliography
+//
+// both, lists and trivlists, add a \par at their beginning and end, but do not indent
+// if no other \par (or empty line) follows them.
+//
+// all other environments are "inline" environments, and those indent
+
 h_environment =
     id:begin_env
         macro_args                                          // parse macro args (which now become environment args)
@@ -525,7 +532,7 @@ h_environment =
 
 
 environment =
-    id:begin_env
+    id:begin_env  !{ g.break(); }
         macro_args                                          // parse macro args (which now become environment args)
         node:( &. { return g.macro(id, g.endArgs()); })     // then execute macro with args without consuming input
         p:paragraph*                                        // then parse environment contents (if macro left some)

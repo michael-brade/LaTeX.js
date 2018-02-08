@@ -326,9 +326,14 @@ export class LaTeXBase
      ..\flushleft =     \
      ..\flushright =    <[ V ]>
 
-    \center             :-> [ @g.create @g.list, null, "center" ]
-    \flushleft          :-> [ @g.create @g.list, null, "flushleft" ]
-    \flushright         :-> [ @g.create @g.list, null, "flushright" ]
+    \center             :->  @g.startlist!; [ @g.create @g.list, null, "center" ]
+    \endcenter          :!-> @g.endlist!
+
+    \flushleft          :->  @g.startlist!; [ @g.create @g.list, null, "flushleft" ]
+    \endflushleft       :!-> @g.endlist!
+
+    \flushright         :->  @g.startlist!; [ @g.create @g.list, null, "flushright" ]
+    \endflushright      :!-> @g.endlist!
 
 
 

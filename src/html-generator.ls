@@ -504,8 +504,6 @@ export class HtmlGenerator
         if not @hasMacro env_id
             error "unknown environment: #{env_id}"
 
-        # @break!     # TODO: only if Vmode...
-
         @startBalanced!
         @enterGroup!
         @beginArgs env_id
@@ -647,7 +645,7 @@ export class HtmlGenerator
 
     endlist: !->
         @setCounter \@listdepth, @counter(\@listdepth) - 1
-
+        @continue!
 
 
 
