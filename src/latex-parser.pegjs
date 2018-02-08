@@ -1,6 +1,7 @@
 {
     var g = options.generator;
     g.setErrorFn(error);
+    g.location = location;
 }
 
 
@@ -559,14 +560,14 @@ environment =
 
 
 item =
-    skip_all_space escape "item" !char og:opt_group? skip_all_space
+    skip_all_space escape "item" !char !{ g.break(); } og:opt_group? skip_all_space
     { return og; }
 
 // items without a counter
 items =
     (
         (skip_all_space hv_macro)*
-        label:item &{ g.break(); return true; }             // break when starting an item
+        label:item
         pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
         {
             return {
@@ -581,7 +582,6 @@ enumitems =
     (
         (skip_all_space hv_macro)*
         label:(label:item {
-            g.break();                                      // break when starting an item
             // null is no opt_group (\item ...)
             // undefined is an empty one (\item[] ...)
             if (label === null) {

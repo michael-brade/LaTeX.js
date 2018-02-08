@@ -216,6 +216,9 @@ export class HtmlGenerator
         error = e
 
 
+    location: !-> error "location function not set!"
+
+
 
     ### character/text creation
 
@@ -325,7 +328,7 @@ export class HtmlGenerator
 
 
         # if continue then do not add parindent or parskip, we are not supposed to start a new paragraph
-        if @_continue
+        if @_continue and @location!.end.offset > @_continue
             classes = classes + " continue"
             @break!
 
@@ -559,10 +562,12 @@ export class HtmlGenerator
     ### attributes (CSS classes)
 
     continue: !->
-        @_continue = true
+        @_continue = @location!.end.offset
 
     break: !->
-        @_continue = false
+        # only record the break if it came from a position AFTER the continue
+        if @location!.end.offset > @_continue
+            @_continue = false
 
 
     # alignment
