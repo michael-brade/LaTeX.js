@@ -4,6 +4,7 @@ require! {
     execa
     fs
     path
+    he
     puppeteer
 }
 
@@ -74,6 +75,9 @@ describe 'LaTeX.js fixtures', !->
                             e.message = "#{e.message} at line #{e.location.start.line} (column #{e.location.start.column}): " +
                                         fixture.source.text.split(/\r\n|\n|\r/)[e.location.start.line - 1]
                         throw e
+
+                    html-is = he.decode html-is
+                    html-should = he.decode html-should
 
                     #html-is = html-beautify html-is
                     expect html-is .to.equal html-should
