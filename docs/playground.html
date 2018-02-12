@@ -152,6 +152,76 @@
 
 
 
+      \section{Boxes}
+
+      \LaTeX.js supports most of the standard \LaTeX\ boxes.
+
+      \medbreak
+
+      \noindent\fbox{\verb|\mbox{|\emph{text}\verb|}|}
+
+      \smallbreak
+
+      We already know one of them: it's called \verb|\mbox|. It simply packs up a series of boxes into another one, and
+      can be used to prevent \LaTeX.js from breaking two words. As boxes can be put inside boxes, these horizontal box
+      packers give you ultimate flexibility.
+
+      \bigbreak
+
+      % yes, unlike in LaTeX, you may put \verb|| anywhere, here it is inside an \fbox :)
+      \noindent\fbox{
+      \verb|\makebox[|\emph{width}\verb|][|\emph{pos}\verb|]{|\emph{text}\verb|}|
+      }
+
+      \noindent\fbox{
+      \verb|\framebox[|\emph{width}\verb|][|\emph{pos}\verb|]{|\emph{text}\verb|}|
+      }
+
+      \smallbreak
+
+      \noindent
+      \emph{width} defines the width of the resulting box as seen from the outside.
+      The \emph{pos} parameter takes a one letter value: \textbf{c}enter,
+      flush\textbf{l}eft, or flush\textbf{r}ight. \textbf{s}pread is not really working
+      in HTML.
+
+
+      The command \verb|framebox| works exactly the same as \verb|makebox|, but it
+      draws a box around the text.
+
+      The following example shows you some things you could do with
+      the \verb|makebox| and \verb|framebox| commands.
+
+      \begin{quote}
+        \fbox{\makebox[10cm][c]{\textbf{c} e \textbf{n} t r a l}}\par
+
+        \framebox{Guess I'm framed now!} \par
+        \framebox[2cm][r]{Bummer, I am too wide} \par
+        \framebox[1cm][l]{never mind, so am I}
+        Can you read this?
+      \end{quote}
+
+
+      \subsection{Low-level box-interface}
+
+      \LaTeX.js supports the following low-level \TeX\ commands:
+      %\noindent\fbox{
+        \verb|\llap{|\emph{text}\verb|}|%}
+      ,
+      %\noindent\fbox{
+        \verb|\rlap{|\emph{text}\verb|}|%}
+      , and
+        \verb|\smash{|\emph{text}\verb|}|, as well as
+        \verb|\hphantom{|\emph{text}\verb|}|,
+        \verb|\vphantom{|\emph{text}\verb|}|, and
+        \verb|\phantom{|\emph{text}\verb|}|.
+
+      A phantom looks like this: \phantom{phantom} yes, now the phantom is gone.
+
+      \noindent
+      \llap{\verb|\llap |}could be used to put something in the margin. However, there are better alternatives for that. See\dots
+
+
       \section{Spacing}
 
       The following horizontal spaces are supported:
