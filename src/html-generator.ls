@@ -3,7 +3,7 @@
 require! {
     './symbols': { ligatures, diacritics, symbols }
     './macros': { LaTeXBase: Macros }
-    katex: { default: katex }
+    katex
     hypher: Hypher
     'svg.js': SVG
     he

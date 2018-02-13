@@ -9,7 +9,12 @@ require! {
 }
 
 # on the server we need to include a DOM implementation
-global.document = require 'domino' .createDocument!
+global.window = require 'svgdom'
+global.document = window.document
+
+
+# svgdom.setFontDir '../src/fonts'
+#       .setFont
 
 const HtmlGenerator   = require '../dist/html-generator' .HtmlGenerator
 const html-beautify   = require 'js-beautify' .html

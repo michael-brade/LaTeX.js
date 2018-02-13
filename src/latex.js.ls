@@ -1,7 +1,8 @@
 ``#!/usr/bin/env node``
 
 # on the server we need to include a DOM implementation - BEFORE requiring HtmlGenerator below
-global.document = require 'domino' .createDocument!
+global.window = require 'svgdom'
+global.document = window.document
 
 require! {
     util

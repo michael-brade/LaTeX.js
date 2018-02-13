@@ -44,8 +44,9 @@
   "dependencies": {
     "domino": "2.x",
     "he": "1.1.x",
-    "katex": "0.9.0-alpha",
+    "katex": "0.9.0-beta1",
     "svg.js": "2.6.x",
+    "svgdom": "https://github.com/michael-brade/svgdom",
     "hypher": "0.x",
     "hyphenation.en-us": "*",
     "hyphenation.de": "*",

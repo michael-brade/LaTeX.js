@@ -3,5 +3,5 @@
 --reporter spec
 --ui bdd
 --check-leaks
---globals document,__core-js_shared__
+--globals document,SVG,__core-js_shared__
 --sort
