@@ -205,7 +205,7 @@ export class HtmlGenerator
 
 
 
-    # private static for easy access
+    # private static for easy access - but it means no parallel generator usage!
     error = (e) !->
         console.error e
         throw new Error e
@@ -213,7 +213,7 @@ export class HtmlGenerator
     error: (e) !-> error e
 
     setErrorFn: (e) !->
-        error = e
+        error := e
 
 
     location: !-> error "location function not set!"
@@ -481,6 +481,9 @@ export class HtmlGenerator
         if @_curArgs.top.args.0 == arg
             @_curArgs.top.args.shift!
             true
+
+    argError: (m) ->
+        error "macro \\#{@_curArgs.top.name}: #{m}"
 
     # add the result of a parsed argument
     addParsedArg: (a) !->

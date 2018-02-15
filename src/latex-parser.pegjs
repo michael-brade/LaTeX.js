@@ -207,7 +207,7 @@ only_preamble =
 
 unknown_macro =
     m:identifier
-    { error("unknown macro: " + m); }
+    { error("unknown macro: \\" + m); }
 
 
 
@@ -226,26 +226,26 @@ key "key" =
 
 macro_args =
     (
-        &{ return g.nextArg("X") }                                                                                              { g.preExecMacro(); }
-      / &{ return g.nextArg("s") }    skip_space s:"*"?                                                                         { g.addParsedArg(!!s); }
-      / &{ return g.nextArg("g") }    a:(arg_group      / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
-      / &{ return g.nextArg("hg") }   a:(arg_hgroup     / . { error("macro " + name + " is missing a group argument") })        { g.addParsedArg(a); }
-      / &{ return g.nextArg("h") }    h:(horizontal     / . { error("expected horizontal material") })                          { g.addParsedArg(h); }
-      / &{ return g.nextArg("o") }    o: opt_group?                                                                             { g.addParsedArg(o); }
-      / &{ return g.nextArg("i") }    i:(id_group       / . { error("macro " + name + " is missing an id group argument") })    { g.addParsedArg(i); }
-      / &{ return g.nextArg("i?") }   i: id_optgroup?                                                                           { g.addParsedArg(i); }
-      / &{ return g.nextArg("k") }    k:(key_group      / . { error("macro " + name + " is missing a key group argument") })    { g.addParsedArg(k); }
-      / &{ return g.nextArg("n") }    n:(expr_group     / . { error("macro " + name + " is missing a num group argument") })    { g.addParsedArg(n); }
-      / &{ return g.nextArg("l") }    l:(length_group   / . { error("macro " + name + " is missing a length group argument") }) { g.addParsedArg(l); }
-      / &{ return g.nextArg("l?") }   l: length_optgroup?                                                                       { g.addParsedArg(l); }
-      / &{ return g.nextArg("m") }    m:(macro_group    / . { error("macro " + name + " is missing a macro group argument") })  { g.addParsedArg(m); }
-      / &{ return g.nextArg("u") }    u:(url_group      / . { error("macro " + name + " is missing a url group argument") })    { g.addParsedArg(u); }
-      / &{ return g.nextArg("cl") }   c:(coord_group    / . { error("macro " + name + " is missing a coordinate/length group") })   { g.addParsedArg(c); }
-      / &{ return g.nextArg("v") }    v:(vector         / . { error("macro " + name + " is missing a coordinate pair") })       { g.addParsedArg(v); }
-      / &{ return g.nextArg("v?") }   v: vector?                                                                                { g.addParsedArg(v); }
+        &{ return g.nextArg("X") }                                                                              { g.preExecMacro(); }
+      / &{ return g.nextArg("s") }    skip_space s:"*"?                                                         { g.addParsedArg(!!s); }
+      / &{ return g.nextArg("g") }    a:(arg_group      / . { g.argError("group argument expected") })          { g.addParsedArg(a); }
+      / &{ return g.nextArg("hg") }   a:(arg_hgroup     / . { g.argError("group argument expected") })          { g.addParsedArg(a); }
+      / &{ return g.nextArg("h") }    h:(horizontal     / . { g.argError("horizontal material expected") })     { g.addParsedArg(h); }
+      / &{ return g.nextArg("o") }    o: opt_group?                                                             { g.addParsedArg(o); }
+      / &{ return g.nextArg("i") }    i:(id_group       / . { g.argError("id group argument expected") })       { g.addParsedArg(i); }
+      / &{ return g.nextArg("i?") }   i: id_optgroup?                                                           { g.addParsedArg(i); }
+      / &{ return g.nextArg("k") }    k:(key_group      / . { g.argError("key group argument expected") })      { g.addParsedArg(k); }
+      / &{ return g.nextArg("n") }    n:(expr_group     / . { g.argError("num group argument expected") })      { g.addParsedArg(n); }
+      / &{ return g.nextArg("l") }    l:(length_group   / . { g.argError("length group argument expected") })   { g.addParsedArg(l); }
+      / &{ return g.nextArg("l?") }   l: length_optgroup?                                                       { g.addParsedArg(l); }
+      / &{ return g.nextArg("m") }    m:(macro_group    / . { g.argError("macro group argument expected") })    { g.addParsedArg(m); }
+      / &{ return g.nextArg("u") }    u:(url_group      / . { g.argError("url group argument expected") })      { g.addParsedArg(u); }
+      / &{ return g.nextArg("cl") }   c:(coord_group    / . { g.argError("coordinate/length group expected") }) { g.addParsedArg(c); }
+      / &{ return g.nextArg("v") }    v:(vector         / . { g.argError("coordinate pair expected") })         { g.addParsedArg(v); }
+      / &{ return g.nextArg("v?") }   v: vector?                                                                { g.addParsedArg(v); }
 
-      / &{ return g.nextArg("items") }      i:items                                                                             { g.addParsedArg(i); }
-      / &{ return g.nextArg("enumitems") }  i:enumitems                                                                         { g.addParsedArg(i); }
+      / &{ return g.nextArg("items") }      i:items                                                             { g.addParsedArg(i); }
+      / &{ return g.nextArg("enumitems") }  i:enumitems                                                         { g.addParsedArg(i); }
     )*
 
 
