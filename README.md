@@ -39,6 +39,7 @@ Options:
 
   -V, --version          output the version number
   -o, --output <file>    specify output file, otherwise STDOUT will be used
+  -a, --assets [dir]     copy CSS and fonts to the specified directory, or to the directory of output file
   -b, --bare             don't include HTML boilerplate and CSS, only output the contents of body
   -e, --entities         encode HTML entities in the output instead of using UTF-8 characters
   -p, --pretty           beautify the html (this may add/remove spaces unintentionally)
