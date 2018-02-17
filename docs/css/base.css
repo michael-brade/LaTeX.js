@@ -456,10 +456,12 @@ h1, h2, h3, h4 {
     bottom: 0;
 }
 
+/* cannot do this, it pushes the whole picture up by the depth of the font :(
 .picture-canvas > .hbox::after {
     content: "";
     display: inline;
 }
+*/
 
 
 /* objects in a picture */
