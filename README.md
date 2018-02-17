@@ -93,13 +93,13 @@ TODO: write documentation
 
 ## Limitations
 
-* I don't create an intermediate AST yet, so TeX's conditional expressions are impossible
-* deprecated macros, or macros that are not supposed to be used in LaTeX, won't even exist in LaTeX.js.
+- I don't create an intermediate AST yet, so TeX's conditional expressions are impossible
+- deprecated macros, or macros that are not supposed to be used in LaTeX, won't even exist in LaTeX.js.
   Examples include: eqnarray, the old LaTeX 2.09 font macros \it, \sl, etc. Also missing are most of the plainTeX macros.
   See also [`l2tabuen.pdf`](ftp://ftp.dante.de/tex-archive/info/l2tabu/english/l2tabuen.pdf).
-* incorrect but legal markup in LaTeX won't produce the same result in LaTeX.js - like when using \raggedleft in the
+- incorrect but legal markup in LaTeX won't produce the same result in LaTeX.js - like when using \raggedleft in the
   middle of a paragraph; but the LaTeX.js result should be intuitively correct.
-* because of the limitations when parsing TeX as a context-free grammar (see [below](#parsing-tex)), native LaTeX packages
+- because of the limitations when parsing TeX as a context-free grammar (see [below](#parsing-tex)), native LaTeX packages
   cannot be parsed and loaded. Instead, the macros those packages (and documentclasses) provide have to be implemented in
   JavaScript.
 
@@ -108,11 +108,11 @@ TODO: write documentation
 
 The following features in LaTeX just cannot be translated to HTML, not even when using JavaScript:
 
-* TeX removes any whitespace from the beginning and end of a line, even consecutive ones that would be printed in the middle
+- TeX removes any whitespace from the beginning and end of a line, even consecutive ones that would be printed in the middle
   of a line, like `\ ` or `~` or ^^0020. This is not possible in HTML (yet - maybe it will be with CSS4).
-* horizontal glue, like `\hfill` in a paragraph of text, is not possible
-* vertical glue makes no sense in HTML, and is impossible to emulate, except in boxes with fixed height
-* `\vspace{}` with a negative value in horizontal mode, i.e. in the middle of a paragraph of text, is not possible
+- horizontal glue, like `\hfill` in a paragraph of text, is not possible
+- vertical glue makes no sense in HTML, and is impossible to emulate, except in boxes with fixed height
+- `\vspace{}` with a negative value in horizontal mode, i.e. in the middle of a paragraph of text, is not possible
   (but this feature is useless anyway)
 
 And the concept of pages does not really apply to HTML, so any macro related to pagebreaks will be ignored. One
@@ -135,11 +135,11 @@ on the problem of parsing TeX, see [here](http://www.mathematik.uni-marburg.de/~
 
 To quote the four problems of TeX:
 
-* Since TeX has dynamic scoping, it is not possible to determine statically
+- Since TeX has dynamic scoping, it is not possible to determine statically
   wheather `a` is an argument to `\app` in `\app a` or just another letter. It depends on the definition of `\app` at
   runtime.
 
-* Macros can be passed as arguments to other macros, further complicating this problem. E.g.:
+- Macros can be passed as arguments to other macros, further complicating this problem. E.g.:
   ```tex
   \def\app #1 #2 {#1 #2}
   \def\id #1 {#1}
@@ -148,18 +148,18 @@ To quote the four problems of TeX:
   ```
   Thus, targets of macro calls can in general not be determined statically.
 
-* TeX has a lexical macro system, which means macro bodies do not have to be syntactically correct pieces
+- TeX has a lexical macro system, which means macro bodies do not have to be syntactically correct pieces
   of TeX code. Also, macros can expand to new macro definitions.
 
-* Tex allows custom macro call syntax. Basically, any syntax could be changed.
+- Tex allows custom macro call syntax. Basically, any syntax could be changed.
 
 
 I therefore take a slightly different approach:
 
-* First, I don't care about TeX, but only LaTeX, and most LaTeX documents do not use TeX syntax, or `\def` in
-  particular. Therefore, this parser assumes standard LaTeX syntax and catcodes, and parses that statically.
+- First, I don't care about TeX, but only LaTeX, and most LaTeX documents do not use TeX syntax, or `\def` in
+  particular. Therefore, this parser assumes standard LaTeX syntax and catcodes.
 
-* Second, for now there is no way of defining macros, only expanding macros is supported. So if a new
+- Second, for now there is no way of defining macros, only expanding macros is supported. So if a new
   LaTeX macro is needed, reimplement it in JavaScript directly, thus circumventing the problem altogether.
 
 
