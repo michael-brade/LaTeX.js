@@ -87,6 +87,7 @@ dependencies:
     'lodash': '4.x'
     'commander': '2.13.x'
     'stdin': '*'
+    'fs-extra': '5.x'
     'js-beautify': '1.7.x'
 
     #'cheerio': '0.x'

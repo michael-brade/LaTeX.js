@@ -96,18 +96,19 @@ describe 'LaTeX.js fixtures', !->
                         await page.addStyleTag content: "body { border: .4px solid; height: max-content; }"
 
                         filename = path.join __dirname, 'screenshots', desc + ' ' + fixture.header
+                        filename = filename.replace /\*/g, '-'
 
                         await page.screenshot {
                             omitBackground: true
-                            path: filename  + '.new.png'
+                            path: filename + '.new.png'
                         }
 
                         if fs.existsSync filename + '.png'
                             # now compare the screenshots and delete the new one if they match
                             try
-                                const result = await execa 'compare', ['-metric', 'rmse', filename + '.png', filename + '.new.png', filename + '.diff.png']
-                                fs.unlinkSync filename  + '.new.png'
-                                fs.unlinkSync filename  + '.diff.png'
+                                const result = await execa 'compare', [filename + '.png', filename + '.new.png', '-metric', 'rmse', filename + '.diff.png']
+                                fs.unlinkSync filename + '.new.png'
+                                fs.unlinkSync filename + '.diff.png'
                             catch
                                 if e.code == "ENOENT"
                                     throw new Error "ImageMagick not installed! Cannot compare screenshots."
@@ -115,4 +116,4 @@ describe 'LaTeX.js fixtures', !->
                                 throw new Error "screenshots differ by #{e.stderr} - see #{filename + '.*.png'}"
                         else
                             # if no screenshot exists yet, use this new one
-                            fs.renameSync filename  + '.new.png', filename  + '.png'
+                            fs.renameSync filename + '.new.png', filename + '.png'

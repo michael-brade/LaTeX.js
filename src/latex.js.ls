@@ -6,8 +6,8 @@ global.document = window.document
 
 require! {
     util
-    fs
     path
+    'fs-extra': fs
     he
     stdin
     commander: program
@@ -41,6 +41,7 @@ program
 
 
     .option '-o, --output <file>',      'specify output file, otherwise STDOUT will be used'
+    .option '-a, --assets [dir]',       'copy CSS and fonts to the specified directory, or to the directory of output file'
 
     # options affecting the HTML output
     .option '-b, --bare',               'don\'t include HTML boilerplate and CSS, only output the contents of body'
@@ -115,3 +116,25 @@ input.then (text) ->
         fs.writeFileSync program.output, html
     else
         process.stdout.write html + '\n'
+
+
+# assets
+dir = program.assets
+
+if program.assets == true
+    if not program.output
+        console.error "  assets: either a directory has to be given, or -o"
+        process.exit 1
+    else
+        dir = path.posix.dirname path.resolve program.output
+
+if dir
+    css = path.join dir, 'css'
+    fonts = path.join dir, 'fonts'
+
+    fs.mkdirpSync css
+    fs.mkdirpSync fonts
+
+    fs.copySync (path.join __dirname, '../dist/css'), css
+    fs.copySync (path.join __dirname, '../dist/fonts'), fonts
+    fs.copySync (path.join __dirname, '../node_modules/katex/dist/fonts/'), fonts, (src) -> src == /\.woff$/ or fs.statSync(src).isDirectory!
