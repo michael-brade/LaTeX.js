@@ -74,15 +74,15 @@ describe 'LaTeX.js fixtures', !->
                 _test fixture.header || 'line ' + (fixture.source.range.0 - 1), !->
                     try
                         html-is     = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false, bare: true } } .html!
-                        html-should = fixture.result.text.replace //\n//g, ""
+                        html-should = fixture.result.text
                     catch
                         if e.location
                             e.message = "#{e.message} at line #{e.location.start.line} (column #{e.location.start.column}): " +
                                         fixture.source.text.split(/\r\n|\n|\r/)[e.location.start.line - 1]
                         throw e
 
-                    html-is = he.decode html-is
-                    html-should = he.decode html-should
+                    html-is = he.decode html-is.replace //\n//g, ""
+                    html-should = he.decode html-should.replace //\n//g, ""
 
                     #html-is = html-beautify html-is
                     expect html-is .to.equal html-should
