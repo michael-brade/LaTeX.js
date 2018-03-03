@@ -1025,7 +1025,7 @@ export class LaTeXBase
     # preamble #
     ############
 
-    args.\documentclass =  <[ P o k o ]>
+    args.\documentclass =  <[ P k? k k? ]>
     \documentclass      : (opts, documentclass, version) !->
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
@@ -1037,13 +1037,25 @@ export class LaTeXBase
 
         @g.documentClass = Class
 
+        if opts
+            for opt in opts.split ','
+                opt = opt.trim!
+
+                # check if a point size was given
+                value = parseFloat opt
+                if value != NaN and opt.endsWith "pt"
+                    len = String(value).length
+                    if String(value) == opt.substring 0, opt.length - 2
+                        console.log opt
 
 
-    args.\usepackage    =  <[ P o g o ]>
+
+
+    args.\usepackage    =  <[ P k? k k? ]>
     \usepackage         : (opts, packages, version) !->
 
 
-    args.\includeonly   = <[ P g ]>
+    args.\includeonly   = <[ P k ]>
     \includeonly        : (filelist) !->
 
 

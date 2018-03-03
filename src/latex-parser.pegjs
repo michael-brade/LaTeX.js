@@ -235,6 +235,7 @@ macro_args =
       / &{ return g.nextArg("i") }    i:(id_group       / . { g.argError("id group argument expected") })       { g.addParsedArg(i); }
       / &{ return g.nextArg("i?") }   i: id_optgroup?                                                           { g.addParsedArg(i); }
       / &{ return g.nextArg("k") }    k:(key_group      / . { g.argError("key group argument expected") })      { g.addParsedArg(k); }
+      / &{ return g.nextArg("k?") }   k: key_optgroup?                                                          { g.addParsedArg(k); }
       / &{ return g.nextArg("n") }    n:(expr_group     / . { g.argError("num group argument expected") })      { g.addParsedArg(n); }
       / &{ return g.nextArg("l") }    l:(length_group   / . { g.argError("length group argument expected") })   { g.addParsedArg(l); }
       / &{ return g.nextArg("l?") }   l: length_optgroup?                                                       { g.addParsedArg(l); }
@@ -271,6 +272,12 @@ id_optgroup     =   skip_space begin_optgroup skip_space
 key_group       =   skip_space begin_group
                         k:key
                     end_group
+                    { return k; }
+
+// [key]
+key_optgroup    =   skip_space begin_optgroup skip_space
+                        k:key
+                    skip_space end_optgroup
                     { return k; }
 
 // lengths
