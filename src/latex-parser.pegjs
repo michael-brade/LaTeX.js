@@ -231,19 +231,26 @@ macro_args =
       / &{ return g.nextArg("g") }    a:(arg_group      / . { g.argError("group argument expected") })          { g.addParsedArg(a); }
       / &{ return g.nextArg("hg") }   a:(arg_hgroup     / . { g.argError("group argument expected") })          { g.addParsedArg(a); }
       / &{ return g.nextArg("h") }    h:(horizontal     / . { g.argError("horizontal material expected") })     { g.addParsedArg(h); }
-      / &{ return g.nextArg("o") }    o: opt_group?                                                             { g.addParsedArg(o); }
+      / &{ return g.nextArg("o?") }   o: opt_group?                                                             { g.addParsedArg(o); }
       / &{ return g.nextArg("i") }    i:(id_group       / . { g.argError("id group argument expected") })       { g.addParsedArg(i); }
       / &{ return g.nextArg("i?") }   i: id_optgroup?                                                           { g.addParsedArg(i); }
       / &{ return g.nextArg("k") }    k:(key_group      / . { g.argError("key group argument expected") })      { g.addParsedArg(k); }
       / &{ return g.nextArg("k?") }   k: key_optgroup?                                                          { g.addParsedArg(k); }
+      // TODO: kv
       / &{ return g.nextArg("n") }    n:(expr_group     / . { g.argError("num group argument expected") })      { g.addParsedArg(n); }
+      / &{ return g.nextArg("n?") }   n: expr_optgroup?                                                         { g.addParsedArg(n); }
       / &{ return g.nextArg("l") }    l:(length_group   / . { g.argError("length group argument expected") })   { g.addParsedArg(l); }
+      / &{ return g.nextArg("lg?") }  l: length_group?                                                          { g.addParsedArg(l); }
       / &{ return g.nextArg("l?") }   l: length_optgroup?                                                       { g.addParsedArg(l); }
       / &{ return g.nextArg("m") }    m:(macro_group    / . { g.argError("macro group argument expected") })    { g.addParsedArg(m); }
       / &{ return g.nextArg("u") }    u:(url_group      / . { g.argError("url group argument expected") })      { g.addParsedArg(u); }
+      // TODO: c
       / &{ return g.nextArg("cl") }   c:(coord_group    / . { g.argError("coordinate/length group expected") }) { g.addParsedArg(c); }
       / &{ return g.nextArg("v") }    v:(vector         / . { g.argError("coordinate pair expected") })         { g.addParsedArg(v); }
       / &{ return g.nextArg("v?") }   v: vector?                                                                { g.addParsedArg(v); }
+      / &{ return g.nextArg("cols") } c:(columns        / . { g.argError("column specification missing") })    { g.addParsedArg(c); }
+
+      / &{ return g.nextArg("is") }   skip_space
 
       / &{ return g.nextArg("items") }      i:items                                                             { g.addParsedArg(i); }
       / &{ return g.nextArg("enumitems") }  i:enumitems                                                         { g.addParsedArg(i); }
@@ -307,6 +314,11 @@ expr_group      =   skip_space begin_group
                     end_group
                     { return n; }
 
+// [num expression]
+expr_optgroup  =   skip_space begin_optgroup
+                        n:num_expr
+                    end_optgroup
+                    { return n; }
 
 // {float expression}
 float_group     =   skip_space begin_group
@@ -448,6 +460,42 @@ num_expr        =   skip_space
 
                     return result;
                 }
+
+
+
+// column spec for tables like tabular
+columns =
+    begin_group
+        s:column_separator*
+        c:(_c:column _s:column_separator* { return Array.isArray(_c) ? _c.concat(_s) : [_c].concat(_s); })+
+    end_group
+    {
+        return c.reduce(function(a, b) { return a.concat(b); }, s)
+    }
+
+column =
+    c:("l"/"c"/"r"/"p" l:length_group { return l; })
+    {
+        return c;
+    }
+    /
+    "*" reps:expr_group c:columns
+    {
+        var result = []
+        for (var i = 0; i < reps; i++) {
+            result = result.concat(c.slice())
+        }
+        return result
+    }
+
+column_separator =
+    s:("|" / "@" a:arg_group { return a; })
+    {
+        return {
+            type: "separator",
+            content: s
+        }
+    }
 
 
 

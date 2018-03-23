@@ -72,35 +72,40 @@ export class LaTeXBase
     #   i: id (group)
     #  i?: optional id (optgroup)
     #   k: key (group)
+    #  k?: optional key (optgroup)
     #  kv: key-value list (optgroup)
     #   u: url (group)
     #   c: color specification (group), that is: <name> or <float> or <float,float,float>
     #   m: macro (group)
     #   l: length (group)
+    # lg?: optional length (group)
     #  l?: optional length (optgroup)
     #  cl: coordinate/length (group)
     #   n: num expression (group)
+    #  n?: num expression (optgroup)
     #   f: float expression (group)
     #   v: vector, a pair of coordinates: (float/length, float/length)
     #  v?: optional vector
     #
-    #   g: arggroup (possibly long - TeX allows \endgraf, but not \par... so allow \par as well)
-    #  hg: arggroup in restricted horizontal mode
-    #   o: optional arg
+    #   g: group (possibly long - TeX allows \endgraf, but not \par... so allow \par as well)
+    #  hg: group in restricted horizontal mode
+    #  o?: optional arg (optgroup)
     #
     #   h: restricted horizontal material
+    #
+    #  is: ignore (following) spaces
 
     args = @args = {}
 
 
     # echo macros just for testing
-    args.echoO = <[ H o ]>
+    args.echoO = <[ H o? ]>
 
     \echoO : (o) ->
         [ "-", o, "-" ]
 
 
-    args.echoOGO = <[ H o g o ]>
+    args.echoOGO = <[ H o? g o? ]>
 
     \echoOGO : (o1, g, o2) ->
         []
@@ -109,7 +114,7 @@ export class LaTeXBase
             ..push "-", o2, "-" if o2
 
 
-    args.echoGOG = <[ H g o g ]>
+    args.echoGOG = <[ H g o? g ]>
 
     \echoGOG : (g1, o, g2) ->
         [ "+", g1, "+" ]
@@ -167,7 +172,7 @@ export class LaTeXBase
     \onecolumn :->
 
     # switch to twocolumn layout from now on
-    args.\twocolumn     = <[ V o ]>
+    args.\twocolumn     = <[ V o? ]>
     \twocolumn :->
 
 
@@ -436,7 +441,7 @@ export class LaTeXBase
     # multicolumns
 
     # \begin{multicols}{number}[pretext][premulticols size]
-    args.\multicols =   <[ V n o o ]>
+    args.\multicols =   <[ V n o? o? ]>
 
     \multicols          : (cols, pre) -> [ pre, @g.create @g.multicols cols ]
 
@@ -481,7 +486,7 @@ export class LaTeXBase
 
     # package: hyperref
 
-    args.\href =        <[ H o u g ]>
+    args.\href =        <[ H o? u g ]>
     \href               : (opts, url, txt) -> [ @g.create @g.link(url), txt ]
 
     args.\url =         <[ H u ]>
@@ -495,7 +500,7 @@ export class LaTeXBase
     # \hyperbaseurl  HV u
 
     # \hyperref[label]{link text} --- like \ref{label}, but use "link text" for display
-    # args.\hyperref =    <[ H o g ]>
+    # args.\hyperref =    <[ H o? g ]>
     # \hyperref           : (label, txt) -> [ @g.ref label ]
 
 
@@ -1078,8 +1083,8 @@ export class LaTeXBase
 
 
     args
-     ..\linebreak =     <[ HV o ]>
-     ..\nolinebreak =   <[ HV o ]>
+     ..\linebreak =     <[ HV n? ]>
+     ..\nolinebreak =   <[ HV n? ]>
      ..\fussy =         <[ HV ]>
      ..\sloppy =        <[ HV ]>
 
@@ -1093,8 +1098,8 @@ export class LaTeXBase
     # these make no sense without pagebreaks
 
     args
-     ..\pagebreak =     <[ HV o ]>
-     ..\nopagebreak =   <[ HV o ]>
+     ..\pagebreak =     <[ HV n? ]>
+     ..\nopagebreak =   <[ HV n? ]>
      ..\samepage =      <[ HV ]>
      ..\enlargethispage = <[ HV s l ]>
      ..\newpage =       <[ HV ]>

@@ -24,7 +24,7 @@ export class Book extends Report
 
     args
      ..\part =          \
-     ..\chapter =       <[ V s X o g ]>
+     ..\chapter =       <[ V s X o? g ]>
 
     \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter, 0, (s or not @"@mainmatter"), toc, ttl ]
 

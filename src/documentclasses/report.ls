@@ -34,7 +34,7 @@ export class Report extends Base
 
     args
      ..\part =          \
-     ..\chapter =       <[ V s X o g ]>
+     ..\chapter =       <[ V s X o? g ]>
 
     \part               : (s, toc, ttl) -> [ @g.startsection \part,          -1, s, toc, ttl ]
     \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter,        0, s, toc, ttl ]

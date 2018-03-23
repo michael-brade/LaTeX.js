@@ -52,7 +52,7 @@ export class Base
      ..\subsection =    \
      ..\subsubsection = \
      ..\paragraph =     \
-     ..\subparagraph =  <[ V s X o g ]>
+     ..\subparagraph =  <[ V s X o? g ]>
 
 
     \part               : (s, toc, ttl) -> [ @g.startsection \part,           0, s, toc, ttl ]
