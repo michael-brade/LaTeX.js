@@ -786,11 +786,46 @@ export class LaTeXBase
 
     # \qbezier[N](x1, y1)(x, y)(x2, y2)
     args.\qbezier =     <[ H n? v v v ]>
+    \qbezier            : (n, v1, v, v2) ->
+        # for path, v MUST be unitless - so v is always in pt (and just to be safe, set size = viewbox in @_path)
+        [ @_path "M#{v1.x.value},#{v1.y.value} Q#{v.x.value},#{v.y.value} #{v2.x.value},#{v2.y.value}", v1.x.unit ]
+
+
+    # SVG path.length()
+    # https://github.com/Pomax/bezierjs for calculating N bezier points
+    #   or use sth like  .stroke({ dasharray: "10, 5" })
 
     # \cbezier[N](x1, y1)(x, y)(x2, y2)(x3, y3)
     args.\cbezier =     <[ H n? v v v v ]>
+    \cbezier            : (n, v1, v, v2, v3) ->
+        [ @_path "M#{v1.x.value},#{v1.y.value} C#{v.x.value},#{v.y.value} #{v2.x.value},#{v2.y.value} #{v3.x.value},#{v3.y.value}", v1.x.unit ]
 
     #args.\graphpaper =  <[  ]>
+
+
+    # typeset an SVG path
+    _path: (p, unit) ->
+        linethickness = @g.length \@wholewidth
+
+        svg = @g.create @g.inline-block, undefined, "picture-object"
+        draw = @g.SVG(svg)
+
+        bbox = draw.path p
+                   .stroke { width: linethickness.value + linethickness.unit }
+                   .fill 'none'
+                   .bbox!
+
+        # size and position
+        svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{unit};bottom:#{Math.min(0, bbox.y)}#{unit}"
+
+        draw.size "#{bbox.width}#{unit}", "#{bbox.height}#{unit}"
+            .viewbox bbox.x, bbox.y, bbox.width, bbox.height
+
+        # last, put the origin into the lower left
+        draw.flip 'y', 0
+
+        @g.create @g.inline-block, svg, "picture"
+
 
 
     ## picture objects
