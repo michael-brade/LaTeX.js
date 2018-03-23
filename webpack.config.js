@@ -1,8 +1,12 @@
-var path = require('path');
-var webpack = require('webpack');
-var CopyPlugin = require('copy-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+    // mode: 'production',
+    mode: 'development',
+    devtool: false, //'source-map',
+
     context: __dirname,
     entry: './docs/js/playground.js',
     output: {
@@ -11,16 +15,15 @@ module.exports = {
         libraryTarget: "window",
         library: "Playground"
     },
-    module: {
-        loaders: [
-            {
-                test: /\.js$/,
-                loader: 'babel-loader'
-            }
-        ]
-    },
     resolve: {
         modules: [path.resolve(__dirname, "dist"), "node_modules"]
+    },
+    module: {
+        rules: [{
+            test: /\.js$/,
+            exclude: /(node_modules|bower_components)/,
+            use: 'babel-loader'
+        }]
     },
     plugins: [
         new CopyPlugin([
@@ -30,6 +33,5 @@ module.exports = {
     ],
     stats: {
         colors: true
-    },
-    //devtool: 'source-map'
+    }
 };

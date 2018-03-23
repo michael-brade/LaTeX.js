@@ -76,7 +76,7 @@ babel:
 dependencies:
     'domino': '2.x'
     'he': '1.1.x'
-    'katex': '0.9.0-beta1'
+    'katex': '0.9.0'
     'svg.js': '2.6.x'
     'svgdom': 'https://github.com/michael-brade/svgdom'
 
@@ -106,13 +106,14 @@ devDependencies:
 
     ### bundling
 
-    'webpack': '3.10.x'
-    'babel-loader': '8.0.0-beta.0'
-    'copy-webpack-plugin': '4.3.x'
+    'webpack': '4.2.x'
+    'webpack-cli': '2.x'
+    'babel-loader': '8.0.0-beta.2'
+    'copy-webpack-plugin': '4.5.x'
 
-    '@babel/core': '7.0.0-beta.33'
-    '@babel/register': '7.0.0-beta.33'
-    '@babel/plugin-syntax-object-rest-spread': '7.0.0-beta.33'
+    '@babel/core': '7.0.0-beta.42'
+    '@babel/register': '7.0.0-beta.42'
+    '@babel/plugin-syntax-object-rest-spread': '7.0.0-beta.42'
 
 
     ### testing
@@ -121,7 +122,7 @@ devDependencies:
     'chai': '4.x'
     'chai-as-promised': '7.x'
 
-    'puppeteer': '^1.0.0'
+    'puppeteer': '1.2.x'
     'execa': '0.9.x'
 
     'istanbul': '>= 0.4.x'
