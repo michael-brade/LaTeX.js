@@ -815,6 +815,11 @@ export class LaTeXBase
                    .fill 'none'
                    .bbox!
 
+        bbox.x -= linethickness.value
+        bbox.y -= linethickness.value
+        bbox.width += linethickness.value * 2
+        bbox.height += linethickness.value * 2
+
         # size and position
         svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{unit};bottom:#{Math.min(0, bbox.y)}#{unit}"
 
@@ -861,15 +866,15 @@ export class LaTeXBase
     #   if xslope == yslope == 0 then error
     args.\line =        <[ H v cl ]>
     \line               : (v, l) ->
-        [ x, y, sx, sy ] = @_slopeLengthToCoords v, l
-        [ @_line x, y, sx, sy ]
+        [ x, y ] = @_slopeLengthToCoords v, l
+        [ @_line x, y, l.unit ]
 
 
     # \vector(xslope,yslope){length}
     args.\vector =      <[ H v cl ]>
     \vector             : (v, l) ->
-        [ x, y, sx, sy ] = @_slopeLengthToCoords v, l
-        [ @_vector x, y, sx, sy ]
+        [ x, y ] = @_slopeLengthToCoords v, l
+        [ @_vector x, y, l.unit ]
 
 
     # \Line(x2,y2)
@@ -878,10 +883,8 @@ export class LaTeXBase
         linethickness = @g.length \@wholewidth
         x = v.x.value
         y = v.y.value
-        sx = Math.abs x
-        sy = Math.max linethickness.value, Math.abs y
 
-        [ @_line x, y, sx, sy ]
+        [ @_line x, y, v.x.unit ]
 
 
     args.\Vector =      <[ H v ]>
@@ -889,10 +892,8 @@ export class LaTeXBase
         linethickness = @g.length \@wholewidth
         x = v.x.value
         y = v.y.value
-        sx = Math.abs x
-        sy = Math.max linethickness.value, Math.abs y
 
-        [ @_vector x, y, sx, sy ]
+        [ @_vector x, y, v.x.unit ]
 
 
     _slopeLengthToCoords: (v, l) ->
@@ -904,35 +905,38 @@ export class LaTeXBase
         if v.x.value == 0
             x = 0
             y = l.value
-
-            sx = linethickness.value
-            sy = Math.abs y
         else
             x = l.value
             y = x * Math.abs v.y.value / v.x.value
-
-            sx = Math.abs x
-            sy = Math.max linethickness.value, Math.abs y
 
         if v.x.value < 0
             x *= -1
         if v.y.value < 0
             y *= -1
 
-        [ x, y, sx, sy ]
+        [ x, y ]
 
 
-    # helper: draw line to x, y; SVG size is (sx, sy)
-    _line: (x, y, sx, sy) ->
+    # helper: draw line to x, y
+    _line: (x, y, unit) ->
         svg = @g.create @g.inline-block, undefined, "picture-object"
-        svg.setAttribute "style", "left:#{Math.min(0, x)}px;bottom:#{Math.min(0, y)}px"
-
-        draw = @g.SVG(svg).size sx, sy
-        draw.viewbox Math.min(0, x), Math.min(0, y), sx, sy
+        draw = @g.SVG(svg)
 
         linethickness = @g.length \@wholewidth
-        draw.line(0, 0, x, y)
-            .stroke { width: linethickness.value + linethickness.unit }
+        bbox = draw.line(0, 0, x, y)
+                   .stroke { width: linethickness.value + linethickness.unit }
+                   .bbox!
+
+        bbox.x -= linethickness.value
+        bbox.y -= linethickness.value
+        bbox.width += linethickness.value * 2
+        bbox.height += linethickness.value * 2
+
+        # size and position
+        svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{unit};bottom:#{Math.min(0, bbox.y)}#{unit}"
+
+        draw.size "#{bbox.width}#{unit}", "#{bbox.height}#{unit}"
+            .viewbox bbox.x, bbox.y, bbox.width, bbox.height
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
@@ -940,25 +944,78 @@ export class LaTeXBase
         @g.create @g.inline-block, svg, "picture"
 
 
-    # helper: draw arrow to x, y; SVG size is (sx+10, sy+10) so as not to clip the arrow head
-    _vector: (x, y, sx, sy) ->
-        svg = @g.create @g.inline-block, undefined, "picture-object"
-        svg.setAttribute "style", "left:#{Math.min(0, x)}px;bottom:#{Math.min(0, y)}px"
-
-        sx += 10
-        sy += 10
-
-        draw = @g.SVG(svg).size sx, sy
-        draw.viewbox Math.min(0, x), Math.min(0, y), sx, sy
-
+    # helper: draw arrow to x, y
+    _vector: (x, y, unit) ->
         linethickness = @g.length \@wholewidth
-        draw.line(0, 0, x, y)
-            .stroke { width: linethickness.value + linethickness.unit }
-            # marker width and height
-            .marker 'end', 10, 5, (add) ->
-                add.polyline [[0, 0], [10, 2.5], [0, 5]]
-                   .move(-5, 0)
+
+        svg = @g.create @g.inline-block, undefined, "picture-object"
+        draw = @g.SVG(svg)
+
+        # arrow head length and width
+        hl = 5
+        hw = 3
+
+        # start point of arrow
+        sx = 0
+        sy = 0
+
+        # l^2 = x^2 + y^2
+        #
+        # y = m*x
+        # x = y/m
+        # m = y/x
+        #
+        #  => l^2 = x^2 + x^2 * m^2   =   x^2 * (1 + m^2)
+        #  => l^2 = y^2/m^2 + y^2     =   y^2 * (1 + 1/m^2)
+        #
+        #  => x = l/sqrt(1 + m^2)
+        #  => y = l/sqrt(1 + 1/m^2)
+
+        hl_px = hl/2 * linethickness.value  # half the head length (the marker scales with stroke width)
+        al_px = Math.sqrt x*x + y*y         # arrow length
+
+        msq  = Math.sqrt 1 + y*y / (x*x)
+        imsq = Math.sqrt 1 + x*x / (y*y)
+
+        dir_x = if x < 0 then -1 else 1
+        dir_y = if y < 0 then -1 else 1
+
+        # if arrow head is longer than the arrow, shift start of the arrow
+        if al_px < hl_px
+            if x != 0 and y != 0
+                sx = hl_px /  msq * -dir_x
+                sy = hl_px / imsq * -dir_y
+            else if y == 0
+                sx = hl_px * -dir_x
+            else
+                sy = hl_px * -dir_y
+
+        # shorten vector by half the arrow head length
+        if x != 0 and y != 0
+            x -= hl_px /  msq * dir_x
+            y -= hl_px / imsq * dir_y
+        else if y == 0
+            x -= hl_px * dir_x
+        else
+            y -= hl_px * dir_y
+
+
+        bbox = draw.line(sx, sy, x, y)
                    .stroke { width: linethickness.value + linethickness.unit }
+                   # marker width and height
+                   .marker 'end', hl, hw, (add) -> add.polyline [[0, 0], [hl, hw/2], [0, hw]]
+                   .bbox!
+
+        bbox.x -= linethickness.value + hl_px
+        bbox.y -= linethickness.value + hl_px
+        bbox.width += linethickness.value + hl_px * 2
+        bbox.height += linethickness.value + hl_px * 2
+
+        # size and position
+        svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{unit};bottom:#{Math.min(0, bbox.y)}#{unit}"
+
+        draw.size "#{bbox.width}#{unit}", "#{bbox.height}#{unit}"
+            .viewbox bbox.x, bbox.y, bbox.width, bbox.height
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
