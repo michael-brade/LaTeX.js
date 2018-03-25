@@ -445,6 +445,7 @@ h1, h2, h3, h4 {
 .picture {
     display: inline-block;  /* so that it can be given a fixed size */
     position: relative;
+    vertical-align: bottom; /* needed for \put */
 }
 
 /* the coordinate system of the picture */
