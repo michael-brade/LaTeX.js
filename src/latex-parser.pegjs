@@ -246,9 +246,10 @@ macro_args =
       / &{ return g.nextArg("u") }    u:(url_group      / . { g.argError("url group argument expected") })      { g.addParsedArg(u); }
       // TODO: c
       / &{ return g.nextArg("cl") }   c:(coord_group    / . { g.argError("coordinate/length group expected") }) { g.addParsedArg(c); }
+      / &{ return g.nextArg("cl?") }  c: coord_optgroup?                                                        { g.addParsedArg(c); }
       / &{ return g.nextArg("v") }    v:(vector         / . { g.argError("coordinate pair expected") })         { g.addParsedArg(v); }
       / &{ return g.nextArg("v?") }   v: vector?                                                                { g.addParsedArg(v); }
-      / &{ return g.nextArg("cols") } c:(columns        / . { g.argError("column specification missing") })    { g.addParsedArg(c); }
+      / &{ return g.nextArg("cols") } c:(columns        / . { g.argError("column specification missing") })     { g.addParsedArg(c); }
 
       / &{ return g.nextArg("is") }   skip_space
 
@@ -347,6 +348,12 @@ vector          =   skip_space "(" x:coordinate "," y:coordinate ")" skip_space
 coord_group     =   skip_space begin_group
                         c:coordinate
                     end_group
+                    { return c; }
+
+// [coord]
+coord_optgroup  =   skip_space begin_optgroup
+                        c:coordinate
+                    end_optgroup
                     { return c; }
 
 

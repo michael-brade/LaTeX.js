@@ -81,6 +81,7 @@ export class LaTeXBase
     # lg?: optional length (group)
     #  l?: optional length (optgroup)
     #  cl: coordinate/length (group)
+    # cl?: optional coordinate/length (optgroup)
     #   n: num expression (group)
     #  n?: num expression (optgroup)
     #   f: float expression (group)
@@ -747,6 +748,8 @@ export class LaTeXBase
 
     \arrowlength        : (l) !->   @g.setLength \@arrowlength l
 
+    \maxovalrad         :-> "20pt"
+
 
     # frames
 
@@ -1025,8 +1028,99 @@ export class LaTeXBase
 
 
     # \oval[radius](width,height)[portion]
-    #   uses circular arcs of radius min(radius, width/2, heigth/2)
-    args.\oval =        <[ H f? v i? ]>
+    #   uses circular arcs of radius min(radius, width/2, height/2)
+    args.\oval =        <[ H cl? v i? ]>
+    \oval               : (rad, size, part) ->
+        linethickness = @g.length \@wholewidth
+
+        if not rad
+            rad = { value: 20, unit: "px" } # TODO: use \maxovalrad, parse the length
+
+        if not part
+            part = ""
+
+        svg = @g.create @g.inline-block, undefined, "picture-object"
+        draw = @g.SVG(svg)
+
+        oval = draw.rect "#{size.x.value}#{size.x.unit}", "#{size.y.value}#{size.y.unit}"
+                   .radius rad.value + rad.unit
+                   .move "-#{size.x.value/2}#{size.x.unit}", "-#{size.y.value/2}#{size.y.unit}"
+                   .stroke { width: linethickness.value + linethickness.unit }
+                   .fill "none"
+
+        bbox = oval.bbox!
+
+
+        # initial rect
+        rect =
+            x: -size.x.value/2 - linethickness.value,
+            y: -size.y.value/2 - linethickness.value,
+            w: size.x.value + linethickness.value * 2,
+            h: size.y.value + linethickness.value * 2
+
+
+        if part.includes 'l'
+            rect = @_intersect rect,
+                x: -size.x.value/2 - linethickness.value,
+                y: -size.y.value/2 - linethickness.value,
+                w: size.x.value/2 + linethickness.value,
+                h: size.y.value + linethickness.value * 2
+
+
+        if part.includes 't'
+            rect = @_intersect rect,
+                x: -size.x.value/2 - linethickness.value,
+                y: -size.y.value/2 - linethickness.value,
+                w: size.x.value + linethickness.value * 2,
+                h: size.y.value/2 + linethickness.value
+
+
+        if part.includes 'r'
+            rect = @_intersect rect,
+                x: 0,
+                y: -size.y.value/2 - linethickness.value,
+                w: size.x.value/2 + linethickness.value,
+                h: size.y.value + linethickness.value * 2
+
+
+        if part.includes 'b'
+            rect = @_intersect rect,
+                x: -size.x.value/2 - linethickness.value,
+                y: 0,
+                w: size.x.value + linethickness.value * 2,
+                h: size.y.value/2 + linethickness.value
+
+
+
+        clip = draw.clip!.add (draw.rect "#{rect.w}#{size.x.unit}", "#{rect.h}#{size.y.unit}"
+                                   .move rect.x, rect.y)
+        clip.flip 'y', 0
+
+        oval.clipWith clip
+
+        bbox.x -= linethickness.value
+        bbox.y -= linethickness.value
+        bbox.width += linethickness.value * 2
+        bbox.height += linethickness.value * 2
+
+        # size and position
+        svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{size.x.unit};bottom:#{Math.min(0, bbox.y)}#{size.y.unit}"
+
+        draw.size "#{bbox.width}#{size.x.unit}", "#{bbox.height}#{size.y.unit}"
+            .viewbox bbox.x, bbox.y, bbox.width, bbox.height
+
+        # last, put the origin into the lower left
+        draw.flip 'y', 0
+
+        [ @g.create @g.inline-block, svg, "picture" ]
+
+
+    # return a new rectangle that is the result of intersecting the given two rectangles
+    _intersect: (r1, r2) ->
+        x: Math.max(r1.x, r2.x),
+        y: Math.max(r1.y, r2.y),
+        w: Math.max(0, Math.min(r1.x + r1.w, r2.x + r2.w) - Math.max(r1.x, r2.x)),
+        h: Math.max(0, Math.min(r1.y + r1.h, r2.y + r2.h) - Math.max(r1.y, r2.y))
 
 
     ####################
