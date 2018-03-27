@@ -786,6 +786,16 @@ export class LaTeXBase
 
     # \multiput(x,y)(delta_x,delta_y){n}{obj}
     args.\multiput =    <[ H v v n g ]>
+    \multiput           : (v, dv, n, obj) ->
+        res = []
+        for i til n
+            res = res ++ @\put {
+                x: { value: v.x.value + i * dv.x.value, unit: v.x.unit }
+                y: { value: v.y.value + i * dv.y.value, unit: v.y.unit }
+            }, obj.cloneNode true
+
+        res
+
 
     # \qbezier[N](x1, y1)(x, y)(x2, y2)
     args.\qbezier =     <[ H n? v v v ]>
