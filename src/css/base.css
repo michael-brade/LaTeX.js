@@ -15,8 +15,6 @@
     --medskipamount: 0.6rem;
     --bigskipamount: 1.2rem;
 
-    --marginparsep: 1.1rem;
-
     --listparindent: 0px;
     --itemindent: 0px;
 
@@ -97,11 +95,28 @@
 /***************/
 
 body {
-    max-width: 40rem;
-    margin: 1em auto;
-    padding: 0 5em;
+    display: flex;
+
+    margin: 0;
+    padding: 0;
 }
 
+
+.body {
+    /* max-width: 40rem; */
+    width: var(--textwidth);
+    margin-left: calc(var(--oddsidemargin) + 1in);
+}
+
+.margin {
+    /* margin is on the right */
+    width: var(--marginparwidth);
+    margin-left: var(--marginparsep);
+}
+
+.margin > * {
+    margin-bottom: var(--marginparpush);
+}
 
 
 .onecolumn {

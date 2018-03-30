@@ -137,6 +137,7 @@ export class HtmlGenerator
     _counters: null
     _resets: null
 
+    _marginpars: null
 
 
     # CTOR
@@ -189,6 +190,8 @@ export class HtmlGenerator
 
         @_labels = new Map()
         @_refs = new Map()
+
+        @_marginpars = []
 
         @_counters = new Map()
         @_resets = new Map()
@@ -296,7 +299,8 @@ export class HtmlGenerator
         for style in @_options.styles
             doc.head.appendChild createStyleSheet style
 
-        doc.body.appendChild @_dom
+        doc.body.appendChild @create @block, @_dom, "body"
+        doc.body.appendChild @create @block, @_marginpars, "margin"
         doc
 
 
@@ -890,6 +894,22 @@ export class HtmlGenerator
             console.warn "warning: reference '#{ref.value}' undefined"
 
         console.warn "There were undefined references."
+
+
+    ### marginpar
+
+    marginpar: (txt) ->
+        id = @nextId!
+
+        marginPar = @create @block, txt
+        marginPar.id = id
+
+        @_marginpars.push marginPar
+
+        marginRef = @create @inline-block
+        marginRef.id = "marginref-" + id
+
+        marginRef
 
 
     ### private helpers

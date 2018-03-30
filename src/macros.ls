@@ -194,6 +194,10 @@ export class LaTeXBase
 
 
 
+    args.\marginpar     = <[ H g ]>
+    \marginpar          : (txt) -> [ @g.marginpar txt ]
+
+
     ###########
     # titling #
     ###########
