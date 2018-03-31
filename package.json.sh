@@ -85,7 +85,7 @@ dependencies:
     'hyphenation.de': '*'
 
     'lodash': '4.x'
-    'commander': '2.13.x'
+    'commander': '2.15.x'
     'stdin': '*'
     'fs-extra': '5.x'
     'js-beautify': '1.7.x'
@@ -106,7 +106,7 @@ devDependencies:
 
     ### bundling
 
-    'webpack': '4.2.x'
+    'webpack': '4.x'
     'webpack-cli': '2.x'
     'babel-loader': '8.0.0-beta.2'
     'copy-webpack-plugin': '4.5.x'
@@ -123,7 +123,7 @@ devDependencies:
     'chai-as-promised': '7.x'
 
     'puppeteer': '1.2.x'
-    'execa': '0.9.x'
+    'pixelmatch': '4.0.x'
 
     'istanbul': '>= 0.4.x'
 

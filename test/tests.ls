@@ -1,11 +1,12 @@
 'use strict'
 
 require! {
-    execa
     fs
     path
     he
     puppeteer
+    pixelmatch
+    pngjs: { PNG }
 }
 
 # on the server we need to include a DOM implementation
@@ -84,7 +85,8 @@ describe 'LaTeX.js fixtures', !->
                     html-is = he.decode html-is.replace //\n//g, ""
                     html-should = he.decode html-should.replace //\n//g, ""
 
-                    #html-is = html-beautify html-is
+                    # html-is = html-beautify html-is
+                    # html-should = html-beautify html-should
                     expect html-is .to.equal html-should
 
 
@@ -93,7 +95,7 @@ describe 'LaTeX.js fixtures', !->
                     _test '   - screenshot', !->>
                         html = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .html!
                         await page.setContent html
-                        await page.addStyleTag content: "body { border: .4px solid; height: max-content; }"
+                        await page.addStyleTag content: ".body, .margin { border: .4px solid; height: max-content; }"
 
                         filename = path.join __dirname, 'screenshots', desc + ' ' + fixture.header
                         filename = filename.replace /\*/g, '-'
@@ -105,15 +107,21 @@ describe 'LaTeX.js fixtures', !->
 
                         if fs.existsSync filename + '.png'
                             # now compare the screenshots and delete the new one if they match
-                            try
-                                const result = await execa 'compare', [filename + '.png', filename + '.new.png', '-metric', 'rmse', filename + '.diff.png']
+
+                            png1 = PNG.sync.read(fs.readFileSync(filename + '.png'))
+                            png2 = PNG.sync.read(fs.readFileSync(filename + '.new.png'))
+
+                            diff = new PNG { width: png1.width, height: png1.height }
+
+                            dfpx = pixelmatch png1.data, png2.data, diff.data, png1.width, png1.height, threshold: 0
+
+                            diff.pack!.pipe(fs.createWriteStream(filename + '.diff.png'))
+
+                            if dfpx > 0
+                                throw new Error "screenshots differ by #{dfpx} pixels - see #{filename + '.*.png'}"
+                            else
                                 fs.unlinkSync filename + '.new.png'
                                 fs.unlinkSync filename + '.diff.png'
-                            catch
-                                if e.code == "ENOENT"
-                                    throw new Error "ImageMagick not installed! Cannot compare screenshots."
-
-                                throw new Error "screenshots differ by #{e.stderr} - see #{filename + '.*.png'}"
                         else
                             # if no screenshot exists yet, use this new one
                             fs.renameSync filename + '.new.png', filename + '.png'
