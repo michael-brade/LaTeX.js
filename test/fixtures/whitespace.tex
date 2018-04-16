@@ -58,15 +58,64 @@ first line \newline
 .
 
 
-** \mbox: restricted horizontal mode eats all paragraphs
+** \mbox: restricted horizontal mode and linebreaks and paragraphs
 .
-x\mbox{ one \\[4cm] space, no white \newline space \linebreak[4] me
+x\mbox{
+one \gobbleO space,
+two \gobbleO[] spaces,
+two \gobbleO{} spaces,
+
+no wh \\[4cm]ite \newline sp \\ ace,
+
+one \\[4cm] space,
+one \linebreak[4]space,
+one \linebreak[4] space,
 
 xx\par
 
 {xx \\  x}}x
+
+\mbox{ there
+is
+
+a
+
+
+space at the beginning and two at the end } .
 .
-<p>x<span class="hbox"><span> one space, no whitespace me xxxxx</span></span>x</p>
+<p>x<span class="hbox"><span>​ one space, two ​ spaces, two ​ spaces, no whitespace, one space, one space, one space, xxxxx</span></span>x</p>
+<p><span class="hbox"><span> there is a space at the beginning and two at the end </span></span> .</p>
+.
+
+
+** \unskip breaks out of groups, \ignorespaces does not
+.
+text {\unskip} text, text {\ignorespaces} text,
+.
+<p>text text, text  text</p>
+.
+
+
+
+** a space is added after macros that take arguments
+.
+% TODO: add a brsp after ] and }
+one \gobbleO space,
+two \gobbleO[] spaces,
+two \gobbleO{} spaces,
+two \echoOGO{} spaces,
+two \echoO[] spaces.
+.
+<p>one space, two ​ spaces, two ​ spaces.</p>
+.
+
+
+
+** space hack to prevent multiple spaces
+.
+x \pagebreak x \nopagebreak x \vspace{1mm} x \label{hi} x \marginpar{test} x \index{something} x \glossary{word} x \nocite x \enlargethispage x
+.
+<p>x x x x x x x x x x</p>
 .
 
 

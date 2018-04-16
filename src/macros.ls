@@ -107,6 +107,11 @@ export class LaTeXBase
     args = @args = {}
 
 
+    # just for testing
+    args.gobbleO = <[ H o? ]>
+
+    \gobbleO : -> []
+
     # echo macros just for testing
     args.echoO = <[ H o? ]>
 
