@@ -68,9 +68,10 @@ paragraph_with_linebreak =
     / break                                     { return g.create(g.linebreak); }
 
 
+// a line in restricted horizontal mode
 line =
     linebreak                                   { return undefined; }
-    / break                                     { return undefined; }
+    / break                                     { return g.createText(g.sp); }
     / text
 
 
@@ -83,7 +84,7 @@ text "text" =
     )+                                          { return g.createText(p.join("")); }
 
     / linebreak
-    / hmode_macro
+    / (&unskip_macro skip_space)? m:hmode_macro { return m; }
     / math
 
     // groups
@@ -397,13 +398,14 @@ horizontal      =   l:line*
 
 // restricted horizontal mode group
 arg_hgroup      =   skip_space begin_group      & { g.enterGroup(); g.startBalanced(); return true; }
+                        s:space?
                         h:horizontal
                     end_group
                     {
                         g.isBalanced() || error("groups inside an argument need to be balanced!");
                         g.endBalanced();
                         g.exitGroup();
-                        return h;
+                        return g.createFragment(g.createText(s), h);
                     }
 
 
@@ -784,6 +786,8 @@ linebreak       "linebreak" = skip_space escape "\\" skip_space '*'?
                                   if (l) return g.createBreakSpace(l);
                                   else   return g.create(g.linebreak);
                               }
+
+unskip_macro                = skip_space escape ("put") !char   // this should hold all macros that unskip (currently only \put; \\ is already in linebreak)
 
 
 /* syntax tokens - LaTeX */

@@ -773,8 +773,8 @@ export class LaTeXBase
     # \dashbox{dashlen}(width,height)[pos]{text}
     args.\dashbox =     <[ H cl v i? g ]>
 
-    # \frame{text} - frame without padding, line width given by picture linethickness
-    args.\frame =       <[ H g ]>
+    # \frame{text} - frame without padding, linewidth given by picture linethickness
+    args.\frame =       <[ H hg ]>
     \frame              : (txt) ->
         el = @g.create @g.inline-block, txt, "hbox pframe"
         w = @g.length \@wholewidth
@@ -787,7 +787,7 @@ export class LaTeXBase
     # these commands create a box with width 0 and height abs(y) + height of {obj} if y positive
 
     # \put(x,y){obj}
-    args.\put =         <[ H v g ]>
+    args.\put =         <[ H v g is ]>
     \put                : (v, obj) ->
         x = v.x.value
         y = v.y.value
