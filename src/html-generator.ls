@@ -423,9 +423,10 @@ export class HtmlGenerator
         canvas = @create @picture-canvas            # TODO: this might add CSS classes... ok?
         appendChildren canvas, content
 
+        # offset sets the coordinates of the lower left corner, so shift negatively
         if offset
-            canvas.setAttribute "style", "left:#{offset.x.value + offset.x.unit};
-                                        bottom:#{offset.y.value + offset.y.unit}"
+            canvas.setAttribute "style", "left:#{-offset.x.value + offset.x.unit};
+                                        bottom:#{-offset.y.value + offset.y.unit}"
 
         # picture
         pic = @create @picture
