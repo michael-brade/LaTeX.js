@@ -411,15 +411,50 @@ h1, h2, h3, h4 {
     vertical-align: bottom;
 }
 
-/* pos: top, inner-pos: bottom (only possible if height was given, too) */
-.p-t.p-cb {
-    display: inline-flex;
+
+/* the following are only possible if height was given, too */
+
+.p-t.p-ct {
+    vertical-align: baseline;
+}
+
+.p-t.p-cc {
     vertical-align: top;
+    align-items: center;
+}
+
+/* pos: top, inner-pos: bottom */
+.p-t.p-cb {
+    vertical-align: top;
+    display: inline-flex;
     align-items: flex-end;
 }
 
-/* pos: bottom, inner-pos: bottom (only possible if height was given, too) */
+/* pos and inner-pos: center */
+.p-c.p-cc {
+    display: inline-flex;
+    align-items: center;
+}
+
+.p-c.p-cb {
+    display: inline-flex;
+    align-items: flex-end;
+}
+
+
+.p-b.p-ct {
+    display: inline-flex;
+    align-items: flex-start;
+}
+
+.p-b.p-cc {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* pos: bottom, inner-pos: bottom */
 .p-b.p-cb {
+    vertical-align: baseline;
     display: inline-flex;
     align-items: flex-end;
 }
