@@ -408,7 +408,7 @@ h1, h2, h3, h4 {
 
 /* if we want a fixed height *and* bottom alignment */
 .pbh.p-b {
-    vertical-align: bottom;
+    vertical-align: text-bottom;
 }
 
 
@@ -419,13 +419,13 @@ h1, h2, h3, h4 {
 }
 
 .p-t.p-cc {
-    vertical-align: top;
+    vertical-align: text-top;
     align-items: center;
 }
 
 /* pos: top, inner-pos: bottom */
 .p-t.p-cb {
-    vertical-align: top;
+    vertical-align: text-top;
     display: inline-flex;
     align-items: flex-end;
 }
