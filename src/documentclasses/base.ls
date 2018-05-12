@@ -24,6 +24,12 @@ export class Base
         @g.newCounter \figure
         @g.newCounter \table
 
+        # @g.setLength \textwidth     { value: 100, unit: "%" }
+
+        @g.setLength \paperwidth    { value: 210, unit: "mm" }
+
+
+
 
     args = {}
     @args = args

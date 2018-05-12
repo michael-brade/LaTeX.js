@@ -94,27 +94,47 @@
 /* page layout */
 /***************/
 
-body {
+html, body {
     display: flex;
 
     margin: 0;
     padding: 0;
+
+    max-width: var(--paperwidth);   /* elements wider than this overflow, but don't increase bodywidth */
+    width: var(--paperwidth);
 }
 
 
 .body {
-    /* max-width: 40rem; */
+    max-width: var(--textwidth);   /* elements wider than this overflow, but don't increase bodywidth */
     width: var(--textwidth);
-    margin-left: calc(var(--oddsidemargin) + 1in);
 }
 
-.margin {
-    /* margin is on the right */
-    width: var(--marginparwidth);
+.margin-left {
+    order: -1;
+    display: flex;
+
+    max-width: var(--marginleftwidth);   /* elements wider than this overflow, but don't increase bodywidth */
+    width: var(--marginleftwidth);
+}
+
+.margin-right {
+    order: 1;
+    display: flex;
+
+    max-width: var(--marginrightwidth);   /* elements wider than this overflow, but don't increase bodywidth */
+    width: var(--marginrightwidth);
+}
+
+.marginpar {
+    width: var(--marginparwidth);           /* ideally in percent relative to margin */
+    min-width: var(--marginparwidth);       /* min-width if in flex container, to force this width */
+
     margin-left: var(--marginparsep);
+    margin-right: var(--marginparsep);
 }
 
-.margin > * {
+.marginpar > * {
     margin-bottom: var(--marginparpush);
 }
 

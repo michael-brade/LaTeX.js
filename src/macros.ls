@@ -35,11 +35,6 @@ export class LaTeXBase
         @g.newCounter \@itemdepth
         @g.newCounter \@enumdepth
 
-        @g.newLength \hsize
-        @g.setLength \hsize         { value: 100, unit: "%" }
-
-        @g.newLength \textwidth
-        @g.setLength \textwidth     { value: 100, unit: "%" }
 
         # picture lengths
         @g.newLength \unitlength
@@ -47,6 +42,19 @@ export class LaTeXBase
 
         @g.newLength \@wholewidth
         @g.setLength \@wholewidth   { value: 0.4, unit: "pt" }
+
+        @g.newLength \paperheight
+        @g.newLength \paperwidth
+
+        @g.newLength \oddsidemargin
+        @g.newLength \evensidemargin
+
+        @g.newLength \textheight
+        @g.newLength \textwidth
+
+        @g.newLength \marginparwidth
+        @g.newLength \marginparsep
+        @g.newLength \marginparpush
 
 
 

@@ -300,7 +300,34 @@ export class HtmlGenerator
             doc.head.appendChild createStyleSheet style
 
         doc.body.appendChild @create @block, @_dom, "body"
-        doc.body.appendChild @create @block, @_marginpars, "margin"
+
+        ### calculate page geometry
+        #
+        # set body's and margins' width to percentage of viewport (= paperwidth)
+        #
+        # we cannot distinguish between even/oddsidemargin - currently, only oddsidemargin is used
+        #
+        # textwidth percent  = textwidth px/paperwidth px
+        # marginleftwidth  % = (oddsidemargin px + toPx(1in))/paperwidth px
+        # marginrightwidth % = 100% - (textwidth + marginleftwidth), if there is no room left, the margin is 0% width
+
+        twp = 100 * (@length \textwidth).value / (@length \paperwidth).value
+        mlwp = 100 * ((@length \oddsidemargin).value + @toPx { value: 1, unit: "in" } .value) / (@length \paperwidth).value
+        mrwp = Math.max(100 - twp - mlwp, 0)
+
+        doc.body.style.setProperty '--textwidth', twp + "%"
+        doc.body.style.setProperty '--marginleftwidth', mlwp + "%"
+        doc.body.style.setProperty '--marginrightwidth', mrwp + "%"
+
+        if mrwp > 0
+            doc.body.style.setProperty '--marginparwidth', 100 * 100 * (@length \marginparwidth).value / (@length \paperwidth).value / mrwp + "%"
+        else
+            doc.body.style.setProperty '--marginparwidth', "0px"
+
+        # marginpar on the right
+        doc.body.appendChild @create @block, null, "margin-left"
+        doc.body.appendChild @create @block, @create(@block, @_marginpars, "marginpar"), "margin-right"
+
         doc
 
 
