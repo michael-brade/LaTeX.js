@@ -24,12 +24,41 @@ export class Base
         @g.newCounter \figure
         @g.newCounter \table
 
-        # @g.setLength \textwidth     { value: 100, unit: "%" }
-
+        # a4paper (TODO: implement documentclass paper options)
         @g.setLength \paperwidth    { value: 210, unit: "mm" }
 
 
+        # 10pt, onecolumn, oneside (twoside doesn't make sense in HTML)
 
+        ## textwidth
+
+        pt345 = @g.toPx { value: 345, unit: "pt" }
+        inch = @g.toPx { value: 1, unit: "in" }
+
+        textwidth = @g.length(\paperwidth).value - 2*inch.value
+        if textwidth > pt345.value
+            textwidth = pt345.value
+
+        @g.setLength \textwidth { value: textwidth, unit: "px" }
+
+
+        ## margins
+
+        @g.setLength \marginparsep { value: 11, unit: "pt" }
+        @g.setLength \marginparpush { value: 5, unit: "pt" }
+
+        # in px
+        margins = @g.length(\paperwidth).value - @g.length(\textwidth).value
+        oddsidemargin = 0.5 * margins - inch.value
+        marginparwidth = 0.5 * margins - @g.length(\marginparsep).value - 0.8 * inch.value
+        if marginparwidth > 2*inch.value
+            marginparwidth = 2*inch.value
+
+        @g.setLength \oddsidemargin { value: oddsidemargin, unit: "px" }
+        @g.setLength \marginparwidth { value: marginparwidth, unit: "px" }
+
+        # \evensidemargin = \paperwidth - 2in - \textwidth - \oddsidemargin
+        # \@settopoint\evensidemargin
 
     args = {}
     @args = args

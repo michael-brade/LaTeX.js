@@ -8,6 +8,15 @@
     --size: 10pt;
     --line-height: 1.2;
 
+    /* --linewidth makes no sense here; it is the width of the line in the current environment */
+
+    --paperwidth: 100%;         /* paper is the browser window */
+
+    /* TeX's even/oddsidemargin are not available in CSS, the HtmlGenerator translates the relevant lengths
+     * to marginleftwidth, marginrightwidth, and textwidth, as well as marginparwidth - all relative to the paper.
+     * So if a fixed width page is desired, simply set --paperwidth to an absolute value.
+     */
+
     --parindent: 1.5em;
     --parskip: 0px;             /* needs to be a length, otherwise calc(2px + var(--parskip)) will return 0 */
 
@@ -101,7 +110,7 @@ html, body {
     padding: 0;
 
     max-width: var(--paperwidth);   /* elements wider than this overflow, but don't increase bodywidth */
-    width: var(--paperwidth);
+    min-width: var(--paperwidth);
 }
 
 

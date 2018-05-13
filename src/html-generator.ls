@@ -311,8 +311,12 @@ export class HtmlGenerator
         # marginleftwidth  % = (oddsidemargin px + toPx(1in))/paperwidth px
         # marginrightwidth % = 100% - (textwidth + marginleftwidth), if there is no room left, the margin is 0% width
 
-        twp = 100 * (@length \textwidth).value / (@length \paperwidth).value
-        mlwp = 100 * ((@length \oddsidemargin).value + @toPx { value: 1, unit: "in" } .value) / (@length \paperwidth).value
+        # do this if a static, non-responsive page is desired (TODO: make configurable!)
+        #doc.body.style.setProperty '--paperwidth', (@length \paperwidth).value + (@length \paperwidth).unit
+
+
+        twp =  Math.round 100 * (@length \textwidth).value / (@length \paperwidth).value, 1
+        mlwp = Math.round 100 * ((@length \oddsidemargin).value + @toPx { value: 1, unit: "in" } .value) / (@length \paperwidth).value, 1
         mrwp = Math.max(100 - twp - mlwp, 0)
 
         doc.body.style.setProperty '--textwidth', twp + "%"
@@ -320,9 +324,17 @@ export class HtmlGenerator
         doc.body.style.setProperty '--marginrightwidth', mrwp + "%"
 
         if mrwp > 0
+            # marginparwidth percentage relative to parent, which is marginrightwidth!
             doc.body.style.setProperty '--marginparwidth', 100 * 100 * (@length \marginparwidth).value / (@length \paperwidth).value / mrwp + "%"
         else
             doc.body.style.setProperty '--marginparwidth', "0px"
+
+        # set the rest of the lengths (TODO: write all defined lengths to CSS, for each group)
+        doc.body.style.setProperty '--marginparsep', (@length \marginparsep).value + (@length \marginparsep).unit
+        doc.body.style.setProperty '--marginparpush', (@length \marginparpush).value + (@length \marginparpush).unit
+
+
+        # doc.documentElement.style.setProperty '--root-color', 'red'
 
         # marginpar on the right
         doc.body.appendChild @create @block, null, "margin-left"
