@@ -144,7 +144,7 @@ html, body {
 }
 
 .marginpar > * {
-    margin-bottom: var(--marginparpush);
+    padding-bottom: var(--marginparpush);   /* use padding, which is included in offsetHeight, margin is not */
 }
 
 

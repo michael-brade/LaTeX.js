@@ -285,19 +285,33 @@ export class HtmlGenerator
             return @_dom
 
         createStyleSheet = (url) ->
-            link = document.createElement("link")
+            link = document.createElement "link"
             link.type = "text/css"
             link.rel = "stylesheet"
             link.href = url
             link
 
+        createScript = (url) ->
+            script = document.createElement "script"
+            script.src = url
+            script
+
+
         doc = document.implementation.createHTMLDocument @documentTitle
+
+        ### head
 
         doc.head.appendChild createStyleSheet "css/katex.css"
         doc.head.appendChild createStyleSheet @documentClass.css
 
         for style in @_options.styles
             doc.head.appendChild createStyleSheet style
+
+
+        doc.head.appendChild createScript "js/base.js"
+
+
+        ### body
 
         doc.body.appendChild @create @block, @_dom, "body"
 

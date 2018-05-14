@@ -28,7 +28,7 @@ module.exports = {
     plugins: [
         new CopyPlugin([
             { from: 'src/css', to: 'css' },
-            //{ from: 'src/fonts', to: 'fonts' }
+            { from: 'src/js', to: 'js' }
         ])
     ],
     stats: {
