@@ -8,14 +8,21 @@
     --size: 10pt;
     --line-height: 1.2;
 
+    /* --linewidth makes no sense here; it is the width of the line in the current environment */
+
+    --paperwidth: 100%;         /* paper is the browser window */
+
+    /* TeX's even/oddsidemargin are not available in CSS, the HtmlGenerator translates the relevant lengths
+     * to marginleftwidth, marginrightwidth, and textwidth, as well as marginparwidth - all relative to the paper.
+     * So if a fixed width page is desired, simply set --paperwidth to an absolute value.
+     */
+
     --parindent: 1.5em;
     --parskip: 0px;             /* needs to be a length, otherwise calc(2px + var(--parskip)) will return 0 */
 
     --smallskipamount: 0.3rem;
     --medskipamount: 0.6rem;
     --bigskipamount: 1.2rem;
-
-    --marginparsep: 1.1rem;
 
     --listparindent: 0px;
     --itemindent: 0px;
@@ -96,12 +103,49 @@
 /* page layout */
 /***************/
 
-body {
-    max-width: 40rem;
-    margin: 1em auto;
-    padding: 0 5em;
+html, body {
+    display: flex;
+
+    margin: 0;
+    padding: 0;
+
+    max-width: var(--paperwidth);   /* elements wider than this overflow, but don't increase bodywidth */
+    min-width: var(--paperwidth);
 }
 
+
+.body {
+    max-width: var(--textwidth);   /* elements wider than this overflow, but don't increase bodywidth */
+    width: var(--textwidth);
+}
+
+.margin-left {
+    order: -1;
+    display: flex;
+
+    max-width: var(--marginleftwidth);   /* elements wider than this overflow, but don't increase bodywidth */
+    width: var(--marginleftwidth);
+}
+
+.margin-right {
+    order: 1;
+    display: flex;
+
+    max-width: var(--marginrightwidth);   /* elements wider than this overflow, but don't increase bodywidth */
+    width: var(--marginrightwidth);
+}
+
+.marginpar {
+    width: var(--marginparwidth);           /* ideally in percent relative to margin */
+    min-width: var(--marginparwidth);       /* min-width if in flex container, to force this width */
+
+    margin-left: var(--marginparsep);
+    margin-right: var(--marginparsep);
+}
+
+.marginpar > * {
+    padding-bottom: var(--marginparpush);   /* use padding, which is included in offsetHeight, margin is not */
+}
 
 
 .onecolumn {
@@ -393,18 +437,53 @@ h1, h2, h3, h4 {
 
 /* if we want a fixed height *and* bottom alignment */
 .pbh.p-b {
-    vertical-align: bottom;
+    vertical-align: text-bottom;
 }
 
-/* pos: top, inner-pos: bottom (only possible if height was given, too) */
+
+/* the following are only possible if height was given, too */
+
+.p-t.p-ct {
+    vertical-align: baseline;
+}
+
+.p-t.p-cc {
+    vertical-align: text-top;
+    align-items: center;
+}
+
+/* pos: top, inner-pos: bottom */
 .p-t.p-cb {
+    vertical-align: text-top;
     display: inline-flex;
-    vertical-align: top;
     align-items: flex-end;
 }
 
-/* pos: bottom, inner-pos: bottom (only possible if height was given, too) */
+/* pos and inner-pos: center */
+.p-c.p-cc {
+    display: inline-flex;
+    align-items: center;
+}
+
+.p-c.p-cb {
+    display: inline-flex;
+    align-items: flex-end;
+}
+
+
+.p-b.p-ct {
+    display: inline-flex;
+    align-items: flex-start;
+}
+
+.p-b.p-cc {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* pos: bottom, inner-pos: bottom */
 .p-b.p-cb {
+    vertical-align: baseline;
     display: inline-flex;
     align-items: flex-end;
 }
@@ -445,6 +524,7 @@ h1, h2, h3, h4 {
 .picture {
     display: inline-block;  /* so that it can be given a fixed size */
     position: relative;
+    vertical-align: bottom; /* needed for \put */
 }
 
 /* the coordinate system of the picture */
