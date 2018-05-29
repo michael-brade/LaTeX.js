@@ -42,7 +42,6 @@
     ]
   },
   "dependencies": {
-    "domino": "2.x",
     "he": "1.1.x",
     "katex": "0.9.0",
     "svg.js": "2.6.x",
@@ -53,7 +52,7 @@
     "lodash": "4.x",
     "commander": "2.15.x",
     "stdin": "*",
-    "fs-extra": "5.x",
+    "fs-extra": "6.x",
     "js-beautify": "1.7.x"
   },
   "devDependencies": {
@@ -64,15 +63,15 @@
     "uglify-js": "3.3.x",
     "webpack": "4.x",
     "webpack-cli": "2.x",
-    "babel-loader": "8.0.0-beta.2",
+    "babel-loader": "8.0.0-beta.3",
     "copy-webpack-plugin": "4.5.x",
-    "@babel/core": "7.0.0-beta.42",
-    "@babel/register": "7.0.0-beta.42",
-    "@babel/plugin-syntax-object-rest-spread": "7.0.0-beta.42",
+    "@babel/core": "7.0.0-beta.49",
+    "@babel/register": "7.0.0-beta.49",
+    "@babel/plugin-syntax-object-rest-spread": "7.0.0-beta.49",
     "mocha": "5.x",
     "chai": "4.x",
     "chai-as-promised": "7.x",
-    "puppeteer": "1.2.x",
+    "puppeteer": "1.4.x",
     "pixelmatch": "4.0.x",
     "istanbul": ">= 0.4.x"
   },
