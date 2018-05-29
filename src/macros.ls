@@ -56,6 +56,49 @@ export class LaTeXBase
         @g.newLength \marginparsep
         @g.newLength \marginparpush
 
+        @g.newLength \columnwidth
+        @g.newLength \columnsep
+        @g.newLength \columnseprule
+
+        @g.newLength \linewidth
+
+        @g.newLength \leftmargin
+        @g.newLength \rightmargin
+        @g.newLength \listparindent
+        @g.newLength \itemindent
+        @g.newLength \labelwidth
+        @g.newLength \labelsep
+
+        @g.newLength \leftmargini
+        @g.newLength \leftmarginii
+        @g.newLength \leftmarginiii
+        @g.newLength \leftmarginiv
+        @g.newLength \leftmarginv
+        @g.newLength \leftmarginvi
+
+        @g.newLength \fboxrule
+        @g.newLength \fboxsep
+
+        @g.newLength \tabbingsep
+        @g.newLength \arraycolsep
+        @g.newLength \tabcolsep
+        @g.newLength \arrayrulewidth
+        @g.newLength \doublerulesep
+        @g.newLength \footnotesep
+        @g.newLength \topmargin
+        @g.newLength \headheight
+        @g.newLength \headsep
+        @g.newLength \footskip
+
+        @g.newLength \topsep
+        @g.newLength \partopsep
+        @g.newLength \itemsep
+        @g.newLength \parsep
+        @g.newLength \floatsep
+        @g.newLength \textfloatsep
+        @g.newLength \intextsep
+        @g.newLength \dblfloatsep
+        @g.newLength \dbltextfloatsep
 
 
     # args: declaring arguments for a macro. If a macro doesn't take arguments and is a
