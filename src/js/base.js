@@ -41,6 +41,23 @@ function positionMarginpars() {
     });
 }
 
-document.addEventListener('change', processTheElements);
-document.addEventListener('change', positionMarginpars);
-document.addEventListener('resize', positionMarginpars);
+
+function completed() {
+	document.removeEventListener("DOMContentLoaded", completed);
+	window.removeEventListener("load", positionMarginpars);
+
+    var observer = new MutationObserver(function() {
+        processTheElements();
+        positionMarginpars();
+    });
+
+    observer.observe(document, { attributes: true, childList: true, characterData: true, subtree: true });
+
+    window.addEventListener('resize', positionMarginpars);
+
+    processTheElements();
+    positionMarginpars();
+}
+
+document.addEventListener("DOMContentLoaded", completed);
+window.addEventListener("load", completed);
