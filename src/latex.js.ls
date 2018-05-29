@@ -41,7 +41,7 @@ program
 
 
     .option '-o, --output <file>',      'specify output file, otherwise STDOUT will be used'
-    .option '-a, --assets [dir]',       'copy CSS and fonts to the specified directory, or to the directory of output file'
+    .option '-a, --assets [dir]',       'copy CSS and fonts to the directory of the output file, unless dir is given (default: no assets are copied)'
 
     # options affecting the HTML output
     .option '-b, --bare',               'don\'t include HTML boilerplate and CSS, only output the contents of body'
@@ -131,10 +131,13 @@ if program.assets == true
 if dir
     css = path.join dir, 'css'
     fonts = path.join dir, 'fonts'
+    js = path.join dir, 'js'
 
     fs.mkdirpSync css
     fs.mkdirpSync fonts
+    fs.mkdirpSync js
 
     fs.copySync (path.join __dirname, '../dist/css'), css
     fs.copySync (path.join __dirname, '../dist/fonts'), fonts
+    fs.copySync (path.join __dirname, '../dist/js'), js
     fs.copySync (path.join __dirname, '../node_modules/katex/dist/fonts/'), fonts, (src) -> src == /\.woff$/ or fs.statSync(src).isDirectory!
