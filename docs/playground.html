@@ -202,6 +202,114 @@
       \end{quote}
 
 
+      \bigbreak
+
+      \noindent\fbox{
+      \verb|\parbox[|\emph{pos}\verb|][|\emph{height}\verb|][|\emph{inner-pos}\verb|]{|\emph{width}\verb|}{|\emph{text}\verb|}|
+      }
+
+      \smallbreak
+
+      \noindent
+      The \verb|\parbox| command produces a box the contents of which are created in paragraph mode. However, only small
+      pieces of text should be used, paragraph-making environments shouldn't be used inside a \verb|\parbox| argument. For
+      larger pieces of text, including ones containing a paragraph-making environment, you should use a \verb|minipage|
+      environment.
+
+      By default LaTeX will position vertically a parbox so its center lines up with the center of the surrounding text line.
+      When the optional position argument is present and equal either to ‘\verb|t|’ or ‘\verb|b|’, this allows you respectively
+      to align either the top or bottom line in the parbox with the baseline of the surrounding text. You may also specify
+      ‘\verb|m|’ for position to get the default behaviour.
+
+      The optional \emph{height} argument overrides the natural height of the box.
+
+      The \emph{inner-pos} argument controls the placement of the text inside the box, as follows; if it is not specified, \emph{pos} is used.
+
+      \verb|t| text is placed at the top of the box.
+
+      \verb|c| text is centered in the box.
+
+      \verb|b| text is placed at the bottom of the box.
+
+      \verb|s| is not supported in HTML
+
+      \smallbreak\noindent
+      The following examples demonstrate simple positioning:
+
+      \begin{itemize}
+      \item simple alignment:
+
+      Some text
+      \fbox{\parbox{2cm}{parbox default alignment, parbox test text}}
+      some text
+      \fbox{\parbox[t]{2cm}{parbox top alignment, text parbox test text}}
+      some text
+      \fbox{\parbox[b]{2cm}{parbox bottom alignment, text parbox test text}}
+      some text.
+
+
+      \item alignment with a given height:
+
+      Some text
+      \fbox{\parbox[c][3cm]{2cm}{parbox default alignment, parbox test text}}
+      some text
+      \fbox{\parbox[t][3cm]{2cm}{parbox top alignment, text parbox test text}}
+      some text
+      \fbox{\parbox[b][3cm]{2cm}{parbox bottom alignment, text parbox test text}}
+      some text.
+      % BUG: empty line here causes parse error!
+      \end{itemize}
+
+      \noindent
+      The following examples demonstrate all explicit \emph{pos}/\emph{inner-pos} combinations:
+      \begin{itemize}
+      \item center alignment:
+
+      \noindent
+      Some text
+      \fbox{\parbox[c][3cm][t]{2cm}{parbox default alignment, parbox test text}}
+      some text
+      \fbox{\parbox[c][3cm][c]{2cm}{parbox top alignment, text parbox test text}}
+      some text
+      \fbox{\parbox[c][3cm][b]{2cm}{parbox bottom alignment, text parbox test text}}
+      some text.
+
+
+      \item top alignment:
+
+      \noindent
+      Some text
+      \fbox{\parbox[t][3cm][t]{2cm}{parbox default alignment, parbox test text}}
+      some text
+      \fbox{\parbox[t][3cm][c]{2cm}{parbox top alignment, text parbox test text}}
+      some text
+      \fbox{\parbox[t][3cm][b]{2cm}{parbox bottom alignment, text parbox test text}}
+      some text.
+
+      \item bottom alignment:
+
+      \noindent
+      Some text
+      \fbox{\parbox[b][3cm][t]{2cm}{parbox default alignment, parbox test text}}
+      some text
+      \fbox{\parbox[b][3cm][c]{2cm}{parbox top alignment, text parbox test text}}
+      some text
+      \fbox{\parbox[b][3cm][b]{2cm}{parbox bottom alignment, text parbox test text}}
+      some text.
+
+
+      \item top/bottom in one line:
+
+      \noindent
+      Some text
+      \fbox{\parbox[b][3cm][t]{2cm}{parbox default alignment, parbox test text}}
+      some text
+      \fbox{\parbox[t][3cm][c]{2cm}{parbox top alignment, text parbox test text}}
+      some text.
+      \end{itemize}
+
+
+
       \subsection{Low-level box-interface}
 
       \LaTeX.js supports the following low-level \TeX\ commands:
