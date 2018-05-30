@@ -39,7 +39,7 @@ before !->>
         for i til msg.args.length
             console.log "#{i}: #{msg.args[i]}"
 
-    await page.setViewport { width: 0, height: 0, deviceScaleFactor: 2 }
+    await page.setViewport { width: 1000, height: 0, deviceScaleFactor: 2 }
 
 after !->>
     await browser.close!
@@ -95,7 +95,7 @@ describe 'LaTeX.js fixtures', !->
                     _test '   - screenshot', !->>
                         html = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .html!
                         await page.setContent html
-                        await page.addStyleTag content: ".body, .margin { border: .4px solid; height: max-content; }"
+                        await page.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
 
                         filename = path.join __dirname, 'screenshots', desc + ' ' + fixture.header
                         filename = filename.replace /\*/g, '-'
