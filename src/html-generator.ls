@@ -301,6 +301,10 @@ export class HtmlGenerator
 
         ### head
 
+        charset = document.createElement "meta"
+        charset.setAttribute "charset", "UTF-8"
+        doc.head.appendChild charset
+
         doc.head.appendChild createStyleSheet "css/katex.css"
         doc.head.appendChild createStyleSheet @documentClass.css
 
@@ -308,7 +312,10 @@ export class HtmlGenerator
             doc.head.appendChild createStyleSheet style
 
 
-        doc.head.appendChild createScript "js/base.js"
+        if window.location
+            doc.head.appendChild createScript new URL("js/base.js", window.location.href).toString!
+        else
+            doc.head.appendChild createScript "js/base.js"
 
 
         ### body
