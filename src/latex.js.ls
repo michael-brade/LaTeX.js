@@ -123,10 +123,13 @@ dir = program.assets
 
 if program.assets == true
     if not program.output
-        console.error "  assets: either a directory has to be given, or -o"
+        console.error "  assets error: either a directory has to be given, or -o"
         process.exit 1
     else
         dir = path.posix.dirname path.resolve program.output
+else if fs.existsSync(dir) and not fs.statSync(dir).isDirectory!
+    console.error "  assets error: the given path exists but is not a directory: ", dir
+    process.exit 1
 
 if dir
     css = path.join dir, 'css'
