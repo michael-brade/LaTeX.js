@@ -36,8 +36,9 @@ function positionMarginpars() {
     mpars.forEach(function(mpar) {
         var mpref = document.querySelector('.body #marginref-' + mpar.id);
         var top = offsetTop(mpref);
-        mpar.style.marginTop = top - prevBottom;
-        prevBottom = top - prevBottom + mpar.offsetHeight
+        mpar.style.marginTop = Math.max(0, top - prevBottom);
+        // if marginTop would have been negative, the element is now further down by that offset => add it to prevBottom
+        prevBottom = top + mpar.offsetHeight + Math.max(0, prevBottom - top);
     });
 }
 
