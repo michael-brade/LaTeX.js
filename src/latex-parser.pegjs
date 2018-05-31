@@ -56,8 +56,16 @@ document =
 
 paragraph =
     vmode_macro
-    / (escape noindent)? b:break                { b && g.break(); return undefined; }
-    / skip_space n:(escape noindent)? txt:text+ { return g.create(g.par, txt, n ? "noindent" : ""); }
+    /
+    bb:((escape noindent)? break)*
+    skip_space n:(escape noindent)? txt:text+
+    be:break?
+    {
+        bb.length > 0 && g.break();
+        var p = g.create(g.par, txt, n ? "noindent" : "");
+        be && g.break();
+        return p;
+    }
 
 
 
@@ -773,12 +781,13 @@ ctrl_space  "control space" = escape (&nl &break / nl / sp)     { return g.brsp;
 
 nbsp        "non-brk space" = "~"                               { return g.nbsp; }          // catcode 13 (active)
 
-break     "paragraph break" = (skip_all_space escape par skip_all_space)+                   // a paragraph break is either \par embedded in spaces,
-                              /                                                             // or
-                              sp*                                                           //
-                              (nl comment* / comment+)                                      // a paragraph break is a newline...
-                              ((sp* nl)+ / &end_doc / EOF)                                  // ...followed by one or more newlines, mixed with spaces,...
-                              (sp / nl / comment)*                                          // ...and optionally followed by any whitespace and/or comment
+break     "paragraph break" = ((skip_all_space escape par skip_all_space)+                  // a paragraph break is either \par embedded in spaces,
+                               /                                                            // or
+                               sp*
+                               (nl comment* / comment+)                                     // a paragraph break is a newline...
+                               ((sp* nl)+ / &end_doc / EOF)                                 // ...followed by one or more newlines, mixed with spaces,...
+                               (sp / nl / comment)*                                         // ...and optionally followed by any whitespace and/or comment
+                              )                                 { return true; }
 
 linebreak       "linebreak" = skip_space escape "\\" skip_space '*'?
                               skip_space
