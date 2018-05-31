@@ -586,8 +586,10 @@ h_environment =
         // if node is a text node, just add it
         // potential spaces after \begin and \end have to be added explicitely
 
-        if (p.length > 0 && node && node.length > 0 && node[node.length - 1].nodeType === 1) {
-            node[node.length - 1].appendChild(g.createFragment(sb, p));
+        var pf = g.createFragment(p);
+        if (pf && node && node.length > 0 && node[node.length - 1].nodeType === 1) {
+            node[node.length - 1].appendChild(sb);
+            node[node.length - 1].appendChild(pf);
             return g.createFragment(node, end, se);
         }
 
@@ -608,8 +610,9 @@ environment =
         // if nodes are created by macro, add content as children to the last element
         // if node is a text node, just add it
 
-        if (p.length > 0 && node && node.length > 0 && node[node.length - 1].nodeType === 1) {
-            node[node.length - 1].appendChild(g.createFragment(p));
+        var pf = g.createFragment(p);
+        if (pf && node && node.length > 0 && node[node.length - 1].nodeType === 1) {
+            node[node.length - 1].appendChild(pf);
             return g.createFragment(node, end);
         }
 
