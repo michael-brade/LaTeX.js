@@ -10,7 +10,8 @@ function processTheElements() {
     }
 }
 
-function offsetTop(el) {
+
+function _vertical(el, tb) {
     var doc, docEl, rect, win;
 
     // return zero for disconnected and hidden (display: none) elements, IE <= 11 only
@@ -25,7 +26,27 @@ function offsetTop(el) {
     docEl = doc.documentElement;
     win = doc.defaultView;
 
-    return rect.top + win.pageYOffset - docEl.clientTop;
+    return rect[tb] + win.pageYOffset - docEl.clientTop;
+}
+
+
+function offsetTop(el) {
+    return _vertical(el, "top");
+}
+
+function offsetBottom(el) {
+    return _vertical(el, "bottom");
+}
+
+function offsetBaseline(el) {
+    var mpbaseline = el.querySelector('.mpbaseline');
+    return offsetBottom(mpbaseline);
+}
+
+function heightAboveBaseline(el) {
+    var baseline = offsetBaseline(el);
+    var top = offsetTop(el);
+    return baseline - top;
 }
 
 
@@ -35,10 +56,15 @@ function positionMarginpars() {
 
     mpars.forEach(function(mpar) {
         var mpref = document.querySelector('.body #marginref-' + mpar.id);
-        var top = offsetTop(mpref);
-        mpar.style.marginTop = Math.max(0, top - prevBottom);
+
+        var baselineref = offsetBottom(mpref);
+        var heightAB = heightAboveBaseline(mpar);
+        var height = mpar.offsetHeight;
+
+        mpar.style.marginTop = Math.max(0, baselineref - heightAB - prevBottom);
+
         // if marginTop would have been negative, the element is now further down by that offset => add it to prevBottom
-        prevBottom = top + mpar.offsetHeight + Math.max(0, prevBottom - top);
+        prevBottom = baselineref - heightAB + height - Math.min(0, baselineref - heightAB - prevBottom);
     });
 }
 

@@ -962,12 +962,12 @@ export class HtmlGenerator
     marginpar: (txt) ->
         id = @nextId!
 
-        marginPar = @create @block, txt
+        marginPar = @create @block, [@create(@inline-block, null, "mpbaseline"), txt]
         marginPar.id = id
 
         @_marginpars.push marginPar
 
-        marginRef = @create @inline-block
+        marginRef = @create @inline-block, null, "mpbaseline"
         marginRef.id = "marginref-" + id
 
         marginRef
