@@ -860,10 +860,14 @@
       indentUnit: 4
     })
 
-    var iframe = document.getElementById('preview')
+    var iframe;
 
-    Playground.compile(editor.getValue(), iframe.contentWindow)
-    editor.refresh()
+    document.addEventListener("DOMContentLoaded", function() {
+      iframe = document.getElementById('preview')
+
+      Playground.compile(editor.getValue(), iframe.contentWindow)
+      editor.refresh()
+    });
 
     editor.on('change', function(e) {
       Playground.compile(editor.getValue(), iframe.contentWindow)
