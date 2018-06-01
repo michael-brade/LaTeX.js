@@ -410,6 +410,24 @@ h1, h2, h3, h4 {
 }
 
 
+/* a class to align text to the baseline, and a class to locate the baseline */
+
+.align-baseline {
+    line-height: 0;
+}
+
+.align-baseline::after {
+    content: '';
+    display: inline-block;
+}
+
+.mpbaseline {
+    line-height: 0;
+    width: 0;
+    height: 0;
+    display: inline-block;
+}
+
 /* parbox/minipage */
 
 .parbox {
