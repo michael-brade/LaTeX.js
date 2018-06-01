@@ -124,7 +124,7 @@ function completed() {
         positionMarginpars();
     });
 
-    observer.observe(document, { attributes: true, childList: true, characterData: true, subtree: true });
+    observer.observe(document, { attributes: true, childList: true, characterData: true });
 
     // add resize event listener
     optimizedResize.add(positionMarginpars);
