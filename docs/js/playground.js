@@ -16,6 +16,9 @@ var scrollY = 0
 module.exports.compile = function(latex, iframe) {
     var doc = iframe.contentDocument
 
+    if (doc.readyState !== "complete")
+        return
+
     try {
         generator.reset()
         var newDoc = latexjs.parse(latex, { generator: generator }).dom()
@@ -33,6 +36,8 @@ module.exports.compile = function(latex, iframe) {
             scrollY = 0
         }
     } catch (e) {
+        console.error(e)
+
         // save scrolling position and restore on next successful compile
         if (!scrollY)
             scrollY = iframe.contentWindow.pageYOffset
@@ -49,9 +54,8 @@ module.exports.compile = function(latex, iframe) {
 
             doc.body.innerHTML = '<pre class="error">ERROR: Parsing failure:\n\n' + errorMessage(error, true) + '</pre>'
         } else {
-            doc.body.innerHTML = '<pre class="error">ERROR: ' + e.message + '</pre>';
+            doc.body.innerHTML = '<pre class="error">ERROR: ' + e.message + '</pre>'
         }
-        console.error(e)
     }
 }
 
