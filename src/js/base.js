@@ -5,8 +5,11 @@ function getVariable(el, propertyName) {
 function processTheElements() {
     var thes = document.querySelectorAll('.the');
     for (var i = 0; i < thes.length; i++) {
-        var v = thes[i].getAttribute('display-var');
-        thes[i].textContent = getVariable(thes[i], v);
+        var v = getVariable(thes[i], thes[i].getAttribute('display-var'));
+        // only mutate if it actually changed
+        if (thes[i].textContent != v) {
+            thes[i].textContent = v;
+        }
     }
 }
 
