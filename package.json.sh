@@ -2,7 +2,7 @@
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.9.2'
+version: '0.10.0'
 
 author:
     'name': 'Michael Brade'
@@ -30,6 +30,7 @@ files:
     'dist/documentclasses/'
     'dist/css/'
     'dist/fonts/'
+    'dist/js/'
 
 
 scripts:
