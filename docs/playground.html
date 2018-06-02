@@ -865,12 +865,12 @@
     document.addEventListener("DOMContentLoaded", function() {
       iframe = document.getElementById('preview')
 
-      Playground.compile(editor.getValue(), iframe.contentWindow)
+      Playground.compile(editor.getValue(), iframe)
       editor.refresh()
     });
 
     editor.on('change', function(e) {
-      Playground.compile(editor.getValue(), iframe.contentWindow)
+      Playground.compile(editor.getValue(), iframe)
       iframe.contentDocument.dispatchEvent(new Event('change'))
     })
   </script>

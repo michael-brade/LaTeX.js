@@ -12,9 +12,9 @@ var generator = new HtmlGenerator({
 
 var scrollY = 0
 
-/* function to compile latex source into the HTML element preview */
-module.exports.compile = function(latex, _window) {
-    var doc = _window.document
+/* function to compile latex source into the given iframe */
+module.exports.compile = function(latex, iframe) {
+    var doc = iframe.contentDocument
 
     try {
         generator.reset()
@@ -25,18 +25,17 @@ module.exports.compile = function(latex, _window) {
             var newBody = doc.adoptNode(newDoc.body)
             doc.documentElement.replaceChild(newBody, doc.body)
         } else {
-            var newDocumentElement = doc.adoptNode(newDoc.documentElement)
-            doc.replaceChild(newDocumentElement, doc.documentElement)
+            iframe.srcdoc = newDoc.documentElement.innerHTML
         }
 
         if (scrollY) {
-            _window.scrollTo(0, scrollY)
+            iframe.contentWindow.scrollTo(0, scrollY)
             scrollY = 0
         }
     } catch (e) {
         // save scrolling position and restore on next successful compile
         if (!scrollY)
-            scrollY = _window.pageYOffset
+            scrollY = iframe.contentWindow.pageYOffset
 
         if (e instanceof latexjs.SyntaxError) {
             var error = {
