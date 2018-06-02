@@ -61,10 +61,16 @@ function positionMarginpars() {
         var heightAB = heightAboveBaseline(mpar);
         var height = mpar.offsetHeight;
 
-        mpar.style.marginTop = Math.max(0, baselineref - heightAB - prevBottom);
+        // round to 1 digit
+        var top = Math.round((baselineref - heightAB - prevBottom) * 10) / 10;
+
+        // only mutate if it actually changed
+        if (mpar.style.marginTop != Math.max(0, top) + "px") {
+            mpar.style.marginTop = Math.max(0, top) + "px";
+        }
 
         // if marginTop would have been negative, the element is now further down by that offset => add it to prevBottom
-        prevBottom = baselineref - heightAB + height - Math.min(0, baselineref - heightAB - prevBottom);
+        prevBottom = baselineref - heightAB + height - Math.min(0, top);
     });
 }
 
@@ -116,7 +122,7 @@ var optimizedResize = (function() {
 // setup event listeners
 
 function completed() {
-	document.removeEventListener("DOMContentLoaded", completed);
+    document.removeEventListener("DOMContentLoaded", completed);
 	window.removeEventListener("load", positionMarginpars);
 
     var observer = new MutationObserver(function() {
@@ -124,7 +130,7 @@ function completed() {
         positionMarginpars();
     });
 
-    observer.observe(document, { attributes: true, childList: true, characterData: true });
+    observer.observe(document, { attributes: true, childList: true, characterData: true, subtree: true });
 
     // add resize event listener
     optimizedResize.add(positionMarginpars);
