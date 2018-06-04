@@ -253,7 +253,7 @@ macro_args =
       / &{ return g.nextArg("l?") }   l: length_optgroup?                                                       { g.addParsedArg(l); }
       / &{ return g.nextArg("m") }    m:(macro_group    / . { g.argError("macro group argument expected") })    { g.addParsedArg(m); }
       / &{ return g.nextArg("u") }    u:(url_group      / . { g.argError("url group argument expected") })      { g.addParsedArg(u); }
-      // TODO: c
+      / &{ return g.nextArg("c") }    c:(color_group    / . { g.argError("color group expected") })             { g.addParsedArg(c); }
       / &{ return g.nextArg("cl") }   c:(coord_group    / . { g.argError("coordinate/length group expected") }) { g.addParsedArg(c); }
       / &{ return g.nextArg("cl?") }  c: coord_optgroup?                                                        { g.addParsedArg(c); }
       / &{ return g.nextArg("v") }    v:(vector         / . { g.argError("coordinate pair expected") })         { g.addParsedArg(v); }
@@ -335,6 +335,13 @@ float_group     =   skip_space begin_group
 
                     end_group
                     { return f; }
+
+
+// {color}
+color_group     =   skip_space begin_group
+                        c:color
+                    end_group
+                    { return c; }
 
 
 // picture coordinates and vectors
@@ -478,6 +485,57 @@ num_expr        =   skip_space
                     return result;
                 }
 
+
+
+// xcolor expressions //
+
+color           = (c_name / c_ext_expr / c_expr) func_expr*
+
+c_ext_expr      = core_model "," d:int ":" (c_expr "," float)+
+
+c_expr          = c_prefix? c_name c_mix_expr c_postfix?
+
+c_mix_expr      = ("!" c_pct "!" c_name)* "!" c_pct ("!" c_name)?
+
+// c_mix_expr      = ("!" c_pct "!" c_name)+
+//                 / ("!" c_pct "!" c_name)* "!" c_pct ("!" c_name)?
+
+func_expr       = fn ("," fn_arg)*
+
+fn              = ">" ("wheel" / "twheel")
+
+fn_arg          = float     // TODO...
+
+
+c_prefix        = m:"-"* { return m.length % 2 == 0; }
+
+c_name          = $(char / digit / ".")+
+
+c_pct           = float
+
+c_postfix       = "!!" (m:"+"+ / "[" int "]")
+
+
+color_model     = core_model / int_model / dec_model / pseudo_model
+
+core_model      = "rgb" / "cmy" / "cmyk" / "hsb" / "gray"
+
+int_model       = "RBG" / "HTML" / "HSB" / "Gray"
+
+dec_model       = "Hsb" / "tHsb" / "wave"
+
+pseudo_model    = "named"
+
+c_type          = "named" / "ps"
+
+
+color_spec      = float ((sp / ",") float)*
+                / c_name
+
+color_spec_list = color_spec ("/" color_spec)*
+
+
+model_list      = (core_model ":")? color_model ("/" color_model)*
 
 
 // column spec for tables like tabular
