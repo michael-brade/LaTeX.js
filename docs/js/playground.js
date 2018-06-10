@@ -41,7 +41,7 @@ module.exports.compile = function(latex, iframe) {
         // we need to disable normal processing of same-page links in the iframe
         // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame
         var linkScript = newDoc.createElement('script')
-        linkScript.text = links.toString() + 'document.addEventListener("DOMContentLoaded", function() { links() })'
+        linkScript.text = 'document.addEventListener("DOMContentLoaded", ' + links.toString() + ')'
         newDoc.head.appendChild(linkScript)
 
         // don't reload all the styles and fonts if not needed!
