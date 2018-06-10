@@ -305,16 +305,25 @@ export class HtmlGenerator
         charset.setAttribute "charset", "UTF-8"
         doc.head.appendChild charset
 
-        doc.head.appendChild createStyleSheet "css/katex.css"
-        doc.head.appendChild createStyleSheet @documentClass.css
-
-        for style in @_options.styles
-            doc.head.appendChild createStyleSheet style
-
-
         if window.location
+            base = document.createElement "base"
+            base.href = window.location.href
+            doc.head.appendChild base
+
+            doc.head.appendChild createStyleSheet new URL("css/katex.css", window.location.href).toString!
+            doc.head.appendChild createStyleSheet new URL(@documentClass.css, window.location.href).toString!
+
+            for style in @_options.styles
+                doc.head.appendChild createStyleSheet new URL(style, window.location.href).toString!
+
             doc.head.appendChild createScript new URL("js/base.js", window.location.href).toString!
         else
+            doc.head.appendChild createStyleSheet "css/katex.css"
+            doc.head.appendChild createStyleSheet @documentClass.css
+
+            for style in @_options.styles
+                doc.head.appendChild createStyleSheet style
+
             doc.head.appendChild createScript "js/base.js"
 
 

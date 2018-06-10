@@ -12,6 +12,21 @@ var generator = new HtmlGenerator({
 
 var scrollY = 0
 
+function links() {
+    var as = document.getElementsByTagName("a")
+    for (var i = 0; i < as.length; i++) {
+        if (as[i].getAttribute("href").startsWith("#")) {
+            as[i].addEventListener("click", function(ev) {
+                ev.preventDefault()
+                var target = ev.target.getAttribute("href").substr(1)
+                var te = document.getElementById(target)
+
+                document.scrollingElement.scrollTop = offsetTop(te)
+            })
+        }
+    }
+}
+
 /* function to compile latex source into the given iframe */
 module.exports.compile = function(latex, iframe) {
     var doc = iframe.contentDocument
@@ -23,12 +38,21 @@ module.exports.compile = function(latex, iframe) {
         generator.reset()
         var newDoc = latexjs.parse(latex, { generator: generator }).dom()
 
+        // we need to disable normal processing of same-page links in the iframe
+        // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame
+        var linkScript = newDoc.createElement('script')
+        linkScript.text = links.toString() + 'document.addEventListener("DOMContentLoaded", function() { links() })'
+        newDoc.head.appendChild(linkScript)
+
         // don't reload all the styles and fonts if not needed!
         if (doc.head.innerHTML == newDoc.head.innerHTML) {
             var newBody = doc.adoptNode(newDoc.body)
             doc.documentElement.replaceChild(newBody, doc.body)
         } else {
             iframe.srcdoc = newDoc.documentElement.innerHTML
+
+            // var blob = new Blob([newDoc.documentElement.innerHTML], {type : 'text/html'});
+            // iframe.src = URL.createObjectURL(blob);
         }
 
         if (scrollY) {
