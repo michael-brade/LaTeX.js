@@ -87,9 +87,9 @@ dependencies:
     'hyphenation.de': '*'
 
     'lodash': '4.x'
-    'commander': '2.15.x'
+    'commander': '2.16.x'
     'stdin': '*'
-    'fs-extra': '6.x'
+    'fs-extra': '7.x'
     'js-beautify': '1.7.x'
 
     #'cheerio': '0.x'
@@ -103,19 +103,20 @@ devDependencies:
     'pegjs': '0.10.x'
     'mkdirp': '0.5.x'
     'rimraf': '2.6.x'
-    'uglify-js': '3.3.x'
+    'uglify-js': '3.4.x'
 
 
     ### bundling
 
     'webpack': '4.x'
-    'webpack-cli': '2.x'
+    'webpack-command': '0.x'
+    'webpack-closure-compiler': '2.x'
     'babel-loader': '8.0.0-beta.3'
     'copy-webpack-plugin': '4.5.x'
 
-    '@babel/core': '7.0.0-beta.49'
-    '@babel/register': '7.0.0-beta.49'
-    '@babel/plugin-syntax-object-rest-spread': '7.0.0-beta.49'
+    '@babel/core': '7.0.0-beta.55'
+    '@babel/register': '7.0.0-beta.55'
+    '@babel/plugin-syntax-object-rest-spread': '7.0.0-beta.55'
 
 
     ### testing
@@ -124,7 +125,7 @@ devDependencies:
     'chai': '4.x'
     'chai-as-promised': '7.x'
 
-    'puppeteer': '1.4.x'
+    'puppeteer': '1.6.x'
     'pixelmatch': '4.0.x'
 
     'istanbul': '>= 0.4.x'
