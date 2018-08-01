@@ -9,14 +9,6 @@ require! {
     pngjs: { PNG }
 }
 
-# on the server we need to include a DOM implementation
-global.window = require 'svgdom'
-global.document = window.document
-
-
-# svgdom.setFontDir '../src/fonts'
-#       .setFont
-
 const HtmlGenerator   = require '../dist/html-generator' .HtmlGenerator
 const html-beautify   = require 'js-beautify' .html
 const latexjs         = require '../dist/latex-parser'

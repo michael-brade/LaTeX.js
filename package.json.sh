@@ -2,7 +2,7 @@
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.10.0'
+version: '0.10.1'
 
 author:
     'name': 'Michael Brade'
@@ -14,15 +14,18 @@ keywords:
     'parser'
     'html5'
 
-
-main:
-    'dist/latex-parser.js'
-
 bin:
     'latex.js': './bin/latex.js'
 
+main:
+    'dist/index.js'
+
+browser:
+    'dist/latex.min.js'
+
 files:
     'bin/latex.js'
+    'dist/index.js'
     'dist/latex-parser.js'
     'dist/macros.js'
     'dist/symbols.js'
@@ -31,12 +34,14 @@ files:
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
+    'dist/latex.min.js'
 
 
 scripts:
     clean: 'rimraf dist bin;'
     build: "
         npm run devbuild;
+        uglifyjs dist/index.js                   -cm -o dist/index.js;
         uglifyjs dist/plugin-pegjs.js            -cm -o dist/plugin-pegjs.js;
         uglifyjs dist/latex-parser.js            -cm -o dist/latex-parser.js;
         uglifyjs dist/macros.js                  -cm -o dist/macros.js;
@@ -49,6 +54,7 @@ scripts:
 
         mkdirp bin;
         lsc -bc --no-header -o bin src/latex.js.ls;
+        chmod a+x bin/latex.js;
     "
     devbuild: "
         mkdirp dist/documentclasses;
@@ -61,6 +67,7 @@ scripts:
         lsc -c -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
         lsc -c -o dist/documentclasses src/documentclasses/;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
+        babel -o dist/index.js src/index.js;
     "
     docs:  'npm run devbuild && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
@@ -71,6 +78,13 @@ scripts:
     cover: 'istanbul cover --dir test/coverage _mocha test/tests.ls;'
 
 babel:
+    presets:
+        * '@babel/preset-env'
+            targets:
+                node: 'current'
+                browsers: '> 0.5%, not dead'
+        ...
+
     plugins:
         '@babel/syntax-object-rest-spread'
         ...
@@ -114,8 +128,10 @@ devDependencies:
     'babel-loader': '8.0.0-beta.3'
     'copy-webpack-plugin': '4.5.x'
 
+    '@babel/cli': '7.0.0-beta.55'
     '@babel/core': '7.0.0-beta.55'
     '@babel/register': '7.0.0-beta.55'
+    '@babel/preset-env': '7.0.0-beta.55'
     '@babel/plugin-syntax-object-rest-spread': '7.0.0-beta.55'
 
 

@@ -2,12 +2,10 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 
-module.exports = {
-    // mode: 'production',
+module.exports = [{
     mode: 'development',
     devtool: false, //'source-map',
 
-    context: __dirname,
     entry: './docs/js/playground.js',
     output: {
         path: path.resolve(__dirname, 'docs'),
@@ -34,4 +32,30 @@ module.exports = {
     stats: {
         colors: true
     }
-};
+}, {
+    mode: 'production',
+    devtool: false,
+
+    context: path.resolve(__dirname, "dist"),
+    entry: './index.js',
+    output: {
+        filename: 'latex.min.js',
+        libraryTarget: "umd",
+        library: "latexjs",
+        umdNamedDefine: true
+    },
+    module: {
+        rules: [{
+            test: /\.js$/,
+            exclude: /(node_modules)/,
+            use: 'babel-loader'
+        }]
+    },
+    performance: {
+        maxEntrypointSize: 512000,
+        maxAssetSize: 512000
+    },
+    stats: {
+        colors: true
+    }
+}];

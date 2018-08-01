@@ -1,5 +1,11 @@
 'use strict'
 
+if global.window is undefined
+    # on the server we need to include a DOM implementation - but hide the require from webpack
+    global.window = eval('require')('svgdom')
+    global.document = window.document
+
+
 require! {
     './symbols': { ligatures, diacritics, symbols }
     './macros': { LaTeXBase: Macros }

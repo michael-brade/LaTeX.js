@@ -14,9 +14,19 @@ You can play with it here:
 
 ## Installation
 
+For CLI usage install it globally:
+
 ```
 npm install -g latex.js
 ```
+
+For library usage add it to your project:
+
+```
+npm install --save-prod latex.js
+```
+
+
 
 ## Usage
 
@@ -25,7 +35,10 @@ generator to create e.g. plain text instead of HTML. Currently, only a HTML gene
 
 LaTeX.js can parse full LaTeX documents as well as documents without a preamble and only the
 text that comes between `\begin{document}` and `\end{document}` in a full LaTeX document. In
-that latter case, the default documentclass is used, which is article unless specified otherwise.
+that latter case, the default documentclass is used, which is `article` unless specified otherwise.
+
+
+### CLI
 
 The CLI has the following options:
 
@@ -53,11 +66,72 @@ Options:
 If no input files are given, STDIN is read.
 ```
 
+### Library
+
+Import the parser and generator, then parse and translate to HTML:
+
+```js
+import { parse, HtmlGenerator } from 'latex.js'
+
+let text = "Hi, this is a line of text."
+
+
+let generator = new HtmlGenerator({ hyphenate: false, bare: true })
+
+let html = parse(text, { generator: generator }).html()
+
+console.log(html)
+```
+
+
+### In the Browser
+
+You can either use your own build or use a link directly to the jsDelivr CDN:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta charset="UTF-8">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="content-language" content="en">
+
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- <script src="node_modules/latex.js/dist/latex.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.10.1/dist/latex.min.js"></script>
+
+  <title>LaTeX.js Test</title>
+</head>
+
+<body>
+  <h1>Compiling LaTeX</h1>
+
+  <script>
+    var text = "Hi, this is a line of text."
+
+    var generator = new latexjs.HtmlGenerator({ hyphenate: false, bare: true })
+
+    var dom = latexjs.parse(text, { generator: generator }).dom()
+
+    document.body.appendChild(dom)
+  </script>
+</body>
+
+</html>
+```
+
+
+
+
 ## Tests
 
 To build it and run the tests, clone this repository and execute:
 
 ```
+npm install
 npm run build   # or devbuild
 npm test
 ```
@@ -95,9 +169,9 @@ TODO: write documentation
 
 - I don't create an intermediate AST yet, so TeX's conditional expressions are impossible
 - deprecated macros, or macros that are not supposed to be used in LaTeX, won't even exist in LaTeX.js.
-  Examples include: eqnarray, the old LaTeX 2.09 font macros \it, \sl, etc. Also missing are most of the plainTeX macros.
+  Examples include: `eqnarray`, the old LaTeX 2.09 font macros `\it`, `\sl`, etc. Also missing are most of the plainTeX macros.
   See also [`l2tabuen.pdf`](ftp://ftp.dante.de/tex-archive/info/l2tabu/english/l2tabuen.pdf).
-- incorrect but legal markup in LaTeX won't produce the same result in LaTeX.js - like when using \raggedleft in the
+- incorrect but legal markup in LaTeX won't produce the same result in LaTeX.js - like when using `\raggedleft` in the
   middle of a paragraph; but the LaTeX.js result should be intuitively correct.
 - because of the limitations when parsing TeX as a context-free grammar (see [below](#parsing-tex)), native LaTeX packages
   cannot be parsed and loaded. Instead, the macros those packages (and documentclasses) provide have to be implemented in
