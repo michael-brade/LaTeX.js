@@ -22,6 +22,7 @@ before !->>
         devtools: false
         dumpio: false
         args: ['--no-sandbox', '--disable-setuid-sandbox']
+        defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
     }
 
     page := (await browser.pages!).0                    # there is always one page available
@@ -31,7 +32,6 @@ before !->>
         for i til msg.args.length
             console.log "#{i}: #{msg.args[i]}"
 
-    await page.setViewport { width: 1000, height: 0, deviceScaleFactor: 2 }
 
 after !->>
     await browser.close!
