@@ -163,7 +163,109 @@ TeX's primitives and basic functionality, so to speak.
 
 ## Definition of Custom Macros
 
-TODO: write documentation
+To define your own LaTeX macros in JavaScript and extend LaTeX.js, you have to create a class that contains these macros
+and pass it to the `HtmlGenerator` constructor in the `options` object as `CustomMacros` property. For instance:
+
+```js
+var generator = new latexjs.HtmlGenerator({
+  CustomMacros: (function(){
+    var args      = CustomMacros.args = {},
+        prototype = CustomMacros.prototype;
+
+    function CustomMacros(generator) {
+      this.g = generator;
+    }
+
+    args['bf'] = ['HV']
+    prototype['bf'] = function() {
+      this.g.setFontWeight('bf')
+    };
+  }())
+});
+```
+
+to define the LaTeX2.09 macro `\bf`.
+
+
+### Macro Arguments
+
+`args` above is a map from string to string array, declaring the type and arguments of a macro. If a macro doesn't take arguments and is a
+horizontal-mode macro, `args` can be left undefined for it.
+
+
+first entry declares the macro type:
+
+| arg  | meaning |
+| ------ | ------ |
+| `H`  | horizontal-mode macro |
+| `V`  | vertical-mode macro - ends the current paragraph |
+| `HV` | horizontal-vertical-mode macro: must return nothing, i.e., doesn't create output |
+| `P`  | only in preamble |
+| `X`  | special entry, may be used multiple times; execute action (macro body) already now with whatever arguments have been parsed so far; this is needed when things should be done before the next arguments are parsed - no value should be returned by the macro in this case, for it will just be ignored |
+
+rest of the list declares the arguments:
+
+| arg  | meaning |
+| ------ | ------ |
+| `s`  | optional star |
+|||
+|  `i` | id (group) |
+| `i?` | optional id (optgroup) |
+|  `k` | key (group) |
+| `k?` | optional key (optgroup) |
+| `kv` | key-value list (optgroup) |
+|  `u` | url (group) |
+|  `c` | color specification (group), that is: <name> or <float> or <float,float,float> |
+|  `m` | macro (group) |
+|  `l` | length (group) |
+|`lg?` | optional length (group) |
+| `l?` | optional length (optgroup) |
+| `cl` | coordinate/length (group) |
+|`cl?` | optional coordinate/length (optgroup) |
+|  `n` | num expression (group) |
+| `n?` | num expression (optgroup) |
+|  `f` | float expression (group) |
+|  `v` | vector, a pair of coordinates: (float/length, float/length) |
+| `v?` | optional vector |
+|||
+|  `g` | group (possibly long - TeX allows `\endgraf`, but not `\par`... so allow `\par` as well) |
+| `hg` | group in restricted horizontal mode |
+| `o?` | optional arg (optgroup) |
+|||
+|  `h` | restricted horizontal material |
+|||
+| `is` | ignore (following) spaces |
+
+Macros have to return an array.
+
+Environments take the return value of the corresponding macro and add their content as child/children to it.
+
+
+## API
+
+### class: HtmlGenerator
+
+#### CTOR: `new HtmlGenerator(options)`
+
+Create a new HTML generator. `options` is an <[Object]> that can have the following properties:
+
+- `documentClass`: <[string]> the default document class if a document without preamble is parsed
+- `CustomMacros`: a <[constructor]>/<[function]> with additional custom macros
+- `hyphenate`: <[boolean]> enable or disable automatic hyphenation
+- `languagePatterns`: language patterns object to use for hyphenation if it is enabled
+- `bare`: <[boolean]> if true, only output the contents of `<body>` and omit `<head>`
+- `styles`: <[Array]<[string]>> additional CSS stylesheets
+
+#### `htmlGenerator.dom()`
+
+Returns the DOM representation (`DocumentFrament` or `HTMLDocument`) for immediate use.
+
+#### `htmlGenerator.html()`
+
+Returns the DOM serialized as HTML string.
+
+### Parser
+
 
 ## Limitations
 
@@ -296,3 +398,12 @@ There is no such alternative in JavaScript yet, though, which is why I started t
 MIT
 
 Copyright (c) 2015-2018 Michael Brade
+
+
+[boolean]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type "Boolean"
+[string]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "String"
+[number]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type "Number"
+[function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
+[constructor]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor "Class"
+[Object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
+[Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"

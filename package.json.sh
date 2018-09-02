@@ -104,7 +104,7 @@ dependencies:
     'commander': '2.17.x'
     'stdin': '*'
     'fs-extra': '7.x'
-    'js-beautify': '1.7.x'
+    'js-beautify': '1.8.x'
 
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
@@ -125,14 +125,14 @@ devDependencies:
     'webpack': '4.x'
     'webpack-command': '0.x'
     'webpack-closure-compiler': '2.x'
-    'babel-loader': '^8.0.0-beta'
+    'babel-loader': '8.0.x'
     'copy-webpack-plugin': '4.5.x'
 
-    '@babel/cli': '7.0.0-rc.1'
-    '@babel/core': '7.0.0-rc.1'
-    '@babel/register': '7.0.0-rc.1'
-    '@babel/preset-env': '7.0.0-rc.1'
-    '@babel/plugin-syntax-object-rest-spread': '7.0.0-rc.1'
+    '@babel/cli': '7.0.x'
+    '@babel/core': '7.0.x'
+    '@babel/register': '7.0.x'
+    '@babel/preset-env': '7.0.x'
+    '@babel/plugin-syntax-object-rest-spread': '7.0.x'
 
 
     ### testing
