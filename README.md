@@ -1,3 +1,13 @@
+<div align="center">
+
+  [![NPM version](https://img.shields.io/npm/v/latex.js.svg?style=plastic)](https://www.npmjs.org/package/latex.js)
+  [![NPM downloads](https://img.shields.io/npm/dm/latex.js.svg?style=plastic)](https://www.npmjs.org/package/latex.js)
+  [![Maintainability](https://api.codeclimate.com/v1/badges/f2ab8b70a87a9da55189/maintainability)](https://codeclimate.com/github/michael-brade/LaTeX.js/maintainability)
+  [![License](https://img.shields.io/github/license/michael-brade/LaTeX.js.svg?style=plastic)](https://github.com/michael-brade/LaTeX.js/blob/master/LICENSE)
+
+</div>
+
+
 # LaTeX to HTML5 translator using a PEG.js parser
 
 This is a LaTeX to HTML5 translator written in JavaScript using PEG.js.
@@ -168,7 +178,7 @@ and pass it to the `HtmlGenerator` constructor in the `options` object as `Custo
 
 ```js
 var generator = new latexjs.HtmlGenerator({
-  CustomMacros: (function(){
+  CustomMacros: (function() {
     var args      = CustomMacros.args = {},
         prototype = CustomMacros.prototype;
 
@@ -183,17 +193,16 @@ var generator = new latexjs.HtmlGenerator({
   }())
 });
 ```
-
 to define the LaTeX2.09 macro `\bf`.
 
 
 ### Macro Arguments
 
-`args` above is a map from string to string array, declaring the type and arguments of a macro. If a macro doesn't take arguments and is a
-horizontal-mode macro, `args` can be left undefined for it.
+`CustomMacros.args` above is a <[Map]<[string], [Array]<[string]>>>, mapping the macro name to the type and arguments of
+the macro. If a macro doesn't take arguments and is a horizontal-mode macro, `args` can be left undefined for it.
 
 
-first entry declares the macro type:
+The first array entry declares the macro type:
 
 | arg  | meaning |
 | ------ | ------ |
@@ -203,11 +212,17 @@ first entry declares the macro type:
 | `P`  | only in preamble |
 | `X`  | special entry, may be used multiple times; execute action (macro body) already now with whatever arguments have been parsed so far; this is needed when things should be done before the next arguments are parsed - no value should be returned by the macro in this case, for it will just be ignored |
 
-rest of the list declares the arguments:
+The rest of the list (array entries) declares the arguments:
 
 | arg  | meaning |
 | ------ | ------ |
 | `s`  | optional star |
+|||
+|  `g` | group (possibly long - TeX allows `\endgraf`, but not `\par`... so allow `\par` as well) |
+| `hg` | group in restricted horizontal mode |
+| `o?` | optional arg (optgroup) |
+|||
+|  `h` | restricted horizontal material |
 |||
 |  `i` | id (group) |
 | `i?` | optional id (optgroup) |
@@ -228,15 +243,17 @@ rest of the list declares the arguments:
 |  `v` | vector, a pair of coordinates: (float/length, float/length) |
 | `v?` | optional vector |
 |||
-|  `g` | group (possibly long - TeX allows `\endgraf`, but not `\par`... so allow `\par` as well) |
-| `hg` | group in restricted horizontal mode |
-| `o?` | optional arg (optgroup) |
-|||
-|  `h` | restricted horizontal material |
-|||
 | `is` | ignore (following) spaces |
 
-Macros have to return an array.
+So, in the following example, the macro `\title` would be a horizontal-vertical-mode macro that takes one mandatory
+TeX-group argument:
+
+```js
+args['title'] = ['HV', 'g'];
+```
+
+
+Macros with types `H` or `V` have to return an array.
 
 Environments take the return value of the corresponding macro and add their content as child/children to it.
 
@@ -403,7 +420,8 @@ Copyright (c) 2015-2018 Michael Brade
 [boolean]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type "Boolean"
 [string]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "String"
 [number]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type "Number"
-[function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
 [constructor]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor "Class"
+[function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
 [Object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
 [Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
+[Map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map "Map"
