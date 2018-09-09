@@ -4,7 +4,7 @@
 /* default lengths */
 /*******************/
 
-:root {
+:root, :host {
     --size: 10pt;
     --line-height: 1.2;
 
@@ -103,7 +103,7 @@
 /* page layout */
 /***************/
 
-html, body {
+html, body, .page {
     display: flex;
 
     margin: 0;
@@ -114,11 +114,13 @@ html, body {
 }
 
 
+/* LaTeX page body */
 .body {
     max-width: var(--textwidth);   /* elements wider than this overflow, but don't increase bodywidth */
     width: var(--textwidth);
 }
 
+/* LaTeX page margins */
 .margin-left {
     order: -1;
     display: flex;
@@ -148,6 +150,7 @@ html, body {
 }
 
 
+/* columns */
 .onecolumn {
     column-count: 1;
 }
