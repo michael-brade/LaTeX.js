@@ -153,13 +153,12 @@ export class HtmlGenerator
     #  - CustomMacros: a constructor (class/function) with additional custom macros
     #  - hyphenate: boolean, enable or disable automatic hyphenation
     #  - languagePatterns: language patterns object to use for hyphenation if it is enabled
-    #  - bare: if true, only output the contents of body
+    #    TODO: infer language from LaTeX preamble and load hypenation patterns automatically - default en
     #  - styles: array with additional CSS stylesheets
     (options) ->
         @_options = Object.assign {
             documentClass: "article"
             styles: []
-            bare: false
             hyphenate: true
         }, options
 
@@ -212,6 +211,9 @@ export class HtmlGenerator
         # do this after creating the sectioning counters because \thepart etc. are already predefined
         @_macros = new Macros @, @_options.CustomMacros
 
+
+    nextId: ->
+        @_uid++
 
 
     # private static for easy access - but it means no parallel generator usage!
@@ -280,15 +282,43 @@ export class HtmlGenerator
 
     ### get the result
 
-    /* set the title of the document, usually called by the \maketitle macro */
-    setTitle: (title) ->
-        @documentTitle = title.textContent
+
+    /* @return the HTMLDocument for use as a standalone webpage */
+    htmlDocument: ->
+        doc = document.implementation.createHTMLDocument @documentTitle
+
+        ### head
+
+        charset = document.createElement "meta"
+        charset.setAttribute "charset", "UTF-8"
+        doc.head.appendChild charset
 
 
-    /* @return the DOM representation (DocumentFrament or HTMLDocument) for immediate use */
-    dom: ->
-        if @_options.bare
-            return @_dom
+        # when used in a browser context, insert all assets with absolute URLs;
+        # this is also useful when using a Blob in iframe.src (see also #12)
+        if window.location
+            base = document.createElement "base"    # TODO: is the base element still needed??
+            base.href = window.location.href
+            doc.head.appendChild base
+
+            doc.head.appendChild @stylesAndScripts window.location.href
+        else
+            doc.head.appendChild @stylesAndScripts
+
+
+        ### body
+
+        doc.body.appendChild @domFragment
+        @applyLengthsAndGeometryToDom doc.body
+
+        return doc
+
+
+
+
+    /* @return a DocumentFragment with styles and scripts */
+    stylesAndScripts: (base) ->
+        el = document.createDocumentFragment!
 
         createStyleSheet = (url) ->
             link = document.createElement "link"
@@ -303,40 +333,38 @@ export class HtmlGenerator
             script
 
 
-        doc = document.implementation.createHTMLDocument @documentTitle
+        el.appendChild createStyleSheet new URL("css/katex.css", base).toString!
+        el.appendChild createStyleSheet new URL(@documentClass.css, base).toString!
 
-        ### head
+        for style in @_options.styles
+            el.appendChild createStyleSheet new URL(style, base).toString!
 
-        charset = document.createElement "meta"
-        charset.setAttribute "charset", "UTF-8"
-        doc.head.appendChild charset
+        el.appendChild createScript new URL("js/base.js", base).toString!
 
-        if window.location
-            base = document.createElement "base"
-            base.href = window.location.href
-            doc.head.appendChild base
-
-            doc.head.appendChild createStyleSheet new URL("css/katex.css", window.location.href).toString!
-            doc.head.appendChild createStyleSheet new URL(@documentClass.css, window.location.href).toString!
-
-            for style in @_options.styles
-                doc.head.appendChild createStyleSheet new URL(style, window.location.href).toString!
-
-            doc.head.appendChild createScript new URL("js/base.js", window.location.href).toString!
-        else
-            doc.head.appendChild createStyleSheet "css/katex.css"
-            doc.head.appendChild createStyleSheet @documentClass.css
-
-            for style in @_options.styles
-                doc.head.appendChild createStyleSheet style
-
-            doc.head.appendChild createScript "js/base.js"
+        return el
 
 
-        ### body
 
-        doc.body.appendChild @create @block, @_dom, "body"
+    /* @return the DocumentFragment without any styles, scripts, or marginpars */
+    domBody: ->
+        return @_dom
 
+    /* @return the DocumentFragment without styles or scripts, but the full page */
+    domFragment: ->
+        el = document.createDocumentFragment!
+
+        # text body
+        el.appendChild @create @block, @domBody!, "body"
+
+        # marginpar on the right
+        el.appendChild @create @block, null, "margin-left"
+        el.appendChild @create @block, @create(@block, @_marginpars, "marginpar"), "margin-right"
+
+        return el
+
+
+    /* write the TeX lengths and page geometry to the DOM */
+    applyLengthsAndGeometryToDom: (el) !->
         ### calculate page geometry
         #
         # set body's and margins' width to percentage of viewport (= paperwidth)
@@ -348,51 +376,42 @@ export class HtmlGenerator
         # marginrightwidth % = 100% - (textwidth + marginleftwidth), if there is no room left, the margin is 0% width
 
         # do this if a static, non-responsive page is desired (TODO: make configurable!)
-        #doc.body.style.setProperty '--paperwidth', (@length \paperwidth).value + (@length \paperwidth).unit
+        #el.style.setProperty '--paperwidth', (@length \paperwidth).value + (@length \paperwidth).unit
 
 
         twp =  Math.round 100 * (@length \textwidth).value / (@length \paperwidth).value, 1
         mlwp = Math.round 100 * ((@length \oddsidemargin).value + @toPx { value: 1, unit: "in" } .value) / (@length \paperwidth).value, 1
         mrwp = Math.max(100 - twp - mlwp, 0)
 
-        doc.body.style.setProperty '--textwidth', twp + "%"
-        doc.body.style.setProperty '--marginleftwidth', mlwp + "%"
-        doc.body.style.setProperty '--marginrightwidth', mrwp + "%"
+        el.style.setProperty '--textwidth', twp + "%"
+        el.style.setProperty '--marginleftwidth', mlwp + "%"
+        el.style.setProperty '--marginrightwidth', mrwp + "%"
 
         if mrwp > 0
             # marginparwidth percentage relative to parent, which is marginrightwidth!
-            doc.body.style.setProperty '--marginparwidth', 100 * 100 * (@length \marginparwidth).value / (@length \paperwidth).value / mrwp + "%"
+            el.style.setProperty '--marginparwidth', 100 * 100 * (@length \marginparwidth).value / (@length \paperwidth).value / mrwp + "%"
         else
-            doc.body.style.setProperty '--marginparwidth', "0px"
+            el.style.setProperty '--marginparwidth', "0px"
 
         # set the rest of the lengths (TODO: write all defined lengths to CSS, for each group)
-        doc.body.style.setProperty '--marginparsep', (@length \marginparsep).value + (@length \marginparsep).unit
-        doc.body.style.setProperty '--marginparpush', (@length \marginparpush).value + (@length \marginparpush).unit
-
-
-        # doc.documentElement.style.setProperty '--root-color', 'red'
-
-        # marginpar on the right
-        doc.body.appendChild @create @block, null, "margin-left"
-        doc.body.appendChild @create @block, @create(@block, @_marginpars, "marginpar"), "margin-right"
-
-        doc
-
-
-    /* @return the HTML representation */
-    html: ->
-        @dom!.outerHTML
+        el.style.setProperty '--marginparsep', (@length \marginparsep).value + (@length \marginparsep).unit
+        el.style.setProperty '--marginparpush', (@length \marginparpush).value + (@length \marginparpush).unit
 
 
 
-    ### element creation
+
+
+    ### document creation
 
     createDocument: (fs) !->
         appendChildren @_dom, fs
 
+    /* set the title of the document, usually called by the \maketitle macro */
+    setTitle: (title) ->
+        @documentTitle = title.textContent
 
-    nextId: ->
-        @_uid++
+
+    ### element creation
 
     create: (type, children, classes = "") ->
         if typeof type == "object"
