@@ -5,23 +5,25 @@
 }
 
 
+// main rule, entry into the parser
+// parses a full LaTeX document, or just the contents of the document environment; returns the generator
 latex =
     &with_preamble
     (skip_all_space escape (&is_hvmode / &is_preamble) macro)*
     skip_all_space
     (begin_doc / &{ error("expected \\begin{document}") })
-        d:document
+        document
     (end_doc / &{ error("\\end{document} missing") })
     .*
     EOF
-    { return d; }
+    { return g; }
     /
     !with_preamble
     // if no preamble was given, start default documentclass
     &{ g.macro("documentclass", [null, g.documentClass, null]); return true; }
-    d:document
+    document
     EOF
-    { return d; }
+    { return g; }
 
 
 // preamble starts with P macro, then only HV and P macros in preamble
@@ -35,6 +37,7 @@ end_doc =
     escape end skip_space begin_group "document" end_group
 
 
+// parses everything between \begin{document} and \end{document}; returns the generator
 document =
     & { g.startBalanced(); g.enterGroup(); return true; }
     skip_all_space            // drop spaces at the beginning of the document
