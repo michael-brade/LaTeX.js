@@ -64,6 +64,7 @@ scripts:
         rsync -a src/css/ dist/css/;
         rsync -a src/fonts/ dist/fonts/;
         rsync -a src/js/ dist/js/;
+        cp src/latex.component.js dist/;
         lsc -c -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
         lsc -c -o dist/documentclasses src/documentclasses/;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;

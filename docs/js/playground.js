@@ -36,7 +36,7 @@ module.exports.compile = function(latex, iframe) {
 
     try {
         generator.reset()
-        var newDoc = latexjs.parse(latex, { generator: generator }).dom()
+        var newDoc = latexjs.parse(latex, { generator: generator }).htmlDocument()
 
         // we need to disable normal processing of same-page links in the iframe
         // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame

@@ -40,12 +40,13 @@ npm install --save-prod latex.js
 
 ## Usage
 
-LaTeX.js is divided into a parser and a generator, so that in theory you could switch the
-generator to create e.g. plain text instead of HTML. Currently, only a HTML generator exists.
+LaTeX.js has a command line interface (CLI), it can be embedded in a website using the provided webcomponent, or it can be
+used to directly to obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each of those
+use-cases is explained in the following subsections.
 
-LaTeX.js can parse full LaTeX documents as well as documents without a preamble and only the
-text that comes between `\begin{document}` and `\end{document}` in a full LaTeX document. In
-that latter case, the default documentclass is used, which is `article` unless specified otherwise.
+LaTeX.js can parse full LaTeX documents as well as documents without a preamble and only the text that comes between
+`\begin{document}` and `\end{document}` in a full LaTeX document. In that latter case, the default documentclass is
+used, which is `article` unless specified otherwise.
 
 
 ### CLI
@@ -78,6 +79,11 @@ If no input files are given, STDIN is read.
 
 ### Library
 
+This is the low-level use-case which gives the greatest control over the translation process.
+
+LaTeX.js is divided into a parser and a generator, so that in theory you could switch the generator to create e.g. plain
+text instead of HTML. Currently, only a HTML generator exists.
+
 Import the parser and generator, then parse and translate to HTML:
 
 ```js
@@ -86,17 +92,20 @@ import { parse, HtmlGenerator } from 'latex.js'
 let text = "Hi, this is a line of text."
 
 
-let generator = new HtmlGenerator({ hyphenate: false, bare: true })
+let generator = new HtmlGenerator({ hyphenate: false })
 
-let html = parse(text, { generator: generator }).html()
+let doc = parse(text, { generator: generator }).htmlDocument()
 
-console.log(html)
+console.log(doc.outerHTML)
 ```
+
+The `HtmlGenerator` takes several options, see the API section below.
 
 
 ### In the Browser
 
-You can either use your own build or use a link directly to the jsDelivr CDN:
+If you want to use the parser and the generator manually, you can either use your own build or use a link directly to
+the jsDelivr CDN:
 
 ```html
 <!DOCTYPE html>
@@ -111,7 +120,7 @@ You can either use your own build or use a link directly to the jsDelivr CDN:
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
   <!-- <script src="node_modules/latex.js/dist/latex.min.js"></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.10.1/dist/latex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/latex.min.js"></script>
 
   <title>LaTeX.js Test</title>
 </head>
@@ -122,17 +131,17 @@ You can either use your own build or use a link directly to the jsDelivr CDN:
   <script>
     var text = "Hi, this is a line of text."
 
-    var generator = new latexjs.HtmlGenerator({ hyphenate: false, bare: true })
+    var generator = new latexjs.HtmlGenerator({ hyphenate: false })
 
-    var dom = latexjs.parse(text, { generator: generator }).dom()
+    generator = latexjs.parse(text, { generator: generator })
 
-    document.body.appendChild(dom)
+    document.body.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/"))
+    document.body.appendChild(generator.domFragment())
   </script>
 </body>
 
 </html>
 ```
-
 
 
 
@@ -159,6 +168,38 @@ To build the playground, execute:
 ```
 npm run docs
 ```
+
+
+
+## Directory Structure
+
+General structure:
+
+- `src`: all the LaTeX.js sources
+- `dist`: the compiled and minified source
+- `docs`: the webpage and (compiled) playground
+- `bin`: the compiled CLI
+- `test`: unit tests and test driver
+
+
+Files and classes needed to translate LaTeX documents to HTML documents:
+
+- the parser: `src/latex-parser.pegjs`
+- the generator: `src/html-generator.ls`
+- macros and documentclasses: `src/macros.ls`, `src/symbols.ls`, `src/documentclasses/*.ls`
+
+- the CLI: `src/latex.js.ls`
+- the webcomponent: `src/latex.component.js`
+- the library API: `src/index.js`
+
+
+Files needed to display the generated HTML document:
+
+- `src/js/` (and thus `dist/js/`): JavaScript that is needed by the resulting HTML document
+- `src/css/` (and thus `dist/js/`): CSS needed by translated HTML document
+- `src/fonts/` (and thus `dist/fonts`): fonts included by the translated HTML document
+
+
 
 
 ## Architecture
@@ -193,6 +234,7 @@ var generator = new latexjs.HtmlGenerator({
   }())
 });
 ```
+
 to define the LaTeX2.09 macro `\bf`.
 
 
@@ -260,6 +302,25 @@ Environments take the return value of the corresponding macro and add their cont
 
 ## API
 
+This section is going to describe the low-level API of the generator and the parser. You will only need it if you
+implement your own macros, or if you want to access parts of the result and keep processing them.
+
+
+### Parser
+
+#### `parser.parse(latex, { generator: <HtmlGenerator> })`
+
+This function parses the given input LaTeX document and returns a generator that creates the output document.
+
+Arguments:
+
+- `latex` is the LaTeX source document
+- options object: must contain a `generator` property with an instance of `HtmlGenerator`
+
+Returns the `HtmlGenerator` instance.
+
+
+
 ### class: HtmlGenerator
 
 #### CTOR: `new HtmlGenerator(options)`
@@ -270,18 +331,31 @@ Create a new HTML generator. `options` is an <[Object]> that can have the follow
 - `CustomMacros`: a <[constructor]>/<[function]> with additional custom macros
 - `hyphenate`: <[boolean]> enable or disable automatic hyphenation
 - `languagePatterns`: language patterns object to use for hyphenation if it is enabled
-- `bare`: <[boolean]> if true, only output the contents of `<body>` and omit `<head>`
 - `styles`: <[Array]<[string]>> additional CSS stylesheets
 
-#### `htmlGenerator.dom()`
 
-Returns the DOM representation (`DocumentFrament` or `HTMLDocument`) for immediate use.
+#### `htmlGenerator.htmlDocument()`
 
-#### `htmlGenerator.html()`
+Returns the full DOM `HTMLDocument` representation of the LaTeX source, including `<head>` and `<body`>. This is meant
+to be used as its own standalone webpage or in an `<iframe>`.
 
-Returns the DOM serialized as HTML string.
+To serialize it, use `htmlGenerator.htmlDocument().outerHTML`.
 
-### Parser
+#### `htmlGenerator.stylesAndScripts()`
+
+Returns a `DocumentFragment` with `<link>` and `<script>` elements. This usually is part of the `<head>` element.
+
+#### `htmlGenerator.domFragment()`
+
+Returns the DOM `DocumentFragment`. This does not include the scripts and stylesheets and is meant for testing and
+low-level embedding.
+
+
+#### `htmlGenerator.documentTitle()`
+
+The title of the document.
+
+
 
 
 ## Limitations
@@ -412,7 +486,7 @@ There is no such alternative in JavaScript yet, though, which is why I started t
 
 ## License
 
-MIT
+[![License](https://img.shields.io/github/license/michael-brade/LaTeX.js.svg?style=plastic)](https://github.com/michael-brade/LaTeX.js/blob/master/LICENSE)
 
 Copyright (c) 2015-2018 Michael Brade
 

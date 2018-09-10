@@ -44,7 +44,7 @@ program
     .option '-a, --assets [dir]',       'copy CSS and fonts to the directory of the output file, unless dir is given (default: no assets are copied)'
 
     # options affecting the HTML output
-    .option '-b, --bare',               'don\'t include HTML boilerplate and CSS, only output the contents of body'
+    .option '-b, --body',               'don\'t include HTML boilerplate and CSS, only output the contents of body'
     .option '-e, --entities',           'encode HTML entities in the output instead of using UTF-8 characters'
     .option '-p, --pretty',             'beautify the html (this may add/remove spaces unintentionally)'
 
@@ -80,7 +80,6 @@ const options =
                         | otherwise console.error "  error: language '#{that}' is not supported yet"; process.exit 1
     documentClass:      program.class
     CustomMacros:       CustomMacros
-    bare:               program.bare
     styles:             program.style || []
 
 
@@ -100,7 +99,12 @@ input.then (text) ->
     if text.join
         text = text.join "\n\n"
 
-    html = latexjs.parse text, { generator: generator } .html!
+    generator = latexjs.parse text, { generator: generator }
+
+    if program.body
+        html = generator.domFragment!.outerHTML
+    else
+        html = generator.htmlDocument!.outerHTML
 
     if program.entities
         html = he.encode html, 'allowUnsafeSymbols': true

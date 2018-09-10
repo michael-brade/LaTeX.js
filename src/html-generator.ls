@@ -303,12 +303,12 @@ export class HtmlGenerator
 
             doc.head.appendChild @stylesAndScripts window.location.href
         else
-            doc.head.appendChild @stylesAndScripts
+            doc.head.appendChild @stylesAndScripts!
 
 
         ### body
 
-        doc.body.appendChild @domFragment
+        doc.body.appendChild @domFragment!
         @applyLengthsAndGeometryToDom doc.body
 
         return doc
@@ -316,7 +316,7 @@ export class HtmlGenerator
 
 
 
-    /* @return a DocumentFragment with styles and scripts */
+    /* @return a DocumentFragment consisting of stylesheets and scripts */
     stylesAndScripts: (base) ->
         el = document.createDocumentFragment!
 
@@ -345,20 +345,17 @@ export class HtmlGenerator
 
 
 
-    /* @return the DocumentFragment without any styles, scripts, or marginpars */
-    domBody: ->
-        return @_dom
-
-    /* @return the DocumentFragment without styles or scripts, but the full page */
+    /* @return DocumentFragment, the full page without stylesheets or scripts */
     domFragment: ->
         el = document.createDocumentFragment!
 
         # text body
-        el.appendChild @create @block, @domBody!, "body"
+        el.appendChild @create @block, @_dom, "body"
 
-        # marginpar on the right
-        el.appendChild @create @block, null, "margin-left"
-        el.appendChild @create @block, @create(@block, @_marginpars, "marginpar"), "margin-right"
+        if @_marginpars.length
+            # marginpar on the right
+            el.appendChild @create @block, null, "margin-left"
+            el.appendChild @create @block, @create(@block, @_marginpars, "marginpar"), "margin-right"
 
         return el
 
