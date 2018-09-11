@@ -19,6 +19,7 @@ more text
 \end{itemize}
 this belongs to paragraph with itemize
 .
+<div class="body">
 <p>a paragraph of text</p>
 <ul class="list">
 <li><span class="itemlabel"><span class="hbox llap">•</span></span><p>ﬁrst item</p><p>with a new paragraph</p></li>
@@ -30,6 +31,7 @@ this belongs to paragraph with itemize
 <li><span class="itemlabel"><span class="hbox llap">•</span></span><p>second item</p></li>
 </ul>
 <p class="continue">this belongs to paragraph with itemize</p>
+</div>
 .
 
 
@@ -44,11 +46,13 @@ this belongs to paragraph with itemize
 \begin{itemize}
 \end{itemize}
 .
+<div class="body">
 <ul class="list"></ul>
 <ul class="list">
 <li><span class="itemlabel"><span class="hbox llap">•</span></span><p>text that doesn’t continue</p></li>
 </ul>
 <ul class="list"></ul>
+</div>
 .
 
 
@@ -63,6 +67,7 @@ text before
 \end{itemize}
 text after
 .
+<div class="body">
 <p>text before</p>
 <ul class="list">
 <li><span class="itemlabel"><span class="hbox llap">•</span></span><p>ﬁrst item</p>
@@ -72,6 +77,7 @@ text after
 </li>
 </ul>
 <p class="continue">text after</p>
+</div>
 .
 
 
@@ -87,6 +93,7 @@ text before
 \end{itemize}
 text after
 .
+<div class="body">
 <p>text before</p>
 <ul class="list">
 <li><span class="itemlabel"><span class="hbox llap">•</span></span>
@@ -100,6 +107,7 @@ text after
 </li>
 </ul>
 <p class="continue">text after</p>
+</div>
 .
 
 
@@ -111,11 +119,13 @@ s** single itemize environment, custom labels
     \item third item
 \end{itemize}
 .
+<div class="body">
 <ul class="list">
 <li><span class="itemlabel"><span class="hbox llap">–</span></span><p>ﬁrst item</p></li>
 <li><span class="itemlabel"><span class="hbox llap"></span></span><p>second item</p></li>
 <li><span class="itemlabel"><span class="hbox llap">•</span></span><p>third item</p></li>
 </ul>
+</div>
 .
 
 
@@ -132,6 +142,7 @@ a paragraph of text
 \end{enumerate}
 this belongs to paragraph with enumerate
 .
+<div class="body">
 <p>a paragraph of text</p>
 <ol class="list">
 <li>
@@ -144,6 +155,7 @@ this belongs to paragraph with enumerate
 </li>
 </ol>
 <p class="continue">this belongs to paragraph with enumerate</p>
+</div>
 .
 
 
@@ -159,6 +171,7 @@ a paragraph of text
 \end{description}
 this belongs to paragraph with description
 .
+<div class="body">
 <p>a paragraph of text</p>
 <dl class="list">
 <dt>term 1</dt>
@@ -167,6 +180,7 @@ this belongs to paragraph with description
 <dd><p>second item</p></dd>
 </dl>
 <p class="continue">this belongs to paragraph with description</p>
+</div>
 .
 
 s** quote, quotation, verse
@@ -194,6 +208,7 @@ verse:
 \end{verse}
 And now we continue without indentation.
 .
+<div class="body">
 <p class="noindent">quote:</p>
 <div class="list quote">
 <p>Here are some quote<br>lines of text</p>
@@ -211,6 +226,7 @@ lines of text lines of text lines of text lines of text lines of text lines of t
 <p>as well as a paragraph with trailing newline.<br></p>
 </div>
 <p class="continue">And now we continue without indentation.</p>
+</div>
 .
 
 
@@ -224,11 +240,13 @@ normal text \begin{small}
 \end{small}
   three spaces!
 .
+<div class="body">
 <p>
 normal text <span class="small">​ </span><span class="small">small text </span>
 <span class="bf small">​ </span><span class="bf small">bold text </span><span class="bf small">​ </span>
 <span class="small">​ </span>three spaces!
 </p>
+</div>
 .
 
 
@@ -254,6 +272,7 @@ Afterwards, we continue as usual.
 
 Yes, this is the last line.
 .
+<div class="body">
 <p>text</p>
 <div class="list center">
 <p>Here are some centered<br>lines of text</p>
@@ -268,6 +287,7 @@ Yes, this is the last line.
 <p>The same is true<br>for a ﬂushright environment.</p>
 </div>
 <p>Yes, this is the last line.</p>
+</div>
 .
 
 
@@ -289,6 +309,7 @@ But centering command should:
 \end{itemize}
 Afterwards, we continue as usual.
 .
+<div class="body">
 <div class="list center">
 <p>Center environment should not center the list.</p>
 <ul class="list">
@@ -303,6 +324,7 @@ Afterwards, we continue as usual.
 <li class="centering"><span class="itemlabel centering"><span class="hbox llap centering">•</span></span><p class="centering">third item</p></li>
 </ul>
 <p class="continue">Afterwards, we continue as usual.</p>
+</div>
 .
 
 
@@ -313,8 +335,10 @@ Afterwards, we continue as usual.
 The title must not be italic.
 \end{abstract}
 .
+<div class="body">
 <div class="list center"><span class="bf small">Abstract</span></div>
 <div class="list quotation"><p><span class="it small">The title must not be italic.</span></p></div>
+</div>
 .
 
 
@@ -332,5 +356,7 @@ more text, but now with%
 \end{comment}
 out space.
 .
+<div class="body">
 <p>text more text, but now without space.</p>
+</div>
 .

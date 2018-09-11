@@ -49,7 +49,9 @@ describe 'LaTeX.js fixtures', !->
 
                 _test = test
 
-                # disable a test by prefixing it with "!", run only some tests by prefixing them with "+"
+                # "!": run all tests except those that start with "!", i.e., disable a test by prefixing it with "!"
+                # "+": run only those tests that start with "+"
+
                 if fixture.header?.charAt(0) == "!"
                     _test = test.skip
                     fixture.header = fixture.header.substr 1
@@ -66,7 +68,7 @@ describe 'LaTeX.js fixtures', !->
                 # create syntax test
                 _test fixture.header || 'line ' + (fixture.source.range.0 - 1), !->
                     try
-                        html-is     = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false, bare: true } } .html!
+                        html-is     = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .domFragment!.outerHTML
                         html-should = fixture.result.text
                     catch
                         if e.location
@@ -85,7 +87,7 @@ describe 'LaTeX.js fixtures', !->
                 # create screenshot test
                 if screenshot
                     _test '   - screenshot', !->>
-                        html = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .html!
+                        html = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .htmlDocument!.outerHTML
                         await page.setContent html
                         await page.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
 

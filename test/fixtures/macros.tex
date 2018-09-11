@@ -2,21 +2,27 @@
 .
 some text \empty\ inside.
 .
+<div class="body">
 <p>some text ​ inside.</p>
+</div>
 .
 
 ** custom macros with a mandatory argument
 .
 some text \echoOGO{with a macro}
 .
+<div class="body">
 <p>some text +with a macro+</p>
+</div>
 .
 
 ** custom macros with an optional argument
 .
 some text \echoO[with a macro]
 .
+<div class="body">
 <p>some text -with a macro-</p>
+</div>
 .
 
 
@@ -27,7 +33,9 @@ some text, \echoGOG{mandatory arg} [%
  ]
  {more mandatory} inside.
 .
+<div class="body">
 <p>some text, +mandatory arg+-, -+more mandatory+ inside.</p>
+</div>
 .
 
 
@@ -36,7 +44,9 @@ some text, \echoGOG{mandatory arg} [%
 % echo simply outputs its arguments delimited by + (mandatory args) or - (optional args)
 \echoOGO[{t]}t]{ext} more
 .
+<div class="body">
 <p>-t]t-+ext+ more</p>
+</div>
 .
 
 
@@ -49,6 +59,8 @@ some text \echoOGO{again} [ % test
 
   {more} in a new paragraph.
 .
+<div class="body">
 <p>some text +again+-<br>-</p>
 <p>more​ in a new paragraph.</p>
+</div>
 .

@@ -10,10 +10,12 @@ Then the text follows.
 
 \end{document}
 .
+<div class="body">
 <h1 id="sec-1"><div>Chapter 1</div>A Chapter</h1>
 <p>Then the text follows.</p>
 <h1 id="sec-2"><div>Chapter 2</div>A Chapter</h1>
 <p>Then the text follows.</p>
+</div>
 .
 
 
@@ -32,21 +34,32 @@ Then the text follows.
 Then the text follows.
 \end{document}
 .
+<div class="body">
 <h1 id="sec-1"><div>Chapter 1</div>A Chapter</h1>
 <h2 id="sec-2">1.1 Here starts a section</h2>
 <p>Then the text follows.</p>
 <h1 id="sec-3"><div>Chapter 2</div>A Chapter</h1>
 <h2 id="sec-4">2.1 Here starts a section</h2>
 <p>Then the text follows.</p>
+</div>
 .
 
 
 ** section inside a macro - correct visual appearance to be done with CSS
 .
+% this can only be output properly if we switch to an AST: then the previous paragraph will end at \section{}
 Start with \emph{some \section{A Section}} text.
 
 Then more text follows.
 .
+<div class="body">
 <p>Start with <span class="it">some</span><h2 id="sec-1"><span class="it">1</span><span class="it"> </span><span class="it">A Section</span></h2> text.</p>
 <p>Then more text follows.</p>
+</div>
+.
+
+
+!** table of contents
+.
+.
 .

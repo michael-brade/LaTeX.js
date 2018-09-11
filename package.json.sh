@@ -142,7 +142,7 @@ devDependencies:
     'chai': '4.x'
     'chai-as-promised': '7.x'
 
-    'puppeteer': '1.7.x'
+    'puppeteer': '1.8.x'
     'pixelmatch': '4.0.x'
 
     'istanbul': '>= 0.4.x'

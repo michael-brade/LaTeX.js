@@ -2,7 +2,9 @@
 .
 Hello \bfseries is emphasized.
 .
+<div class="body">
 <p>Hello <span class="bf">is emphasized.</span></p>
+</div>
 .
 
 ** \emph{} command and nesting
@@ -17,11 +19,13 @@ test {test \em\em\em test \em test}
 
 \textit{You can also \emph{emphasize} text if it is set in italics}
 .
+<div class="body">
 <p>Hello, <span class="it">this</span> is emphasized.</p>
 <p><span class="it">emph </span><span class="up">normal</span>, <span class="up">normal </span><span class="it">emph</span></p>
 <p><span class="it">emph </span><span class="up">normal</span></p>
 <p>test test <span class="it">test </span><span class="up">test</span></p>
 <p><span class="it">You can also </span><span class="up">emphasize</span><span class="it"> text if it is set in italics</span></p>
+</div>
 .
 
 
@@ -29,7 +33,9 @@ test {test \em\em\em test \em test}
 .
 outer { text \bfseries {what} more text } end outer
 .
+<div class="body">
 <p>outer ​ text <span class="bf">what</span><span class="bf">​ </span><span class="bf">more text </span>​ end outer</p>
+</div>
 .
 
 
@@ -42,9 +48,11 @@ are we going to do here?
 \slshape
 Wrap all the paragraphs.
 .
+<div class="body">
 <p>hello, <span class="it">what</span></p>
 <p><span class="it">are we going to do here?</span></p>
 <p><span class="sl">Wrap all the paragraphs.</span></p>
+</div>
 .
 
 
@@ -52,5 +60,7 @@ Wrap all the paragraphs.
 .
 \texttt{first test of -- and ---}
 .
+<div class="body">
 <p><span class="tt">first test of -- and ---</span></p>
+</div>
 .
