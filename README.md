@@ -58,13 +58,12 @@ Usage: latex.js [options] [files...]
 
 translate a LaTeX document to HTML5
 
-
 Options:
 
   -V, --version          output the version number
   -o, --output <file>    specify output file, otherwise STDOUT will be used
-  -a, --assets [dir]     copy CSS and fonts to the specified directory, or to the directory of output file
-  -b, --bare             don't include HTML boilerplate and CSS, only output the contents of body
+  -a, --assets [dir]     copy CSS and fonts to the directory of the output file, unless dir is given (default: no assets are copied)
+  -b, --body             don't include HTML boilerplate and CSS, only output the contents of body
   -e, --entities         encode HTML entities in the output instead of using UTF-8 characters
   -p, --pretty           beautify the html (this may add/remove spaces unintentionally)
   -c, --class <class>    set a default documentclass for documents without a preamble (default: article)
@@ -73,6 +72,7 @@ Options:
   -n, --no-hyphenation   don't insert soft hyphens (disables automatic hyphenation in the browser)
   -l, --language <lang>  set hyphenation language (default: en)
   -h, --help             output usage information
+
 
 If no input files are given, STDIN is read.
 ```
@@ -89,12 +89,12 @@ Import the parser and generator, then parse and translate to HTML:
 ```js
 import { parse, HtmlGenerator } from 'latex.js'
 
-let text = "Hi, this is a line of text."
+let latex = "Hi, this is a line of text."
 
 
 let generator = new HtmlGenerator({ hyphenate: false })
 
-let doc = parse(text, { generator: generator }).htmlDocument()
+let doc = parse(latex, { generator: generator }).htmlDocument()
 
 console.log(doc.outerHTML)
 ```
@@ -122,7 +122,7 @@ the jsDelivr CDN:
   <!-- <script src="node_modules/latex.js/dist/latex.min.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/latex.min.js"></script>
 
-  <title>LaTeX.js Test</title>
+  <title>LaTeX.js API Test</title>
 </head>
 
 <body>
@@ -143,6 +143,8 @@ the jsDelivr CDN:
 </html>
 ```
 
+Note that in this case the styles and scripts are not encapsulated, so they clash with the text and style of the
+containing page.
 
 
 ## Tests
@@ -191,7 +193,6 @@ Files and classes needed to translate LaTeX documents to HTML documents:
 - the CLI: `src/latex.js.ls`
 - the webcomponent: `src/latex.component.js`
 - the library API: `src/index.js`
-
 
 Files needed to display the generated HTML document:
 
