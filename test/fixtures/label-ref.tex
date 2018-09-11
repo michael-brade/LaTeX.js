@@ -2,7 +2,9 @@
 .
 This\label{test} label is empty:~\ref{test}.
 .
+<div class="body">
 <p>This label is empty:&nbsp;<a href="#"></a>.</p>
+</div>
 .
 
 
@@ -16,8 +18,10 @@ Now there is more.
 
 This \label{test} is counter c:~\ref{test}. And another~\ref{test}.
 .
+<div class="body">
 <p>Here is some text with two forward references: <a href="#c-1">1</a> and <a href="#c-1">1</a>. <a id="c-1"></a> Now there is more.</p>
 <p>This  is counter c:&nbsp;<a href="#c-1">1</a>. And another&nbsp;<a href="#c-1">1</a>.</p>
+</div>
 .
 
 
@@ -28,8 +32,10 @@ See Section~\ref{sec:test}.
 \section{Section Name}
 \label{sec:test}
 .
+<div class="body">
 <p>See Section&nbsp;<a href="#sec-1">1</a>.</p>
 <h2 id="sec-1">1 Section Name</h2>
+</div>
 .
 
 
@@ -39,8 +45,10 @@ See Section~\ref{sec:test}.
 
 This is Section~\ref{sec:test}.
 .
+<div class="body">
 <h2 id="sec-1">1 Section Name</h2>
 <p>This is Section&nbsp;<a href="#sec-1">1</a>.</p>
+</div>
 .
 
 
@@ -50,8 +58,10 @@ This is Section~\ref{sec:test}.
 
 This \label{sec:test} is Section~\ref{sec:test}.
 .
+<div class="body">
 <h2 id="sec-1">1 Section Name</h2>
 <p>This  is Section&nbsp;<a href="#sec-1">1</a>.</p>
+</div>
 .
 
 
@@ -68,10 +78,12 @@ See Section~\ref{sec:test}.
 This is Section~\ref{sec:test}.
 \end{document}
 .
+<div class="body">
 <h1 id="sec-1"><div>Chapter 1</div>Labels</h1>
 <p>See Section&nbsp;<a href="#sec-2">1.1</a>.</p>
 <h2 id="sec-2">1.1 Section Name</h2>
 <p>This is Section&nbsp;<a href="#sec-2">1.1</a>.</p>
+</div>
 .
 
 
@@ -84,6 +96,7 @@ The most widely-used format is item number~\ref{popular}.
     \item Con\TeX t
 \end{enumerate}
 .
+<div class="body">
 <p>The most widely‐used format is item number&nbsp;<a href="#item-2">2</a>.</p>
 <ol class="list">
 <li>
@@ -99,6 +112,7 @@ The most widely-used format is item number~\ref{popular}.
 <p>Con<span class="tex">T<span class="e">e</span>X</span>t</p>
 </li>
 </ol>
+</div>
 .
 
 

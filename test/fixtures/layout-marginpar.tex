@@ -1,0 +1,82 @@
+s** layout definition
+.
+\documentclass{article}
+
+\setlength{\textwidth}{10cm}
+\setlength{\oddsidemargin}{1cm}
+\setlength{\marginparwidth}{2.4cm}
+\setlength{\marginparsep}{4.5mm}
+
+\begin{document}
+\marginpar{And here is a piece on the right.}
+This is just some simple text. This is just some simple text.
+This is just some simple text. This is just some simple text.
+This is just some simple text. This is just some simple text.
+\end{document}
+.
+<div class="body">
+<p><span class="mpbaseline" id="marginref-1"></span> This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text.</p>
+</div>
+<div class="margin-right">
+<div class="marginpar"><div id="1"><span class="mpbaseline"></span>And here is a piece on the right.</div></div>
+</div>
+.
+
+
+s** wrong layout definition with overflowing margins
+.
+\documentclass{article}
+
+\setlength{\textwidth}{12cm}
+\setlength{\oddsidemargin}{3cm}
+\setlength{\marginparwidth}{7cm}
+\setlength{\marginparsep}{2cm}
+
+\begin{document}
+\marginpar{And here is a piece on the right.}
+This is just some simple text. This is just some simple text.
+This is just some simple text. This is just some simple text.
+This is just some simple text. This is just some simple text.
+\end{document}
+.
+<div class="body">
+<p><span class="mpbaseline" id="marginref-1"></span> This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text.</p>
+</div>
+<div class="margin-right">
+<div class="marginpar"><div id="1"><span class="mpbaseline"></span>And here is a piece on the right.</div></div>
+</div>
+.
+
+
+
+s** marginpars
+.
+This is just some simple text. This is just some simple text.
+This is just some simple text. This is just some simple text.
+This is just some simple text. This is just some simple text.
+
+This is just some simple text. -MPAR-\marginpar{\Large text in margin} This is just some simple text.
+This is just some simple text. This is just some simple text.
+
+\bigbreak
+
+This is just some simple text. -MPAR-\marginpar{\tiny text in margin} This is just some simple text. This is just some simple text.
+This is just some simple text. This is just some simple text.
+
+\bigbreak
+
+This is just some simple text.
+.
+<div class="body">
+<p>This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text.</p>
+<p>This is just some simple text. ‐MPAR‐<span class="mpbaseline" id="marginref-1"></span> This is just some simple text. This is just some simple text. This is just some simple text.</p>
+<span class="vspace bigskip"></span>
+<p>This is just some simple text. ‐MPAR‐<span class="mpbaseline" id="marginref-2"></span> This is just some simple text. This is just some simple text. This is just some simple text. This is just some simple text.</p>
+<span class="vspace bigskip"></span>
+<p>This is just some simple text.</p>
+</div>
+<div class="margin-right"><div class="marginpar">
+<div id="1"><span class="mpbaseline"></span><span class="Large">text in margin</span></div>
+<div id="2"><span class="mpbaseline"></span><span class="tiny">text in margin</span></div>
+</div></div>
+.

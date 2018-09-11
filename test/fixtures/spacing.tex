@@ -12,6 +12,7 @@ em-space: -\quad- \\
 3cm horizontal space: -\hspace{3cm}- \\
 %relative fills: -\hspace{\stretch{1}}-\hspace{\stretch{2}}- % not possible in html!
 .
+<div class="body">
 <p>Negative thin space: ‐<span class="negthinspace"></span>‐<br>
 Thin space: ‐ ‐<br>
 Thin space: ‐ ‐<br>
@@ -23,6 +24,7 @@ em‐space: ‐ ‐<br>
 2x em‐space: ‐  ‐<br>
 3cm horizontal space: ‐<span style="margin-right:113.38584px"></span>‐<br>
 </p>
+</div>
 .
 
 
@@ -31,8 +33,10 @@ em‐space: ‐ ‐<br>
 This is just some simple text.\\[1cm]
 This is just some simple text.
 .
+<div class="body">
 <p>This is just some simple text.<span class="breakspace" style="margin-bottom:37.79528px"></span>
 This is just some simple text.</p>
+</div>
 .
 
 
@@ -57,6 +61,7 @@ A line after the medbreak with just some simple text.
 \bigbreak
 Final line of just some simple text.
 .
+<div class="body">
 <p>This is just a line of text <span class="vspace-inline smallskip"></span>with an embedded small skip.</p>
 <p>This is just some simple text.</p>
 <span class="vspace medskip"></span>
@@ -70,6 +75,7 @@ Final line of just some simple text.
 <p>A line after the medbreak with just some simple text.</p>
 <span class="vspace bigskip"></span>
 <p>Final line of just some simple text.</p>
+</div>
 .
 
 
@@ -80,7 +86,9 @@ This is some text, it includes\vspace{1cm} a vertical space. And some more text.
 \vspace{1cm}
 And another paragraph.
 .
+<div class="body">
 <p>This is some text, it includes<span class="vspace-inline" style="margin-bottom:37.79528px"></span> a vertical space. And some more text.</p>
 <span class="vspace" style="margin-bottom:37.79528px"></span>
 <p>And another paragraph.</p>
+</div>
 .
