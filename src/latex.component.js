@@ -40,7 +40,7 @@ customElements.define('latex-js',
       generator.applyLengthsAndGeometryToDom(page)
       page.appendChild(generator.domFragment())
 
-      this.shadow.appendChild(generator.stylesAndScripts(new URL("..", path)))
+      this.shadow.appendChild(generator.stylesAndScripts(path))
       this.shadow.appendChild(page)
     }
 

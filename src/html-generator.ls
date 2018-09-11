@@ -332,14 +332,22 @@ export class HtmlGenerator
             script.src = url
             script
 
+        if base
+            el.appendChild createStyleSheet new URL("css/katex.css", base).toString!
+            el.appendChild createStyleSheet new URL(@documentClass.css, base).toString!
 
-        el.appendChild createStyleSheet new URL("css/katex.css", base).toString!
-        el.appendChild createStyleSheet new URL(@documentClass.css, base).toString!
+            for style in @_options.styles
+                el.appendChild createStyleSheet new URL(style, base).toString!
 
-        for style in @_options.styles
-            el.appendChild createStyleSheet new URL(style, base).toString!
+            el.appendChild createScript new URL("js/base.js", base).toString!
+        else
+            el.appendChild createStyleSheet "css/katex.css"
+            el.appendChild createStyleSheet @documentClass.css
 
-        el.appendChild createScript new URL("js/base.js", base).toString!
+            for style in @_options.styles
+                el.appendChild createStyleSheet style
+
+            el.appendChild createScript "js/base.js"
 
         return el
 
@@ -353,8 +361,8 @@ export class HtmlGenerator
         el.appendChild @create @block, @_dom, "body"
 
         if @_marginpars.length
-            # marginpar on the right
-            el.appendChild @create @block, null, "margin-left"
+            # marginpar on the right - TODO: is there any configuration possible to select which margin?
+            #el.appendChild @create @block, null, "margin-left"
             el.appendChild @create @block, @create(@block, @_marginpars, "marginpar"), "margin-right"
 
         return el

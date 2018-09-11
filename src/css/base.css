@@ -104,7 +104,10 @@
 /***************/
 
 html, body, .page {
-    display: flex;
+    display: grid;
+
+    grid-template-columns: [margin-left] var(--marginleftwidth) [body] var(--textwidth) [margin-right] var(--marginrightwidth);
+    grid-template-rows: auto;
 
     margin: 0;
     padding: 0;
@@ -116,30 +119,30 @@ html, body, .page {
 
 /* LaTeX page body */
 .body {
-    max-width: var(--textwidth);   /* elements wider than this overflow, but don't increase bodywidth */
-    width: var(--textwidth);
+    grid-column: body;
+    grid-row: 1;
 }
 
 /* LaTeX page margins */
 .margin-left {
-    order: -1;
-    display: flex;
+    grid-column: margin-left;
+    grid-row: 1;
+    justify-self: end;
 
-    max-width: var(--marginleftwidth);   /* elements wider than this overflow, but don't increase bodywidth */
-    width: var(--marginleftwidth);
+    display: flex;
 }
 
 .margin-right {
-    order: 1;
-    display: flex;
+    grid-column: margin-right;
+    grid-row: 1;
+    justify-self: start;
 
-    max-width: var(--marginrightwidth);   /* elements wider than this overflow, but don't increase bodywidth */
-    width: var(--marginrightwidth);
+    display: flex;
 }
 
 .marginpar {
     width: var(--marginparwidth);           /* ideally in percent relative to margin */
-    min-width: var(--marginparwidth);       /* min-width if in flex container, to force this width */
+    min-width: var(--marginparwidth);       /* min-width if in grid/flex container, to force this width */
 
     margin-left: var(--marginparsep);
     margin-right: var(--marginparsep);

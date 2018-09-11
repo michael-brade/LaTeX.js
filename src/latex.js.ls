@@ -84,7 +84,6 @@ const options =
 
 
 
-generator = new HtmlGenerator(options)
 
 
 const readFile = util.promisify(fs.readFile)
@@ -99,7 +98,7 @@ input.then (text) ->
     if text.join
         text = text.join "\n\n"
 
-    generator = latexjs.parse text, { generator: generator }
+    generator = latexjs.parse text, { generator: new HtmlGenerator(options) }
 
     if program.body
         html = generator.domFragment!.outerHTML
