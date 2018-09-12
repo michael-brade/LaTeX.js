@@ -11,7 +11,7 @@ customElements.define('latex-js',
 
       // wait for some LaTeX source to appear in the upgrade-case
       if (!this.textContent) {
-        var observer = new MutationObserver(mutationList => {
+        const observer = new MutationObserver(mutationList => {
           if (this.textContent) {
             // no longer need to watch for change
             // TODO: actually, we could keep watching to support editing!
@@ -28,12 +28,21 @@ customElements.define('latex-js',
     }
 
     onContentReady() {
+      // empty DOM
       while (this.shadow.lastChild) {
         this.shadow.lastChild.remove()
       }
 
-      var generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate: false }) })
+      // read options
+      const hyphenate = this.getAttribute("hyphenate") !== "false"
 
+      if (this.hasAttribute("baseURL"))
+        path = this.getAttribute("baseURL")
+
+      // parse
+      const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate: hyphenate }) })
+
+      // create DOM
       let page = document.createElement("div")
       page.setAttribute("class", "page")
 

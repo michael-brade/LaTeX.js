@@ -78,6 +78,69 @@ Options:
 If no input files are given, STDIN is read.
 ```
 
+### WebComponent
+
+LaTeX.js can be used as a web component:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="content-language" content="en">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/latex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/latex.component.js"></script>
+
+  <style>
+    latex-js {
+      display: inline-block;
+      width: 40%;
+      border: 1px solid red;
+      margin-right: 2em;
+    }
+  </style>
+
+  <title>LaTeX.js Web Component Test</title>
+</head>
+
+<body>
+  <h1>Compiling LaTeX</h1>
+
+  <latex-js baseURL="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/">
+    \documentclass{article}
+
+    \begin{document}
+    Hello World.
+    \end{document}
+  </latex-js>
+
+
+  <latex-js hyphenate="false">
+    Another.
+  </latex-js>
+
+</body>
+
+</html>
+```
+
+This, however, requires a browser with support for the shadow DOM.
+
+Then you need to decide how to embed the `<latex-js>` element and style it accordingly with CSS; most importantly, set
+the `display:` property. It is `inline` by default.
+
+The `<latex-js>` element supports a few attributes to configure LaTeX.js:
+
+- `baseURL`: if you want the LaTeX.js component to use a different set of stylesheets than the ones delivered along
+  with the `latex.component.js`, then you need to set the base using this attribute.
+
+- `hyphenate`: enable or disable hyphenation (default: enabled)
+
+
 ### Library
 
 This is the low-level use-case which gives the greatest control over the translation process.
