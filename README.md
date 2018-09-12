@@ -63,6 +63,7 @@ Options:
   -V, --version          output the version number
   -o, --output <file>    specify output file, otherwise STDOUT will be used
   -a, --assets [dir]     copy CSS and fonts to the directory of the output file, unless dir is given (default: no assets are copied)
+  -u, --url <base URL>   set the base URL to use for the assets (default: use relative URLs)
   -b, --body             don't include HTML boilerplate and CSS, only output the contents of body
   -e, --entities         encode HTML entities in the output instead of using UTF-8 characters
   -p, --pretty           beautify the html (this may add/remove spaces unintentionally)
@@ -335,16 +336,22 @@ Create a new HTML generator. `options` is an <[Object]> that can have the follow
 - `styles`: <[Array]<[string]>> additional CSS stylesheets
 
 
-#### `htmlGenerator.htmlDocument()`
+#### `htmlGenerator.htmlDocument(baseURL)`
 
 Returns the full DOM `HTMLDocument` representation of the LaTeX source, including `<head>` and `<body`>. This is meant
 to be used as its own standalone webpage or in an `<iframe>`.
 
+`baseURL` will be used as base for the scripts and stylesheets; if omitted, the base will be `window.location.href` or,
+if not available, scripts and stylesheets will have relative URLs.
+
 To serialize it, use `htmlGenerator.htmlDocument().outerHTML`.
 
-#### `htmlGenerator.stylesAndScripts()`
+#### `htmlGenerator.stylesAndScripts(baseURL)`
 
 Returns a `DocumentFragment` with `<link>` and `<script>` elements. This usually is part of the `<head>` element.
+
+If `baseURL` is given, the files will be referenced with absolute URLs, otherwise with relative URLs.
+
 
 #### `htmlGenerator.domFragment()`
 

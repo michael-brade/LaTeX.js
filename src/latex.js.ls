@@ -42,6 +42,7 @@ program
 
     .option '-o, --output <file>',      'specify output file, otherwise STDOUT will be used'
     .option '-a, --assets [dir]',       'copy CSS and fonts to the directory of the output file, unless dir is given (default: no assets are copied)'
+    .option '-u, --url <base URL>',     'set the base URL to use for the assets (default: use relative URLs)'
 
     # options affecting the HTML output
     .option '-b, --body',               'don\'t include HTML boilerplate and CSS, only output the contents of body'
@@ -103,7 +104,7 @@ input.then (text) ->
     if program.body
         html = generator.domFragment!.outerHTML
     else
-        html = generator.htmlDocument!.outerHTML
+        html = generator.htmlDocument(program.url).outerHTML
 
     if program.entities
         html = he.encode html, 'allowUnsafeSymbols': true

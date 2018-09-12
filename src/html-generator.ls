@@ -283,8 +283,10 @@ export class HtmlGenerator
     ### get the result
 
 
-    /* @return the HTMLDocument for use as a standalone webpage */
-    htmlDocument: ->
+    /* @return the HTMLDocument for use as a standalone webpage
+     * @param baseURL the base URL to use to build an absolute URL
+     */
+    htmlDocument: (baseURL) ->
         doc = document.implementation.createHTMLDocument @documentTitle
 
         ### head
@@ -293,15 +295,17 @@ export class HtmlGenerator
         charset.setAttribute "charset", "UTF-8"
         doc.head.appendChild charset
 
+        if not baseURL
+            # when used in a browser context, always insert all assets with absolute URLs;
+            # this is also useful when using a Blob in iframe.src (see also #12)
+            baseURL = window.location?.href
 
-        # when used in a browser context, insert all assets with absolute URLs;
-        # this is also useful when using a Blob in iframe.src (see also #12)
-        if window.location
+        if baseURL
             base = document.createElement "base"    # TODO: is the base element still needed??
-            base.href = window.location.href
+            base.href = baseURL                     # TODO: not in svgdom
             doc.head.appendChild base
 
-            doc.head.appendChild @stylesAndScripts window.location.href
+            doc.head.appendChild @stylesAndScripts baseURL
         else
             doc.head.appendChild @stylesAndScripts!
 
@@ -317,7 +321,7 @@ export class HtmlGenerator
 
 
     /* @return a DocumentFragment consisting of stylesheets and scripts */
-    stylesAndScripts: (base) ->
+    stylesAndScripts: (baseURL) ->
         el = document.createDocumentFragment!
 
         createStyleSheet = (url) ->
@@ -332,14 +336,14 @@ export class HtmlGenerator
             script.src = url
             script
 
-        if base
-            el.appendChild createStyleSheet new URL("css/katex.css", base).toString!
-            el.appendChild createStyleSheet new URL(@documentClass.css, base).toString!
+        if baseURL
+            el.appendChild createStyleSheet new URL("css/katex.css", baseURL).toString!
+            el.appendChild createStyleSheet new URL(@documentClass.css, baseURL).toString!
 
             for style in @_options.styles
-                el.appendChild createStyleSheet new URL(style, base).toString!
+                el.appendChild createStyleSheet new URL(style, baseURL).toString!
 
-            el.appendChild createScript new URL("js/base.js", base).toString!
+            el.appendChild createScript new URL("js/base.js", baseURL).toString!
         else
             el.appendChild createStyleSheet "css/katex.css"
             el.appendChild createStyleSheet @documentClass.css
