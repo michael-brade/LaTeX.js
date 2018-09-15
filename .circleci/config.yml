@@ -47,13 +47,10 @@ jobs:
 
       - store_artifacts:
           path: test/test-results.xml
-          prefix: tests
       - store_artifacts:
           path: test/coverage
-          prefix: coverage
       - store_test_results:
           path: test/test-results.xml
-          prefix: tests
 
 workflows:
   version: 2
