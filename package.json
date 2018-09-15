@@ -36,9 +36,10 @@
     "devbuild": "mkdirp dist/documentclasses;mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a src/js/ dist/js/;cp src/latex.component.js dist/;lsc -c -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;lsc -c -o dist/documentclasses src/documentclasses/;pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;babel -o dist/index.js src/index.js;mkdirp bin;lsc -bc --no-header -o bin src/latex.js.ls;chmod a+x bin/latex.js;",
     "docs": "npm run devbuild && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;",
     "pgcc": "google-closure-compiler --compilation_level SIMPLE --externs src/externs.js --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;",
-    "test": "mocha test/fixtures.ls;",
-    "iron": "iron-node node_modules/.bin/_mocha test/fixtures.ls;",
-    "cover": "nyc --reporter=html --reporter=text --report-dir=test/coverage npm test;"
+    "test": "mocha test/*.ls;",
+    "iron": "iron-node node_modules/.bin/_mocha test/*.ls;",
+    "testc": "nyc mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls;",
+    "cover": "nyc report --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage;"
   },
   "babel": {
     "presets": [
@@ -87,6 +88,7 @@
     "@babel/preset-env": "7.0.x",
     "@babel/plugin-syntax-object-rest-spread": "7.0.x",
     "mocha": "5.x",
+    "mocha-junit-reporter": "1.18.x",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "puppeteer": "1.8.x",

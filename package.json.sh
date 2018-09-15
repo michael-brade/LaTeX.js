@@ -74,9 +74,12 @@ scripts:
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
                                     --externs src/externs.js \
                                     --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;"
-    test:  'mocha test/fixtures.ls;'
-    iron:  'iron-node node_modules/.bin/_mocha test/fixtures.ls;'
-    cover: 'nyc --reporter=html --reporter=text --report-dir=test/coverage npm test;'
+
+    test:  'mocha test/*.ls;'
+    iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
+
+    testc: 'nyc mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls;'
+    cover: 'nyc report --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage;'
 
 babel:
     presets:
@@ -139,6 +142,7 @@ devDependencies:
     ### testing
 
     'mocha': '5.x'
+    'mocha-junit-reporter': '1.18.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
 
