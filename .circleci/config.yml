@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/latex.js
   docker:
-    - image: circleci/node:10-stretch
+    - image: circleci/node:10-stretch-browsers
 
 jobs:
   build:
@@ -35,17 +35,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/latex.js
-
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Install dependencies
-          command: npm install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-
       - run:
           name: Run unit tests
           command: npm run testc
