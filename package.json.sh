@@ -76,7 +76,7 @@ scripts:
                                     --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;"
     test:  'mocha test/fixtures.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/fixtures.ls;'
-    cover: 'istanbul cover --dir test/coverage _mocha test/fixtures.ls;'
+    cover: 'nyc --reporter=html --reporter=text --report-dir=test/coverage npm test;'
 
 babel:
     presets:
@@ -145,7 +145,7 @@ devDependencies:
     'puppeteer': '1.8.x'
     'pixelmatch': '4.0.x'
 
-    'istanbul': '>= 0.4.x'
+    'nyc': '13.x'
 
 
 repository:
