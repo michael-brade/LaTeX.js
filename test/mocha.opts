@@ -1,5 +1,5 @@
 --require livescript
---file test/_setup.ls
+--file test/lib/setup.ls
 --reporter spec
 --inline-diffs
 --ui bdd

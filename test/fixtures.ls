@@ -12,7 +12,7 @@ require! {
 const HtmlGenerator   = require '../dist/html-generator' .HtmlGenerator
 const html-beautify   = require 'js-beautify' .html
 const latexjs         = require '../dist/latex-parser'
-const load-fixtures   = require './load-fixtures' .load
+const load-fixtures   = require './lib/load-fixtures' .load
 
 
 var browser, page
