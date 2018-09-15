@@ -50,7 +50,7 @@ jobs:
       - store_artifacts:
           path: test/coverage
       - store_test_results:
-          path: test/test-results.xml
+          path: test
 
 workflows:
   version: 2
