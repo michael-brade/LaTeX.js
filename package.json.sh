@@ -51,10 +51,6 @@ scripts:
         uglifyjs dist/documentclasses/article.js -cm -o dist/documentclasses/article.js;
         uglifyjs dist/documentclasses/book.js    -cm -o dist/documentclasses/book.js;
         uglifyjs dist/documentclasses/report.js  -cm -o dist/documentclasses/report.js;
-
-        mkdirp bin;
-        lsc -bc --no-header -o bin src/latex.js.ls;
-        chmod a+x bin/latex.js;
     "
     devbuild: "
         mkdirp dist/documentclasses;
@@ -69,6 +65,10 @@ scripts:
         lsc -c -o dist/documentclasses src/documentclasses/;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
         babel -o dist/index.js src/index.js;
+
+        mkdirp bin;
+        lsc -bc --no-header -o bin src/latex.js.ls;
+        chmod a+x bin/latex.js;
     "
     docs:  'npm run devbuild && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
@@ -102,7 +102,7 @@ dependencies:
     'hyphenation.de': '*'
 
     'lodash': '4.x'
-    'commander': '2.17.x'
+    'commander': '2.18.x'
     'stdin': '*'
     'fs-extra': '7.x'
     'js-beautify': '1.8.x'
