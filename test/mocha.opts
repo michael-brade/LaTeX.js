@@ -1,6 +1,7 @@
 --require livescript
 --file test/_setup.ls
 --reporter spec
+--inline-diffs
 --ui bdd
 --check-leaks
 --globals document,SVG,__core-js_shared__
