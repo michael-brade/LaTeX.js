@@ -33,9 +33,9 @@ addStyle = (url, styles) ->
 
 
 program
-    .name info.name
-    .version info.version
-    .description 'translate a LaTeX document to HTML5'
+    .name           info.name
+    .version        info.version
+    .description    info.description
 
     .usage '[options] [files...]'
 
@@ -58,7 +58,7 @@ program
     .option '-l, --language <lang>',    'set hyphenation language', 'en'
 
 
-    .on '--help', -> console.log '\n  If no input files are given, STDIN is read.\n'
+    .on '--help', -> console.log '\nIf no input files are given, STDIN is read.'
 
     .parse process.argv
 
@@ -68,8 +68,8 @@ if program.macros
     Name = path.posix.basename that
     CustomMacros = (require that)[Name]   # TODO
 
-if program.bare and program.style
-    console.error "  error: conflicting options 'bare' and 'style' given!"
+if program.body and (program.style or program.url)
+    console.error "error: conflicting options: 'url' and 'style' cannot be used with 'body'!"
     process.exit 1
 
 
@@ -78,7 +78,7 @@ const options =
     languagePatterns:   switch program.language
                         | 'en' => en
                         | 'de' => de
-                        | otherwise console.error "  error: language '#{that}' is not supported yet"; process.exit 1
+                        | otherwise console.error "error: language '#{that}' is not supported yet"; process.exit 1
     documentClass:      program.class
     CustomMacros:       CustomMacros
     styles:             program.style || []
@@ -120,6 +120,9 @@ input.then (text) ->
         fs.writeFileSync program.output, html
     else
         process.stdout.write html + '\n'
+.catch (err) ->
+    console.error err.toString!
+    process.exit 1
 
 
 # assets
@@ -127,12 +130,12 @@ dir = program.assets
 
 if program.assets == true
     if not program.output
-        console.error "  assets error: either a directory has to be given, or -o"
+        console.error "assets error: either a directory has to be given, or -o"
         process.exit 1
     else
         dir = path.posix.dirname path.resolve program.output
 else if fs.existsSync(dir) and not fs.statSync(dir).isDirectory!
-    console.error "  assets error: the given path exists but is not a directory: ", dir
+    console.error "assets error: the given path exists but is not a directory: ", dir
     process.exit 1
 
 if dir

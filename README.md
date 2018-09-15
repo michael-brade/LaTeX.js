@@ -56,7 +56,7 @@ The CLI has the following options:
 ```
 Usage: latex.js [options] [files...]
 
-translate a LaTeX document to HTML5
+JavaScript LaTeX to HTML5 translator
 
 Options:
 
@@ -73,7 +73,6 @@ Options:
   -n, --no-hyphenation   don't insert soft hyphens (disables automatic hyphenation in the browser)
   -l, --language <lang>  set hyphenation language (default: en)
   -h, --help             output usage information
-
 
 If no input files are given, STDIN is read.
 ```
