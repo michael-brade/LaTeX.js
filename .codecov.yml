@@ -1,0 +1,17 @@
+coverage:
+  range: "50...85"
+
+  status:
+    project:
+      default: on
+    patch:
+      default: on
+    changes:
+      default: on
+
+comment:
+  layout: "header, reach, diff, flags, files, footer"
+  behavior: default
+  require_changes: no
+  require_base: no
+  require_head: yes

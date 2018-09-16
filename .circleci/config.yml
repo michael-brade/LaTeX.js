@@ -56,13 +56,7 @@ workflows:
   version: 2
   build-and-test:
     jobs:
-      - build:
-          filters:
-            branches:
-              only: /master/
+      - build
       - test:
           requires:
             - build
-          filters:
-            branches:
-              only: /master/
