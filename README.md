@@ -556,7 +556,7 @@ There is no such alternative in JavaScript yet, though, which is why I started t
 
 ## License
 
-[![License](https://img.shields.io/github/license/michael-brade/LaTeX.js.svg?style=plastic)](https://github.com/michael-brade/LaTeX.js/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/michael-brade/LaTeX.js.svg?style=plastic)](https://github.com/michael-brade/LaTeX.js/blob/master/LICENSE) [![Greenkeeper badge](https://badges.greenkeeper.io/michael-brade/LaTeX.js.svg)](https://greenkeeper.io/)
 
 Copyright (c) 2015-2018 Michael Brade
 
