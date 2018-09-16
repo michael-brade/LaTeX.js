@@ -2,6 +2,8 @@
 
   [![NPM version](https://img.shields.io/npm/v/latex.js.svg?style=plastic)](https://www.npmjs.org/package/latex.js)
   [![NPM downloads](https://img.shields.io/npm/dm/latex.js.svg?style=plastic)](https://www.npmjs.org/package/latex.js)
+  [![CircleCI](https://img.shields.io/circleci/project/github/michael-brade/LaTeX.js.svg?style=plastic)](https://circleci.com/gh/michael-brade/LaTeX.js)
+  [![codecov](https://codecov.io/gh/michael-brade/LaTeX.js/branch/master/graph/badge.svg)](https://codecov.io/gh/michael-brade/LaTeX.js)
   [![Maintainability](https://api.codeclimate.com/v1/badges/f2ab8b70a87a9da55189/maintainability)](https://codeclimate.com/github/michael-brade/LaTeX.js/maintainability)
   [![Greenkeeper badge](https://badges.greenkeeper.io/michael-brade/LaTeX.js.svg)](https://greenkeeper.io/)
   [![License](https://img.shields.io/github/license/michael-brade/LaTeX.js.svg?style=plastic)](https://github.com/michael-brade/LaTeX.js/blob/master/LICENSE)
@@ -308,11 +310,10 @@ to define the LaTeX2.09 macro `\bf`.
 `CustomMacros.args` above is a <[Map]<[string], [Array]<[string]>>>, mapping the macro name to the type and arguments of
 the macro. If a macro doesn't take arguments and is a horizontal-mode macro, `args` can be left undefined for it.
 
+The first array entry of `args[<macro name>]` declares the macro type:
 
-The first array entry declares the macro type:
-
-| arg  | meaning |
-| ------ | ------ |
+| type | meaning |
+| ---- | ------- |
 | `H`  | horizontal-mode macro |
 | `V`  | vertical-mode macro - ends the current paragraph |
 | `HV` | horizontal-vertical-mode macro: must return nothing, i.e., doesn't create output |
@@ -322,7 +323,7 @@ The first array entry declares the macro type:
 The rest of the list (array entries) declares the arguments:
 
 | arg  | meaning |
-| ------ | ------ |
+| ---- | ------- |
 | `s`  | optional star |
 |||
 |  `g` | group (possibly long - TeX allows `\endgraf`, but not `\par`... so allow `\par` as well) |
