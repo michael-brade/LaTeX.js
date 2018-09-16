@@ -1,11 +1,15 @@
 'use strict'
 
-require! path
+require! { path, fs }
 require! '../package': pkg
 require! 'os': { EOL }
 
+require! tmp
+require! './lib/cmd'
+
 const binFile = path.resolve pkg.bin[pkg.name]
-const latexjs = require('./lib/cmd').create binFile
+const latexjs = cmd.create binFile
+
 
 
 describe 'LaTeX.js CLI test', !->
@@ -32,3 +36,25 @@ describe 'LaTeX.js CLI test', !->
 
     test.skip 'TODO: parsing bug in commander', ->
         latexjs.execute ['-b -s style.css'] .then (r) -> console.log r
+
+
+    test 'default translation', ->
+        expect(latexjs.execute [], [ "A paragraph." ])
+            .to.eventually.be.fulfilled
+            .and.to.be.an 'object' .that.includes.key 'stdout'
+            .and.to.satisfy (res) -> res.stdout == '<html><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body style="--textwidth:58%;--marginleftwidth:21%;--marginrightwidth:21%;--marginparwidth:45.22744645012744%;--marginparsep:14.666663000000002px;--marginparpush:6.666665px"><div class="body"><p>A para­graph.</p></div></body></html>' + EOL
+
+    test 'return only the body', ->
+        expect(latexjs.execute ['-b'], [ "A paragraph." ])
+            .to.eventually.be.fulfilled
+            .and.to.be.an 'object' .that.includes.key 'stdout'
+            .and.to.satisfy (res) -> res.stdout == '<div class="body"><p>A para­graph.</p></div>' + EOL
+
+    test 'include custom macros', ->
+        tmpfile = tmp.fileSync!
+        macroCode = require('livescript').compile(fs.readFileSync 'test/api/CustomMacros.ls', 'utf8')
+        fs.writeSync tmpfile.fd, macroCode
+
+        expect(latexjs.execute ['-b', '-m', tmpfile.name], [ "A \\myMacro[custom] macro." ])
+            .to.eventually.be.fulfilled
+            .and.to.satisfy (res) -> res.stdout == '<div class="body"><p>A -cus­tom- macro.</p></div>' + EOL

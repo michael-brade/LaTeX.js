@@ -77,6 +77,7 @@
     "mkdirp": "0.5.x",
     "rimraf": "2.6.x",
     "uglify-js": "3.4.x",
+    "tmp": "0.x",
     "webpack": "4.x",
     "webpack-command": "0.x",
     "webpack-closure-compiler": "2.x",

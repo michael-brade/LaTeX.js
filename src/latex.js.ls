@@ -65,8 +65,15 @@ program
 
 
 if program.macros
-    Name = path.posix.basename that
-    CustomMacros = (require that)[Name]   # TODO
+    macros = path.resolve process.cwd!, that
+    CustomMacros = (require macros)
+    if CustomMacros.default
+        # class is the default export
+        CustomMacros = that
+    else
+        # class is a named export
+        CustomMacros = CustomMacros[path.parse macros .name]
+
 
 if program.body and (program.style or program.url)
     console.error "error: conflicting options: 'url' and 'style' cannot be used with 'body'!"

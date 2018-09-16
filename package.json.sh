@@ -122,6 +122,7 @@ devDependencies:
     'mkdirp': '0.5.x'
     'rimraf': '2.6.x'
     'uglify-js': '3.4.x'
+    'tmp': '0.x'
 
 
     ### bundling
