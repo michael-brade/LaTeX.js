@@ -186,7 +186,7 @@ html {
 
     text-align: justify;
     line-height: var(--line-height);
-    hyphens: auto;
+    hyphens: manual;
 }
 
 .katex {
