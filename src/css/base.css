@@ -194,6 +194,10 @@ html {
     font-family: "Computer Modern Serif", "KaTeX_Main" !important;
 }
 
+.katex .mathit {
+    font-family: "Computer Modern Serif", "KaTeX_Math" !important;
+}
+
 
 /* family */
 .rm {
