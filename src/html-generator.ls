@@ -11,6 +11,7 @@ require! {
     './macros': { LaTeXBase: Macros }
     katex
     hypher: Hypher
+    'hyphenation.en-us': h-en
     'svg.js': SVG
     he
 
@@ -152,14 +153,15 @@ export class HtmlGenerator
     #  - documentClass: the default document class if a document without preamble is parsed
     #  - CustomMacros: a constructor (class/function) with additional custom macros
     #  - hyphenate: boolean, enable or disable automatic hyphenation
-    #  - languagePatterns: language patterns object to use for hyphenation if it is enabled
-    #    TODO: infer language from LaTeX preamble and load hypenation patterns automatically - default en
+    #  - languagePatterns: language patterns object to use for hyphenation if it is enabled (default en)
+    #    TODO: infer language from LaTeX preamble and load hypenation patterns automatically
     #  - styles: array with additional CSS stylesheets
     (options) ->
         @_options = Object.assign {
             documentClass: "article"
             styles: []
             hyphenate: true
+            languagePatterns: h-en
         }, options
 
         if @_options.hyphenate

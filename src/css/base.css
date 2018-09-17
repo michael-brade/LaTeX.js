@@ -103,6 +103,7 @@
 /* page layout */
 /***************/
 
+/* .page is the element when used as a web component */
 html, body, .page {
     display: grid;
 
@@ -180,7 +181,7 @@ html, body, .page {
 /* fonts */
 /*********/
 
-html {
+html, body, .page {
     font-family: "Computer Modern Serif", serif;
     font-size: var(--size);
 
