@@ -83,7 +83,7 @@
     "webpack-closure-compiler": "2.x",
     "babel-loader": "8.0.x",
     "copy-webpack-plugin": "4.5.x",
-    "@babel/cli": "7.0.x",
+    "@babel/cli": "~7.1.0",
     "@babel/core": "7.0.x",
     "@babel/register": "7.0.x",
     "@babel/preset-env": "7.0.x",
