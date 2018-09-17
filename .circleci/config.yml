@@ -48,6 +48,8 @@ jobs:
       - store_artifacts:
           path: test/test-results.xml
       - store_artifacts:
+          path: test/screenshots
+      - store_artifacts:
           path: test/coverage
       - store_test_results:
           path: test
