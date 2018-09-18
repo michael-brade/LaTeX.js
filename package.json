@@ -86,7 +86,7 @@
     "@babel/cli": "~7.1.0",
     "@babel/core": "~7.1.0",
     "@babel/register": "7.0.x",
-    "@babel/preset-env": "7.0.x",
+    "@babel/preset-env": "~7.1.0",
     "@babel/plugin-syntax-object-rest-spread": "7.0.x",
     "mocha": "5.x",
     "mocha-junit-reporter": "1.18.x",
