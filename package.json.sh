@@ -38,19 +38,22 @@ files:
 
 
 scripts:
-    clean: 'rimraf dist bin;'
+    clean: 'rimraf dist bin test/coverage;'
     build: "
         npm run devbuild;
-        uglifyjs dist/index.js                   -cm -o dist/index.js;
-        uglifyjs dist/plugin-pegjs.js            -cm -o dist/plugin-pegjs.js;
-        uglifyjs dist/latex-parser.js            -cm -o dist/latex-parser.js;
-        uglifyjs dist/macros.js                  -cm -o dist/macros.js;
-        uglifyjs dist/symbols.js                 -cm -o dist/symbols.js;
-        uglifyjs dist/html-generator.js          -cm -o dist/html-generator.js;
-        uglifyjs dist/documentclasses/base.js    -cm -o dist/documentclasses/base.js;
-        uglifyjs dist/documentclasses/article.js -cm -o dist/documentclasses/article.js;
-        uglifyjs dist/documentclasses/book.js    -cm -o dist/documentclasses/book.js;
-        uglifyjs dist/documentclasses/report.js  -cm -o dist/documentclasses/report.js;
+        cd dist;
+        uglifyjs latex-parser.js            -cm --source-map 'includeSources,url=\"./latex-parser.js.map\"'                   -o latex-parser.js;
+
+        uglifyjs index.js                   -cm --source-map 'content=inline,includeSources,url=\"./index.js.map\"'           -o index.js;
+        uglifyjs macros.js                  -cm --source-map 'content=inline,includeSources,url=\"./macros.js.map\"'          -o macros.js;
+        uglifyjs symbols.js                 -cm --source-map 'content=inline,includeSources,url=\"./symbols.js.map\"'         -o symbols.js;
+        uglifyjs html-generator.js          -cm --source-map 'content=inline,includeSources,url=\"./html-generator.js.map\"'  -o html-generator.js;
+
+        uglifyjs documentclasses/base.js    -cm --source-map 'content=inline,includeSources,url=\"./base.js.map\"'            -o documentclasses/base.js;
+        uglifyjs documentclasses/article.js -cm --source-map 'content=inline,includeSources,url=\"./article.js.map\"'         -o documentclasses/article.js;
+        uglifyjs documentclasses/book.js    -cm --source-map 'content=inline,includeSources,url=\"./book.js.map\"'            -o documentclasses/book.js;
+        uglifyjs documentclasses/report.js  -cm --source-map 'content=inline,includeSources,url=\"./report.js.map\"'          -o documentclasses/report.js;
+        cd ..;
     "
     devbuild: "
         mkdirp dist/documentclasses;
@@ -61,19 +64,19 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a src/js/ dist/js/;
         cp src/latex.component.js dist/;
-        lsc -c -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
-        lsc -c -o dist/documentclasses src/documentclasses/;
+        lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
+        lsc -c -m embedded -o dist/documentclasses src/documentclasses/;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
-        babel -o dist/index.js src/index.js;
+        babel -o dist/index.js -s inline src/index.js;
 
         mkdirp bin;
-        lsc -bc --no-header -o bin src/latex.js.ls;
+        lsc -bc --no-header -m embedded -o bin src/latex.js.ls;
         chmod a+x bin/latex.js;
     "
-    docs:  'npm run devbuild && webpack && uglifyjs -cm -o docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;'
+    docs:  'npm run build && webpack'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
                                     --externs src/externs.js \
-                                    --js_output_file docs/js/playground.bundle.pack.js docs/js/playground.bundle.js;"
+                                    --js_output_file docs/js/playground.bundle.min.js docs/js/playground.bundle.js;"
 
     test:  'mocha test/*.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
@@ -114,7 +117,7 @@ dependencies:
     #'xmldom': '^0.1.19'
 
 devDependencies:
-    'livescript': 'https://github.com/gkz/LiveScript'
+    'livescript': 'https://github.com/michael-brade/LiveScript'
 
     ### building
 
@@ -131,6 +134,7 @@ devDependencies:
     'webpack-command': '0.x'
     'webpack-closure-compiler': '2.x'
     'babel-loader': '8.0.x'
+    'source-map-loader': '0.2.x'
     'copy-webpack-plugin': '4.5.x'
 
     '@babel/cli': '7.0.x'

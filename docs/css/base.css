@@ -4,7 +4,7 @@
 /* default lengths */
 /*******************/
 
-:root {
+:root, :host {
     --size: 10pt;
     --line-height: 1.2;
 
@@ -103,8 +103,12 @@
 /* page layout */
 /***************/
 
-html, body {
-    display: flex;
+/* .page is the element when used as a web component */
+html, body, .page {
+    display: grid;
+
+    grid-template-columns: [margin-left] var(--marginleftwidth) [body] var(--textwidth) [margin-right] var(--marginrightwidth);
+    grid-template-rows: auto;
 
     margin: 0;
     padding: 0;
@@ -114,30 +118,32 @@ html, body {
 }
 
 
+/* LaTeX page body */
 .body {
-    max-width: var(--textwidth);   /* elements wider than this overflow, but don't increase bodywidth */
-    width: var(--textwidth);
+    grid-column: body;
+    grid-row: 1;
 }
 
+/* LaTeX page margins */
 .margin-left {
-    order: -1;
-    display: flex;
+    grid-column: margin-left;
+    grid-row: 1;
+    justify-self: end;
 
-    max-width: var(--marginleftwidth);   /* elements wider than this overflow, but don't increase bodywidth */
-    width: var(--marginleftwidth);
+    display: flex;
 }
 
 .margin-right {
-    order: 1;
-    display: flex;
+    grid-column: margin-right;
+    grid-row: 1;
+    justify-self: start;
 
-    max-width: var(--marginrightwidth);   /* elements wider than this overflow, but don't increase bodywidth */
-    width: var(--marginrightwidth);
+    display: flex;
 }
 
 .marginpar {
     width: var(--marginparwidth);           /* ideally in percent relative to margin */
-    min-width: var(--marginparwidth);       /* min-width if in flex container, to force this width */
+    min-width: var(--marginparwidth);       /* min-width if in grid/flex container, to force this width */
 
     margin-left: var(--marginparsep);
     margin-right: var(--marginparsep);
@@ -148,6 +154,7 @@ html, body {
 }
 
 
+/* columns */
 .onecolumn {
     column-count: 1;
 }
@@ -174,18 +181,22 @@ html, body {
 /* fonts */
 /*********/
 
-html {
+html, body, .page {
     font-family: "Computer Modern Serif", serif;
     font-size: var(--size);
 
     text-align: justify;
     line-height: var(--line-height);
-    hyphens: auto;
+    hyphens: manual;
 }
 
 .katex {
     font-size: 1em !important;
     font-family: "Computer Modern Serif", "KaTeX_Main" !important;
+}
+
+.katex .mathit {
+    font-family: "Computer Modern Serif", "KaTeX_Math" !important;
 }
 
 

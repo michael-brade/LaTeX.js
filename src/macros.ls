@@ -1291,7 +1291,7 @@ export class LaTeXBase
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
         ClassName = documentclass.charAt(0).toUpperCase() + documentclass.slice(1)
-        Class = (require "./documentclasses/" + documentclass)[ClassName]
+        Class = (require "./documentclasses/" + documentclass + ".js")[ClassName]
 
         import all new Class(@g)
         args import Class.args
