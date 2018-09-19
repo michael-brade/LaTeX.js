@@ -824,7 +824,8 @@ EOF             "EOF"       = !. / escape endinput
 
 /* space handling */
 
-nl              "newline"   = !'\r''\n' / '\r' / '\r\n'         { return undefined; }       // catcode 5 (linux, os x, windows)
+nl              "newline"   = "\n" / "\r\n" / "\r"
+                            / "\u2028" / "\u2029"               { return undefined; }       // catcode 5 (linux, os x, windows, unicode)
 sp              "whitespace"= [ \t]                             { return undefined; }       // catcode 10
 
 comment         "comment"   = "%"  (!nl .)* (nl sp* / EOF)                                  // catcode 14, including the newline
