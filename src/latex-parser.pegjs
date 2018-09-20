@@ -377,7 +377,9 @@ coord_optgroup  =   skip_space begin_optgroup
 
 
 
-url_char        =   char/digit/punctuation/"-"/"#"/"&"/escape? "%" { return "%" }
+url_pct_encoded =   escape? p:$("%" hex hex) { return p; }
+
+url_char        =   char / digit / [-._~:/?#[\]@!$&()*+,;=] / "'" / url_pct_encoded
                     / . &{ error("illegal char in url given"); }
 
 // {url}
