@@ -46,7 +46,7 @@ files:
 
 
 scripts:
-    clean: 'rimraf dist bin test/coverage;'
+    clean: 'rimraf dist bin test/coverage docs/js/playground.bundle.*;'
     build: "
         npm run devbuild;
         cd dist;
@@ -64,6 +64,7 @@ scripts:
         cd ..;
     "
     devbuild: "
+        rimraf dist/**/*.js.map;
         mkdirp dist/documentclasses;
         mkdirp dist/css;
         mkdirp dist/js;
@@ -81,7 +82,7 @@ scripts:
         lsc -bc --no-header -m embedded -o bin src/latex.js.ls;
         chmod a+x bin/latex.js;
     "
-    docs:  'npm run build && webpack'
+    docs:  'npm run devbuild && webpack'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
                                     --externs src/externs.js \
                                     --js_output_file docs/js/playground.bundle.min.js docs/js/playground.bundle.js;"
