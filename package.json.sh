@@ -2,7 +2,7 @@
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.10.1'
+version: '0.11.0'
 
 author:
     'name': 'Michael Brade'
@@ -137,10 +137,10 @@ devDependencies:
     'source-map-loader': '0.2.x'
     'copy-webpack-plugin': '4.5.x'
 
-    '@babel/cli': '7.0.x'
-    '@babel/core': '7.0.x'
+    '@babel/cli': '7.1.x'
+    '@babel/core': '7.1.x'
     '@babel/register': '7.0.x'
-    '@babel/preset-env': '7.0.x'
+    '@babel/preset-env': '7.1.x'
     '@babel/plugin-syntax-object-rest-spread': '7.0.x'
 
 
