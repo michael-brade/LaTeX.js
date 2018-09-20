@@ -336,7 +336,7 @@ The rest of the list (array entries) declares the arguments:
 | `i?` | optional id (optgroup) |
 |  `k` | key (group) |
 | `k?` | optional key (optgroup) |
-| `kv` | key-value list (optgroup) |
+|`kv?` | key-value list (optgroup) |
 |  `u` | url (group) |
 |  `c` | color specification (group), that is: <name> or <float> or <float,float,float> |
 |  `m` | macro (group) |

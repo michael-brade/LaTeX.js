@@ -231,9 +231,13 @@ unknown_macro =
 identifier "identifier" =
     $char+
 
+// key can contain pretty much anything but = and ,
 key "key" =
-    $(char / sp / digit / punctuation  / [$&_\-/@] / utf8_char)+
+    $(char / digit / sp / [-$&_/@] / ![=,] utf8_char)+
 
+key_val "key=value" =
+    k:key v:(skip_space '=' skip_space v:(key / &{ error("value expected") }) { return v.trim(); })?
+    { return { [k.trim()]: v == null ? true : v }; }
 
 
 macro_args =
@@ -248,7 +252,7 @@ macro_args =
       / &{ return g.nextArg("i?") }   i: id_optgroup?                                                           { g.addParsedArg(i); }
       / &{ return g.nextArg("k") }    k:(key_group      / . { g.argError("key group argument expected") })      { g.addParsedArg(k); }
       / &{ return g.nextArg("k?") }   k: key_optgroup?                                                          { g.addParsedArg(k); }
-      // TODO: kv
+      / &{ return g.nextArg("kv?") }  k: keyval_optgroup?                                                       { g.addParsedArg(k); }
       / &{ return g.nextArg("n") }    n:(expr_group     / . { g.argError("num group argument expected") })      { g.addParsedArg(n); }
       / &{ return g.nextArg("n?") }   n: expr_optgroup?                                                         { g.addParsedArg(n); }
       / &{ return g.nextArg("l") }    l:(length_group   / . { g.argError("length group argument expected") })   { g.addParsedArg(l); }
@@ -299,6 +303,15 @@ key_optgroup    =   skip_space begin_optgroup skip_space
                         k:key
                     skip_space end_optgroup
                     { return k; }
+
+
+// [key-val list]  (key1=val1,key2=val2)
+keyval_optgroup =   skip_space begin_optgroup
+                        kv_list:(skip_space ',' {return null;} / skip_space kv:key_val {return kv;})*
+                    skip_space end_optgroup
+                    {
+                        return kv_list.filter(kv => kv != null);
+                    }
 
 // lengths
 length_unit     =   skip_space u:("sp" / "pt" / "px" / "dd" / "mm" / "pc" / "cc" / "cm" / "in" / "ex" / "em") _
