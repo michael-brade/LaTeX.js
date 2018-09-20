@@ -94,8 +94,8 @@ LaTeX.js can be used as a web component:
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/latex.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/latex.component.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.component.js"></script>
 
   <style>
     latex-js {
@@ -112,7 +112,7 @@ LaTeX.js can be used as a web component:
 <body>
   <h1>Compiling LaTeX</h1>
 
-  <latex-js baseURL="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/">
+  <latex-js baseURL="https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/">
     \documentclass{article}
 
     \begin{document}
@@ -186,7 +186,7 @@ the jsDelivr CDN:
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
   <!-- <script src="node_modules/latex.js/dist/latex.min.js"></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/latex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.min.js"></script>
 
   <title>LaTeX.js API Test</title>
 </head>
@@ -201,7 +201,7 @@ the jsDelivr CDN:
 
     generator = latexjs.parse(text, { generator: generator })
 
-    document.body.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.11.0/dist/"))
+    document.body.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/"))
     document.body.appendChild(generator.domFragment())
   </script>
 </body>
