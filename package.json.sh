@@ -175,7 +175,7 @@ license: 'MIT'
 bugs:
     url: 'https://github.com/michael-brade/LaTeX.js/issues'
 
-homepage: 'https://github.com/michael-brade/LaTeX.js#readme'
+homepage: 'https://latex.js.org'
 
 engines:
     node: '>= 8.0'
