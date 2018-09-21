@@ -109,33 +109,10 @@ export class LaTeXBase
     args = @args = {}
 
 
-    # just for testing
-    args.gobbleO = <[ H o? ]>
+    # this LaTeX implementation already covers these packages
 
-    \gobbleO : -> []
+    providedPackages = <[ calc pspicture picture pict2e keyval ]>
 
-    # echo macros just for testing
-    args.echoO = <[ H o? ]>
-
-    \echoO : (o) ->
-        [ "-", o, "-" ]
-
-
-    args.echoOGO = <[ H o? g o? ]>
-
-    \echoOGO : (o1, g, o2) ->
-        []
-            ..push "-", o1, "-" if o1
-            ..push "+", g,  "+"
-            ..push "-", o2, "-" if o2
-
-
-    args.echoGOG = <[ H g o? g ]>
-
-    \echoGOG : (g1, o, g2) ->
-        [ "+", g1, "+" ]
-            ..push "-", o,  "-" if o
-            ..push "+", g2, "+"
 
 
     args.\empty = <[ HV ]>
@@ -495,11 +472,11 @@ export class LaTeXBase
 
     # label, ref
 
-    args.\label =       <[ HV k ]>
-    \label              : (label) !-> @g.setLabel label
+    args.\label =       <[ HV g ]>
+    \label              : (label) !-> @g.setLabel label.textContent
 
-    args.\ref =         <[ H k ]>
-    \ref                : (label) -> [ @g.ref label ]
+    args.\ref =         <[ H g ]>
+    \ref                : (label) -> [ @g.ref label.textContent ]
 
 
 
@@ -703,50 +680,6 @@ export class LaTeXBase
     # graphics #
     ############
 
-
-    # graphicx
-
-
-    # TODO: restrict to just one path?
-    # { {path1/} {path2/} }
-    args.\graphicspath = <[ HV gl ]>
-    \graphicspath       : (paths) !->
-
-    # \includegraphics*[key-val list]{file}
-    args.\includegraphics = <[ H s kv? k ]>
-
-
-    # color
-
-    # \definecolor{name}{model}{color specification}
-    args.\definecolor = <[ HV i? c ]>
-
-
-    # {name} or [model]{color specification}
-    args.\color =       <[ HV i? c ]>
-
-    # {name}{text} or [model]{color specification}{text}
-    args.\textcolor =   <[ H i? c g ]>
-
-
-    args.\colorbox =    <[ H i? c g ]>
-    args.\fcolorbox =   <[ H i? c c g ]>
-
-
-    # rotation
-
-    # \rotatebox[key-val list]{angle}{text}
-    args.\rotatebox =   <[ H kv? f g ]>
-
-
-    # scaling
-
-    # \scalebox{h-scale}[v-scale]{text}
-    # \reflectbox{text}
-    # \resizebox*{h-length}{v-length}{text}
-
-
-    # xcolor
 
 
     ### picture environment (pspicture, calc, picture and pict2e packages)
@@ -1250,8 +1183,9 @@ export class LaTeXBase
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
         # load and instantiate the documentclass
-        ClassName = documentclass.charAt(0).toUpperCase() + documentclass.slice(1)
-        Class = (require "./documentclasses/" + documentclass + ".js")[ClassName]
+        Export = (require "./documentclasses/" + documentclass + ".js")
+        if not Class = Export.default
+            Class = Export[Object.getOwnPropertyNames(Export).0]
 
         @g.documentClass = new Class @g, options
         import all @g.documentClass
@@ -1259,10 +1193,28 @@ export class LaTeXBase
 
 
 
-
-
-    args.\usepackage    =  <[ P kv? k k? ]>
+    args.\usepackage    =  <[ P kv? g k? ]>
     \usepackage         : (opts, packages, version) !->
+        options = Object.assign {}, @g.documentClass.options, opts
+        packages = packages.textContent?.split ','
+
+        for p in packages
+            pkg = p.trim!
+
+            continue if providedPackages.includes pkg
+
+            # load and instantiate the package
+            try
+                Export = require "./packages/" + pkg + ".js"
+
+                if not Package = Export.default
+                    Package = Export[Object.getOwnPropertyNames(Export).0]
+
+                import all new Package @g, options
+                args import Package.args
+            catch
+                # log error but continue anyway
+                console.error "error loading package \"#{pkg}\": #{e}"
 
 
     args.\includeonly   = <[ P k ]>

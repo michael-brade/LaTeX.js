@@ -37,6 +37,7 @@ files:
     'dist/html-generator.js'
     'dist/html-generator.js.map'
     'dist/documentclasses/'
+    'dist/packages/'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
@@ -66,6 +67,7 @@ scripts:
     devbuild: "
         rimraf dist/**/*.js.map;
         mkdirp dist/documentclasses;
+        mkdirp dist/packages;
         mkdirp dist/css;
         mkdirp dist/js;
         mkdirp dist/fonts;
@@ -75,6 +77,7 @@ scripts:
         cp src/latex.component.js dist/;
         lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
         lsc -c -m embedded -o dist/documentclasses src/documentclasses/;
+        lsc -c -m embedded -o dist/packages src/packages/;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
         babel -o dist/latex-parser.js dist/latex-parser.js;
         babel -o dist/index.js -s inline src/index.js;
