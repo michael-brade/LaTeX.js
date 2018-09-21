@@ -1,6 +1,8 @@
+.uuid
 .vscode
 /bin/
 /dist/
 /node_modules/
 /test/coverage/
+/test/test-results.xml
 /.nyc_output/
