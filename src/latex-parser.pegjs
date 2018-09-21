@@ -244,28 +244,28 @@ macro_args =
     (
         &{ return g.nextArg("X") }                                                                              { g.preExecMacro(); }
       / &{ return g.nextArg("s") }    skip_space s:"*"?                                                         { g.addParsedArg(!!s); }
-      / &{ return g.nextArg("g") }    a:(arg_group      / . { g.argError("group argument expected") })          { g.addParsedArg(a); }
-      / &{ return g.nextArg("hg") }   a:(arg_hgroup     / . { g.argError("group argument expected") })          { g.addParsedArg(a); }
-      / &{ return g.nextArg("h") }    h:(horizontal     / . { g.argError("horizontal material expected") })     { g.addParsedArg(h); }
+      / &{ return g.nextArg("g") }    a:(arg_group      / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
+      / &{ return g.nextArg("hg") }   a:(arg_hgroup     / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
+      / &{ return g.nextArg("h") }    h:(horizontal     / &{ g.argError("horizontal material expected") })      { g.addParsedArg(h); }
       / &{ return g.nextArg("o?") }   o: opt_group?                                                             { g.addParsedArg(o); }
-      / &{ return g.nextArg("i") }    i:(id_group       / . { g.argError("id group argument expected") })       { g.addParsedArg(i); }
+      / &{ return g.nextArg("i") }    i:(id_group       / &{ g.argError("id group argument expected") })        { g.addParsedArg(i); }
       / &{ return g.nextArg("i?") }   i: id_optgroup?                                                           { g.addParsedArg(i); }
-      / &{ return g.nextArg("k") }    k:(key_group      / . { g.argError("key group argument expected") })      { g.addParsedArg(k); }
+      / &{ return g.nextArg("k") }    k:(key_group      / &{ g.argError("key group argument expected") })       { g.addParsedArg(k); }
       / &{ return g.nextArg("k?") }   k: key_optgroup?                                                          { g.addParsedArg(k); }
       / &{ return g.nextArg("kv?") }  k: keyval_optgroup?                                                       { g.addParsedArg(k); }
-      / &{ return g.nextArg("n") }    n:(expr_group     / . { g.argError("num group argument expected") })      { g.addParsedArg(n); }
+      / &{ return g.nextArg("n") }    n:(expr_group     / &{ g.argError("num group argument expected") })       { g.addParsedArg(n); }
       / &{ return g.nextArg("n?") }   n: expr_optgroup?                                                         { g.addParsedArg(n); }
-      / &{ return g.nextArg("l") }    l:(length_group   / . { g.argError("length group argument expected") })   { g.addParsedArg(l); }
+      / &{ return g.nextArg("l") }    l:(length_group   / &{ g.argError("length group argument expected") })    { g.addParsedArg(l); }
       / &{ return g.nextArg("lg?") }  l: length_group?                                                          { g.addParsedArg(l); }
       / &{ return g.nextArg("l?") }   l: length_optgroup?                                                       { g.addParsedArg(l); }
-      / &{ return g.nextArg("m") }    m:(macro_group    / . { g.argError("macro group argument expected") })    { g.addParsedArg(m); }
-      / &{ return g.nextArg("u") }    u:(url_group      / . { g.argError("url group argument expected") })      { g.addParsedArg(u); }
-      / &{ return g.nextArg("c") }    c:(color_group    / . { g.argError("color group expected") })             { g.addParsedArg(c); }
-      / &{ return g.nextArg("cl") }   c:(coord_group    / . { g.argError("coordinate/length group expected") }) { g.addParsedArg(c); }
+      / &{ return g.nextArg("m") }    m:(macro_group    / &{ g.argError("macro group argument expected") })     { g.addParsedArg(m); }
+      / &{ return g.nextArg("u") }    u:(url_group      / &{ g.argError("url group argument expected") })       { g.addParsedArg(u); }
+      / &{ return g.nextArg("c") }    c:(color_group    / &{ g.argError("color group expected") })              { g.addParsedArg(c); }
+      / &{ return g.nextArg("cl") }   c:(coord_group    / &{ g.argError("coordinate/length group expected") })  { g.addParsedArg(c); }
       / &{ return g.nextArg("cl?") }  c: coord_optgroup?                                                        { g.addParsedArg(c); }
-      / &{ return g.nextArg("v") }    v:(vector         / . { g.argError("coordinate pair expected") })         { g.addParsedArg(v); }
+      / &{ return g.nextArg("v") }    v:(vector         / &{ g.argError("coordinate pair expected") })          { g.addParsedArg(v); }
       / &{ return g.nextArg("v?") }   v: vector?                                                                { g.addParsedArg(v); }
-      / &{ return g.nextArg("cols") } c:(columns        / . { g.argError("column specification missing") })     { g.addParsedArg(c); }
+      / &{ return g.nextArg("cols") } c:(columns        / &{ g.argError("column specification missing") })      { g.addParsedArg(c); }
 
       / &{ return g.nextArg("is") }   skip_space
 
@@ -393,7 +393,7 @@ coord_optgroup  =   skip_space begin_optgroup
 url_pct_encoded =   escape? p:$("%" hex hex) { return p; }
 
 url_char        =   char / digit / [-._~:/?#[\]@!$&()*+,;=] / "'" / url_pct_encoded
-                    / . &{ error("illegal char in url given"); }
+                    / &{ error("illegal char in url given"); }
 
 // {url}
 url_group       =   skip_space begin_group
