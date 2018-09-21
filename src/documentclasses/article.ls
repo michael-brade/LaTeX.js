@@ -12,7 +12,7 @@ export class Article extends Base
 
 
     # CTOR
-    (generator) ->
+    (generator, options) ->
         super ...
 
         @g.setCounter \secnumdepth  3

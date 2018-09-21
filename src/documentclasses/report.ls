@@ -12,7 +12,7 @@ export class Report extends Base
 
 
     # CTOR
-    (generator) ->
+    (generator, options) ->
         super ...
 
         @g.newCounter \chapter

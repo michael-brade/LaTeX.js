@@ -1246,27 +1246,17 @@ export class LaTeXBase
     ############
 
     args.\documentclass =  <[ P kv? k k? ]>
-    \documentclass      : (opts, documentclass, version) !->
+    \documentclass      : (options, documentclass, version) !->
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
+        # load and instantiate the documentclass
         ClassName = documentclass.charAt(0).toUpperCase() + documentclass.slice(1)
         Class = (require "./documentclasses/" + documentclass + ".js")[ClassName]
 
-        import all new Class(@g)
+        @g.documentClass = new Class @g, options
+        import all @g.documentClass
         args import Class.args
 
-        @g.documentClass = Class
-
-        if opts
-            for opt in opts.split ','
-                opt = opt.trim!
-
-                # check if a point size was given
-                value = parseFloat opt
-                if value != NaN and opt.endsWith "pt"
-                    len = String(value).length
-                    if String(value) == opt.substring 0, opt.length - 2
-                        console.log opt
 
 
 

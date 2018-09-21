@@ -14,7 +14,7 @@ export class Book extends Report
 
 
     # CTOR
-    (generator) ->
+    (generator, options) ->
         super ...
 
         @[\@mainmatter] = true

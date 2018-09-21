@@ -9,10 +9,14 @@ require! {
 #
 export class Base
 
+    # class options
+    options: {}
+
     # CTOR
-    (generator) ->
+    (generator, options) ->
 
         @g = generator
+        @options = options if options
 
         @g.newCounter \part
         @g.newCounter \section

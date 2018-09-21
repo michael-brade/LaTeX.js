@@ -124,7 +124,7 @@ export class HtmlGenerator
     ### public instance vars (vars beginning with "_" are meant to be private!)
 
     SVG: SVG
-    documentClass: null     # name of the default document class until \documentclass{}, then the actual class
+    documentClass: null     # name of the default document class until \documentclass{}, then the actual class instance
     documentTitle: null
 
     # initialize only in CTOR, otherwise the objects end up in the prototype
@@ -340,7 +340,7 @@ export class HtmlGenerator
 
         if baseURL
             el.appendChild createStyleSheet new URL("css/katex.css", baseURL).toString!
-            el.appendChild createStyleSheet new URL(@documentClass.css, baseURL).toString!
+            el.appendChild createStyleSheet new URL(@documentClass@@css, baseURL).toString!
 
             for style in @_options.styles
                 el.appendChild createStyleSheet new URL(style, baseURL).toString!
@@ -348,7 +348,7 @@ export class HtmlGenerator
             el.appendChild createScript new URL("js/base.js", baseURL).toString!
         else
             el.appendChild createStyleSheet "css/katex.css"
-            el.appendChild createStyleSheet @documentClass.css
+            el.appendChild createStyleSheet @documentClass@@css
 
             for style in @_options.styles
                 el.appendChild createStyleSheet style
