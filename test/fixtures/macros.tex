@@ -9,7 +9,11 @@ some text \empty\ inside.
 
 ** custom macros with a mandatory argument
 .
+\documentclass{article}
+\usepackage{echo}
+\begin{document}
 some text \echoOGO{with a macro}
+\end{document}
 .
 <div class="body">
 <p>some text +with a macro+</p>
@@ -18,7 +22,11 @@ some text \echoOGO{with a macro}
 
 ** custom macros with an optional argument
 .
+\documentclass{article}
+\usepackage{echo}
+\begin{document}
 some text \echoO[with a macro]
+\end{document}
 .
 <div class="body">
 <p>some text -with a macro-</p>
@@ -28,10 +36,14 @@ some text \echoO[with a macro]
 
 ** custom macros with optional and mandatory arguments, mixed with space and comments
 .
+\documentclass{article}
+\usepackage{echo}
+\begin{document}
 some text, \echoGOG{mandatory arg} [%
 ,  % another comment
  ]
  {more mandatory} inside.
+\end{document}
 .
 <div class="body">
 <p>some text, +mandatory arg+-, -+more mandatory+ inside.</p>
@@ -41,8 +53,12 @@ some text, \echoGOG{mandatory arg} [%
 
 ** brackets can be used in optional arguments when protected by a group
 .
+\documentclass{article}
+\usepackage{echo}
+\begin{document}
 % echo simply outputs its arguments delimited by + (mandatory args) or - (optional args)
 \echoOGO[{t]}t]{ext} more
+\end{document}
 .
 <div class="body">
 <p>-t]t-+ext+ more</p>
@@ -53,11 +69,15 @@ some text, \echoGOG{mandatory arg} [%
 
 ** custom macros with optional and mandatory arguments, mixed with newlines
 .
+\documentclass{article}
+\usepackage{echo}
+\begin{document}
 some text \echoOGO{again} [ % test
 
  ]% another comment
 
   {more} in a new paragraph.
+\end{document}
 .
 <div class="body">
 <p>some text +again+-<br>-</p>
