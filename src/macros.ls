@@ -104,48 +104,7 @@ export class LaTeXBase
     # args: declaring arguments for a macro. If a macro doesn't take arguments and is a
     #       horizontal-mode macro, args can be left undefined for it.
     #
-    # syntax:
-    #
-    # first entry declares the macro type:
-    #   H:  horizontal-mode macro
-    #   V:  vertical-mode macro - ends the current paragraph
-    #   HV: horizontal-vertical-mode macro: must return nothing, i.e., doesn't create output
-    #   P:  only in preamble
-    #
-    # one special entry:
-    #   X: execute action (macro body) already now with whatever arguments have been parsed so far;
-    #      this is needed when things should be done before the next arguments are parsed - no value
-    #      should be returned by the macro in this case, for it will just be ignored
-    #
-    # rest of the list declares the arguments:
-    #   s: optional star
-    #
-    #   i: id (group)
-    #  i?: optional id (optgroup)
-    #   k: key (group)
-    #  k?: optional key (optgroup)
-    #  kv: key-value list (optgroup)
-    #   u: url (group)
-    #   c: color specification (group), that is: <name> or <float> or <float,float,float>
-    #   m: macro (group)
-    #   l: length (group)
-    # lg?: optional length (group)
-    #  l?: optional length (optgroup)
-    #  cl: coordinate/length (group)
-    # cl?: optional coordinate/length (optgroup)
-    #   n: num expression (group)
-    #  n?: num expression (optgroup)
-    #   f: float expression (group)
-    #   v: vector, a pair of coordinates: (float/length, float/length)
-    #  v?: optional vector
-    #
-    #   g: group (possibly long - TeX allows \endgraf, but not \par... so allow \par as well)
-    #  hg: group in restricted horizontal mode
-    #  o?: optional arg (optgroup)
-    #
-    #   h: restricted horizontal material
-    #
-    #  is: ignore (following) spaces
+    # syntax: see README.mb
 
     args = @args = {}
 
@@ -754,7 +713,7 @@ export class LaTeXBase
     \graphicspath       : (paths) !->
 
     # \includegraphics*[key-val list]{file}
-    args.\includegraphics = <[ H s kv k ]>
+    args.\includegraphics = <[ H s kv? k ]>
 
 
     # color
@@ -777,7 +736,7 @@ export class LaTeXBase
     # rotation
 
     # \rotatebox[key-val list]{angle}{text}
-    args.\rotatebox =   <[ H kv f g ]>
+    args.\rotatebox =   <[ H kv? f g ]>
 
 
     # scaling
@@ -1286,7 +1245,7 @@ export class LaTeXBase
     # preamble #
     ############
 
-    args.\documentclass =  <[ P k? k k? ]>
+    args.\documentclass =  <[ P kv? k k? ]>
     \documentclass      : (opts, documentclass, version) !->
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
@@ -1312,7 +1271,7 @@ export class LaTeXBase
 
 
 
-    args.\usepackage    =  <[ P k? k k? ]>
+    args.\usepackage    =  <[ P kv? k k? ]>
     \usepackage         : (opts, packages, version) !->
 
 

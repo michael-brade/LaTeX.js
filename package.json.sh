@@ -76,6 +76,7 @@ scripts:
         lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
         lsc -c -m embedded -o dist/documentclasses src/documentclasses/;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
+        babel -o dist/latex-parser.js dist/latex-parser.js;
         babel -o dist/index.js -s inline src/index.js;
 
         mkdirp bin;
