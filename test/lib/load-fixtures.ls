@@ -5,65 +5,37 @@ p = require 'path'
 _ = require 'lodash'
 
 
-parse = (input, separators) ->
-    lines = input.split //\r?\n//g
-    max = lines.length
-    min = line = 0
+parse = (input, separator) ->
+    # escape separator
+    separator = separator.replace //[.?*+^$[\]\\(){}|-]//g, "\\$&"
+    # add OS-specific EOLs
+    separator = //(?:^|\r\n|\n|\r)(?:#{separator}(?:$|\r\n|\n|\r)(?!#{separator})|#{separator}(?=$|\r\n|\n|\r))//
+
+    lines = input.split separator
 
     result = {
         fixtures: []
     }
 
-    # Scan fixtures
-    while line < max
-        if separators.indexOf(lines[line]) < 0
-            line++
-            continue
+    fid = 1
 
-        currentSep = lines[line]
+    # assemble fixtures
+    for line from 0 til lines.length by 3
 
         fixture =
-            header: ''
-            source:
-                text: ''
-                range: []
+            id: fid++
+            header: lines[line].trim!
+            source: lines[line + 1]
+            result: lines[line + 2]
 
-            result:
-                text: ''
-                range: []
-
-
-        # seek end of first and second blocks
-        for block in <[ source result ]>
-            blockStart = ++line
-
-            while line < max and lines[line] isnt currentSep
-                line++
-
-            break if line >= max
-
-            fixture[block].text = (lines.slice blockStart, line).join '\n'
-            fixture[block].range.push(blockStart, line)
-
-        line++
-
-        # look for header on the two lines before the fixture.source block
-        i = fixture.source.range.0 - 2
-        while i >= Math.max(min, fixture.source.range.0 - 3)
-            l = lines[i]
-            break if (separators.indexOf l) >= 0
-
-            if l.trim!.length
-                fixture.header = l.trim!
-                break
-            i--
+        break if fixture.source == undefined or fixture.result == undefined
 
         result.fixtures.push fixture
 
     return result
 
 /* Read fixtures (recursively).
-    @separator (String|Array) - allowed fixture separator(s)
+    @separator fixture separator (default is '.')
     @return array of fixtures grouped by filename:
     [
         {
@@ -83,14 +55,8 @@ parse = (input, separators) ->
         }
     ]
 */
-export load = (path, separator) ->
+export load = (path, separator = '.') ->
     stat = fs.statSync path
-
-    if _.isString separator
-        separator = separator.split ''
-    else if not _.isArray separator
-        separator = ['.']
-
 
     if stat.isFile!
         input = fs.readFileSync(path, 'utf8')

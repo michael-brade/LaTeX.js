@@ -66,18 +66,18 @@ describe 'LaTeX.js fixtures', !->
 
 
                 # create syntax test
-                _test fixture.header || 'line ' + (fixture.source.range.0 - 1), !->
+                _test fixture.header || 'fixture number ' + fixture.id, !->
                     try
-                        html-is     = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .domFragment!.outerHTML
-                        html-should = fixture.result.text
+                        html-is     = latexjs.parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } } .domFragment!.outerHTML
+                        html-should = fixture.result
                     catch
                         if e.location
                             e.message = "#{e.message} at line #{e.location.start.line} (column #{e.location.start.column}): " +
-                                        fixture.source.text.split(/\r\n|\n|\r/)[e.location.start.line - 1]
+                                        fixture.source.split(//\r\n|\n|\r//)[e.location.start.line - 1]
                         throw e
 
-                    html-is = he.decode html-is.replace //\n//g, ""
-                    html-should = he.decode html-should.replace //\n//g, ""
+                    html-is = he.decode html-is.replace //\r\n|\n|\r//g, ""
+                    html-should = he.decode html-should.replace //\r\n|\n|\r//g, ""
 
                     # html-is = html-beautify html-is
                     # html-should = html-beautify html-should
@@ -87,7 +87,7 @@ describe 'LaTeX.js fixtures', !->
                 # create screenshot test
                 if screenshot
                     _test '   - screenshot', !->>
-                        html = latexjs.parse fixture.source.text, { generator: new HtmlGenerator { hyphenate: false } } .htmlDocument!.outerHTML
+                        html = latexjs.parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } } .htmlDocument!.outerHTML
                         await page.setContent html
                         await page.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
 
