@@ -181,7 +181,7 @@ body, .page {
 /* fonts */
 /*********/
 
-html, body, .page {
+html, .page {
     font-family: "Computer Modern Serif", serif;
     font-size: var(--size);
 
