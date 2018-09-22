@@ -48,8 +48,9 @@ module.exports.compile = function(latex, iframe) {
         if (doc.head.innerHTML == newDoc.head.innerHTML) {
             var newBody = doc.adoptNode(newDoc.body)
             doc.documentElement.replaceChild(newBody, doc.body)
+            doc.documentElement.style.cssText = newDoc.documentElement.style.cssText
         } else {
-            iframe.srcdoc = newDoc.documentElement.innerHTML
+            iframe.srcdoc = newDoc.documentElement.outerHTML
 
             // var blob = new Blob([newDoc.documentElement.innerHTML], {type : 'text/html'});
             // iframe.src = URL.createObjectURL(blob);

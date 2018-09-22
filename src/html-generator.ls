@@ -315,7 +315,7 @@ export class HtmlGenerator
         ### body
 
         doc.body.appendChild @domFragment!
-        @applyLengthsAndGeometryToDom doc.body
+        @applyLengthsAndGeometryToDom doc.documentElement
 
         return doc
 
@@ -376,6 +376,10 @@ export class HtmlGenerator
 
     /* write the TeX lengths and page geometry to the DOM */
     applyLengthsAndGeometryToDom: (el) !->
+
+        # root font size
+        el.style.setProperty '--size', (@length \@@size).value + (@length \@@size).unit
+
         ### calculate page geometry
         #
         # set body's and margins' width to percentage of viewport (= paperwidth)

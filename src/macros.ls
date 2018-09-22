@@ -1,3 +1,4 @@
+'use strict'
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
@@ -35,6 +36,8 @@ export class LaTeXBase
         @g.newCounter \@itemdepth
         @g.newCounter \@enumdepth
 
+
+        @g.newLength \@@size         # root font size
 
         # picture lengths
         @g.newLength \unitlength

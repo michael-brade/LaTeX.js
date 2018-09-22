@@ -9,6 +9,8 @@ require! {
 #
 export class Base
 
+    args = @args = {}
+
     # class options
     options: {}
 
@@ -28,11 +30,59 @@ export class Base
         @g.newCounter \figure
         @g.newCounter \table
 
-        # a4paper (TODO: implement documentclass paper options)
-        @g.setLength \paperwidth    { value: 210, unit: "mm" }
 
 
-        # 10pt, onecolumn, oneside (twoside doesn't make sense in HTML)
+        # default: letterpaper, 10pt, onecolumn, oneside
+
+        @g.setLength \paperheight   { value: 11, unit: "in" }
+        @g.setLength \paperwidth    { value: 8.5, unit: "in" }
+        @g.setLength \@@size        { value: 10, unit: "pt" }
+
+        for opt in @options
+            opt = Object.keys(opt).0
+            switch opt
+            | "oneside" =>
+            | "twoside" =>      # twoside doesn't make sense in single-page HTML
+
+            | "onecolumn" =>    # TODO
+            | "twocolumn" =>
+
+            | "titlepage" =>    # TODO
+            | "notitlepage" =>
+
+            | "fleqn" =>
+            | "leqno" =>
+
+            | "a4paper" =>
+                @g.setLength \paperheight   { value: 297, unit: "mm" }
+                @g.setLength \paperwidth    { value: 210, unit: "mm" }
+            | "a5paper" =>
+                @g.setLength \paperheight   { value: 210, unit: "mm" }
+                @g.setLength \paperwidth    { value: 148, unit: "mm" }
+            | "b5paper" =>
+                @g.setLength \paperheight   { value: 250, unit: "mm" }
+                @g.setLength \paperwidth    { value: 176, unit: "mm" }
+            | "letterpaper" =>
+                @g.setLength \paperheight   { value: 11, unit: "in" }
+                @g.setLength \paperwidth    { value: 8.5, unit: "in" }
+            | "legalpaper" =>
+                @g.setLength \paperheight   { value: 14, unit: "in" }
+                @g.setLength \paperwidth    { value: 8.5, unit: "in" }
+            | "executivepaper" =>
+                @g.setLength \paperheight   { value: 10.5, unit: "in" }
+                @g.setLength \paperwidth    { value: 7.25, unit: "in" }
+            | "landscape" =>
+                tmp = @g.length \paperheight
+                @g.setLength \paperheight   @g.length \paperwidth
+                @g.setLength \paperwidth    tmp
+
+            | otherwise =>
+                # check if a point size was given
+                value = parseFloat opt
+                if value != NaN and opt.endsWith "pt" and String(value) == opt.substring 0, opt.length - 2
+                    @g.setLength \@@size  { value, unit: "pt" }
+
+
 
         ## textwidth
 
@@ -64,8 +114,6 @@ export class Base
         # \evensidemargin = \paperwidth - 2in - \textwidth - \oddsidemargin
         # \@settopoint\evensidemargin
 
-    args = {}
-    @args = args
 
 
     \contentsname       :-> [ "Contents" ]
