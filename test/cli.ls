@@ -42,7 +42,7 @@ describe 'LaTeX.js CLI test', !->
         expect(latexjs.execute [], [ "A paragraph." ])
             .to.eventually.be.fulfilled
             .and.to.be.an 'object' .that.includes.key 'stdout'
-            .and.to.satisfy (res) -> res.stdout == '<html><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body style="--textwidth:58%;--marginleftwidth:21%;--marginrightwidth:21%;--marginparwidth:45.22744645012744%;--marginparsep:14.666663000000002px;--marginparpush:6.666665px"><div class="body"><p>A para­graph.</p></div></body></html>' + EOL
+            .and.to.satisfy (res) -> res.stdout == '<html style="--size:13.33333px;--textwidth:56%;--marginleftwidth:22%;--marginrightwidth:22%;--marginparwidth:48.20264845142601%;--marginparsep:14.666663000000002px;--marginparpush:6.666665px"><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>A para­graph.</p></div></body></html>' + EOL
 
     test 'return only the body', ->
         expect(latexjs.execute ['-b'], [ "A paragraph." ])
