@@ -16,6 +16,10 @@ describe 'LaTeX.js fixtures', !->
     const fixture_path = path.join(__dirname, 'fixtures')
     const fixtures = load-fixtures fixture_path
 
+    before !->>
+        # set the base url for the screenshots so that CSS and fonts are found
+        await page.goto "file://" + process.cwd! + "/dist"
+
     fixtures.forEach (filefixtures) !->
         const desc = path.relative fixture_path, filefixtures.file
 

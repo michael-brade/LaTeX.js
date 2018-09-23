@@ -25,7 +25,6 @@ before !->>
     }
 
     global.page = (await browser.pages!).0              # there is always one page available
-    await page.goto "file://" + process.cwd! + "/dist"  # set the base url
 
     page.on 'console', (msg) ->
         for i til msg.args.length
