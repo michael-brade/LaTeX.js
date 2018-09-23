@@ -150,6 +150,7 @@ devDependencies:
     'source-map-loader': '0.2.x'
     'copy-webpack-plugin': '4.5.x'
 
+    '@babel/node': '7.0.x'
     '@babel/cli': '7.1.x'
     '@babel/core': '7.1.x'
     '@babel/register': '7.0.x'

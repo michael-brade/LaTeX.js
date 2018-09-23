@@ -1,12 +1,8 @@
 'use strict'
 
 require! {
-    fs
     path
     he
-    puppeteer
-    pixelmatch
-    pngjs: { PNG }
 }
 
 const HtmlGenerator   = require '../dist/html-generator' .HtmlGenerator
@@ -14,27 +10,6 @@ const html-beautify   = require 'js-beautify' .html
 const latexjs         = require '../dist/latex-parser'
 const load-fixtures   = require './lib/load-fixtures' .load
 
-
-var browser, page
-
-before !->>
-    browser := await puppeteer.launch {
-        devtools: false
-        dumpio: false
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-        defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
-    }
-
-    page := (await browser.pages!).0                    # there is always one page available
-    await page.goto "file://" + process.cwd! + "/src"   # set the base url
-
-    page.on 'console', (msg) ->
-        for i til msg.args.length
-            console.log "#{i}: #{msg.args[i]}"
-
-
-after !->>
-    await browser.close!
 
 
 describe 'LaTeX.js fixtures', !->
@@ -86,7 +61,7 @@ describe 'LaTeX.js fixtures', !->
 
                 # create screenshot test
                 if screenshot
-                    _test '   - screenshot', !->>
+                    _test '   - screenshot', ->>
                         html = latexjs.parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } } .htmlDocument!.outerHTML
                         await page.setContent html
                         await page.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
@@ -94,28 +69,4 @@ describe 'LaTeX.js fixtures', !->
                         filename = path.join __dirname, 'screenshots', desc + ' ' + fixture.header
                         filename = filename.replace /\*/g, '-'
 
-                        await page.screenshot {
-                            omitBackground: true
-                            path: filename + '.new.png'
-                        }
-
-                        if fs.existsSync filename + '.png'
-                            # now compare the screenshots and delete the new one if they match
-
-                            png1 = PNG.sync.read(fs.readFileSync(filename + '.png'))
-                            png2 = PNG.sync.read(fs.readFileSync(filename + '.new.png'))
-
-                            diff = new PNG { width: png1.width, height: png1.height }
-
-                            dfpx = pixelmatch png1.data, png2.data, diff.data, png1.width, png1.height, threshold: 0
-
-                            diff.pack!.pipe(fs.createWriteStream(filename + '.diff.png'))
-
-                            if dfpx > 0
-                                throw new Error "screenshots differ by #{dfpx} pixels - see #{filename + '.*.png'}"
-                            else
-                                fs.unlinkSync filename + '.new.png'
-                                fs.unlinkSync filename + '.diff.png'
-                        else
-                            # if no screenshot exists yet, use this new one
-                            fs.renameSync filename + '.new.png', filename + '.png'
+                        takeScreenshot filename

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="content-language" content="en">
+
+
+  <script src="../../dist/latex.min.js"></script>
+  <script src="../../dist/latex.component.js"></script>
+
+  <style>
+      latex-js {
+        display: inline-block;
+        width: 45%;
+        border: 1px solid green;
+        margin-left: 2%;
+        margin-right: 2%;
+      }
+    </style>
+
+  <!-- <script src="node_modules/latex.js/dist/latex.webcomponent.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.component.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.min.js"></script> -->
+
+  <title>LaTeX.js Web Component Test</title>
+</head>
+
+<body>
+  <h1>Compiling LaTeX</h1>
+
+  <p>Here are two LaTeX documents side by side:</p>
+
+  <p>
+    <latex-js>
+      \documentclass[16pt]{article}
+
+      \begin{document}
+      Hello World. homecoming configuring components environments playground
+      \end{document}
+    </latex-js>
+
+
+    <latex-js hyphenate="false">
+      Another.
+    </latex-js>
+  </p>
+</body>
+
+</html>
