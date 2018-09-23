@@ -85,8 +85,10 @@ scripts:
         mkdirp bin;
         lsc -bc --no-header -m embedded -o bin src/latex.js.ls;
         chmod a+x bin/latex.js;
+
+        webpack --config-name latex.js
     "
-    docs:  'npm run devbuild && webpack'
+    docs:  'npm run devbuild && webpack --config-name playground'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
                                     --externs src/externs.js \
                                     --js_output_file docs/js/playground.bundle.min.js docs/js/playground.bundle.js;"

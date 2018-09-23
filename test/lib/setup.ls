@@ -27,8 +27,8 @@ before !->>
     global.page = (await browser.pages!).0              # there is always one page available
 
     page.on 'console', (msg) ->
-        for i til msg.args.length
-            console.log "#{i}: #{msg.args[i]}"
+        if msg._type == 'error'
+            console.error msg._text
 
 
 after !->>

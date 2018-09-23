@@ -2,6 +2,7 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = [{
+    name: 'playground',
     mode: 'production',
     devtool: 'source-map',
 
@@ -40,6 +41,7 @@ module.exports = [{
         maxAssetSize: 512000
     }
 }, {
+    name: 'latex.js',
     mode: 'production',
     devtool: 'source-map',
 
