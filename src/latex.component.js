@@ -45,9 +45,9 @@ customElements.define('latex-js',
       // create DOM
       let page = document.createElement("div")
       page.setAttribute("class", "page")
-
-      generator.applyLengthsAndGeometryToDom(page)
       page.appendChild(generator.domFragment())
+
+      generator.applyLengthsAndGeometryToDom(this.shadow.host)
 
       this.shadow.appendChild(generator.stylesAndScripts(path))
       this.shadow.appendChild(page)
