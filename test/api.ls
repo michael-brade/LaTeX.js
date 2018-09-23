@@ -36,6 +36,9 @@ describe 'LaTeX.js API test', !->
 
     test 'browser API', ->
 
-    test 'web component API', ->>
-        await page.goto 'file://' + path.join __dirname, 'api/webcomponent.html'
-        takeScreenshot path.join __dirname, 'screenshots/webcomponent'
+    test 'web component API', !->>
+        await page.goto 'file://' + path.join(__dirname, 'api/webcomponent.html'), {
+            waitUntil: <[ load networkidle0 ]>
+        }
+        await page.waitFor 1000
+        await takeScreenshot path.join __dirname, 'screenshots/webcomponent'
