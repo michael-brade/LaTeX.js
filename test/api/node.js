@@ -1,6 +1,6 @@
 #!/usr/bin/env babel-node
 
-import { parse, HtmlGenerator } from 'latex.js'
+import { parse, HtmlGenerator } from '../..'    // from 'latex.js' when used in a normal environment
 
 let latex = "Hi, this is a line of text."
 
