@@ -244,9 +244,9 @@ npm run docs
 General structure:
 
 - `src`: all the LaTeX.js sources
+- `bin`: the compiled CLI
 - `dist`: the compiled and minified source
 - `docs`: the webpage and (compiled) playground
-- `bin`: the compiled CLI
 - `test`: unit tests and test driver
 
 
@@ -255,6 +255,7 @@ Files and classes needed to translate LaTeX documents to HTML documents:
 - the parser: `src/latex-parser.pegjs`
 - the generator: `src/html-generator.ls`
 - macros and documentclasses: `src/macros.ls`, `src/symbols.ls`, `src/documentclasses/*.ls`
+- packages: `src/packages/*.ls`
 
 - the CLI: `src/latex.js.ls`
 - the webcomponent: `src/latex.component.js`
@@ -304,6 +305,9 @@ var generator = new latexjs.HtmlGenerator({
 
 to define the LaTeX2.09 macro `\bf`.
 
+If you are going to define custom macros in an external file and you want to use that with the CLI, you will have to
+name the file just like the class, or you will have to default export it.
+
 
 ### Macro Arguments
 
@@ -322,36 +326,38 @@ The first array entry of `args[<macro name>]` declares the macro type:
 
 The rest of the list (array entries) declares the arguments:
 
-| arg  | meaning |
-| ---- | ------- |
-| `s`  | optional star |
-|||
-|  `g` | group (possibly long - TeX allows `\endgraf`, but not `\par`... so allow `\par` as well) |
-| `hg` | group in restricted horizontal mode |
-| `o?` | optional arg (optgroup) |
-|||
-|  `h` | restricted horizontal material |
-|||
-|  `i` | id (group) |
-| `i?` | optional id (optgroup) |
-|  `k` | key (group) |
-| `k?` | optional key (optgroup) |
-|`kv?` | key-value list (optgroup) |
-|  `u` | url (group) |
-|  `c` | color specification (group), that is: <name> or <float> or <float,float,float> |
-|  `m` | macro (group) |
-|  `l` | length (group) |
-|`lg?` | optional length (group) |
-| `l?` | optional length (optgroup) |
-| `cl` | coordinate/length (group) |
-|`cl?` | optional coordinate/length (optgroup) |
-|  `n` | num expression (group) |
-| `n?` | num expression (optgroup) |
-|  `f` | float expression (group) |
-|  `v` | vector, a pair of coordinates: (float/length, float/length) |
-| `v?` | optional vector |
-|||
-| `is` | ignore (following) spaces |
+| arg  | delimiters | meaning                       | content | output |
+| ---- | --- |--------------------------------------|------|-----|
+| `s`  |     | optional star                        |||
+|||||
+|  `g` | { } | LaTeX code group (possibly long)     | TeX allows `\endgraf`, but not `\par`... so allow `\par` as well | |
+| `hg` | { } | restricted horizontal mode material  |||
+| `o?` | [ ] | optional arg                         | LaTeX code |  |
+|||||
+|  `h` |     | restricted horizontal mode material  ||  |
+|||||
+|  `i` | { } | id                                   | letters only |  |
+| `i?` | [ ] | optional id                          | letters only |  |
+|  `k` | { } | key                                  | anything but = and , | |
+| `k?` | [ ] | optional key                         | anything but = and , | |
+|`csv` | { } | comma-separated values               || |
+|`csv?`| [ ] | optional comma-separated values      ||  |
+|`kv?` | [ ] | optional key-value list              ||  |
+|  `u` | { } | url                                  | a URL as specified by RFC3986 |  |
+|  `c` | { } | color specification                  | *name* or *float* or *float,float,float* |  |
+|  `m` | { } | macro                                | `\macro` | |
+|  `l` | { } | length                               ||  |
+|`lg?` | { } | optional length group                ||  |
+| `l?` | [ ] | optional length                      |||
+| `cl` | { } | coordinate/length                    | `<float>` or TeX length |  |
+|`cl?` | [ ] | optional coordinate/length           ||  |
+|  `n` | { } | num expression                       ||  |
+| `n?` | [ ] | optional num expression              ||  |
+|  `f` | { } | float expression                     ||  |
+|  `v` | ( ) | vector, a pair of coordinates        | (float/length, float/length) |
+| `v?` |     | optional vector                      |||
+|||||
+| `is` |     | ignore (following) spaces            |||
 
 So, in the following example, the macro `\title` would be a horizontal-vertical-mode macro that takes one mandatory
 TeX-group argument:
@@ -398,6 +404,11 @@ Create a new HTML generator. `options` is an <[Object]> that can have the follow
 - `hyphenate`: <[boolean]> enable or disable automatic hyphenation
 - `languagePatterns`: language patterns object to use for hyphenation if it is enabled
 - `styles`: <[Array]<[string]>> additional CSS stylesheets
+
+
+#### `htmlGenerator.reset()`
+
+Reset the generator. Needs to be called before the generator is used for creating a second document.
 
 
 #### `htmlGenerator.htmlDocument(baseURL)`
