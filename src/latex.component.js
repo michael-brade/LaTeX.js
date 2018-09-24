@@ -51,11 +51,26 @@ customElements.define('latex-js',
 
       this.shadow.appendChild(generator.stylesAndScripts(path))
       this.shadow.appendChild(page)
+
+      // we need to add CMU fonts to the parent page (if they weren't added yet)
+      const pDoc = this.ownerDocument
+      const links = pDoc.querySelectorAll('link')
+      const cmu = new URL("fonts/cmu.css", path)
+
+      for (let link of links) {
+        if (link.href == cmu.href)
+          return
+      }
+
+      const linkEl = pDoc.createElement("link")
+      linkEl.type = "text/css"
+      linkEl.rel = "stylesheet"
+      linkEl.href = cmu.href
+
+      pDoc.head.appendChild(linkEl)
     }
 
-    connectedCallback() {
-        console.log("connected")
-    }
+    connectedCallback() { }
   }
 );
 
