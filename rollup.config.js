@@ -72,7 +72,7 @@ process.env.GOAL === "playground" ?
                 format: "umd",
                 sourcemap: prod,
                 name: "Playground",
-                file: "docs/js/playground.bundle.js",
+                file: "docs/.vuepress/public/js/playground.bundle.js",
                 globals: {
                     svgdom: 'svgdom'
                 }
