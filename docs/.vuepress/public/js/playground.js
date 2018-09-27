@@ -1,12 +1,7 @@
 var HtmlGenerator = require('html-generator').HtmlGenerator
-var en = require('hyphenation.en-us')
-
 var latexjs = require('latex-parser')
 
-
 var generator = new HtmlGenerator({
-    hyphenate: true,
-    languagePatterns: en,
     styles: ['css/error.css']
 })
 

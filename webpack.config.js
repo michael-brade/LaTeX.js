@@ -40,7 +40,7 @@ module.exports = [{
 
     entry: './docs/js/playground.js',
     output: {
-        path: path.resolve(__dirname, 'docs'),
+        path: path.resolve(__dirname, 'docs/.vuepress/public/'),
         filename: 'js/playground.bundle.min.js',
         libraryTarget: 'window',
         library: 'Playground'
