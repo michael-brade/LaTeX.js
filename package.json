@@ -71,7 +71,7 @@
     "rimraf": "3.x",
     "tmp": "0.x",
     "glob": "^7.1.4",
-    "vuepress": "0.14.x",
+    "vuepress": "1.0.0-alpha.1",
     "rollup": "2.x",
     "rollup-plugin-visualizer": "4.0.x",
     "rollup-plugin-livescript": "^0.1.1",

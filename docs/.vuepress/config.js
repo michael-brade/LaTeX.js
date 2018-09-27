@@ -52,5 +52,9 @@ module.exports = {
             })
             //md.use(require('markdown-it-xxx'))
         }
-    }
+    },
+
+    plugins: [
+        require('./assets.js')
+    ]
 }
