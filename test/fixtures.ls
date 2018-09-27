@@ -3,6 +3,7 @@
 require! {
     path
     he
+    slugify
 }
 
 const HtmlGenerator   = require '../dist/html-generator' .HtmlGenerator
@@ -70,7 +71,6 @@ describe 'LaTeX.js fixtures', !->
                         await page.setContent html
                         await page.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
 
-                        filename = path.join __dirname, 'screenshots', desc + ' ' + fixture.header
-                        filename = filename.replace /\*/g, '-'
+                        filename = path.join __dirname, 'screenshots', slugify(desc + ' ' + fixture.header, { remove: /[*+~()'"!:@,{}\\]/g })
 
                         takeScreenshot filename

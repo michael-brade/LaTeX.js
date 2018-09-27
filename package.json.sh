@@ -113,7 +113,7 @@ babel:
 
 
 dependencies:
-    'he': '1.1.x'
+    'he': '1.2.x'
     'katex': '0.9.0'
     'svg.js': '2.6.x'
     'svgdom': 'https://github.com/michael-brade/svgdom'
@@ -166,6 +166,7 @@ devDependencies:
     'mocha-junit-reporter': '1.18.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
+    'slugify': '1.3.x'
 
     'puppeteer': '1.8.x'
     'pixelmatch': '4.0.x'
