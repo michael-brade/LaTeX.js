@@ -89,7 +89,7 @@
     "rimraf": "2.6.x",
     "uglify-js": "3.6.x",
     "tmp": "0.x",
-    "vuepress": "0.14.x",
+    "vuepress": "1.0.0-alpha.1",
     "webpack": "4.x",
     "webpack-cli": "3.x",
     "webpack-closure-compiler": "2.x",

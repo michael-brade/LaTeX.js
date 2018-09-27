@@ -64,7 +64,6 @@ module.exports = [{
     },
     plugins: [
         new CopyPlugin([
-            { from: 'src/css', to: 'css' },
             { from: 'src/js', to: 'js' }
         ])
     ],
