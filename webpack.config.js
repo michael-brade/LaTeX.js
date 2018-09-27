@@ -37,10 +37,11 @@ module.exports = [{
     mode: 'production',
     devtool: 'source-map',
 
-    entry: './docs/js/playground.js',
+    entry: './docs/.vuepress/public/js/playground.js',
+
     output: {
-        path: path.resolve(__dirname, 'docs/.vuepress/public/'),
-        filename: 'js/playground.bundle.min.js',
+        path: path.resolve(__dirname, 'docs/.vuepress/public/js'),
+        filename: 'playground.bundle.min.js',
         libraryTarget: 'window',
         library: 'Playground'
     },
@@ -82,8 +83,8 @@ module.exports = [{
     mode: 'production',
     devtool: 'source-map',
 
-    context: path.resolve(__dirname, 'dist'),
-    entry: './index.js',
+    entry: './dist/index.js',
+
     output: {
         filename: 'latex.min.js',
         libraryTarget: "umd",
