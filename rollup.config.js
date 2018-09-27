@@ -66,7 +66,7 @@ process.env.GOAL === "library-umd" ?
         } :
 process.env.GOAL === "playground" ?
         {
-            input: "docs/js/playground.js",
+            input: "docs/.vuepress/public/js/playground.js",
             output: {
                 format: "umd",
                 sourcemap: prod,
