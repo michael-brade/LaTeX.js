@@ -2,6 +2,7 @@
 .vscode
 /bin/
 /dist/
+/website/
 /node_modules/
 /test/coverage/
 /test/test-results.xml

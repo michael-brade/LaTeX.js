@@ -91,10 +91,29 @@ scripts:
 
         webpack --config-name latex.js
     "
-    docs:  'npm run devbuild && webpack --config-name playground'
+
+
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
                                     --externs src/externs.js \
                                     --js_output_file docs/js/playground.bundle.min.js docs/js/playground.bundle.js;"
+
+
+    # docs and website
+
+    devdocs: 'vuepress dev docs'
+
+    docs: "
+        [ ! -d website ] && git worktree add website gh-pages;
+        rm -rf website/*;
+        npm run devbuild && webpack --config-name playground;
+
+        cd website;
+        git add .
+        git commit -m 'regenerated website'
+    "
+
+
+    # unit tests
 
     test:  'mocha test/*.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
@@ -148,6 +167,10 @@ devDependencies:
     'uglify-js': '3.6.x'
     'tmp': '0.x'
 
+
+    ### docs
+
+    'vuepress': '0.14.x'
 
     ### bundling
 
