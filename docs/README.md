@@ -4,7 +4,7 @@ navbar: true
 
 title: TEST
 
-heroImage: /hero.png
+heroImage: /img/latexjs.png
 
 actionText: Documentation →
 actionLink: /guide/

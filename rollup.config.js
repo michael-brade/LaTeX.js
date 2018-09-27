@@ -4,7 +4,6 @@ import livescript from "./lib/rollup-plugin-livescript";
 import pegjs from "./lib/rollup-plugin-pegjs";
 import { terser } from "rollup-plugin-terser";
 import replace from "rollup-plugin-re";
-import copy from 'rollup-plugin-copy';
 import visualizer from 'rollup-plugin-visualizer';
 import ignoreInfiniteLoop from './lib/pegjs-no-infinite-loop.js';
 
@@ -79,13 +78,6 @@ process.env.GOAL === "playground" ?
             },
             external: ['svgdom'],
             plugins: [...plugins("umd"),
-                copy({
-                    targets: [
-                        { src: 'src/css/*', dest: 'docs/css/' },
-                        { src: 'src/js/*', dest: 'docs/js/' }
-                    ],
-                    verbose: true
-                }),
                 visualizer({
                     filename: 'docs/js/playground.stats.html',
                     sourcemap: true,

@@ -51,7 +51,7 @@ files:
     'dist/js/'
 
 scripts:
-    clean: 'rimraf dist bin test/coverage docs/js/playground.bundle.*;'
+    clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js/playground.bundle.*;'
     build: 'NODE_ENV=production npm run devbuild;'
     devbuild: "
         rimraf 'dist/**/*.js.map';
