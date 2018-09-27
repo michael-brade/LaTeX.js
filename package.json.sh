@@ -73,6 +73,26 @@ scripts:
         wait;
     "
 
+
+
+
+    # docs and website
+
+    devdocs: 'vuepress dev docs'
+
+    docs: "
+        [ ! -d website ] && git worktree add website gh-pages;
+        rm -rf website/*;
+        npm run devbuild && webpack --config-name playground;
+
+        cd website;
+        git add .
+        git commit -m 'regenerated website'
+    "
+
+
+    # unit tests
+
     test:  'mocha test/*.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
 
@@ -121,6 +141,10 @@ devDependencies:
     'rimraf': '3.x'
     'tmp': '0.x'
     'glob': '^7.1.4'
+
+    ### docs
+
+    'vuepress': '0.14.x'
 
     ### bundling
 
