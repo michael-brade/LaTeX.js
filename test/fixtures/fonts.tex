@@ -7,7 +7,22 @@ Hello \bfseries is emphasized.
 </div>
 .
 
-** \emph{} command and nesting
+
+** \em and \emph{}
+.
+\em You can also \emph{emphasize} text.
+.
+<div class="body">
+<p>
+<span class="it">You can also </span>
+<span class="it"><span class="up">emphasize</span></span>
+<span class="it"> text.</span>
+</p>
+</div>
+.
+
+
+s** \emph{} command and nesting
 .
 Hello, \emph{this} is emphasized.
 
@@ -21,10 +36,10 @@ test {test \em\em\em test \em test}
 .
 <div class="body">
 <p>Hello, <span class="it">this</span> is emphasized.</p>
-<p><span class="it">emph </span><span class="up">normal</span>, <span class="up">normal </span><span class="it">emph</span></p>
-<p><span class="it">emph </span><span class="up">normal</span></p>
+<p><span class="it">emph <span class="up">normal</span></span>, <span class="up">normal <span class="it">emph</span></span></p>
+<p><span class="it">emph <span class="up">normal</span></span></p>
 <p>test test <span class="it">test </span><span class="up">test</span></p>
-<p><span class="it">You can also </span><span class="up">emphasize</span><span class="it"> text if it is set in italics</span></p>
+<p><span class="it">You can also <span class="up">emphasize</span> text if it is set in italics</span></p>
 </div>
 .
 

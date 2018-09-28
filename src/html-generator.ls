@@ -48,6 +48,13 @@ export class HtmlGenerator
     ### private static vars
     create =                    (type, classes) -> el = document.createElement type; el.setAttribute "class", classes;  return el
 
+    blockRegex =                //^(address|blockquote|body|center|dir|div|dl|fieldset|form|h[1-6]|hr
+                                   |isindex|menu|noframes|noscript|ol|p|pre|table|ul|dd|dt|frameset
+                                   |li|tbody|td|tfoot|th|thead|tr|html)$//i
+
+    isBlockLevel =              (el) -> blockRegex.test el.nodeName
+
+
     # generic elements
 
     inline-block:               "span"
@@ -741,33 +748,38 @@ export class HtmlGenerator
         attrs = @_inlineAttributes!
         return nodes if not attrs
 
+        # TODO: instance of Node for Element and Text is enough
         if nodes instanceof window.Element
-            # add current attrs
-            @addAttribute nodes, attrs
-        else if nodes instanceof window.Text
-            # wrap with current attrs
-            span = document.createElement "span"
-            span.setAttribute "class", attrs
-            span.appendChild nodes
-            return span
+            if isBlockLevel nodes
+                return @create @block, nodes, attrs
+            else
+                return @create @inline, nodes, attrs
+        else if nodes instanceof window.Text or nodes instanceof window.DocumentFragment
+            # wrap with current attrs - TODO: is inline always the right choice?
+            return @create @inline, nodes, attrs
         else if Array.isArray nodes
             for node in nodes
                 @addAttribute node, attrs
-        else if nodes instanceof window.DocumentFragment
-            child = nodes.firstChild
-            while child is not null
-                if child instanceof window.Text
-                    # wrap with current attrs and replace node
-                    span = document.createElement "span"
-                    span.setAttribute "class", attrs
-                    nodes.replaceChild span, child
-                    span.appendChild child
-                else if child instanceof window.Element
-                    @addAttribute child, attrs
-                else
-                    console.warn "addAttributes got an unsupported child in DocumentFragment:", child
+        # else if nodes instanceof window.DocumentFragment
+            #
+            # child = nodes.firstChild
+            # while child is not null
+            #     nextchild = child.nextSibling   # do it now b/c child will change below
+            #     if child instanceof window.Text
+            #         # wrap with current attrs and replace node
+            #         span = document.createElement "span"
+            #         span.setAttribute "class", attrs
+            #         nodes.replaceChild span, child
+            #         span.appendChild child
+            #     else if child instanceof window.Element
+            #         # this code overwrites font changes in children with e.g. "up it" when it should be "up"
+            #         # instead, find out if span or div is needed, then wrap!
+            #         @addAttribute child, attrs
+            #     else
+            #         console.warn "addAttributes got an unsupported child in DocumentFragment:", child
 
-                child = child.nextSibling
+            #     child = nextchild
+
         else
             console.warn "addAttributes got an unknown/unsupported argument:", nodes
 
