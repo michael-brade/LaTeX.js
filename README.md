@@ -543,25 +543,16 @@ This also means that you cannot use `\vs^^+ip` to have LaTeX.js interpret it as 
 that most people will probably never need.
 
 
-## TODO
-
-* [ ] implement the documentclasses `slides`, `beamer` (using `reveal.js`), and `memoir`
-* [ ] implement `\usepackage`; macros in separate classes for each package, then import them
-* [ ] implement `newcommand` and `renewcommand`, should be quite easy by now...
-
-Maybe:
-
-* [ ] implement the output using TeX's original linebreaking algorithm: https://github.com/bramstein/typeset
-
-
 
 ## Alternatives
 
-If you need a LaTeX to HTML translator that also understands TeX to some extent, take a look at
+If you need a LaTeX to HTML translator that also understands TeX to some extent, take a look at:
 
-* [LaTeXML](https://github.com/brucemiller/LaTeXML) (Perl) or
-* [HEVEA](http://hevea.inria.fr/) (OCaml) or
-* [plasTeX](https://github.com/tiarno/plastex) (Python).
+* [LaTeXML](https://github.com/brucemiller/LaTeXML) (Perl)
+* ~~[HEVEA](http://hevea.inria.fr/) (OCaml)~~
+* ~~[plasTeX](https://github.com/tiarno/plastex) (Python)~~
+
+Update: sadly, those last two are nowhere near the quality of LaTeX.js.
 
 There is no such alternative in JavaScript yet, though, which is why I started this project. I want to use it in my
 `derby-entities-lib` project.
