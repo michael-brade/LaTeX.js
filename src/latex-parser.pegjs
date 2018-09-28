@@ -31,10 +31,10 @@ with_preamble =
     skip_all_space escape &is_preamble
 
 begin_doc =
-    escape begin skip_space begin_group "document" end_group
+    escape begin _ begin_group "document" end_group
 
 end_doc =
-    escape end skip_space begin_group "document" end_group
+    escape end _ begin_group "document" end_group
 
 
 // parses everything between \begin{document} and \end{document}; returns the generator
@@ -61,7 +61,7 @@ paragraph =
     vmode_macro
     /
     bb:((escape noindent)? break)*
-    skip_space n:(escape noindent)? txt:text+
+    _ n:(escape noindent)? txt:text+
     be:break?
     {
         bb.length > 0 && g.break();
@@ -95,7 +95,7 @@ text "text" =
     )+                                          { return g.createText(p.join("")); }
 
     / linebreak
-    / (&unskip_macro skip_space)? m:hmode_macro { return m; }
+    / (&unskip_macro _)? m:hmode_macro          { return m; }
     / math
 
     // groups
@@ -203,7 +203,7 @@ is_hmode_env =
 
 
 macro =
-    name:identifier skip_space &{ if (g.hasMacro(name)) { g.beginArgs(name); return true; } }
+    name:identifier _ &{ if (g.hasMacro(name)) { g.beginArgs(name); return true; } }
     macro_args
     {
         var args = g.parsedArgs();
@@ -236,14 +236,14 @@ key "key" =
     $(char / digit / sp / [-$&_/@] / ![=,] utf8_char)+
 
 key_val "key=value" =
-    k:key v:(skip_space '=' skip_space v:(key / &{ error("value expected") }) { return v.trim(); })?
+    k:key v:(_ '=' _ v:(key / &{ error("value expected") }) { return v.trim(); })?
     { return { [k.trim()]: v == null ? true : v }; }
 
 
 macro_args =
     (
         &{ return g.nextArg("X") }                                                                              { g.preExecMacro(); }
-      / &{ return g.nextArg("s") }    skip_space s:"*"?                                                         { g.addParsedArg(!!s); }
+      / &{ return g.nextArg("s") }    _ s:"*"?                                                                  { g.addParsedArg(!!s); }
       / &{ return g.nextArg("g") }    a:(arg_group      / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
       / &{ return g.nextArg("hg") }   a:(arg_hgroup     / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
       / &{ return g.nextArg("h") }    h:(horizontal     / &{ g.argError("horizontal material expected") })      { g.addParsedArg(h); }
@@ -275,46 +275,46 @@ macro_args =
 
 
 // {identifier}
-id_group        =   skip_space begin_group skip_space
+id_group        =   _ begin_group _
                         id:identifier
-                    skip_space end_group
+                    _ end_group
                     { return id; }
 
 // {\identifier}
-macro_group     =   skip_space begin_group skip_space
+macro_group     =   _ begin_group _
                         escape id:identifier
-                    skip_space end_group
+                    _ end_group
                     { return id; }
 
 // [identifier]
-id_optgroup     =   skip_space begin_optgroup skip_space
+id_optgroup     =   _ begin_optgroup _
                         id:identifier
-                    skip_space end_optgroup
+                    _ end_optgroup
                     { return id; }
 
 // {key}
-key_group       =   skip_space begin_group
+key_group       =   _ begin_group _
                         k:key
-                    end_group
+                    _ end_group
                     { return k; }
 
 // [key]
-key_optgroup    =   skip_space begin_optgroup skip_space
+key_optgroup    =   _ begin_optgroup _
                         k:key
-                    skip_space end_optgroup
+                    _ end_optgroup
                     { return k; }
 
 
 // [key-val list]  (key1=val1,key2=val2)
-keyval_optgroup =   skip_space begin_optgroup
-                        kv_list:(skip_space ',' {return null;} / skip_space kv:key_val {return kv;})*
-                    skip_space end_optgroup
+keyval_optgroup =   _ begin_optgroup
+                        kv_list:(_ ',' {return null;} / _ kv:key_val {return kv;})*
+                    _ end_optgroup
                     {
                         return kv_list.filter(kv => kv != null);
                     }
 
 // lengths
-length_unit     =   skip_space u:("sp" / "pt" / "px" / "dd" / "mm" / "pc" / "cc" / "cm" / "in" / "ex" / "em") !char _
+length_unit     =   _ u:("sp" / "pt" / "px" / "dd" / "mm" / "pc" / "cc" / "cm" / "in" / "ex" / "em") !char _
                     { return u; }
 
   // TODO: should be able to use variables and maths: 2\parskip etc.
@@ -322,39 +322,39 @@ length          =   l:float u:length_unit (plus float length_unit)? (minus float
                     { return g.toPx({ value: l, unit: u }); }
 
 // {length}
-length_group    =   skip_space begin_group skip_space
+length_group    =   _ begin_group _
                         l:length
                     end_group
                     { return l; }
 
 // [length]
-length_optgroup =   skip_space begin_optgroup skip_space
+length_optgroup =   _ begin_optgroup _
                         l:length
                     end_optgroup
                     { return l; }
 
 
 // {num expression}
-expr_group      =   skip_space begin_group
+expr_group      =   _ begin_group
                         n:num_expr
                     end_group
                     { return n; }
 
 // [num expression]
-expr_optgroup  =   skip_space begin_optgroup
+expr_optgroup  =   _ begin_optgroup
                         n:num_expr
                     end_optgroup
                     { return n; }
 
 // {float expression}
-float_group     =   skip_space begin_group
+float_group     =   _ begin_group
                         // TODO
                     end_group
                     { return f; }
 
 
 // {color}
-color_group     =   skip_space begin_group
+color_group     =   _ begin_group
                         c:color
                     end_group
                     { return c; }
@@ -363,27 +363,27 @@ color_group     =   skip_space begin_group
 // picture coordinates and vectors
 
 // float or length
-coordinate      =   skip_space c:(
+coordinate      =   _ c:(
                         length
                         /
                         f:float { return { value: f * g.length("unitlength").value,
                                             unit:     g.length("unitlength").unit };    }
-                    ) skip_space
+                    ) _
                     { return c; }
 
 // (coord, coord)
-vector          =   skip_space "(" x:coordinate "," y:coordinate ")" skip_space
+vector          =   _ "(" x:coordinate "," y:coordinate ")" _
                     { return { x: x, y: y }; }
 
 
 // {coord}
-coord_group     =   skip_space begin_group
+coord_group     =   _ begin_group
                         c:coordinate
                     end_group
                     { return c; }
 
 // [coord]
-coord_optgroup  =   skip_space begin_optgroup
+coord_optgroup  =   _ begin_optgroup
                         c:coordinate
                     end_optgroup
                     { return c; }
@@ -396,9 +396,9 @@ url_char        =   char / digit / [-._~:/?#[\]@!$&()*+,;=] / "'" / url_pct_enco
                     / &{ error("illegal char in url given"); }
 
 // {url}
-url_group       =   skip_space begin_group
+url_group       =   _ begin_group _
                         url:(!end_group c:url_char {return c;})+
-                    end_group
+                    _ end_group
                     { return url.join(""); }
 
 
@@ -411,7 +411,7 @@ url_group       =   skip_space begin_group
 // In the document and in environments, the default state is unbalanced until end of document or environment.
 // In an argument, the default state is balanced (so that we know when to take } as end of argument),
 // so first enter the group, then start a new level of balancing.
-arg_group       =   skip_space begin_group      & { g.enterGroup(); g.startBalanced(); return true; }
+arg_group       =   _ begin_group      & { g.enterGroup(); g.startBalanced(); return true; }
                         s:space?
                         p:paragraph_with_linebreak*
                     end_group
@@ -430,7 +430,7 @@ horizontal      =   l:line*
                     { return g.createFragment(l); }
 
 // restricted horizontal mode group
-arg_hgroup      =   skip_space begin_group      & { g.enterGroup(); g.startBalanced(); return true; }
+arg_hgroup      =   _ begin_group      & { g.enterGroup(); g.startBalanced(); return true; }
                         s:space?
                         h:horizontal
                     end_group
@@ -443,7 +443,7 @@ arg_hgroup      =   skip_space begin_group      & { g.enterGroup(); g.startBalan
 
 
 // [<LaTeX code/text>]
-opt_group       =   skip_space begin_optgroup   & { g.enterGroup(); g.startBalanced(); return true; }
+opt_group       =   _ begin_optgroup   & { g.enterGroup(); g.startBalanced(); return true; }
                         p:paragraph_with_linebreak*
                     end_optgroup                & { return g.isBalanced(); }
                     {
@@ -462,10 +462,8 @@ opt_group       =   skip_space begin_optgroup   & { g.enterGroup(); g.startBalan
 value           =   escape "value" c:id_group               { return c; }
 
 // \real{<float>}
-real            =   escape "real" skip_space
-                    begin_group
-                        skip_space f:float skip_space
-                    end_group                               { return f; }
+real            =   escape "real" _
+                    begin_group _ f:float _ end_group       { return f; }
 
 
 
@@ -474,10 +472,10 @@ num_value       =   "(" expr:num_expr ")"                   { return expr; }
                   / real
                   / c:value                                 { return g.counter(c); }
 
-num_factor      =   s:("+"/"-") skip_space n:num_factor     { return s == "-" ? -n : n; }
+num_factor      =   s:("+"/"-") _ n:num_factor     { return s == "-" ? -n : n; }
                   / num_value
 
-num_term        =   head:num_factor tail:(skip_space ("*" / "/") skip_space num_factor)*
+num_term        =   head:num_factor tail:(_ ("*" / "/") _ num_factor)*
                 {
                     var result = head, i;
 
@@ -489,9 +487,7 @@ num_term        =   head:num_factor tail:(skip_space ("*" / "/") skip_space num_
                     return Math.trunc(result);
                 }
 
-num_expr        =   skip_space
-                        head:num_term tail:(skip_space ("+" / "-") skip_space num_term)*
-                    skip_space
+num_expr        =   _ head:num_term tail:(_ ("+" / "-") _ num_term)* _
                 {
                     var result = head, i;
 
@@ -612,7 +608,7 @@ smbskip_vmode   =   s:$("small"/"med"/"big")"skip" !char _ { return g.createVSpa
 // verb - one-line verbatim text
 
 // TODO: this should use the current font size!
-verb            =   "verb" s:"*"? skip_space !char
+verb            =   "verb" s:"*"? _ !char
                     b:.
                         v:$(!nl t:. !{ return b == t; })*
                     e:.
@@ -764,12 +760,12 @@ enumitems =
 // comment
 
 comment_env "comment environment" =
-    "\\begin" skip_space "{comment}"
+    "\\begin" _ "{comment}"
         (!end_comment .)*
-    end_comment skip_space
+    end_comment _
     { g.break(); return undefined; }
 
-end_comment = "\\end" skip_space "{comment}"
+end_comment = "\\end" _ "{comment}"
 
 
 
@@ -797,7 +793,7 @@ math_primitive =
     / superscript
     / subscript
     / escape identifier
-    / begin_group skip_space end_group
+    / begin_group _ end_group
     / begin_group math_primitive+ end_group
     / sp / nl / linebreak / comment
 
@@ -866,18 +862,17 @@ break     "paragraph break" = ((skip_all_space escape par skip_all_space)+      
                                (sp / nl / comment)*                                         // ...and optionally followed by any whitespace and/or comment
                               )                                 { return true; }
 
-linebreak       "linebreak" = skip_space escape "\\" skip_space '*'?
-                              skip_space
-                              l:(begin_optgroup skip_space
+linebreak       "linebreak" = _ escape "\\" _ '*'? _
+                              l:(begin_optgroup _
                                     l:length
-                                end_optgroup skip_space {return l;})?
+                                end_optgroup _ {return l;})?
                               {
                                   if (l) return g.createBreakSpace(l);
                                   else   return g.create(g.linebreak);
                               }
 
 // this should hold all macros that unskip (\\ is already in linebreak) [or add a new macro type?]
-unskip_macro                = skip_space escape ("put"/"newline") !char
+unskip_macro                = _ escape ("put"/"newline") !char
 
 
 /* syntax tokens - LaTeX */
@@ -912,7 +907,7 @@ ctrl_sym    "control symbol"= escape c:[$%#&{}_\-,/@]           { return g.contr
 
 
 // returns a unicode char/string
-symbol      "symbol macro"  = escape name:identifier &{ return g.hasSymbol(name); } skip_space
+symbol      "symbol macro"  = escape name:identifier &{ return g.hasSymbol(name); } _
     {
         return g.symbol(name);
     }
@@ -921,7 +916,7 @@ symbol      "symbol macro"  = escape name:identifier &{ return g.hasSymbol(name)
 diacritic "diacritic macro" =
     escape
     d:$(char !char / !char .)  &{ return g.hasDiacritic(d); }
-    skip_space
+    _
     c:(begin_group c:primitive? end_group s:space? { return g.diacritic(d, c) + (s ? s:""); }
       /            c:primitive                     { return g.diacritic(d, c); })
     {
@@ -940,9 +935,7 @@ diacritic "diacritic macro" =
 // ^^^^FFFF = hex FFFF
 // ^^c      = if charcode(c) < 64 then fromCharCode(c+64) else fromCharCode(c-64)
 charsym     = escape "symbol"
-              begin_group
-                skip_space i:integer skip_space
-              end_group                                         { return String.fromCharCode(i); }
+              begin_group _ i:integer _ end_group               { return String.fromCharCode(i); }
             / escape "char" i:integer                           { return String.fromCharCode(i); }
             / "^^^^" i:hex16                                    { return String.fromCharCode(i); }
             / "^^"   i:hex8                                     { return String.fromCharCode(i); }
@@ -970,12 +963,12 @@ float "float value"     = f:$(
 // distinguish length/counter: if it's not a counter, it is a length
 the                     = "the" !char _ t:(
                             c:value &{ return g.hasCounter(c);} { return g.createText("" + g.counter(c)); }
-                            / escape id:identifier skip_space   { return g.theLength(id); }
+                            / escape id:identifier _            { return g.theLength(id); }
                         )                                       { return t; }
 
 // logging
 logging                 = "showthe" !char _ (
                             c:value &{ return g.hasCounter(c);} { console.log(g.counter(c)); }
-                            / escape l:identifier skip_space    { console.log(g.length(l)); }
+                            / escape l:identifier _             { console.log(g.length(l)); }
                         )
                         / "message" m:arg_group                 { console.log(m.textContent); }
