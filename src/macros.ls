@@ -382,9 +382,11 @@ export class LaTeXBase
 
         [
         @g.create @g.unorderedList, items.map (item) ~>
+            @g.enterGroup!
             # label: null means no opt_group was given (\item ...), undefined is an empty one (\item[] ...)
-
             makelabel = @g.create @g.itemlabel, @\llap (if item.label != null then item.label else @g.macro label)
+            @g.exitGroup!
+
             @g.create @g.listitem, [ makelabel, item.text ]
         ]
 
