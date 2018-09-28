@@ -108,7 +108,7 @@ text "text" =
 // this rule must always return a string
 primitive "primitive" =
       char
-    / space                                     { return g.sp; }
+    / space !unskip_macro                       { return g.sp; }
     / hyphen
     / digit
     / punctuation
@@ -875,7 +875,8 @@ linebreak       "linebreak" = skip_space escape "\\" skip_space '*'?
                                   else   return g.create(g.linebreak);
                               }
 
-unskip_macro                = skip_space escape ("put") !char   // this should hold all macros that unskip (currently only \put; \\ is already in linebreak)
+// this should hold all macros that unskip (\\ is already in linebreak) [or add a new macro type?]
+unskip_macro                = skip_space escape ("put"/"newline") !char
 
 
 /* syntax tokens - LaTeX */
