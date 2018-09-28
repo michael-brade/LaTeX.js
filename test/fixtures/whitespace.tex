@@ -304,3 +304,21 @@ x
 <p class="continue">​ </p>
 </div>
 .
+
+
+** spaces before and after horizontal environments
+.
+xx
+\begin{empty}
+  text\begin{empty}
+    text
+  \end{empty}
+  \begin{empty}text
+  \end{empty}
+\end{empty}
+xx
+.
+<div class="body">
+<p>xx ​ text​ text ​ text ​ ​ xx</p>
+</div>
+.
