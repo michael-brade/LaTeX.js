@@ -124,6 +124,8 @@ export class LaTeXBase
 
     \TeX :->
         # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
+        @g.enterGroup! # prevent createText to add attributes, they will be added by @g.macro
+
         tex = @g.create @g.inline
         tex.setAttribute('class', 'tex')
 
@@ -132,10 +134,14 @@ export class LaTeXBase
         tex.appendChild e
         tex.appendChild @g.createText 'X'
 
+        @g.exitGroup!
+
         return [tex]
 
     \LaTeX :->
         # <span class="latex">L<span>a</span>T<span>e</span>X</span>
+        @g.enterGroup!
+
         latex = @g.create @g.inline
         latex.setAttribute('class', 'latex')
 
@@ -146,6 +152,8 @@ export class LaTeXBase
         e = @g.create @g.inline, (@g.createText 'e'), 'e'
         latex.appendChild e
         latex.appendChild @g.createText 'X'
+
+        @g.exitGroup!
 
         return [latex]
 
