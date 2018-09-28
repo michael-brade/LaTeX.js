@@ -532,7 +532,8 @@ export class HtmlGenerator
         span = document.createElement "span"
         span.setAttribute "class", "breakspace"
         span.setAttribute "style", "margin-bottom:" + length.value + length.unit
-        return span
+        # we need to add the current font in case it uses a relative length (e.g. em)
+        return @addAttributes span
 
     createHSpace: (length) ->
         span = document.createElement "span"
@@ -743,43 +744,20 @@ export class HtmlGenerator
         el.hasAttribute "class" and //\b#{attr}\b//.test el.getAttribute "class"
 
 
-    # this adds the current attribute values to the given element or array of elements
+    # this wraps the current attribute values around the given element or array of elements
     addAttributes: (nodes) ->
         attrs = @_inlineAttributes!
         return nodes if not attrs
 
-        # TODO: instance of Node for Element and Text is enough
         if nodes instanceof window.Element
             if isBlockLevel nodes
                 return @create @block, nodes, attrs
             else
                 return @create @inline, nodes, attrs
         else if nodes instanceof window.Text or nodes instanceof window.DocumentFragment
-            # wrap with current attrs - TODO: is inline always the right choice?
             return @create @inline, nodes, attrs
         else if Array.isArray nodes
-            for node in nodes
-                @addAttribute node, attrs
-        # else if nodes instanceof window.DocumentFragment
-            #
-            # child = nodes.firstChild
-            # while child is not null
-            #     nextchild = child.nextSibling   # do it now b/c child will change below
-            #     if child instanceof window.Text
-            #         # wrap with current attrs and replace node
-            #         span = document.createElement "span"
-            #         span.setAttribute "class", attrs
-            #         nodes.replaceChild span, child
-            #         span.appendChild child
-            #     else if child instanceof window.Element
-            #         # this code overwrites font changes in children with e.g. "up it" when it should be "up"
-            #         # instead, find out if span or div is needed, then wrap!
-            #         @addAttribute child, attrs
-            #     else
-            #         console.warn "addAttributes got an unsupported child in DocumentFragment:", child
-
-            #     child = nextchild
-
+            return nodes.map (node) -> @create @inline, node, attrs
         else
             console.warn "addAttributes got an unknown/unsupported argument:", nodes
 
