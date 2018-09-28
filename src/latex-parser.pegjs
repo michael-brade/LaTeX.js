@@ -314,7 +314,7 @@ keyval_optgroup =   skip_space begin_optgroup
                     }
 
 // lengths
-length_unit     =   skip_space u:("sp" / "pt" / "px" / "dd" / "mm" / "pc" / "cc" / "cm" / "in" / "ex" / "em") _
+length_unit     =   skip_space u:("sp" / "pt" / "px" / "dd" / "mm" / "pc" / "cc" / "cm" / "in" / "ex" / "em") !char _
                     { return u; }
 
   // TODO: should be able to use variables and maths: 2\parskip etc.
@@ -601,8 +601,8 @@ column_separator =
 vspace_hmode    =   "vspace" "*"?   l:length_group      { return g.createVSpaceInline(l); }
 vspace_vmode    =   "vspace" "*"?   l:length_group      { return g.createVSpace(l); }
 
-smbskip_hmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkipInline(s + "skip"); }
-smbskip_vmode   =   s:$("small"/"med"/"big")"skip"  _   { return g.createVSpaceSkip(s + "skip"); }
+smbskip_hmode   =   s:$("small"/"med"/"big")"skip" !char _ { return g.createVSpaceSkipInline(s + "skip"); }
+smbskip_vmode   =   s:$("small"/"med"/"big")"skip" !char _ { return g.createVSpaceSkip(s + "skip"); }
 
 //  \\[length] is defined in the linebreak rule further down
 
@@ -801,21 +801,21 @@ math_primitive =
     / sp / nl / linebreak / comment
 
 
-// shortcut for end of token
-_                           = !char skip_space
+// shortcut
+_                           = skip_space
 
 /* kind of keywords */
 
-begin                       = "begin"   _   {}
-end                         = "end"     _   {}
+begin                       = "begin"    !char _   {}
+end                         = "end"      !char _   {}
 
-par                         = "par" !char   {}
-noindent                    = "noindent"_   {}
+par                         = "par"      !char     {}
+noindent                    = "noindent" !char _   {}
 
-plus                        = "plus"    _   {}
-minus                       = "minus"   _   {}
+plus                        = "plus"     !char _   {}
+minus                       = "minus"    !char _   {}
 
-endinput                    = "endinput"_   .*
+endinput                    = "endinput" !char _   .*
 
 
 /* syntax tokens - TeX's first catcodes that generate no output */
@@ -967,13 +967,13 @@ float "float value"     = f:$(
 
 
 // distinguish length/counter: if it's not a counter, it is a length
-the                     = "the" _ t:(
+the                     = "the" !char _ t:(
                             c:value &{ return g.hasCounter(c);} { return g.createText("" + g.counter(c)); }
                             / escape id:identifier skip_space   { return g.theLength(id); }
                         )                                       { return t; }
 
 // logging
-logging                 = "showthe" _ (
+logging                 = "showthe" !char _ (
                             c:value &{ return g.hasCounter(c);} { console.log(g.counter(c)); }
                             / escape l:identifier skip_space    { console.log(g.length(l)); }
                         )
