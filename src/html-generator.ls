@@ -57,7 +57,7 @@ export class HtmlGenerator
 
     # generic elements
 
-    inline-block:               "span"
+    inline:                     "span"
     block:                      "div"
 
 
@@ -92,7 +92,7 @@ export class HtmlGenerator
     term:                       "dt"
     description:                "dd"
 
-    itemlabel:                  do -> create ::inline-block, "itemlabel"
+    itemlabel:                  do -> create ::inline, "itemlabel"
 
     quote:                      do -> create ::block, "list quote"
     quotation:                  do -> create ::block, "list quotation"
@@ -123,8 +123,8 @@ export class HtmlGenerator
     verb:                       do -> create "code", "tt"
     verbatim:                   "pre"
 
-    picture:                    do -> create ::inline-block, "picture"
-    picture-canvas:             do -> create ::inline-block, "picture-canvas"
+    picture:                    do -> create ::inline, "picture"
+    picture-canvas:             do -> create ::inline, "picture-canvas"
 
 
 
@@ -852,7 +852,7 @@ export class HtmlGenerator
         @_stack.top.lengths.get l
 
     theLength: (id) ->
-        l = @create @inline-block, undefined, "the"
+        l = @create @inline, undefined, "the"
         l.setAttribute "display-var", id
         l
 
@@ -1072,12 +1072,12 @@ export class HtmlGenerator
     marginpar: (txt) ->
         id = @nextId!
 
-        marginPar = @create @block, [@create(@inline-block, null, "mpbaseline"), txt]
+        marginPar = @create @block, [@create(@inline, null, "mpbaseline"), txt]
         marginPar.id = id
 
         @_marginpars.push marginPar
 
-        marginRef = @create @inline-block, null, "mpbaseline"
+        marginRef = @create @inline, null, "mpbaseline"
         marginRef.id = "marginref-" + id
 
         marginRef

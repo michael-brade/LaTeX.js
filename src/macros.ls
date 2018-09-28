@@ -124,11 +124,11 @@ export class LaTeXBase
 
     \TeX :->
         # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
-        tex = @g.create @g.inline-block
+        tex = @g.create @g.inline
         tex.setAttribute('class', 'tex')
 
         tex.appendChild @g.createText 'T'
-        e = @g.create @g.inline-block, (@g.createText 'e'), 'e'
+        e = @g.create @g.inline, (@g.createText 'e'), 'e'
         tex.appendChild e
         tex.appendChild @g.createText 'X'
 
@@ -136,14 +136,14 @@ export class LaTeXBase
 
     \LaTeX :->
         # <span class="latex">L<span>a</span>T<span>e</span>X</span>
-        latex = @g.create @g.inline-block
+        latex = @g.create @g.inline
         latex.setAttribute('class', 'latex')
 
         latex.appendChild @g.createText 'L'
-        a = @g.create @g.inline-block, (@g.createText 'a'), 'a'
+        a = @g.create @g.inline, (@g.createText 'a'), 'a'
         latex.appendChild a
         latex.appendChild @g.createText 'T'
-        e = @g.create @g.inline-block, (@g.createText 'e'), 'e'
+        e = @g.create @g.inline, (@g.createText 'e'), 'e'
         latex.appendChild e
         latex.appendChild @g.createText 'X'
 
@@ -154,7 +154,7 @@ export class LaTeXBase
 
     \newline            :-> [ @g.create @g.linebreak ]
 
-    \negthinspace       :-> [ @g.create @g.inline-block, undefined, 'negthinspace' ]
+    \negthinspace       :-> [ @g.create @g.inline, undefined, 'negthinspace' ]
 
 
 
@@ -408,7 +408,7 @@ export class LaTeXBase
 
         [
         @g.create @g.orderedList, items.map (item) ~>
-            label = @g.create @g.inlineBlock, item.label.node
+            label = @g.create @g.inline, item.label.node
             if item.label.id
                 label.id = item.label.id
 
@@ -523,20 +523,20 @@ export class LaTeXBase
      ..\vphantom =      \
      ..\phantom =       <[ H hg ]>   # TODO: not true, these should be usable in V-mode as well, they don't \leavevmode :(
 
-    \llap               : (txt) -> [ @g.create @g.inline-block, txt, "hbox llap" ]
-    \rlap               : (txt) -> [ @g.create @g.inline-block, txt, "hbox rlap" ]
-    \clap               : (txt) -> [ @g.create @g.inline-block, txt, "hbox clap" ]
-    \smash              : (txt) -> [ @g.create @g.inline-block, txt, "hbox smash" ]
+    \llap               : (txt) -> [ @g.create @g.inline, txt, "hbox llap" ]
+    \rlap               : (txt) -> [ @g.create @g.inline, txt, "hbox rlap" ]
+    \clap               : (txt) -> [ @g.create @g.inline, txt, "hbox clap" ]
+    \smash              : (txt) -> [ @g.create @g.inline, txt, "hbox smash" ]
 
-    \hphantom           : (txt) -> [ @g.create @g.inline-block, txt, "phantom hbox smash" ]
-    \vphantom           : (txt) -> [ @g.create @g.inline-block, txt, "phantom hbox rlap" ]
-    \phantom            : (txt) -> [ @g.create @g.inline-block, txt, "phantom hbox" ]
+    \hphantom           : (txt) -> [ @g.create @g.inline, txt, "phantom hbox smash" ]
+    \vphantom           : (txt) -> [ @g.create @g.inline, txt, "phantom hbox rlap" ]
+    \phantom            : (txt) -> [ @g.create @g.inline, txt, "phantom hbox" ]
 
 
     # LaTeX
 
     args.\underline     = <[ H hg ]>
-    \underline          : (txt) -> [ @g.create @g.inline-block, txt, "hbox underline" ]
+    \underline          : (txt) -> [ @g.create @g.inline, txt, "hbox underline" ]
 
 
     # \mbox{text} - not broken into lines
@@ -607,8 +607,8 @@ export class LaTeXBase
             | "r" => classes += " llap"
             |  _  => @g.error "unknown position: #{pos}"
 
-        content = @g.create @g.inline-block, txt
-        box = @g.create @g.inline-block, content, classes
+        content = @g.create @g.inline, txt
+        box = @g.create @g.inline, content, classes
 
         if width
             box.setAttribute "style", "width:" + width.value + width.unit
@@ -662,8 +662,8 @@ export class LaTeXBase
         | "b" => classes += " p-cb"
         |  _  => @g.error "unknown inner-pos: #{inner-pos}"
 
-        content = @g.create @g.inline-block, txt
-        box = @g.create @g.inline-block, content, classes
+        content = @g.create @g.inline, txt
+        box = @g.create @g.inline, content, classes
 
         box.setAttribute "style", style
 
@@ -715,7 +715,7 @@ export class LaTeXBase
     # \frame{text} - frame without padding, linewidth given by picture linethickness
     args.\frame =       <[ H hg ]>
     \frame              : (txt) ->
-        el = @g.create @g.inline-block, txt, "hbox pframe"
+        el = @g.create @g.inline, txt, "hbox pframe"
         w = @g.length \@wholewidth
         el.setAttribute "style" "border-width:" + w.value + w.unit
         [ el ]
@@ -731,13 +731,13 @@ export class LaTeXBase
         x = v.x.value
         y = v.y.value
 
-        wrapper = @g.create @g.inline-block, obj, "put-obj"
+        wrapper = @g.create @g.inline, obj, "put-obj"
         wrapper.setAttribute "style", "left:#{x + v.x.unit}"
 
-        strut = @g.create @g.inline-block, undefined, "strut"
+        strut = @g.create @g.inline, undefined, "strut"
         strut.setAttribute "style", "height:#{Math.abs(y) + v.y.unit}"
 
-        @rlap @g.create @g.inline-block, [wrapper, strut], "picture"
+        @rlap @g.create @g.inline, [wrapper, strut], "picture"
 
 
     # \multiput(x,y)(delta_x,delta_y){n}{obj}
@@ -776,7 +776,7 @@ export class LaTeXBase
     _path: (p, unit) ->
         linethickness = @g.length \@wholewidth
 
-        svg = @g.create @g.inline-block, undefined, "picture-object"
+        svg = @g.create @g.inline, undefined, "picture-object"
         draw = @g.SVG(svg)
 
         bbox = draw.path p
@@ -798,7 +798,7 @@ export class LaTeXBase
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        @g.create @g.inline-block, svg, "picture"
+        @g.create @g.inline, svg, "picture"
 
 
 
@@ -813,7 +813,7 @@ export class LaTeXBase
         linethickness = @g.length \@wholewidth
         lw = linethickness.value
 
-        svg = @g.create @g.inline-block, undefined, "picture-object"
+        svg = @g.create @g.inline, undefined, "picture-object"
         svg.setAttribute "style", "left:#{-d.value/2 - lw}px;bottom:#{-d.value/2 - lw}px"
 
         draw = @g.SVG(svg).size (d.value + lw*2) + d.unit, (d.value + lw*2) + d.unit
@@ -827,7 +827,7 @@ export class LaTeXBase
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        [ @g.create @g.inline-block, svg, "picture" ]
+        [ @g.create @g.inline, svg, "picture" ]
 
 
     # \line(xslope,yslope){length}
@@ -888,7 +888,7 @@ export class LaTeXBase
 
     # helper: draw line to x, y
     _line: (x, y, unit) ->
-        svg = @g.create @g.inline-block, undefined, "picture-object"
+        svg = @g.create @g.inline, undefined, "picture-object"
         draw = @g.SVG(svg)
 
         linethickness = @g.length \@wholewidth
@@ -910,14 +910,14 @@ export class LaTeXBase
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        @g.create @g.inline-block, svg, "picture"
+        @g.create @g.inline, svg, "picture"
 
 
     # helper: draw arrow to x, y
     _vector: (x, y, unit) ->
         linethickness = @g.length \@wholewidth
 
-        svg = @g.create @g.inline-block, undefined, "picture-object"
+        svg = @g.create @g.inline, undefined, "picture-object"
         draw = @g.SVG(svg)
 
         # arrow head length and width
@@ -989,7 +989,7 @@ export class LaTeXBase
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        @g.create @g.inline-block, svg, "picture"
+        @g.create @g.inline, svg, "picture"
 
 
 
@@ -1005,7 +1005,7 @@ export class LaTeXBase
         if not part
             part = ""
 
-        svg = @g.create @g.inline-block, undefined, "picture-object"
+        svg = @g.create @g.inline, undefined, "picture-object"
         draw = @g.SVG(svg)
 
         oval = draw.rect "#{size.x.value}#{size.x.unit}", "#{size.y.value}#{size.y.unit}"
@@ -1078,7 +1078,7 @@ export class LaTeXBase
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        [ @g.create @g.inline-block, svg, "picture" ]
+        [ @g.create @g.inline, svg, "picture" ]
 
 
     # return a new rectangle that is the result of intersecting the given two rectangles
