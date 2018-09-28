@@ -224,32 +224,33 @@ export class LaTeXBase
     [ args[\text + ..]  = <[ H X g ]> for <[ rm sf tt md bf up it sl sc normal ]> ]
 
 
-    \textrm             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "rm" else @g.exitGroup!; [ arg ]
-    \textsf             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "sf" else @g.exitGroup!; [ arg ]
-    \texttt             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "tt" else @g.exitGroup!; [ arg ]
+    \textrm         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "rm" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
+    \textsf         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "sf" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
+    \texttt         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontFamily "tt" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
 
-    \textmd             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontWeight "md" else @g.exitGroup!; [ arg ]
-    \textbf             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontWeight "bf" else @g.exitGroup!; [ arg ]
+    \textmd         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontWeight "md" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
+    \textbf         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontWeight "bf" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
 
-    \textup             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "up" else @g.exitGroup!; [ arg ]
-    \textit             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "it" else @g.exitGroup!; [ arg ]
-    \textsl             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "sl" else @g.exitGroup!; [ arg ]
-    \textsc             : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "sc" else @g.exitGroup!; [ arg ]
+    \textup         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape  "up" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
+    \textit         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape  "it" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
+    \textsl         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape  "sl" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
+    \textsc         : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape  "sc" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
 
-    \textnormal         : (arg) ->
-                                    if &length == 0
-                                        @g.enterGroup!
-                                        @g.setFontFamily "rm"
-                                        @g.setFontWeight "md"
-                                        @g.setFontShape "up"
-                                    else
-                                        @g.exitGroup!
-                                        [ arg ]
+    \textnormal     : (arg) ->
+                        if &length == 0
+                            @g.enterGroup!
+                            @g.setFontFamily "rm"
+                            @g.setFontWeight "md"
+                            @g.setFontShape "up"
+                        else
+                            arg = @g.addAttributes arg
+                            @g.exitGroup!
+                            [ arg ]
 
 
 
-    args.\emph          = <[ H X g ]>
-    \emph               : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "em" else @g.exitGroup!; [ arg ]
+    args.\emph      = <[ H X g ]>
+    \emph           : (arg) ->  if &length == 0 then @g.enterGroup!; @g.setFontShape "em" else arg = @g.addAttributes arg; @g.exitGroup!; [ arg ]
 
 
     # declarations

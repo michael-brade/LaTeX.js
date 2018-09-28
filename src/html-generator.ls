@@ -244,14 +244,14 @@ export class HtmlGenerator
         | '\''  => @symbol \textquoteright
 
     hyphen: ->
-        if @_stack.top.attrs.fontFamily == 'tt'
+        if @_activeAttributeValue('fontFamily') == 'tt'
             '-'                                         # U+002D
         else
             he.decode "&hyphen;"                        # U+2010
 
     ligature: (l) ->
         # no ligatures in tt
-        if @_stack.top.attrs.fontFamily == 'tt'
+        if @_activeAttributeValue('fontFamily') == 'tt'
             l
         else
             ligatures.get l
@@ -453,7 +453,7 @@ export class HtmlGenerator
     # create a text node that has font attributes set and allows for hyphenation
     createText: (t) ->
         return if not t
-        @_wrapWithAttributes document.createTextNode if @_options.hyphenate then @_h.hyphenateText t else t
+        @addAttributes document.createTextNode if @_options.hyphenate then @_h.hyphenateText t else t
 
     # create a pure text node without font attributes and no hyphenation
     createVerbatim: (t) ->
@@ -492,16 +492,6 @@ export class HtmlGenerator
 
         pic
 
-
-
-    # add attributes to an element - in HTML, those are CSS classes
-    addAttribute: (el, c) !->
-        if el.hasAttribute "class"
-            c = el.getAttribute("class") + " " + c
-        el.setAttribute "class", c
-
-    hasAttribute: (el, c) ->
-        el.hasAttribute "class" and new RegExp("\\b#{c}\\b").test el.getAttribute "class"
 
 
 
@@ -574,7 +564,7 @@ export class HtmlGenerator
         @_macros[name]
             .apply @_macros, args
             ?.filter (x) -> x !~= undefined
-            .map (x) ~> if not x.nodeType? then @createText x else x
+            .map (x) ~> if typeof x == 'string' or x instanceof String then @createText x else @addAttributes x
 
 
     # macro arguments
@@ -647,10 +637,10 @@ export class HtmlGenerator
     ### groups
 
     # start a new group
-    enterGroup: !->
+    enterGroup: (copyAttrs = false) !->
         # shallow copy of the contents of top is enough because we don't change the elements, only the array and the maps
         @_stack.push {
-            attrs: Object.assign {}, @_stack.top.attrs
+            attrs: if copyAttrs then Object.assign {}, @_stack.top.attrs else {}
             align: null                                                 # alignment is set only per level where it was changed
             currentlabel: Object.assign {}, @_stack.top.currentlabel
             lengths: new Map(@_stack.top.lengths)
@@ -676,7 +666,7 @@ export class HtmlGenerator
         @_groups.top == 0
 
 
-    ### attributes (CSS classes)
+    ### attributes - in HTML, those are CSS classes
 
     continue: !->
         @_continue = @location!.end.offset
@@ -706,7 +696,7 @@ export class HtmlGenerator
 
     setFontShape: (shape) !->
         if shape == "em"
-            if @_stack.top.attrs.fontShape == "it"
+            if @_activeAttributeValue("fontShape") == "it"
                 shape = "up"
             else
                 shape = "it"
@@ -720,9 +710,68 @@ export class HtmlGenerator
         @_stack.top.attrs.textDecoration = decoration
 
 
+    # get all inline attributes of the current group
     _inlineAttributes: ->
         cur = @_stack.top.attrs
         [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.textDecoration].join(' ').replace(/\s+/g, ' ').trim!
+
+    # get the currently active value for a specific attribute, also taking into account inheritance from parent groups
+    # return the empty string if the attribute was never set
+    _activeAttributeValue: (attr) ->
+        # from top to bottom until the first value is found
+        for level from @_stack.length-1 to 0 by -1
+            if @_stack[level].attrs[attr]
+                return that
+
+
+    ## attributes and nodes/elements
+
+    # add the given attribute(s) to a single element
+    addAttribute: (el, attrs) !->
+        if el.hasAttribute "class"
+            attrs = el.getAttribute("class") + " " + attrs
+        el.setAttribute "class", attrs
+
+    hasAttribute: (el, attr) ->
+        el.hasAttribute "class" and //\b#{attr}\b//.test el.getAttribute "class"
+
+
+    # this adds the current attribute values to the given element or array of elements
+    addAttributes: (nodes) ->
+        attrs = @_inlineAttributes!
+        return nodes if not attrs
+
+        if nodes instanceof window.Element
+            # add current attrs
+            @addAttribute nodes, attrs
+        else if nodes instanceof window.Text
+            # wrap with current attrs
+            span = document.createElement "span"
+            span.setAttribute "class", attrs
+            span.appendChild nodes
+            return span
+        else if Array.isArray nodes
+            for node in nodes
+                @addAttribute node, attrs
+        else if nodes instanceof window.DocumentFragment
+            child = nodes.firstChild
+            while child is not null
+                if child instanceof window.Text
+                    # wrap with current attrs and replace node
+                    span = document.createElement "span"
+                    span.setAttribute "class", attrs
+                    nodes.replaceChild span, child
+                    span.appendChild child
+                else if child instanceof window.Element
+                    @addAttribute child, attrs
+                else
+                    console.warn "addAttributes got an unsupported child in DocumentFragment:", child
+
+                child = child.nextSibling
+        else
+            console.warn "addAttributes got an unknown/unsupported argument:", nodes
+
+        return nodes
 
 
 
@@ -1034,18 +1083,6 @@ export class HtmlGenerator
 
         return parent
 
-
-    _wrapWithAttributes: (el, attrs) ->
-        if not attrs
-            attrs = @_inlineAttributes!
-
-        if attrs
-            span = document.createElement "span"
-            span.setAttribute "class", attrs
-            span.appendChild el
-            return span
-
-        return el
 
 
     # private utilities

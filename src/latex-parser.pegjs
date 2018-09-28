@@ -99,7 +99,7 @@ text "text" =
     / math
 
     // groups
-    / begin_group                             & { g.enterGroup(); return true; }
+    / begin_group                             & { g.enterGroup(true); return true; } // copy attributes
       s:space?                                  { return g.createText(s); }
     / end_group                               & { if (!g.isBalanced()) { g.exitGroup(); return true; } } // end group only in unbalanced state
       s:space?                                  { return g.createText(s); }
