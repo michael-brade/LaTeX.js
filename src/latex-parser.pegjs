@@ -677,7 +677,7 @@ h_environment =
             return g.createFragment(node, end, se);
         }
 
-        return g.createFragment(node, sb, p, end, se);
+        return g.createFragment(node, sb, pf, end, se);     // use pf, fragments in p are now empty!!
     }
 
 
@@ -699,8 +699,7 @@ environment =
             node[node.length - 1].appendChild(pf);
             return g.createFragment(node, end);
         }
-
-        return g.createFragment(node, p, end);
+        return g.createFragment(node, pf, end);
     }
 
 
