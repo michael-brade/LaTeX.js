@@ -107,7 +107,7 @@ export class LaTeXBase
     # args: declaring arguments for a macro. If a macro doesn't take arguments and is a
     #       horizontal-mode macro, args can be left undefined for it.
     #
-    # syntax: see README.mb
+    # syntax: see README.md
 
     args = @args = {}
 

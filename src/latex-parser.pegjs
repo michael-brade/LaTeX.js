@@ -611,6 +611,7 @@ smbskip_vmode   =   s:$("small"/"med"/"big")"skip" !char _ { return g.createVSpa
 
 // verb - one-line verbatim text
 
+// TODO: this should use the current font size!
 verb            =   "verb" s:"*"? skip_space !char
                     b:.
                         v:$(!nl t:. !{ return b == t; })*
