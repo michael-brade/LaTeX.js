@@ -397,7 +397,7 @@ url_char        =   char / digit / [-._~:/?#[\]@!$&()*+,;=] / "'" / url_pct_enco
 
 // {url}
 url_group       =   _ begin_group _
-                        url:(!end_group c:url_char {return c;})+
+                        url:(!(_ end_group) c:url_char {return c;})+
                     _ end_group
                     { return url.join(""); }
 
