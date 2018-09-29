@@ -51,17 +51,14 @@ scripts:
     build: "
         npm run devbuild;
         cd dist;
-        uglifyjs latex-parser.js            -cm --source-map 'includeSources,url=\"./latex-parser.js.map\"'                   -o latex-parser.js;
+        uglifyjs latex-parser.js  -cm --source-map 'includeSources,url=\"./latex-parser.js.map\"' -o latex-parser.js;
 
-        uglifyjs index.js                   -cm --source-map 'content=inline,includeSources,url=\"./index.js.map\"'           -o index.js;
-        uglifyjs macros.js                  -cm --source-map 'content=inline,includeSources,url=\"./macros.js.map\"'          -o macros.js;
-        uglifyjs symbols.js                 -cm --source-map 'content=inline,includeSources,url=\"./symbols.js.map\"'         -o symbols.js;
-        uglifyjs html-generator.js          -cm --source-map 'content=inline,includeSources,url=\"./html-generator.js.map\"'  -o html-generator.js;
+        echo -n index macros symbols html-generator | xargs -d' '
+                                    -P8 -I{} uglifyjs {}.js              -cm --source-map 'content=inline,includeSources,url=\"./{}.js.map\"' -o {}.js;
 
-        uglifyjs documentclasses/base.js    -cm --source-map 'content=inline,includeSources,url=\"./base.js.map\"'            -o documentclasses/base.js;
-        uglifyjs documentclasses/article.js -cm --source-map 'content=inline,includeSources,url=\"./article.js.map\"'         -o documentclasses/article.js;
-        uglifyjs documentclasses/book.js    -cm --source-map 'content=inline,includeSources,url=\"./book.js.map\"'            -o documentclasses/book.js;
-        uglifyjs documentclasses/report.js  -cm --source-map 'content=inline,includeSources,url=\"./report.js.map\"'          -o documentclasses/report.js;
+        ls documentclasses/ | xargs -P8 -I{} uglifyjs documentclasses/{} -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o documentclasses/{};
+        ls packages/        | xargs -P8 -I{} uglifyjs packages/{}        -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o packages/{};
+
         cd ..;
     "
     devbuild: "
