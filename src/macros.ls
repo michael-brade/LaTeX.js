@@ -1184,14 +1184,11 @@ export class LaTeXBase
 
 
 
-    args.\usepackage    =  <[ P kv? g k? ]>
+    args.\usepackage    =  <[ P kv? csv k? ]>
     \usepackage         : (opts, packages, version) !->
         options = Object.assign {}, @g.documentClass.options, opts
-        packages = packages.textContent?.split ','
 
-        for p in packages
-            pkg = p.trim!
-
+        for pkg in packages
             continue if providedPackages.includes pkg
 
             # load and instantiate the package
@@ -1208,7 +1205,7 @@ export class LaTeXBase
                 console.error "error loading package \"#{pkg}\": #{e}"
 
 
-    args.\includeonly   = <[ P k ]>
+    args.\includeonly   = <[ P csv ]>
     \includeonly        : (filelist) !->
 
 

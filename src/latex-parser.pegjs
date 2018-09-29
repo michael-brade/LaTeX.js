@@ -232,7 +232,7 @@ identifier "identifier" =
     $char+
 
 // key can contain pretty much anything but = and ,
-key "key" =
+key =
     $(char / digit / sp / [-$&_/@] / ![=,] utf8_char)+
 
 key_val "key=value" =
@@ -243,16 +243,20 @@ key_val "key=value" =
 macro_args =
     (
         &{ return g.nextArg("X") }                                                                              { g.preExecMacro(); }
-      / &{ return g.nextArg("s") }    _ s:"*"?                                                                  { g.addParsedArg(!!s); }
+      / &{ return g.nextArg("s") }  _ s:"*"?                                                                    { g.addParsedArg(!!s); }
+
       / &{ return g.nextArg("g") }    a:(arg_group      / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
       / &{ return g.nextArg("hg") }   a:(arg_hgroup     / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
       / &{ return g.nextArg("h") }    h:(horizontal     / &{ g.argError("horizontal material expected") })      { g.addParsedArg(h); }
       / &{ return g.nextArg("o?") }   o: opt_group?                                                             { g.addParsedArg(o); }
+
       / &{ return g.nextArg("i") }    i:(id_group       / &{ g.argError("id group argument expected") })        { g.addParsedArg(i); }
       / &{ return g.nextArg("i?") }   i: id_optgroup?                                                           { g.addParsedArg(i); }
       / &{ return g.nextArg("k") }    k:(key_group      / &{ g.argError("key group argument expected") })       { g.addParsedArg(k); }
       / &{ return g.nextArg("k?") }   k: key_optgroup?                                                          { g.addParsedArg(k); }
       / &{ return g.nextArg("kv?") }  k: keyval_optgroup?                                                       { g.addParsedArg(k); }
+      / &{ return g.nextArg("csv") }  v:(csv_group      / &{ g.argError("comma-sep. values group expected") })  { g.addParsedArg(v); }
+
       / &{ return g.nextArg("n") }    n:(expr_group     / &{ g.argError("num group argument expected") })       { g.addParsedArg(n); }
       / &{ return g.nextArg("n?") }   n: expr_optgroup?                                                         { g.addParsedArg(n); }
       / &{ return g.nextArg("l") }    l:(length_group   / &{ g.argError("length group argument expected") })    { g.addParsedArg(l); }
@@ -311,6 +315,14 @@ keyval_optgroup =   _ begin_optgroup
                     _ end_optgroup
                     {
                         return kv_list.filter(kv => kv != null);
+                    }
+
+// {val1,val2,val3}
+csv_group       =   _ begin_group _
+                        v_list:(_ ',' {return null;} / _ v:key {return v.trim();})*
+                    _ end_group
+                    {
+                        return v_list.filter(v => v != null);
                     }
 
 // lengths
