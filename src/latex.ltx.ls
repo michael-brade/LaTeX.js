@@ -10,7 +10,7 @@
 # This class should be independent of HtmlGenerator and just work with the generator interface.
 #
 # State is held that is relevant to the particular macros and/or documentclass.
-export class LaTeXBase
+export class LaTeX
 
     _title: null
     _author: null

@@ -1,7 +1,7 @@
 'use strict'
 
 require! {
-    './macros': { LaTeXBase: Macros }
+    './latex.ltx': { LaTeX: Macros }
     './symbols': { diacritics, symbols }
 }
 
