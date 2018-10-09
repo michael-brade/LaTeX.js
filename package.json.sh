@@ -34,6 +34,8 @@ files:
     'dist/macros.js.map'
     'dist/symbols.js'
     'dist/symbols.js.map'
+    'dist/generator.js'
+    'dist/generator.js.map'
     'dist/html-generator.js'
     'dist/html-generator.js.map'
     'dist/documentclasses/'
@@ -53,7 +55,7 @@ scripts:
         cd dist;
         uglifyjs latex-parser.js  -cm --source-map 'includeSources,url=\"./latex-parser.js.map\"' -o latex-parser.js;
 
-        echo -n index macros symbols html-generator | xargs -d' '
+        echo -n index macros symbols generator html-generator | xargs -d' '
                                     -P8 -I{} uglifyjs {}.js              -cm --source-map 'content=inline,includeSources,url=\"./{}.js.map\"' -o {}.js;
 
         ls documentclasses/ | xargs -P8 -I{} uglifyjs documentclasses/{} -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o documentclasses/{};
@@ -72,7 +74,7 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a src/js/ dist/js/;
         cp src/latex.component.js dist/;
-        lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/html-generator.ls;
+        lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/macros.ls src/generator.ls src/html-generator.ls;
         lsc -c -m embedded -o dist/documentclasses src/documentclasses/;
         lsc -c -m embedded -o dist/packages src/packages/;
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
