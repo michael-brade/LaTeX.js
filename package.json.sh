@@ -122,7 +122,7 @@ dependencies:
     'hyphenation.de': '*'
 
     'lodash': '4.x'
-    'commander': '2.18.x'
+    'commander': '2.19.x'
     'stdin': '*'
     'fs-extra': '7.x'
     'js-beautify': '1.8.x'
@@ -167,7 +167,7 @@ devDependencies:
     'chai-as-promised': '7.x'
     'slugify': '1.3.x'
 
-    'puppeteer': '1.8.x'
+    'puppeteer': '1.9.x'
     'pixelmatch': '4.0.x'
 
     'nyc': '13.x'
