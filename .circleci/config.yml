@@ -56,8 +56,6 @@ jobs:
           path: test/screenshots/test-results.xml
       - store_test_results:
           path: test
-      - store_test_results:
-          path: test/screenshots
 
 workflows:
   version: 2
