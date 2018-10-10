@@ -82,7 +82,7 @@ scripts:
         babel -o dist/index.js -s inline src/index.js;
 
         mkdirp bin;
-        lsc -bc --no-header -m embedded -o bin src/latex.js.ls;
+        lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
 
         webpack --config-name latex.js
