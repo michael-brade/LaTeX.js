@@ -1,9 +1,5 @@
 'use strict'
 
-require! {
-    '../macros': { LaTeXBase }
-}
-
 
 # base class for all standard documentclasses
 #
