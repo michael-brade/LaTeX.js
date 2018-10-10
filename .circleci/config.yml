@@ -46,13 +46,18 @@ jobs:
           when: always
 
       - store_artifacts:
-          path: test/test-results.xml
-      - store_artifacts:
           path: test/screenshots
       - store_artifacts:
           path: test/coverage
+
+      - store_artifacts:
+          path: test/test-results.xml
+      - store_artifacts:
+          path: test/screenshots/test-results.xml
       - store_test_results:
           path: test
+      - store_test_results:
+          path: test/screenshots
 
 workflows:
   version: 2

@@ -95,7 +95,10 @@ scripts:
     test:  'mocha test/*.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
 
-    testc: 'nyc ./node_modules/.bin/mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls;'
+    testc: "
+        nyc ./node_modules/.bin/mocha -i -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls;
+        mocha -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/screenshots/test-results.xml test/*.ls;
+    "
     cover: 'nyc report --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage && codecov;'
 
 babel:
