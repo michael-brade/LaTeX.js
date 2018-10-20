@@ -449,14 +449,6 @@ export class LaTeX
 
 
 
-    # multicolumns
-
-    # \begin{multicols}{number}[pretext][premulticols size]
-    args.\multicols =   <[ V n o? o? ]>
-
-    \multicols          : (cols, pre) -> [ pre, @g.create @g.multicols cols ]
-
-
     # picture
 
     # \begin{picture}(width,height)(xoffset,yoffset)
