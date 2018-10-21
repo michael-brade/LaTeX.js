@@ -39,10 +39,11 @@ export diacritics = new Map([
     * \.                    ['\u0307', '\u02D9']        # ˙
 ])
 
+# tuenc.def (LuaLaTeX, XeLaTeX; (PDF)LaTeX would use t1enc.def, ot1enc.def, etc. and need textcomp.sty)
 export symbols = new Map([
     # spaces
     * \space                ' '
-    * \nobreakspace         he.decode '&nbsp;'      #     U+00A0
+    * \nobreakspace         he.decode '&nbsp;'      #     U+00A0   ~
     * \thinspace            he.decode '&thinsp;'    #     U+2009
     * \enspace              he.decode '&ensp;'      #     U+2002   (en quad: U+2000)
     * \enskip               he.decode '&ensp;'
@@ -53,44 +54,48 @@ export symbols = new Map([
     * \textcompwordmark     he.decode '&zwnj;'      #     U+200C
 
     # basic latin
-    * \slash                he.decode '&sol;'
-    * \textasciicircum      '^'                     #     U+005E    \^{}
+    * \textdollar           '$'                     #     U+0024    \$
+    * \$                    '$'
+    * \slash                he.decode '&sol;'       #     U+002F
     * \textless             '<'                     #     U+003C
     * \textgreater          '>'                     #     U+003E
-    * \textasciitilde       '˜'                     #     U+007E    \~{}
     * \textbackslash        '\u005C'                #     U+005C
-    * \lbrack               '['
-    * \rbrack               ']'
-    * \textbraceleft        '{'                     #     U+007B    \{
-    * \textbraceright       '}'                     #     U+007D    \}
-    * \textdollar           '$'                     #     U+0024    \$
+    * \textasciicircum      '^'                     #     U+005E    \^{}
     * \textunderscore       '_'                     #     U+005F    \_
+    * \_                    '_'
+    * \lbrack               '['                     #     U+005B
+    * \rbrack               ']'                     #     U+005D
+    * \textbraceleft        '{'                     #     U+007B    \{
+    * \{                    '{'
+    * \textbraceright       '}'                     #     U+007D    \}
+    * \}                    '}'
+    * \textasciitilde       '˜'                     #     U+007E    \~{}
 
     # non-ASCII letters
     * \AA                   '\u00C5'                # Å
     * \aa                   '\u00E5'                # å
     * \AE                   he.decode '&AElig;'     # Æ   U+00C6
     * \ae                   he.decode '&aelig;'     # æ   U+00E6
-    * \IJ                   he.decode '&IJlig;'     # Ĳ   U+0132
-    * \ij                   he.decode '&ijlig;'     # ĳ   U+0133
     * \OE                   he.decode '&OElig;'     # Œ   U+0152
     * \oe                   he.decode '&oelig;'     # œ   U+0153
-    * \TH                   he.decode '&THORN;'     # Þ   U+00DE
-    * \th                   he.decode '&thorn;'     # þ   U+00FE
-    * \SS                   '\u1E9E'                # ẞ
-    * \ss                   he.decode '&szlig;'     # ß   U+00DF
     * \DH                   he.decode '&ETH;'       # Ð   U+00D0
     * \dh                   he.decode '&eth;'       # ð   U+00F0
-    * \O                    he.decode '&Oslash;'    # Ø   U+00D8
-    * \o                    he.decode '&oslash;'    # ø   U+00F8
     * \DJ                   he.decode '&Dstrok;'    # Đ   U+0110
     * \dj                   he.decode '&dstrok;'    # đ   U+0111
-    * \L                    he.decode '&Lstrok;'    # Ł   U+0141
-    * \l                    he.decode '&lstrok;'    # ł   U+0142
-    * \i                    he.decode '&imath;'     # ı   U+0131
-    * \j                    he.decode '&jmath;'     # ȷ   U+0237
     * \NG                   he.decode '&ENG;'       # Ŋ   U+014A
     * \ng                   he.decode '&eng;'       # ŋ   U+014B
+    * \TH                   he.decode '&THORN;'     # Þ   U+00DE
+    * \th                   he.decode '&thorn;'     # þ   U+00FE
+    * \O                    he.decode '&Oslash;'    # Ø   U+00D8
+    * \o                    he.decode '&oslash;'    # ø   U+00F8
+    * \i                    he.decode '&imath;'     # ı   U+0131
+    * \j                    he.decode '&jmath;'     # ȷ   U+0237
+    * \L                    he.decode '&Lstrok;'    # Ł   U+0141
+    * \l                    he.decode '&lstrok;'    # ł   U+0142
+    * \IJ                   he.decode '&IJlig;'     # Ĳ   U+0132
+    * \ij                   he.decode '&ijlig;'     # ĳ   U+0133
+    * \SS                   '\u1E9E'                # ẞ
+    * \ss                   he.decode '&szlig;'     # ß   U+00DF
 
     # quotes
     * \textquotesingle      "'"                     # '   U+0027
@@ -120,13 +125,14 @@ export symbols = new Map([
     * \texttildelow         '\u02F7'                # ˷
 
     # punctuation
-    * \textellipsis         he.decode '&hellip;'    # …   U+2026    \dots
+    * \textendash           he.decode '&ndash;'     # –   U+2013
+    * \textemdash           he.decode '&mdash;'     # —   U+2014
+    * \textellipsis         he.decode '&hellip;'    # …   U+2026    \dots, \ldots
     * \dots                 he.decode '&hellip;'
+    * \ldots                he.decode '&hellip;'
     * \textbullet           he.decode '&bull;'      # •   U+2022
     * \textopenbullet       '\u25E6'                # ◦
     * \textperiodcentered   he.decode '&middot;'    # ·   U+00B7
-    * \textendash           he.decode '&ndash;'     # –   U+2013
-    * \textemdash           he.decode '&mdash;'     # —   U+2014
     * \textdagger           he.decode '&dagger;'    # †   U+2020    \dag
     * \dag                  he.decode '&dagger;'
     * \textdaggerdbl        he.decode '&Dagger;'    # ‡   U+2021    \ddag
@@ -150,34 +156,37 @@ export symbols = new Map([
     * \textlbrackdbl        '\u301A'                # 〚
     * \textrbrackdbl        '\u301B'                # 〛
 
-    # misc
-    * \textreferencemark    '\u203B'                # ※
+    # legal symbols
+    * \textcopyright        he.decode '&copy;'      # ©   U+00A9    \copyright
+    * \copyright            he.decode '&copy;'
+    * \textregistered       he.decode '&reg;'       # ®   U+00AE
+    * \textcircledP         he.decode '&copysr;'    # ℗   U+2117
+    * \textservicemark      '\u2120'                # ℠
+    * \texttrademark        he.decode '&trade;'     # ™   U+2122
 
-    * \textordfeminine      he.decode '&ordf;'      # ª   U+00AA
-    * \textordmasculine     he.decode '&ordm;'      # º   U+00BA
+    # genealogical
     * \textmarried          '\u26AD'                # ⚭
     * \textdivorced         '\u26AE'                # ⚮
+
+    # misc
+    * \textordfeminine      he.decode '&ordf;'      # ª   U+00AA
+    * \textordmasculine     he.decode '&ordm;'      # º   U+00BA
+
+    * \textdegree           he.decode '&deg;'       # °   U+00B0
+    * \textmu               he.decode '&micro;'     # µ   U+00B5
 
     * \textbar              '\u007C'                # |
     * \textbardbl           he.decode '&Vert;'      # ‖   U+2016
     * \textbrokenbar        he.decode '&brvbar;'    # ¦   U+00A6
 
-    * \textbigcircle        he.decode '&xcirc;'     # ◯   U+25EF
-    * \textcopyright        he.decode '&copy;'      # ©   U+00A9    \copyright
-    * \copyright            he.decode '&copy;'
-    * \textcircledP         he.decode '&copysr;'    # ℗   U+2117
-    * \textregistered       he.decode '&reg;'       # ®   U+00AE
-    * \textservicemark      '\u2120'                # ℠
-    * \texttrademark        he.decode '&trade;'     # ™   U+2122
-
+    * \textreferencemark    '\u203B'                # ※
+    * \textdiscount         '\u2052'                # ⁒
+    * \textcelsius          '\u2103'                # ℃   U+2103
     * \textnumero           he.decode '&numero;'    # №   U+2116
     * \textrecipe           he.decode '&rx;'        # ℞   U+211E
     * \textestimated        '\u212E'                # ℮
+    * \textbigcircle        he.decode '&xcirc;'     # ◯   U+25EF
     * \textmusicalnote      he.decode '&sung;'      # ♪   U+266A
-    * \textdiscount         '\u2052'                # ⁒
-
-    * \textdegree           he.decode '&deg;'       # °   U+00B0    \degree
-    * \textcelsius          '\u2103'                # ℃  U+2103    \celsius
 
     * \textohm              '\u2126'                # Ω
     * \textmho              '\u2127'                # ℧
@@ -190,7 +199,7 @@ export symbols = new Map([
     * \textdownarrow        he.decode '&darr;'      # ↓   U+2193
 
     # math symbols
-    * \textperthousand      he.decode '&permil;'    # ‰   U+2030    \perthousand
+    * \textperthousand      he.decode '&permil;'    # ‰   U+2030
     * \textpertenthousand   '\u2031'                # ‱
     * \textonehalf          he.decode '&frac12;'    # ½   U+00BD
     * \textthreequarters    he.decode '&frac34;'    # ¾   U+00BE
@@ -199,10 +208,10 @@ export symbols = new Map([
     * \textdiv              he.decode '&divide;'    # ÷   U+00F7
     * \texttimes            he.decode '&times;'     # ×   U+00D7
     * \textminus            he.decode '&minus;'     # −   U+2212
+    * \textasteriskcentered he.decode '&lowast;'    # ∗   U+2217
     * \textpm               he.decode '&plusmn;'    # ±   U+00B1
     * \textsurd             he.decode '&radic;'     # √   U+221A
     * \textlnot             he.decode '&not;'       # ¬   U+00AC
-    * \textasteriskcentered he.decode '&lowast;'    # ∗   U+2217
     * \textonesuperior      he.decode '&sup1;'      # ¹   U+00B9
     * \texttwosuperior      he.decode '&sup2;'      # ²   U+00B2
     * \textthreesuperior    he.decode '&sup3;'      # ³   U+00B3
