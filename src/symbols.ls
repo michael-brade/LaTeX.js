@@ -151,7 +151,6 @@ export symbols = new Map([
     * \textrbrackdbl        '\u301B'                # 〛
 
     # misc
-    * \checkmark            he.decode '&check;'     # ✓   U+2713
     * \textreferencemark    '\u203B'                # ※
 
     * \textordfeminine      he.decode '&ordf;'      # ª   U+00AA
@@ -178,25 +177,10 @@ export symbols = new Map([
     * \textdiscount         '\u2052'                # ⁒
 
     * \textdegree           he.decode '&deg;'       # °   U+00B0    \degree
-    * \degree               he.decode '&deg;'
     * \textcelsius          '\u2103'                # ℃  U+2103    \celsius
-    * \celsius              '\u2103'
 
     * \textohm              '\u2126'                # Ω
     * \textmho              '\u2127'                # ℧
-
-    # cards
-
-    * \spadesuit            he.decode '&spades;'    # ♠  U+2660
-    * \heartsuit            '\u2661'                # ♡
-    * \diamondsuit          '\u2662'                # ♢
-    * \clubsuit             he.decode '&clubs;'     # ♣  U+2663
-
-    * \varspadesuit         '\u2664'                # ♤
-    * \varheartsuit         he.decode '&hearts;'    # ♥  U+2665     \varheart
-    * \varheart             he.decode '&hearts;'
-    * \vardiamondsuit       he.decode '&diams;'     # ♦  U+2666
-    * \varclubsuit          '\u2667'                # ♧
 
 
     # arrows
@@ -207,7 +191,6 @@ export symbols = new Map([
 
     # math symbols
     * \textperthousand      he.decode '&permil;'    # ‰   U+2030    \perthousand
-    * \perthousand          he.decode '&permil;'
     * \textpertenthousand   '\u2031'                # ‱
     * \textonehalf          he.decode '&frac12;'    # ½   U+00BD
     * \textthreequarters    he.decode '&frac34;'    # ¾   U+00BE
