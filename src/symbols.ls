@@ -1,3 +1,5 @@
+'use strict'
+
 require! he
 
 export ligatures = new Map([
@@ -215,18 +217,6 @@ export symbols = new Map([
     * \textonesuperior      he.decode '&sup1;'      # ¹   U+00B9
     * \texttwosuperior      he.decode '&sup2;'      # ²   U+00B2
     * \textthreesuperior    he.decode '&sup3;'      # ³   U+00B3
-
-    # old style numerals
-    * \textzerooldstyle     '\uF730'                # 
-    * \textoneoldstyle      '\uF731'                # 
-    * \texttwooldstyle      '\uF732'                # 
-    * \textthreeoldstyle    '\uF733'                # 
-    * \textfouroldstyle     '\uF734'                # 
-    * \textfiveoldstyle     '\uF735'                # 
-    * \textsixoldstyle      '\uF736'                # 
-    * \textsevenoldstyle    '\uF737'                # 
-    * \texteightoldstyle    '\uF738'                # 
-    * \textnineoldstyle     '\uF739'                # 
 
     # currencies
     * \texteuro             he.decode '&euro;'      # €   U+20AC
