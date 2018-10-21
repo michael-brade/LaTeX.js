@@ -8,7 +8,7 @@ if global.window is undefined
 
 require! {
     './generator': { Generator }
-    './symbols': { ligatures, diacritics, symbols }
+    './symbols': { ligatures, diacritics }
     katex
     hypher: Hypher
     'hyphenation.en-us': h-en
@@ -124,6 +124,7 @@ export class HtmlGenerator extends Generator
     ### public instance vars (vars beginning with "_" are meant to be private!)
 
     SVG: SVG
+    KaTeX: katex
 
     _dom:   null
 
@@ -182,12 +183,6 @@ export class HtmlGenerator extends Generator
         else
             ligatures.get l
 
-    hasSymbol: (name) ->
-        symbols.has name
-
-    symbol: (name) ->
-        @error "no such symbol: #{name}" if not @hasSymbol name
-        symbols.get name
 
     hasDiacritic: (d) ->
         diacritics.has d

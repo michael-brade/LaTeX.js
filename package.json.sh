@@ -117,7 +117,7 @@ babel:
 
 dependencies:
     'he': '1.2.x'
-    'katex': '0.9.0'
+    'katex': '0.10.0-rc.1'
     'svg.js': '2.6.x'
     'svgdom': 'https://github.com/michael-brade/svgdom'
 

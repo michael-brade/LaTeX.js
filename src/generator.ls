@@ -104,6 +104,17 @@ export class Generator
 
 
 
+    ### characters
+
+    hasSymbol: (name) ->
+        Macros.symbols.has name
+
+    symbol: (name) ->
+        @error "no such symbol: #{name}" if not @hasSymbol name
+        Macros.symbols.get name
+
+
+
     ### macros
 
     hasMacro: (name) ->

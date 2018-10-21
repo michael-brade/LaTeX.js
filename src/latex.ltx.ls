@@ -1,5 +1,9 @@
 'use strict'
 
+require! {
+    './symbols': { symbols }
+}
+
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
 # By default, a macro takes no arguments and is a horizontal-mode macro.
@@ -23,6 +27,7 @@ export class LaTeX
         if CustomMacros
             import all new CustomMacros(generator)
             args import CustomMacros.args
+            CustomMacros.symbols?.forEach (value, key) -> symbols.set key, value
 
         @g = generator
 
@@ -103,6 +108,8 @@ export class LaTeX
         @g.newLength \dblfloatsep
         @g.newLength \dbltextfloatsep
 
+
+    @symbols = symbols
 
     # args: declaring arguments for a macro. If a macro doesn't take arguments and is a
     #       horizontal-mode macro, args can be left undefined for it.
@@ -1192,6 +1199,7 @@ export class LaTeX
 
                 import all new Package @g, options
                 args import Package.args
+                Package.symbols?.forEach (value, key) -> symbols.set key, value
             catch
                 # log error but continue anyway
                 console.error "error loading package \"#{pkg}\": #{e}"
