@@ -16,6 +16,9 @@ require! {
 # State is held that is relevant to the particular macros and/or documentclass.
 export class LaTeX
 
+    # this LaTeX implementation already covers these packages
+    providedPackages = <[ calc pspicture picture pict2e keyval comment ]>
+
     _title: null
     _author: null
     _date: null
@@ -117,12 +120,6 @@ export class LaTeX
     # syntax: see README.md
 
     args = @args = {}
-
-
-    # this LaTeX implementation already covers these packages
-
-    providedPackages = <[ calc pspicture picture pict2e keyval ]>
-
 
 
     args.\empty = <[ HV ]>
