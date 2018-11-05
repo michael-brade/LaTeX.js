@@ -72,6 +72,7 @@ scripts:
         mkdirp dist/fonts;
         rsync -a src/css/ dist/css/;
         rsync -a src/fonts/ dist/fonts/;
+        rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
         cp src/latex.component.js dist/;
         lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/generator.ls src/html-generator.ls;
@@ -117,7 +118,7 @@ babel:
 
 dependencies:
     'he': '1.2.x'
-    'katex': '0.10.0-rc.1'
+    'katex': '0.10.0'
     'svg.js': '2.6.x'
     'svgdom': 'https://github.com/michael-brade/svgdom'
 
