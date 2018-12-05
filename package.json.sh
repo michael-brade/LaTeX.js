@@ -150,7 +150,7 @@ devDependencies:
     ### bundling
 
     'webpack': '4.x'
-    'webpack-command': '0.x'
+    'webpack-cli': '3.x'
     'webpack-closure-compiler': '2.x'
     'babel-loader': '8.0.x'
     'source-map-loader': '0.2.x'
