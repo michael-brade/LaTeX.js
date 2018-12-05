@@ -119,7 +119,7 @@ babel:
 dependencies:
     'he': '1.2.x'
     'katex': '0.10.0'
-    'svg.js': '2.6.x'
+    'svg.js': '2.7.x'
     'svgdom': 'https://github.com/michael-brade/svgdom'
 
     'hypher': '0.x'
@@ -154,14 +154,14 @@ devDependencies:
     'webpack-closure-compiler': '2.x'
     'babel-loader': '8.0.x'
     'source-map-loader': '0.2.x'
-    'copy-webpack-plugin': '4.5.x'
+    'copy-webpack-plugin': '4.6.x'
 
-    '@babel/node': '7.0.x'
-    '@babel/cli': '7.1.x'
-    '@babel/core': '7.1.x'
+    '@babel/node': '7.2.x'
+    '@babel/cli': '7.2.x'
+    '@babel/core': '7.2.x'
     '@babel/register': '7.0.x'
-    '@babel/preset-env': '7.1.x'
-    '@babel/plugin-syntax-object-rest-spread': '7.0.x'
+    '@babel/preset-env': '7.2.x'
+    '@babel/plugin-syntax-object-rest-spread': '7.2.x'
 
 
     ### testing
@@ -172,7 +172,7 @@ devDependencies:
     'chai-as-promised': '7.x'
     'slugify': '1.3.x'
 
-    'puppeteer': '1.9.x'
+    'puppeteer': '1.11.x'
     'pixelmatch': '4.0.x'
 
     'nyc': '13.x'
