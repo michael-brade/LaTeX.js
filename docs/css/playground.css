@@ -1,8 +1,14 @@
 body {
     margin: 0;
+    height: 100vh;
+
     display: grid;
     grid-template-rows: 5% 92% 3%;
-    height: 100vh;
+    grid-template-columns: 1fr 6px 1fr;
+    grid-template-areas:
+        "header header header"
+        "latex gutter preview"
+        "footer footer footer";
 }
 
 #header, #footer {
@@ -12,24 +18,26 @@ body {
 
     color: hsla(0, 0%, 100%, .65);
     background: #2d9961;
-
     font-size: 1.5vh;
 }
 
 #header {
+    grid-area: header;
     font-size: 3vh;
     font-family: sans-serif;
 }
 
-#content {
-    display: flex;
+#footer {
+    grid-area: footer;
 }
 
 #latex-editor {
-    height: auto;
+    grid-area: latex;
+    height: 100%;
 }
 
 #preview {
+    grid-area: preview;
     color: #333;
     border: none;
     width: 100%;
@@ -38,26 +46,26 @@ body {
 
 /* splitter */
 
-.gutter.gutter-horizontal {
+#gutter {
+    /* background-color: #eee; */
     display: flex;
+    justify-content: center;
     align-items: center;
-    line-height: 5px;
-    font-size: 12px;
-    font-family: sans-serif;
-    letter-spacing: 2px;
-    color: #ccc;
-    text-shadow: 1px 0 1px black;
+    cursor: col-resize;
 }
 
-.gutter::after {
-    content: '.. .. .. ..';
+#gutter:before {
+    display: block;
+    content: "";
+    width: 2px;
+    height: 40px;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
 }
 
-.gutter {
-    cursor: ew-resize;
-    background-color: #eee;
+#gutter:hover:before {
+    border-color: #999;
 }
-
 
 /* LaTeX logo */
 
