@@ -299,6 +299,8 @@ var generator = new latexjs.HtmlGenerator({
     prototype['bf'] = function() {
       this.g.setFontWeight('bf')
     };
+
+    return CustomMacros;
   }())
 });
 ```
