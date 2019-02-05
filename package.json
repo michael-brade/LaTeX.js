@@ -95,7 +95,7 @@
     "source-map-loader": "0.2.x",
     "copy-webpack-plugin": "4.6.x",
     "@babel/node": "7.2.x",
-    "@babel/cli": "7.2.x",
+    "@babel/cli": "~7.2.3",
     "@babel/core": "7.2.x",
     "@babel/register": "7.0.x",
     "@babel/preset-env": "7.2.x",
