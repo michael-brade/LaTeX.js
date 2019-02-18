@@ -100,7 +100,7 @@
     "@babel/register": "7.0.x",
     "@babel/preset-env": "7.2.x",
     "@babel/plugin-syntax-object-rest-spread": "7.2.x",
-    "mocha": "5.x",
+    "mocha": "^6.0.0",
     "mocha-junit-reporter": "1.18.x",
     "chai": "4.x",
     "chai-as-promised": "7.x",
