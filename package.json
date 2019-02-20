@@ -93,7 +93,7 @@
     "webpack-closure-compiler": "2.x",
     "babel-loader": "8.0.x",
     "source-map-loader": "0.2.x",
-    "copy-webpack-plugin": "4.6.x",
+    "copy-webpack-plugin": "~5.0.0",
     "@babel/node": "7.2.x",
     "@babel/cli": "7.2.x",
     "@babel/core": "7.2.x",
