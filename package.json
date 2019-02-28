@@ -79,7 +79,7 @@
     "commander": "2.19.x",
     "stdin": "*",
     "fs-extra": "7.x",
-    "js-beautify": "1.8.x"
+    "js-beautify": "~1.9.0"
   },
   "devDependencies": {
     "livescript": "https://github.com/michael-brade/LiveScript",
