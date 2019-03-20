@@ -86,7 +86,7 @@
     "pegjs": "0.10.x",
     "mkdirp": "0.5.x",
     "rimraf": "2.6.x",
-    "uglify-js": "3.4.x",
+    "uglify-js": "~3.5.0",
     "tmp": "0.x",
     "webpack": "4.x",
     "webpack-cli": "3.x",
