@@ -76,7 +76,7 @@
     "hyphenation.en-us": "*",
     "hyphenation.de": "*",
     "lodash": "4.x",
-    "commander": "2.19.x",
+    "commander": "~2.20.0",
     "stdin": "*",
     "fs-extra": "7.x",
     "js-beautify": "1.8.x"
