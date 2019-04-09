@@ -127,10 +127,10 @@ dependencies:
     'hyphenation.de': '*'
 
     'lodash': '4.x'
-    'commander': '2.19.x'
+    'commander': '2.20.x'
     'stdin': '*'
     'fs-extra': '7.x'
-    'js-beautify': '1.8.x'
+    'js-beautify': '1.9.x'
 
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
@@ -143,7 +143,7 @@ devDependencies:
     'pegjs': '0.10.x'
     'mkdirp': '0.5.x'
     'rimraf': '2.6.x'
-    'uglify-js': '3.4.x'
+    'uglify-js': '3.5.x'
     'tmp': '0.x'
 
 
@@ -154,25 +154,26 @@ devDependencies:
     'webpack-closure-compiler': '2.x'
     'babel-loader': '8.0.x'
     'source-map-loader': '0.2.x'
-    'copy-webpack-plugin': '4.6.x'
+    'copy-webpack-plugin': '5.x'
 
     '@babel/node': '7.2.x'
-    '@babel/cli': '7.2.x'
-    '@babel/core': '7.2.x'
-    '@babel/register': '7.0.x'
-    '@babel/preset-env': '7.2.x'
+    '@babel/cli': '7.4.x'
+    '@babel/core': '7.4.x'
+    '@babel/register': '7.4.x'
+    '@babel/preset-env': '7.4.x'
     '@babel/plugin-syntax-object-rest-spread': '7.2.x'
 
 
     ### testing
 
-    'mocha': '5.x'
-    'mocha-junit-reporter': '1.18.x'
+    'mocha': '6.x'
+    'mocha-junit-reporter': '1.21.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
     'slugify': '1.3.x'
 
-    'puppeteer': '1.11.x'
+    'puppeteer': '1.14.x'
+    'puppeteer-firefox': '0.x'
     'pixelmatch': '4.0.x'
 
     'nyc': '13.x'
