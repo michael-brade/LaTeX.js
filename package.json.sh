@@ -75,10 +75,10 @@ scripts:
         rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
         cp src/latex.component.js dist/;
-        lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/generator.ls src/html-generator.ls;
-        lsc -c -m embedded -p src/latex.ltx.ls > dist/latex.ltx.js;
-        lsc -c -m embedded -o dist/documentclasses src/documentclasses/;
-        lsc -c -m embedded -o dist/packages src/packages/;
+        lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/generator.ls src/html-generator.ls &
+        lsc -c -m embedded -p src/latex.ltx.ls > dist/latex.ltx.js &
+        lsc -c -m embedded -o dist/documentclasses src/documentclasses/ &
+        lsc -c -m embedded -o dist/packages src/packages/ &
         pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
         babel -o dist/latex-parser.js dist/latex-parser.js;
         babel -o dist/index.js -s inline src/index.js;
