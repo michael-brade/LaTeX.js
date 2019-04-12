@@ -119,7 +119,7 @@ babel:
 dependencies:
     'he': '1.2.x'
     'katex': '0.10.0'
-    'svg.js': '2.7.x'
+    '@svgdotjs/svg.js': '3.x',
     'svgdom': 'https://github.com/michael-brade/svgdom'
 
     'hypher': '0.x'

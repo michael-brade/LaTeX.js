@@ -760,10 +760,13 @@ export class LaTeX
         linethickness = @g.length \@wholewidth
 
         svg = @g.create @g.inline, undefined, "picture-object"
-        draw = @g.SVG(svg)
+        draw = @g.SVG!.addTo svg
 
         bbox = draw.path p
-                   .stroke { width: linethickness.value + linethickness.unit }
+                   .stroke {
+                       color: "#000"
+                       width: linethickness.value + linethickness.unit
+                   }
                    .fill 'none'
                    .bbox!
 
@@ -799,12 +802,17 @@ export class LaTeX
         svg = @g.create @g.inline, undefined, "picture-object"
         svg.setAttribute "style", "left:#{-d.value/2 - lw}px;bottom:#{-d.value/2 - lw}px"
 
-        draw = @g.SVG(svg).size (d.value + lw*2) + d.unit, (d.value + lw*2) + d.unit
+        draw = @g.SVG!
+                 .addTo svg
+                 .size (d.value + lw*2) + d.unit, (d.value + lw*2) + d.unit
 
         draw.circle(d.value + d.unit)
             .cx((d.value/2 + lw) + d.unit)
             .cy((d.value/2 + lw) + d.unit)
-            .stroke { width: linethickness.value + linethickness.unit }
+            .stroke {
+                color: "#000"
+                width: linethickness.value + linethickness.unit
+            }
             .fill(if s then "" else "none")
 
         # last, put the origin into the lower left
@@ -872,11 +880,14 @@ export class LaTeX
     # helper: draw line to x, y
     _line: (x, y, unit) ->
         svg = @g.create @g.inline, undefined, "picture-object"
-        draw = @g.SVG(svg)
+        draw = @g.SVG!.addTo svg
 
         linethickness = @g.length \@wholewidth
         bbox = draw.line(0, 0, x, y)
-                   .stroke { width: linethickness.value + linethickness.unit }
+                   .stroke {
+                       color: "#000"
+                       width: linethickness.value + linethickness.unit
+                   }
                    .bbox!
 
         bbox.x -= linethickness.value
@@ -901,7 +912,7 @@ export class LaTeX
         linethickness = @g.length \@wholewidth
 
         svg = @g.create @g.inline, undefined, "picture-object"
-        draw = @g.SVG(svg)
+        draw = @g.SVG!
 
         # arrow head length and width
         hl = 5
@@ -953,7 +964,10 @@ export class LaTeX
 
 
         bbox = draw.line(sx, sy, x, y)
-                   .stroke { width: linethickness.value + linethickness.unit }
+                   .stroke {
+                       color: "#000"
+                       width: linethickness.value + linethickness.unit
+                   }
                    # marker width and height
                    .marker 'end', hl, hw, (add) -> add.polyline [[0, 0], [hl, hw/2], [0, hw]]
                    .bbox!
@@ -972,6 +986,7 @@ export class LaTeX
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
+        draw.addTo svg
         @g.create @g.inline, svg, "picture"
 
 
@@ -989,12 +1004,15 @@ export class LaTeX
             part = ""
 
         svg = @g.create @g.inline, undefined, "picture-object"
-        draw = @g.SVG(svg)
+        draw = @g.SVG!.addTo svg
 
         oval = draw.rect "#{size.x.value}#{size.x.unit}", "#{size.y.value}#{size.y.unit}"
                    .radius rad.value + rad.unit
                    .move "-#{size.x.value/2}#{size.x.unit}", "-#{size.y.value/2}#{size.y.unit}"
-                   .stroke { width: linethickness.value + linethickness.unit }
+                   .stroke {
+                       color: "#000"
+                       width: linethickness.value + linethickness.unit
+                   }
                    .fill "none"
 
         bbox = oval.bbox!

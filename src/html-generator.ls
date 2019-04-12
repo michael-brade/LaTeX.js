@@ -1,10 +1,5 @@
 'use strict'
 
-if global.window is undefined
-    # on the server we need to include a DOM implementation - but hide the require from webpack
-    global.window = eval('require')('svgdom')
-    global.document = window.document
-
 
 require! {
     './generator': { Generator }
@@ -12,12 +7,26 @@ require! {
     katex
     hypher: Hypher
     'hyphenation.en-us': h-en
-    'svg.js': SVG
+    '@svgdotjs/svg.js': { SVG, registerWindow }
     he
 
     'lodash/flattenDeep'
     'lodash/compact'
 }
+
+if global.window is undefined
+    # on the server we need to include a DOM implementation - but hide the require from webpack
+    global.window = eval('require')('svgdom')
+        ## custom font directory
+        #.setFontDir('./fonts')
+        ## map the font-family to the file
+        #.setFontFamilyMappings({'Arial': 'arial.ttf'})
+        ## you can preload your fonts to avoid the loading delay
+        ## when the font is used the first time
+        #.preloadFonts()
+    global.document = window.document
+
+    registerWindow window, document
 
 
 he.decode.options.strict = true

@@ -11,6 +11,8 @@ const HtmlGenerator   = require '../dist/html-generator' .HtmlGenerator
 const html-beautify   = require 'js-beautify' .html
 const latexjs         = require '../dist/latex-parser'
 const load-fixture    = require './lib/load-fixtures' .load
+const decache         = require 'decache'
+const registerWindow  = require '@svgdotjs/svg.js' .registerWindow
 
 
 subdirs = []
@@ -65,6 +67,12 @@ function run-fixture (fixture, name)
 
     # create syntax test
     _test fixture.header || 'fixture number ' + fixture.id, !->
+        decache '@svgdotjs/svg.js'
+        delete HtmlGenerator.prototype.SVG
+        HtmlGenerator.prototype.SVG = require '@svgdotjs/svg.js' .SVG
+        registerWindow window, document
+
+
         try
             html-is     = latexjs.parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } } .domFragment!.outerHTML
             html-should = fixture.result
