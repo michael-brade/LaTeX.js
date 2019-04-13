@@ -148,12 +148,14 @@ export class HtmlGenerator extends Generator
     #  - languagePatterns: language patterns object to use for hyphenation if it is enabled (default en)
     #    TODO: infer language from LaTeX preamble and load hypenation patterns automatically
     #  - styles: array with additional CSS stylesheets
+    #  - precision: precision of numbers in CSS and SVG
     (options) ->
         @_options = Object.assign {
             documentClass: "article"
             styles: []
             hyphenate: true
             languagePatterns: h-en
+            precision: 3
         }, options
 
         if @_options.hyphenate
@@ -167,6 +169,12 @@ export class HtmlGenerator extends Generator
 
         @_dom = document.createDocumentFragment!
 
+
+    # helpers
+
+    round: (num) ->
+        const factor = Math.pow 10, @_options.precision
+        Math.round(num * factor) / factor
 
 
     ### character/text creation
@@ -308,7 +316,7 @@ export class HtmlGenerator extends Generator
     applyLengthsAndGeometryToDom: (el) !->
 
         # root font size
-        el.style.setProperty '--size', (@length \@@size).value + (@length \@@size).unit
+        el.style.setProperty '--size', @round(@length \@@size .value) + (@length \@@size).unit
 
         ### calculate page geometry
         #
@@ -323,23 +331,24 @@ export class HtmlGenerator extends Generator
         # do this if a static, non-responsive page is desired (TODO: make configurable!)
         #el.style.setProperty '--paperwidth', (@length \paperwidth).value + (@length \paperwidth).unit
 
-        twp =  Math.round 100 * (@length \textwidth).value / (@length \paperwidth).value, 1
-        mlwp = Math.round 100 * ((@length \oddsidemargin).value + @toPx { value: 1, unit: "in" } .value) / (@length \paperwidth).value, 1
+        twp =  100 * (@length \textwidth).value / (@length \paperwidth).value
+        mlwp = 100 * ((@length \oddsidemargin).value + @toPx { value: 1, unit: "in" } .value) / (@length \paperwidth).value
         mrwp = Math.max(100 - twp - mlwp, 0)
 
-        el.style.setProperty '--textwidth', twp + "%"
-        el.style.setProperty '--marginleftwidth', mlwp + "%"
-        el.style.setProperty '--marginrightwidth', mrwp + "%"
+        el.style.setProperty '--textwidth', @round(twp) + "%"
+        el.style.setProperty '--marginleftwidth', @round(mlwp) + "%"
+        el.style.setProperty '--marginrightwidth', @round(mrwp) + "%"
 
         if mrwp > 0
             # marginparwidth percentage relative to parent, which is marginrightwidth!
-            el.style.setProperty '--marginparwidth', 100 * 100 * (@length \marginparwidth).value / (@length \paperwidth).value / mrwp + "%"
+            mpwp = 100 * 100 * (@length \marginparwidth).value / (@length \paperwidth).value / mrwp
+            el.style.setProperty '--marginparwidth', @round(mpwp) + "%"
         else
             el.style.setProperty '--marginparwidth', "0px"
 
         # set the rest of the lengths (TODO: write all defined lengths to CSS, for each group)
-        el.style.setProperty '--marginparsep', (@length \marginparsep).value + (@length \marginparsep).unit
-        el.style.setProperty '--marginparpush', (@length \marginparpush).value + (@length \marginparpush).unit
+        el.style.setProperty '--marginparsep', @round(@length \marginparsep .value) + (@length \marginparsep).unit
+        el.style.setProperty '--marginparpush', @round(@length \marginparpush .value) + (@length \marginparpush).unit
 
 
 
@@ -406,14 +415,14 @@ export class HtmlGenerator extends Generator
 
         # offset sets the coordinates of the lower left corner, so shift negatively
         if offset
-            canvas.setAttribute "style", "left:#{-offset.x.value + offset.x.unit};
-                                        bottom:#{-offset.y.value + offset.y.unit}"
+            canvas.setAttribute "style", "left:#{-@round(offset.x.value) + offset.x.unit};
+                                        bottom:#{-@round(offset.y.value) + offset.y.unit}"
 
         # picture
         pic = @create @picture
         pic.appendChild canvas
-        pic.setAttribute "style", "width:#{size.x.value + size.x.unit};
-                                   height:#{size.y.value + size.y.unit}"
+        pic.setAttribute "style", "width:#{@round(size.x.value) + size.x.unit};
+                                   height:#{@round(size.y.value) + size.y.unit}"
 
         pic
 
@@ -436,26 +445,26 @@ export class HtmlGenerator extends Generator
     createVSpace: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "vspace"
-        span.setAttribute "style", "margin-bottom:" + length.value + length.unit
+        span.setAttribute "style", "margin-bottom:" + @round(length.value) + length.unit
         return span
 
     createVSpaceInline: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "vspace-inline"
-        span.setAttribute "style", "margin-bottom:" + length.value + length.unit
+        span.setAttribute "style", "margin-bottom:" + @round(length.value) + length.unit
         return span
 
     # create a linebreak with a given vspace between the lines
     createBreakSpace: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "breakspace"
-        span.setAttribute "style", "margin-bottom:" + length.value + length.unit
+        span.setAttribute "style", "margin-bottom:" + @round(length.value) + length.unit
         # we need to add the current font in case it uses a relative length (e.g. em)
         return @addAttributes span
 
     createHSpace: (length) ->
         span = document.createElement "span"
-        span.setAttribute "style", "margin-right:" + length.value + length.unit
+        span.setAttribute "style", "margin-right:" + @round(length.value) + length.unit
         return span
 
 

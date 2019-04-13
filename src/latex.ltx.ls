@@ -594,7 +594,7 @@ export class LaTeX
         box = @g.create @g.inline, content, classes
 
         if width
-            box.setAttribute "style", "width:" + width.value + width.unit
+            box.setAttribute "style", "width:" + @g.round(width.value) + width.unit
 
         [ box ]
 
@@ -626,11 +626,11 @@ export class LaTeX
         pos = "c" if not pos
         inner-pos = pos if not inner-pos
         classes = "parbox"
-        style = "width:#{width.value + width.unit};"
+        style = "width:#{@g.round width.value}#{width.unit};"
 
         if height
             classes += " pbh"
-            style += "height:#{height.value + height.unit};"
+            style += "height:#{@g.round height.value}#{height.unit};"
 
         switch pos
         | "c" => classes += " p-c"
@@ -700,7 +700,7 @@ export class LaTeX
     \frame              : (txt) ->
         el = @g.create @g.inline, txt, "hbox pframe"
         w = @g.length \@wholewidth
-        el.setAttribute "style" "border-width:" + w.value + w.unit
+        el.setAttribute "style" "border-width:#{@g.round w.value}#{w.unit}"
         [ el ]
 
 
@@ -715,10 +715,10 @@ export class LaTeX
         y = v.y.value
 
         wrapper = @g.create @g.inline, obj, "put-obj"
-        wrapper.setAttribute "style", "left:#{x + v.x.unit}"
+        wrapper.setAttribute "style", "left:#{@g.round x}#{v.x.unit}"
 
         strut = @g.create @g.inline, undefined, "strut"
-        strut.setAttribute "style", "height:#{Math.abs(y) + v.y.unit}"
+        strut.setAttribute "style", "height:#{Math.abs(@g.round y)}#{v.y.unit}"
 
         @rlap @g.create @g.inline, [wrapper, strut], "picture"
 
@@ -740,7 +740,9 @@ export class LaTeX
     args.\qbezier =     <[ H n? v v v ]>
     \qbezier            : (n, v1, v, v2) ->
         # for path, v MUST be unitless - so v is always in pt (and just to be safe, set size = viewbox in @_path)
-        [ @_path "M#{v1.x.value},#{v1.y.value} Q#{v.x.value},#{v.y.value} #{v2.x.value},#{v2.y.value}", v1.x.unit ]
+        [ @_path "M#{@g.round v1.x.value},#{@g.round v1.y.value}
+                  Q#{@g.round v.x.value},#{@g.round v.y.value} #{@g.round v2.x.value},#{@g.round v2.y.value}",
+                  v1.x.unit ]
 
 
     # SVG path.length()
@@ -750,7 +752,10 @@ export class LaTeX
     # \cbezier[N](x1, y1)(x, y)(x2, y2)(x3, y3)
     args.\cbezier =     <[ H n? v v v v ]>
     \cbezier            : (n, v1, v, v2, v3) ->
-        [ @_path "M#{v1.x.value},#{v1.y.value} C#{v.x.value},#{v.y.value} #{v2.x.value},#{v2.y.value} #{v3.x.value},#{v3.y.value}", v1.x.unit ]
+        [ @_path "M#{@g.round v1.x.value},#{@g.round v1.y.value}
+                  C#{@g.round v.x.value},#{@g.round v.y.value}
+                   #{@g.round v2.x.value},#{@g.round v2.y.value}
+                   #{@g.round v3.x.value},#{@g.round v3.y.value}", v1.x.unit ]
 
     #args.\graphpaper =  <[  ]>
 
@@ -765,7 +770,7 @@ export class LaTeX
         bbox = draw.path p
                    .stroke {
                        color: "#000"
-                       width: linethickness.value + linethickness.unit
+                       width: @g.round(linethickness.value) + linethickness.unit
                    }
                    .fill 'none'
                    .bbox!
@@ -776,10 +781,10 @@ export class LaTeX
         bbox.height += linethickness.value * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{unit};bottom:#{Math.min(0, bbox.y)}#{unit}"
+        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}#{unit};bottom:#{Math.min(0, @g.round bbox.y)}#{unit}"
 
-        draw.size "#{bbox.width}#{unit}", "#{bbox.height}#{unit}"
-            .viewbox bbox.x, bbox.y, bbox.width, bbox.height
+        draw.size "#{@g.round bbox.width}#{unit}", "#{@g.round bbox.height}#{unit}"
+            .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
@@ -800,18 +805,18 @@ export class LaTeX
         lw = linethickness.value
 
         svg = @g.create @g.inline, undefined, "picture-object"
-        svg.setAttribute "style", "left:#{-d.value/2 - lw}px;bottom:#{-d.value/2 - lw}px"
+        svg.setAttribute "style", "left:#{@g.round -d.value/2 - lw}px;bottom:#{@g.round -d.value/2 - lw}px"
 
         draw = @g.SVG!
                  .addTo svg
-                 .size (d.value + lw*2) + d.unit, (d.value + lw*2) + d.unit
+                 .size @g.round(d.value + lw*2) + d.unit, @g.round(d.value + lw*2) + d.unit
 
-        draw.circle(d.value + d.unit)
-            .cx((d.value/2 + lw) + d.unit)
-            .cy((d.value/2 + lw) + d.unit)
+        draw.circle(@g.round(d.value) + d.unit)
+            .cx(@g.round(d.value/2 + lw) + d.unit)
+            .cy(@g.round(d.value/2 + lw) + d.unit)
             .stroke {
                 color: "#000"
-                width: linethickness.value + linethickness.unit
+                width: @g.round(linethickness.value) + linethickness.unit
             }
             .fill(if s then "" else "none")
 
@@ -886,7 +891,7 @@ export class LaTeX
         bbox = draw.line(0, 0, x, y)
                    .stroke {
                        color: "#000"
-                       width: linethickness.value + linethickness.unit
+                       width: @g.round(linethickness.value) + linethickness.unit
                    }
                    .bbox!
 
@@ -896,10 +901,10 @@ export class LaTeX
         bbox.height += linethickness.value * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{unit};bottom:#{Math.min(0, bbox.y)}#{unit}"
+        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}#{unit};bottom:#{Math.min(0, @g.round bbox.y)}#{unit}"
 
-        draw.size "#{bbox.width}#{unit}", "#{bbox.height}#{unit}"
-            .viewbox bbox.x, bbox.y, bbox.width, bbox.height
+        draw.size "#{@g.round bbox.width}#{unit}", "#{@g.round bbox.height}#{unit}"
+            .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
@@ -963,13 +968,13 @@ export class LaTeX
             y -= hl_px * dir_y
 
 
-        bbox = draw.line(sx, sy, x, y)
+        bbox = draw.line(@g.round(sx), @g.round(sy), @g.round(x), @g.round(y))
                    .stroke {
                        color: "#000"
-                       width: linethickness.value + linethickness.unit
+                       width: @g.round(linethickness.value) + linethickness.unit
                    }
                    # marker width and height
-                   .marker 'end', hl, hw, (add) -> add.polyline [[0, 0], [hl, hw/2], [0, hw]]
+                   .marker 'end', @g.round(hl), @g.round(hw), (add) ~> add.polyline [[0, 0], [@g.round(hl), @g.round(hw/2)], [0, @g.round(hw)]]
                    .bbox!
 
         bbox.x -= linethickness.value + hl_px
@@ -978,10 +983,10 @@ export class LaTeX
         bbox.height += linethickness.value + hl_px * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{unit};bottom:#{Math.min(0, bbox.y)}#{unit}"
+        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}#{unit};bottom:#{Math.min(0, @g.round bbox.y)}#{unit}"
 
-        draw.size "#{bbox.width}#{unit}", "#{bbox.height}#{unit}"
-            .viewbox bbox.x, bbox.y, bbox.width, bbox.height
+        draw.size "#{@g.round bbox.width}#{unit}", "#{@g.round bbox.height}#{unit}"
+            .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
@@ -1011,7 +1016,7 @@ export class LaTeX
                    .move "-#{size.x.value/2}#{size.x.unit}", "-#{size.y.value/2}#{size.y.unit}"
                    .stroke {
                        color: "#000"
-                       width: linethickness.value + linethickness.unit
+                       width: @g.round(linethickness.value) + linethickness.unit
                    }
                    .fill "none"
 
@@ -1059,8 +1064,8 @@ export class LaTeX
 
 
 
-        clip = draw.clip!.add (draw.rect "#{rect.w}#{size.x.unit}", "#{rect.h}#{size.y.unit}"
-                                   .move rect.x, rect.y)
+        clip = draw.clip!.add (draw.rect "#{@g.round rect.w}#{size.x.unit}", "#{@g.round rect.h}#{size.y.unit}"
+                                   .move @g.round(rect.x), @g.round(rect.y))
         clip.flip 'y', 0
 
         oval.clipWith clip
@@ -1071,10 +1076,10 @@ export class LaTeX
         bbox.height += linethickness.value * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, bbox.x)}#{size.x.unit};bottom:#{Math.min(0, bbox.y)}#{size.y.unit}"
+        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}#{size.x.unit};bottom:#{Math.min(0, @g.round bbox.y)}#{size.y.unit}"
 
-        draw.size "#{bbox.width}#{size.x.unit}", "#{bbox.height}#{size.y.unit}"
-            .viewbox bbox.x, bbox.y, bbox.width, bbox.height
+        draw.size "#{@g.round bbox.width}#{size.x.unit}", "#{@g.round bbox.height}#{size.y.unit}"
+            .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
 
         # last, put the origin into the lower left
         draw.flip 'y', 0

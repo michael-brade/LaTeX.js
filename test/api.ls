@@ -32,7 +32,7 @@ describe 'LaTeX.js API test', !->
                 node.removeAllListeners 'exit'
                 reject err
 
-        .to.eventually.equal '<html style="--size:13.33333px;--textwidth:56%;--marginleftwidth:22%;--marginrightwidth:22%;--marginparwidth:48.20264845142601%;--marginparsep:14.666663000000002px;--marginparpush:6.666665px"><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>Hi, this is a line of text.</p></div></body></html>' + EOL
+        .to.eventually.equal '<html style="--size:13.333px;--textwidth:56.373%;--marginleftwidth:21.814%;--marginrightwidth:21.814%;--marginparwidth:48.614%;--marginparsep:14.667px;--marginparpush:6.667px"><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>Hi, this is a line of text.</p></div></body></html>' + EOL
 
     test 'browser API', ->
 
