@@ -1,5 +1,37 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+const path = require('path')
+const CopyPlugin = require('copy-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
+
+const svgjsClasses = [
+    'A',
+    'ClipPath',
+    'Defs',
+    'Element',
+    'G',
+    'Image',
+    'Marker',
+    'Path',
+    'Polygon',
+    'Rect',
+    'Stop',
+    'Svg',
+    'Text',
+    'Tspan',
+    'Circle',
+    'Container',
+    'Dom',
+    'Ellipse',
+    'Gradient',
+    'Line',
+    'Mask',
+    'Pattern',
+    'Polyline',
+    'Shape',
+    'Style',
+    'Symbol',
+    'TextPath',
+    'Use'
+]
 
 module.exports = [{
     name: 'playground',
@@ -36,9 +68,21 @@ module.exports = [{
             { from: 'src/js', to: 'js' }
         ])
     ],
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                parallel: true,
+                terserOptions: {
+                    mangle: {
+                        reserved: svgjsClasses
+                    }
+                }
+            })
+        ]
+    },
     performance: {
-        maxEntrypointSize: 512000,
-        maxAssetSize: 512000
+        maxEntrypointSize: 600000,
+        maxAssetSize: 600000
     }
 }, {
     name: 'latex.js',
@@ -65,6 +109,18 @@ module.exports = [{
                 exclude: /(node_modules)/,
                 use: 'babel-loader'
             }
+        ]
+    },
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                parallel: true,
+                terserOptions: {
+                    mangle: {
+                        reserved: svgjsClasses
+                    }
+                }
+            })
         ]
     },
     performance: {
