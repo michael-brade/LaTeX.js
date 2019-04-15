@@ -170,12 +170,6 @@ export class HtmlGenerator extends Generator
         @_dom = document.createDocumentFragment!
 
 
-    # helpers
-
-    round: (num) ->
-        const factor = Math.pow 10, @_options.precision
-        Math.round(num * factor) / factor
-
 
     ### character/text creation
 

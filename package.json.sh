@@ -77,6 +77,7 @@ scripts:
         cp src/latex.component.js dist/;
         lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/generator.ls src/html-generator.ls &
         lsc -c -m embedded -p src/latex.ltx.ls > dist/latex.ltx.js &
+        lsc -c -m embedded -p src/types.ls > dist/types.js &
         lsc -c -m embedded -o dist/documentclasses src/documentclasses/ &
         lsc -c -m embedded -o dist/packages src/packages/;
         wait;

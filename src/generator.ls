@@ -79,8 +79,15 @@ export class Generator
         @_macros = new Macros @, @_options.CustomMacros
 
 
+    # helpers
+
     nextId: ->
         @_uid++
+
+    round: (num) ->
+        const factor = Math.pow 10, @_options.precision
+        Math.round(num * factor) / factor
+
 
 
     # private static for easy access - but it means no parallel generator usage!
@@ -344,6 +351,7 @@ export class Generator
 
     ### lengths
 
+
     newLength: (l) !->
         error "length #{l} already defined!" if @hasLength l
         @_stack.top.lengths.set l, { value: 0; unit: "px" }
@@ -367,35 +375,6 @@ export class Generator
         l
 
 
-    # in TeX pt
-    unitsPt = new Map([
-        * 'sp'  0.000015259     # 1sp = 1/65536pt = 0.000015259pt
-        * 'dd'  1.07
-        * 'mm'  2.84527559
-        * 'pc'  12
-        * 'cc'  12.84           # 1cc = 12dd
-        * 'cm'  28.4527559
-        * 'in'  72.27
-    ])
-
-    # TeX unit to Browser px (assuming 96dpi)
-    unitsPx = new Map([
-        * 'sp'  0.000020345     # 1sp = 1/65536pt
-        * 'pt'  1.333333
-        * 'dd'  1.420875
-        * 'mm'  3.779528
-        * 'pc'  16
-        * 'cc'  17.0505         # 1cc = 12dd
-        * 'cm'  37.79528
-        * 'in'  96
-    ])
-
-    # convert to px if possible
-    toPx: (l) ->
-        return l if not unitsPx.has l.unit
-
-        value: l.value * unitsPx.get l.unit
-        unit: 'px'
 
 
 
