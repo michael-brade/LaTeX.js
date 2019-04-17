@@ -331,7 +331,7 @@ length_unit     =   _ u:("sp" / "pt" / "px" / "dd" / "mm" / "pc" / "cc" / "cm" /
 
   // TODO: should be able to use variables and maths: 2\parskip etc.
 length          =   l:float u:length_unit (plus float length_unit)? (minus float length_unit)?
-                    { return g.toPx({ value: l, unit: u }); }
+                    { return new g.Length(l, u); }
 
 // {length}
 length_group    =   _ begin_group _
@@ -375,12 +375,7 @@ color_group     =   _ begin_group
 // picture coordinates and vectors
 
 // float or length
-coordinate      =   _ c:(
-                        length
-                        /
-                        f:float { return { value: f * g.length("unitlength").value,
-                                            unit:     g.length("unitlength").unit };    }
-                    ) _
+coordinate      =   _ c:(length / f:float { return g.length("unitlength").mul(f) }) _
                     { return c; }
 
 // (coord, coord)

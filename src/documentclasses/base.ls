@@ -1,6 +1,5 @@
 'use strict'
 
-
 # base class for all standard documentclasses
 #
 export class Base
@@ -30,9 +29,9 @@ export class Base
 
         # default: letterpaper, 10pt, onecolumn, oneside
 
-        @g.setLength \paperheight   { value: 11, unit: "in" }
-        @g.setLength \paperwidth    { value: 8.5, unit: "in" }
-        @g.setLength \@@size        { value: 10, unit: "pt" }
+        @g.setLength \paperheight       new @g.Length 11, "in"
+        @g.setLength \paperwidth        new @g.Length 8.5, "in"
+        @g.setLength \@@size            new @g.Length 10, "pt"
 
         for opt in @options
             opt = Object.keys(opt).0
@@ -50,62 +49,62 @@ export class Base
             | "leqno" =>
 
             | "a4paper" =>
-                @g.setLength \paperheight   { value: 297, unit: "mm" }
-                @g.setLength \paperwidth    { value: 210, unit: "mm" }
+                @g.setLength \paperheight   new @g.Length 297, "mm"
+                @g.setLength \paperwidth    new @g.Length 210, "mm"
             | "a5paper" =>
-                @g.setLength \paperheight   { value: 210, unit: "mm" }
-                @g.setLength \paperwidth    { value: 148, unit: "mm" }
+                @g.setLength \paperheight   new @g.Length 210, "mm"
+                @g.setLength \paperwidth    new @g.Length 148, "mm"
             | "b5paper" =>
-                @g.setLength \paperheight   { value: 250, unit: "mm" }
-                @g.setLength \paperwidth    { value: 176, unit: "mm" }
+                @g.setLength \paperheight   new @g.Length 250, "mm"
+                @g.setLength \paperwidth    new @g.Length 176, "mm"
             | "letterpaper" =>
-                @g.setLength \paperheight   { value: 11, unit: "in" }
-                @g.setLength \paperwidth    { value: 8.5, unit: "in" }
+                @g.setLength \paperheight   new @g.Length 11, "in"
+                @g.setLength \paperwidth    new @g.Length 8.5, "in"
             | "legalpaper" =>
-                @g.setLength \paperheight   { value: 14, unit: "in" }
-                @g.setLength \paperwidth    { value: 8.5, unit: "in" }
+                @g.setLength \paperheight   new @g.Length 14, "in"
+                @g.setLength \paperwidth    new @g.Length 8.5, "in"
             | "executivepaper" =>
-                @g.setLength \paperheight   { value: 10.5, unit: "in" }
-                @g.setLength \paperwidth    { value: 7.25, unit: "in" }
+                @g.setLength \paperheight   new @g.Length 10.5, "in"
+                @g.setLength \paperwidth    new @g.Length 7.25, "in"
             | "landscape" =>
                 tmp = @g.length \paperheight
                 @g.setLength \paperheight   @g.length \paperwidth
                 @g.setLength \paperwidth    tmp
 
             | otherwise =>
-                # check if a point size was given
+                # check if a point size was given -> set font size
                 value = parseFloat opt
                 if value != NaN and opt.endsWith "pt" and String(value) == opt.substring 0, opt.length - 2
-                    @g.setLength \@@size  { value, unit: "pt" }
+                    @g.setLength \@@size new @g.Length value, "pt"
 
 
 
         ## textwidth
 
-        pt345 = @g.toPx { value: 345, unit: "pt" }
-        inch = @g.toPx { value: 1, unit: "in" }
+        pt345 = new @g.Length 345, "pt"
+        inch = new @g.Length 1, "in"
 
-        textwidth = @g.length(\paperwidth).value - 2*inch.value
-        if textwidth > pt345.value
-            textwidth = pt345.value
+        textwidth = @g.length(\paperwidth).sub(inch.mul 2)
+        if textwidth.cmp(pt345) == 1
+            textwidth = pt345
 
-        @g.setLength \textwidth { value: textwidth, unit: "px" }
+        @g.setLength \textwidth textwidth
 
 
         ## margins
 
-        @g.setLength \marginparsep { value: 11, unit: "pt" }
-        @g.setLength \marginparpush { value: 5, unit: "pt" }
+        @g.setLength \marginparsep new @g.Length 11, "pt"
+        @g.setLength \marginparpush new @g.Length 5, "pt"
 
         # in px
-        margins = @g.length(\paperwidth).value - @g.length(\textwidth).value
-        oddsidemargin = 0.5 * margins - inch.value
-        marginparwidth = 0.5 * margins - @g.length(\marginparsep).value - 0.8 * inch.value
-        if marginparwidth > 2*inch.value
-            marginparwidth = 2*inch.value
+        margins = @g.length(\paperwidth).sub @g.length(\textwidth)
+        oddsidemargin = margins.mul(0.5).sub(inch)
+        marginparwidth = margins.mul(0.5).sub(@g.length(\marginparsep)).sub(inch.mul 0.8)
+        if marginparwidth.cmp(inch.mul(2)) == 1
+            marginparwidth = inch.mul(2)
 
-        @g.setLength \oddsidemargin { value: oddsidemargin, unit: "px" }
-        @g.setLength \marginparwidth { value: marginparwidth, unit: "px" }
+        @g.setLength \oddsidemargin oddsidemargin
+        @g.setLength \marginparwidth marginparwidth
 
         # \evensidemargin = \paperwidth - 2in - \textwidth - \oddsidemargin
         # \@settopoint\evensidemargin
@@ -166,13 +165,13 @@ export class Base
         date = @g.create @g.date, if @_date then that else @g.macro \today
 
         maketitle = @g.create @g.list, [
-            @g.createVSpace({ value: 2, unit: "em"})
+            @g.createVSpace new @g.Length 2, "em"
             title
-            @g.createVSpace({ value: 1.5, unit: "em"})
+            @g.createVSpace new @g.Length 1.5, "em"
             author
-            @g.createVSpace({ value: 1, unit: "em"})
+            @g.createVSpace new @g.Length 1, "em"
             date
-            @g.createVSpace({ value: 1.5, unit: "em"})
+            @g.createVSpace new @g.Length 1.5, "em"
         ], "center"
 
 

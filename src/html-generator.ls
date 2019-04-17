@@ -310,7 +310,7 @@ export class HtmlGenerator extends Generator
     applyLengthsAndGeometryToDom: (el) !->
 
         # root font size
-        el.style.setProperty '--size', @round(@length \@@size .value) + (@length \@@size).unit
+        el.style.setProperty '--size', @length(\@@size).value
 
         ### calculate page geometry
         #
@@ -323,10 +323,10 @@ export class HtmlGenerator extends Generator
         # marginrightwidth % = 100% - (textwidth + marginleftwidth), if there is no room left, the margin is 0% width
 
         # do this if a static, non-responsive page is desired (TODO: make configurable!)
-        #el.style.setProperty '--paperwidth', (@length \paperwidth).value + (@length \paperwidth).unit
+        #el.style.setProperty '--paperwidth', @length \paperwidth).value
 
-        twp =  100 * (@length \textwidth).value / (@length \paperwidth).value
-        mlwp = 100 * ((@length \oddsidemargin).value + @toPx { value: 1, unit: "in" } .value) / (@length \paperwidth).value
+        twp =  100 * (@length \textwidth).ratio(@length \paperwidth)
+        mlwp = 100 * (@length(\oddsidemargin).add new @Length 1, "in").ratio(@length \paperwidth)
         mrwp = Math.max(100 - twp - mlwp, 0)
 
         el.style.setProperty '--textwidth', @round(twp) + "%"
@@ -335,14 +335,14 @@ export class HtmlGenerator extends Generator
 
         if mrwp > 0
             # marginparwidth percentage relative to parent, which is marginrightwidth!
-            mpwp = 100 * 100 * (@length \marginparwidth).value / (@length \paperwidth).value / mrwp
+            mpwp = 100 * 100 * (@length \marginparwidth).ratio(@length \paperwidth) / mrwp
             el.style.setProperty '--marginparwidth', @round(mpwp) + "%"
         else
             el.style.setProperty '--marginparwidth', "0px"
 
         # set the rest of the lengths (TODO: write all defined lengths to CSS, for each group)
-        el.style.setProperty '--marginparsep', @round(@length \marginparsep .value) + (@length \marginparsep).unit
-        el.style.setProperty '--marginparpush', @round(@length \marginparpush .value) + (@length \marginparpush).unit
+        el.style.setProperty '--marginparsep', @length(\marginparsep).value
+        el.style.setProperty '--marginparpush', @length(\marginparpush).value
 
 
 
@@ -409,14 +409,12 @@ export class HtmlGenerator extends Generator
 
         # offset sets the coordinates of the lower left corner, so shift negatively
         if offset
-            canvas.setAttribute "style", "left:#{-@round(offset.x.value) + offset.x.unit};
-                                        bottom:#{-@round(offset.y.value) + offset.y.unit}"
+            canvas.setAttribute "style", "left:#{-offset.x.value};bottom:#{-offset.y.value}"
 
         # picture
         pic = @create @picture
         pic.appendChild canvas
-        pic.setAttribute "style", "width:#{@round(size.x.value) + size.x.unit};
-                                   height:#{@round(size.y.value) + size.y.unit}"
+        pic.setAttribute "style", "width:#{size.x.value};height:#{size.y.value}"
 
         pic
 
@@ -439,26 +437,26 @@ export class HtmlGenerator extends Generator
     createVSpace: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "vspace"
-        span.setAttribute "style", "margin-bottom:" + @round(length.value) + length.unit
+        span.setAttribute "style", "margin-bottom:" + length.value
         return span
 
     createVSpaceInline: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "vspace-inline"
-        span.setAttribute "style", "margin-bottom:" + @round(length.value) + length.unit
+        span.setAttribute "style", "margin-bottom:" + length.value
         return span
 
     # create a linebreak with a given vspace between the lines
     createBreakSpace: (length) ->
         span = document.createElement "span"
         span.setAttribute "class", "breakspace"
-        span.setAttribute "style", "margin-bottom:" + @round(length.value) + length.unit
+        span.setAttribute "style", "margin-bottom:" + length.value
         # we need to add the current font in case it uses a relative length (e.g. em)
         return @addAttributes span
 
     createHSpace: (length) ->
         span = document.createElement "span"
-        span.setAttribute "style", "margin-right:" + @round(length.value) + length.unit
+        span.setAttribute "style", "margin-right:" + length.value
         return span
 
 

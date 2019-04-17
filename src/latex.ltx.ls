@@ -49,10 +49,10 @@ export class LaTeX
 
         # picture lengths
         @g.newLength \unitlength
-        @g.setLength \unitlength    { value: 1, unit: "pt" }
+        @g.setLength \unitlength    new @g.Length 1, "pt"
 
         @g.newLength \@wholewidth
-        @g.setLength \@wholewidth   { value: 0.4, unit: "pt" }
+        @g.setLength \@wholewidth   new @g.Length 0.4, "pt"
 
         @g.newLength \paperheight
         @g.newLength \paperwidth
@@ -594,7 +594,7 @@ export class LaTeX
         box = @g.create @g.inline, content, classes
 
         if width
-            box.setAttribute "style", "width:" + @g.round(width.value) + width.unit
+            box.setAttribute "style", "width:#{width.value}"
 
         [ box ]
 
@@ -626,11 +626,11 @@ export class LaTeX
         pos = "c" if not pos
         inner-pos = pos if not inner-pos
         classes = "parbox"
-        style = "width:#{@g.round width.value}#{width.unit};"
+        style = "width:#{width.value};"
 
         if height
             classes += " pbh"
-            style += "height:#{@g.round height.value}#{height.unit};"
+            style += "height:#{height.value};"
 
         switch pos
         | "c" => classes += " p-c"
@@ -679,10 +679,10 @@ export class LaTeX
      ..\linethickness = <[ HV l ]>
      ..\arrowlength =   <[ HV l ]>
 
-    \thinlines          :!->        @g.setLength \@wholewidth { value: 0.4, unit: "pt" }
-    \thicklines         :!->        @g.setLength \@wholewidth { value: 0.8, unit: "pt" }
+    \thinlines          :!->        @g.setLength \@wholewidth new @g.Length 0.4, "pt"
+    \thicklines         :!->        @g.setLength \@wholewidth new @g.Length 0.8, "pt"
     \linethickness      : (l) !->
-        @g.error "relative units for \\linethickness not supported!" if l.unit != "px"
+        @g.error "relative units for \\linethickness not supported!" if l.unit != "sp"
         @g.setLength \@wholewidth l
 
     \arrowlength        : (l) !->   @g.setLength \@arrowlength l
@@ -700,7 +700,7 @@ export class LaTeX
     \frame              : (txt) ->
         el = @g.create @g.inline, txt, "hbox pframe"
         w = @g.length \@wholewidth
-        el.setAttribute "style" "border-width:#{@g.round w.value}#{w.unit}"
+        el.setAttribute "style" "border-width:#{w.value}"
         [ el ]
 
 
@@ -711,14 +711,11 @@ export class LaTeX
     # \put(x,y){obj}
     args.\put =         <[ H v g is ]>
     \put                : (v, obj) ->
-        x = v.x.value
-        y = v.y.value
-
         wrapper = @g.create @g.inline, obj, "put-obj"
-        wrapper.setAttribute "style", "left:#{@g.round x}#{v.x.unit}"
+        wrapper.setAttribute "style", "left:#{v.x.value}"
 
         strut = @g.create @g.inline, undefined, "strut"
-        strut.setAttribute "style", "height:#{Math.abs(@g.round y)}#{v.y.unit}"
+        strut.setAttribute "style", "height:#{v.y.abs!.value}"
 
         @rlap @g.create @g.inline, [wrapper, strut], "picture"
 
@@ -729,8 +726,8 @@ export class LaTeX
         res = []
         for i til n
             res = res ++ @\put {
-                x: { value: v.x.value + i * dv.x.value, unit: v.x.unit }
-                y: { value: v.y.value + i * dv.y.value, unit: v.y.unit }
+                x: new @g.Length v.x.add(dv.x.mul(i))
+                y: new @g.Length v.y.add(dv.y.mul(i))
             }, obj.cloneNode true
 
         res
@@ -739,10 +736,11 @@ export class LaTeX
     # \qbezier[N](x1, y1)(x, y)(x2, y2)
     args.\qbezier =     <[ H n? v v v ]>
     \qbezier            : (n, v1, v, v2) ->
-        # for path, v MUST be unitless - so v is always in pt (and just to be safe, set size = viewbox in @_path)
-        [ @_path "M#{@g.round v1.x.value},#{@g.round v1.y.value}
-                  Q#{@g.round v.x.value},#{@g.round v.y.value} #{@g.round v2.x.value},#{@g.round v2.y.value}",
-                  v1.x.unit ]
+        # for path, v MUST be unitless - so v is always in user coordinate system, or relative
+        # (and just to be safe, set size = viewbox in @_path)
+        [ @_path "M#{v1.x.pxpct},#{v1.y.pxpct} Q#{v.x.pxpct},#{v.y.pxpct} #{v2.x.pxpct},#{v2.y.pxpct}" ]
+
+
 
 
     # SVG path.length()
@@ -752,16 +750,13 @@ export class LaTeX
     # \cbezier[N](x1, y1)(x, y)(x2, y2)(x3, y3)
     args.\cbezier =     <[ H n? v v v v ]>
     \cbezier            : (n, v1, v, v2, v3) ->
-        [ @_path "M#{@g.round v1.x.value},#{@g.round v1.y.value}
-                  C#{@g.round v.x.value},#{@g.round v.y.value}
-                   #{@g.round v2.x.value},#{@g.round v2.y.value}
-                   #{@g.round v3.x.value},#{@g.round v3.y.value}", v1.x.unit ]
+        [ @_path "M#{v1.x.pxpct},#{v1.y.pxpct} C#{v.x.pxpct},#{v.y.pxpct} #{v2.x.pxpct},#{v2.y.pxpct} #{v3.x.pxpct},#{v3.y.pxpct}" ]
 
     #args.\graphpaper =  <[  ]>
 
 
     # typeset an SVG path
-    _path: (p, unit) ->
+    _path: (p) ->
         linethickness = @g.length \@wholewidth
 
         svg = @g.create @g.inline, undefined, "picture-object"
@@ -770,20 +765,20 @@ export class LaTeX
         bbox = draw.path p
                    .stroke {
                        color: "#000"
-                       width: @g.round(linethickness.value) + linethickness.unit
+                       width: linethickness.value
                    }
                    .fill 'none'
                    .bbox!
 
-        bbox.x -= linethickness.value
-        bbox.y -= linethickness.value
-        bbox.width += linethickness.value * 2
-        bbox.height += linethickness.value * 2
+        bbox.x -= linethickness.px
+        bbox.y -= linethickness.px
+        bbox.width += linethickness.px * 2
+        bbox.height += linethickness.px * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}#{unit};bottom:#{Math.min(0, @g.round bbox.y)}#{unit}"
+        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}px;bottom:#{Math.min(0, @g.round bbox.y)}px"
 
-        draw.size "#{@g.round bbox.width}#{unit}", "#{@g.round bbox.height}#{unit}"
+        draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
             .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
 
         # last, put the origin into the lower left
@@ -800,23 +795,27 @@ export class LaTeX
     # \circle[*]{diameter}
     args.\circle =      <[ H s cl ]>
     \circle             : (s, d) ->
-        # increase border by linewidth
-        linethickness = @g.length \@wholewidth
-        lw = linethickness.value
+        # no negative diameters
+        d = d.abs!
 
         svg = @g.create @g.inline, undefined, "picture-object"
-        svg.setAttribute "style", "left:#{@g.round -d.value/2 - lw}px;bottom:#{@g.round -d.value/2 - lw}px"
+
+        linethickness = @g.length \@wholewidth
+
+        # increase border by linewidth
+        offset = d.div(2).add(linethickness).value
+        svg.setAttribute "style", "left:-#{offset};bottom:-#{offset}"
 
         draw = @g.SVG!
                  .addTo svg
-                 .size @g.round(d.value + lw*2) + d.unit, @g.round(d.value + lw*2) + d.unit
+                 .size d.add(linethickness.mul(2)).value, d.add(linethickness.mul(2)).value
 
-        draw.circle(@g.round(d.value) + d.unit)
-            .cx(@g.round(d.value/2 + lw) + d.unit)
-            .cy(@g.round(d.value/2 + lw) + d.unit)
+        draw.circle(d.value)
+            .cx(d.div(2).add(linethickness).value)
+            .cy(d.div(2).add(linethickness).value)
             .stroke {
                 color: "#000"
-                width: @g.round(linethickness.value) + linethickness.unit
+                width: linethickness.value
             }
             .fill(if s then "" else "none")
 

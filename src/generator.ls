@@ -3,6 +3,7 @@
 require! {
     './latex.ltx': { LaTeX: Macros }
     './symbols': { diacritics, symbols }
+    './types': { Length: makeLengthClass }
 }
 
 
@@ -37,7 +38,11 @@ export class Generator
 
     _marginpars: null
 
+    Length: null
+
     reset: !->
+        @Length = makeLengthClass @
+
         @documentClass = @_options.documentClass
         @documentTitle = "untitled"
 
@@ -354,7 +359,7 @@ export class Generator
 
     newLength: (l) !->
         error "length #{l} already defined!" if @hasLength l
-        @_stack.top.lengths.set l, { value: 0; unit: "px" }
+        @_stack.top.lengths.set l, new @Length 0, "px"
 
     hasLength: (l) ->
         @_stack.top.lengths.has l
@@ -362,7 +367,7 @@ export class Generator
     setLength: (id, length) !->
         error "no such length: #{id}" if not @hasLength id
         # console.log "set length:", id, length
-        @_stack.top.lengths.set id, @toPx length
+        @_stack.top.lengths.set id, length
 
     length: (l) ->
         error "no such length: #{l}" if not @hasLength l
