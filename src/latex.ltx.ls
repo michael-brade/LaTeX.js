@@ -2,6 +2,7 @@
 
 require! {
     './symbols': { symbols }
+    './types': { Vector }
 }
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
@@ -830,79 +831,79 @@ export class LaTeX
     #   if xslope == yslope == 0 then error
     args.\line =        <[ H v cl ]>
     \line               : (v, l) ->
-        [ x, y ] = @_slopeLengthToCoords v, l
-        [ @_line x, y, l.unit ]
+        [ @_line ...@_slopeLengthToCoords v, l ]
 
 
     # \vector(xslope,yslope){length}
     args.\vector =      <[ H v cl ]>
     \vector             : (v, l) ->
-        [ x, y ] = @_slopeLengthToCoords v, l
-        [ @_vector x, y, l.unit ]
+        [ @_vector ...@_slopeLengthToCoords v, l ]
 
 
-    # \Line(x2,y2)
-    args.\Line =        <[ H v ]>
-    \Line               : (v) ->
-        linethickness = @g.length \@wholewidth
-        x = v.x.value
-        y = v.y.value
-
-        [ @_line x, y, v.x.unit ]
+    # \Line(x1,y1)(x2,y2)
+    args.\Line =        <[ H v v ]>
+    \Line               : (vs, ve) ->
+        [ @_line vs, ve ]
 
 
-    args.\Vector =      <[ H v ]>
-    \Vector             : (v) ->
-        linethickness = @g.length \@wholewidth
-        x = v.x.value
-        y = v.y.value
-
-        [ @_vector x, y, v.x.unit ]
+    # extension - not in LaTeX (pict2e)
+    # \Vector(x1,y1)(x2,y2)
+    args.\Vector =      <[ H v v ]>
+    \Vector             : (vs, ve) ->
+        [ @_vector vs, ve ]
 
 
+    # convert slope/length pair to a vector (x/y coordinates)
     _slopeLengthToCoords: (v, l) ->
         @g.error "illegal slope (0,0)" if v.x.value == v.y.value == 0
-        @g.error "relative units not allowed for slope" if v.x.unit != v.y.unit or v.x.unit != "px"
+        @g.error "relative units not allowed for slope" if v.x.unit != v.y.unit or v.x.unit != "sp"
 
         linethickness = @g.length \@wholewidth
 
-        if v.x.value == 0
-            x = 0
-            y = l.value
+        zero = new @g.Length 0, l.unit
+
+        if v.x.px == 0
+            x = zero
+            y = l
         else
-            x = l.value
-            y = x * Math.abs v.y.value / v.x.value
+            x = l
+            y = x.mul Math.abs(v.y.ratio(v.x))
 
-        if v.x.value < 0
-            x *= -1
-        if v.y.value < 0
-            y *= -1
+        if v.x.cmp(zero) < 0
+            x = x.mul -1
+        if v.y.cmp(zero) < 0
+            y = y.mul -1
 
-        [ x, y ]
+        [ new Vector(zero, zero), new Vector(x, y) ]
 
 
-    # helper: draw line to x, y
-    _line: (x, y, unit) ->
+    # helper: draw line from vs to ve
+    # TODO: if vs is negative and ve positive, style/size/viewbox needs to be adapted!
+    _line: (vs, ve) ->
+        # TODO: em/ex should be supported!
+        @g.error "relative units not allowed for line" if vs.x.unit != vs.y.unit or vs.x.unit != "sp"
+        @g.error "relative units not allowed for line" if ve.x.unit != ve.y.unit or ve.x.unit != "sp"
+
         svg = @g.create @g.inline, undefined, "picture-object"
         draw = @g.SVG!.addTo svg
 
         linethickness = @g.length \@wholewidth
-        bbox = draw.line(0, 0, x, y)
+        bbox = draw.line(vs.x.px, vs.y.px, ve.x.px, ve.y.px)
                    .stroke {
                        color: "#000"
-                       width: @g.round(linethickness.value) + linethickness.unit
+                       width: linethickness.value
                    }
                    .bbox!
 
-        bbox.x -= linethickness.value
-        bbox.y -= linethickness.value
-        bbox.width += linethickness.value * 2
-        bbox.height += linethickness.value * 2
+        bbox.x -= linethickness.px
+        bbox.y -= linethickness.px
+        bbox.width += linethickness.px * 2
+        bbox.height += linethickness.px * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}#{unit};bottom:#{Math.min(0, @g.round bbox.y)}#{unit}"
+        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}px;bottom:#{Math.min(0, @g.round bbox.y)}px"
 
-        draw.size "#{@g.round bbox.width}#{unit}", "#{@g.round bbox.height}#{unit}"
+        draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
             .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
 
         # last, put the origin into the lower left
@@ -911,8 +912,13 @@ export class LaTeX
         @g.create @g.inline, svg, "picture"
 
 
-    # helper: draw arrow to x, y
-    _vector: (x, y, unit) ->
+    # helper: draw arrow from vs to ve
+    _vector: (vs, ve) ->
+        # TODO: vs not implemented! always 0
+        # TODO: em/ex should be supported!
+        @g.error "relative units not allowed for vector" if vs.x.unit != vs.y.unit or vs.x.unit != "sp"
+        @g.error "relative units not allowed for vector" if ve.x.unit != ve.y.unit or ve.x.unit != "sp"
+
         linethickness = @g.length \@wholewidth
 
         svg = @g.create @g.inline, undefined, "picture-object"
@@ -922,69 +928,36 @@ export class LaTeX
         hl = 5
         hw = 3
 
-        # start point of arrow
-        sx = 0
-        sy = 0
-
-        # l^2 = x^2 + y^2
-        #
-        # y = m*x
-        # x = y/m
-        # m = y/x
-        #
-        #  => l^2 = x^2 + x^2 * m^2   =   x^2 * (1 + m^2)
-        #  => l^2 = y^2/m^2 + y^2     =   y^2 * (1 + 1/m^2)
-        #
-        #  => x = l/sqrt(1 + m^2)
-        #  => y = l/sqrt(1 + 1/m^2)
-
-        hl_px = hl/2 * linethickness.value  # half the head length (the marker scales with stroke width)
-        al_px = Math.sqrt x*x + y*y         # arrow length
-
-        msq  = Math.sqrt 1 + y*y / (x*x)
-        imsq = Math.sqrt 1 + x*x / (y*y)
-
-        dir_x = if x < 0 then -1 else 1
-        dir_y = if y < 0 then -1 else 1
+        hhl = linethickness.mul(hl/2)       # half the head length (the marker scales with stroke width)
+        al = ve.sub(vs).norm!               # arrow length
 
         # if arrow head is longer than the arrow, shift start of the arrow
-        if al_px < hl_px
-            if x != 0 and y != 0
-                sx = hl_px /  msq * -dir_x
-                sy = hl_px / imsq * -dir_y
-            else if y == 0
-                sx = hl_px * -dir_x
-            else
-                sy = hl_px * -dir_y
+        if al.cmp(hhl) < 0
+            s = ve.shift_start hhl
+        else
+            s = new Vector @g.Length.zero, @g.Length.zero
 
         # shorten vector by half the arrow head length
-        if x != 0 and y != 0
-            x -= hl_px /  msq * dir_x
-            y -= hl_px / imsq * dir_y
-        else if y == 0
-            x -= hl_px * dir_x
-        else
-            y -= hl_px * dir_y
+        ve = ve.shift_end hhl.mul -1
 
-
-        bbox = draw.line(@g.round(sx), @g.round(sy), @g.round(x), @g.round(y))
+        bbox = draw.line(s.x.px, s.y.px, ve.x.px, ve.y.px)
                    .stroke {
                        color: "#000"
-                       width: @g.round(linethickness.value) + linethickness.unit
+                       width: linethickness.value
                    }
                    # marker width and height
-                   .marker 'end', @g.round(hl), @g.round(hw), (add) ~> add.polyline [[0, 0], [@g.round(hl), @g.round(hw/2)], [0, @g.round(hw)]]
+                   .marker 'end', hl, hw, (add) ~> add.polyline [[0, 0], [hl, @g.round(hw/2)], [0, hw]]
                    .bbox!
 
-        bbox.x -= linethickness.value + hl_px
-        bbox.y -= linethickness.value + hl_px
-        bbox.width += linethickness.value + hl_px * 2
-        bbox.height += linethickness.value + hl_px * 2
+        bbox.x -= linethickness.px + hhl.px
+        bbox.y -= linethickness.px + hhl.px
+        bbox.width += linethickness.px + hhl.px * 2
+        bbox.height += linethickness.px + hhl.px * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}#{unit};bottom:#{Math.min(0, @g.round bbox.y)}#{unit}"
+        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}px;bottom:#{Math.min(0, @g.round bbox.y)}px"
 
-        draw.size "#{@g.round bbox.width}#{unit}", "#{@g.round bbox.height}#{unit}"
+        draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
             .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
 
         # last, put the origin into the lower left

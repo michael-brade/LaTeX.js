@@ -1,4 +1,5 @@
 {
+    var Vector = require('./types').Vector;
     var g = options.generator;
     g.setErrorFn(error);
     g.location = location;
@@ -380,7 +381,7 @@ coordinate      =   _ c:(length / f:float { return g.length("unitlength").mul(f)
 
 // (coord, coord)
 vector          =   _ "(" x:coordinate "," y:coordinate ")" _
-                    { return { x: x, y: y }; }
+                    { return new Vector(x, y); }
 
 
 // {coord}

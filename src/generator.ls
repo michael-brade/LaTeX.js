@@ -3,7 +3,7 @@
 require! {
     './latex.ltx': { LaTeX: Macros }
     './symbols': { diacritics, symbols }
-    './types': { Length: makeLengthClass }
+    './types': { makeLengthClass }
 }
 
 
