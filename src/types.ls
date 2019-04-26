@@ -106,6 +106,14 @@ export makeLengthClass = (generator) -> class
         new g.Length Math.sqrt(@_value**2 + l._value**2), @_unit
 
 
+    @min = ->
+        Array.from(&).reduce (a, b) ->
+            if a.cmp(b) < 0 then a else b
+
+    @max = ->
+        Array.from(&).reduce (a, b) ->
+            if a.cmp(b) > 0 then a else b
+
 
 # a position vector (from origin to point)
 export class Vector
@@ -130,6 +138,8 @@ export class Vector
     sub: (v) ->
         new Vector @_x.sub(v.x), @_y.sub(v.y)
 
+    mul: (s) ->
+        new Vector @_x.mul(s), @_y.mul(s)
 
     # shift the start point of the vector along its direction to shorten (l < 0) or lengthen (l > 0) the vector
     # and return another position vector that will point to the new start of the vector

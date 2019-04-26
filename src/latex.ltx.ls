@@ -726,10 +726,7 @@ export class LaTeX
     \multiput           : (v, dv, n, obj) ->
         res = []
         for i til n
-            res = res ++ @\put {
-                x: new @g.Length v.x.add(dv.x.mul(i))
-                y: new @g.Length v.y.add(dv.y.mul(i))
-            }, obj.cloneNode true
+            res = res ++ @\put v.add(dv.mul i), obj.cloneNode true
 
         res
 
@@ -803,9 +800,9 @@ export class LaTeX
 
         linethickness = @g.length \@wholewidth
 
-        # increase border by linewidth
-        offset = d.div(2).add(linethickness).value
-        svg.setAttribute "style", "left:-#{offset};bottom:-#{offset}"
+        # increase border by linewidth; multiply by -1 to shift left/down
+        offset = d.div(2).add(linethickness).mul(-1).value
+        svg.setAttribute "style", "left:#{offset};bottom:#{offset}"
 
         draw = @g.SVG!
                  .addTo svg
@@ -1079,7 +1076,7 @@ export class LaTeX
     \setlength          : (id, l) !-> @g.setLength id, l
 
     args.\addtolength = <[ HV m l ]>
-    \addtolength        : (id, l) !-> @g.setLength id, @g.length(id) + l
+    \addtolength        : (id, l) !-> @g.setLength id, @g.length(id).add l
 
 
     # settoheight     =

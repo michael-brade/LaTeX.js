@@ -359,7 +359,7 @@ export class Generator
 
     newLength: (l) !->
         error "length #{l} already defined!" if @hasLength l
-        @_stack.top.lengths.set l, new @Length 0, "px"
+        @_stack.top.lengths.set l, @Length.zero
 
     hasLength: (l) ->
         @_stack.top.lengths.has l

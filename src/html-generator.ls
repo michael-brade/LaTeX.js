@@ -409,7 +409,7 @@ export class HtmlGenerator extends Generator
 
         # offset sets the coordinates of the lower left corner, so shift negatively
         if offset
-            canvas.setAttribute "style", "left:#{-offset.x.value};bottom:#{-offset.y.value}"
+            canvas.setAttribute "style", "left:#{offset.x.mul(-1).value};bottom:#{offset.y.mul(-1).value}"
 
         # picture
         pic = @create @picture
@@ -422,7 +422,7 @@ export class HtmlGenerator extends Generator
 
 
 
-    # for smallskip, medskip, bigskip
+    # for skip == smallskip, medskip, bigskip
     createVSpaceSkip: (skip) ->
         span = document.createElement "span"
         span.setAttribute "class", "vspace " + skip
