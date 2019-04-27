@@ -282,6 +282,27 @@ s** grid with \multiput
 .
 
 
+!s** ovals
+.
+\setlength{\unitlength}{0.7cm}
+\begin{picture}(6,4)
+  \linethickness{0.075mm}
+  \multiput(0,0)(1,0){7}{\line(0,1){4}}
+  \multiput(0,0)(0,1){5}{\line(1,0){6}}
+  \thicklines
+  \put(2,3){\oval(3,1.8)}
+  \thinlines
+  \put(3,2){\oval(3,1.8)}
+  \thicklines
+  \put(2,1){\oval(3,1.8)[tl]}
+  \put(4,1){\oval(3,1.8)[b]}
+  \put(4,3){\oval(3,1.8)[r]}
+  \put(3,1.5){\oval(1.8,0.4)}
+\end{picture}
+.
+.
+
+
 s** mixing math, text and lines
 .
 \frame{

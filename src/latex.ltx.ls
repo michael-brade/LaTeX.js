@@ -968,86 +968,95 @@ export class LaTeX
     # \oval[radius](width,height)[portion]
     #   uses circular arcs of radius min(radius, width/2, height/2)
     args.\oval =        <[ H cl? v i? ]>
-    \oval               : (rad, size, part) ->
+    \oval               : (maxrad, size, part) ->
         linethickness = @g.length \@wholewidth
 
-        if not rad
-            rad = { value: 20, unit: "px" } # TODO: use \maxovalrad, parse the length
+        if not maxrad
+            maxrad = new @g.Length 20, "px" # TODO: use \maxovalrad, parse the length (if unitless, multiply with \unitlength)
 
         if not part
             part = ""
 
+        # determine radius
+        if size.x.cmp(size.y) < 0
+            rad = size.x.div 2
+        else
+            rad = size.y.div 2
+
+        if maxrad.cmp(rad) < 0
+            rad = maxrad
+
         svg = @g.create @g.inline, undefined, "picture-object"
         draw = @g.SVG!.addTo svg
 
-        oval = draw.rect "#{size.x.value}#{size.x.unit}", "#{size.y.value}#{size.y.unit}"
-                   .radius rad.value + rad.unit
-                   .move "-#{size.x.value/2}#{size.x.unit}", "-#{size.y.value/2}#{size.y.unit}"
+        oval = draw.rect size.x.value, size.y.value
+                   .radius rad.value
+                   .move size.x.div(-2).value, size.y.div(-2).value
                    .stroke {
                        color: "#000"
-                       width: @g.round(linethickness.value) + linethickness.unit
+                       width: linethickness.value
                    }
                    .fill "none"
-
-        bbox = oval.bbox!
 
 
         # initial rect
         rect =
-            x: -size.x.value/2 - linethickness.value,
-            y: -size.y.value/2 - linethickness.value,
-            w: size.x.value + linethickness.value * 2,
-            h: size.y.value + linethickness.value * 2
+            x: size.x.div(-2).sub linethickness
+            y: size.y.div(-2).sub linethickness
+            w: size.x.add linethickness.mul 2
+            h: size.y.add linethickness.mul 2
 
 
         if part.includes 'l'
             rect = @_intersect rect,
-                x: -size.x.value/2 - linethickness.value,
-                y: -size.y.value/2 - linethickness.value,
-                w: size.x.value/2 + linethickness.value,
-                h: size.y.value + linethickness.value * 2
+                x: size.x.div(-2).sub linethickness
+                y: size.y.div(-2).sub linethickness
+                w: size.x.div(2).add linethickness
+                h: size.y.add linethickness.mul 2
 
 
         if part.includes 't'
             rect = @_intersect rect,
-                x: -size.x.value/2 - linethickness.value,
-                y: -size.y.value/2 - linethickness.value,
-                w: size.x.value + linethickness.value * 2,
-                h: size.y.value/2 + linethickness.value
+                x: size.x.div(-2).sub linethickness
+                y: size.y.div(-2).sub linethickness
+                w: size.x.add linethickness.mul 2
+                h: size.y.div(2).add linethickness
 
 
         if part.includes 'r'
             rect = @_intersect rect,
-                x: 0,
-                y: -size.y.value/2 - linethickness.value,
-                w: size.x.value/2 + linethickness.value,
-                h: size.y.value + linethickness.value * 2
+                x: @g.Length.zero
+                y: size.y.div(-2).sub linethickness
+                w: size.x.div(2).add linethickness
+                h: size.y.add linethickness.mul 2
 
 
         if part.includes 'b'
             rect = @_intersect rect,
-                x: -size.x.value/2 - linethickness.value,
-                y: 0,
-                w: size.x.value + linethickness.value * 2,
-                h: size.y.value/2 + linethickness.value
+                x: size.x.div(-2).sub linethickness
+                y: @g.Length.zero
+                w: size.x.add linethickness.mul 2
+                h: size.y.div(2).add linethickness
 
 
+        bbox = oval.bbox!
 
-        clip = draw.clip!.add (draw.rect "#{@g.round rect.w}#{size.x.unit}", "#{@g.round rect.h}#{size.y.unit}"
-                                   .move @g.round(rect.x), @g.round(rect.y))
+        bbox.x -= linethickness.px
+        bbox.y -= linethickness.px
+        bbox.width += linethickness.px * 2
+        bbox.height += linethickness.px * 2
+
+
+        clip = draw.clip!.add (draw.rect rect.w.value, rect.h.value
+                                   .move rect.x.value, rect.y.value)
         clip.flip 'y', 0
 
         oval.clipWith clip
 
-        bbox.x -= linethickness.value
-        bbox.y -= linethickness.value
-        bbox.width += linethickness.value * 2
-        bbox.height += linethickness.value * 2
-
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}#{size.x.unit};bottom:#{Math.min(0, @g.round bbox.y)}#{size.y.unit}"
+        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}px;bottom:#{Math.min(0, @g.round bbox.y)}px"
 
-        draw.size "#{@g.round bbox.width}#{size.x.unit}", "#{@g.round bbox.height}#{size.y.unit}"
+        draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
             .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
 
         # last, put the origin into the lower left
@@ -1058,10 +1067,10 @@ export class LaTeX
 
     # return a new rectangle that is the result of intersecting the given two rectangles
     _intersect: (r1, r2) ->
-        x: Math.max(r1.x, r2.x),
-        y: Math.max(r1.y, r2.y),
-        w: Math.max(0, Math.min(r1.x + r1.w, r2.x + r2.w) - Math.max(r1.x, r2.x)),
-        h: Math.max(0, Math.min(r1.y + r1.h, r2.y + r2.h) - Math.max(r1.y, r2.y))
+        x: @g.Length.max(r1.x, r2.x)
+        y: @g.Length.max(r1.y, r2.y)
+        w: @g.Length.max(@g.Length.zero, @g.Length.min(r1.x.add(r1.w), r2.x.add(r2.w)).sub @g.Length.max(r1.x, r2.x))
+        h: @g.Length.max(@g.Length.zero, @g.Length.min(r1.y.add(r1.h), r2.y.add(r2.h)).sub @g.Length.max(r1.y, r2.y))
 
 
     ####################
