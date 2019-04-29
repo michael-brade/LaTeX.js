@@ -986,9 +986,7 @@ export class LaTeX
         if maxrad.cmp(rad) < 0
             rad = maxrad
 
-        svg = @g.create @g.inline, undefined, "picture-object"
-        draw = @g.SVG!.addTo svg
-
+        draw = @g.SVG!
         oval = draw.rect size.x.value, size.y.value
                    .radius rad.value
                    .move size.x.div(-2).value, size.y.div(-2).value
@@ -1054,6 +1052,7 @@ export class LaTeX
         oval.clipWith clip
 
         # size and position
+        svg = @g.create @g.inline, undefined, "picture-object"
         svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}px;bottom:#{Math.min(0, @g.round bbox.y)}px"
 
         draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
@@ -1061,6 +1060,8 @@ export class LaTeX
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
+
+        draw.addTo svg
 
         [ @g.create @g.inline, svg, "picture" ]
 
