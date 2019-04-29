@@ -800,22 +800,36 @@ export class LaTeX
 
         linethickness = @g.length \@wholewidth
 
-        # increase border by linewidth; multiply by -1 to shift left/down
-        offset = d.div(2).add(linethickness).mul(-1).value
+        draw = @g.SVG!.addTo svg
+
+        # if the circle is filled, then linewidth must not influence the diameter
+        if s
+            offset = d.div(2).mul(-1).value
+
+            draw.size d.value, d.value
+                .stroke {
+                    color: "#000"
+                    width: "0"
+                }
+                .circle(d.value)
+                .cx(d.div(2).value)
+                .cy(d.div(2).value)
+                .fill("")
+        else
+            # increase border by linewidth; multiply by -1 to shift left/down
+            offset = d.div(2).add(linethickness).mul(-1).value
+
+            draw.size d.add(linethickness.mul(2)).value, d.add(linethickness.mul(2)).value
+                .stroke {
+                    color: "#000"
+                    width: linethickness.value
+                }
+                .circle(d.value)
+                .cx(d.div(2).add(linethickness).value)
+                .cy(d.div(2).add(linethickness).value)
+                .fill("none")
+
         svg.setAttribute "style", "left:#{offset};bottom:#{offset}"
-
-        draw = @g.SVG!
-                 .addTo svg
-                 .size d.add(linethickness.mul(2)).value, d.add(linethickness.mul(2)).value
-
-        draw.circle(d.value)
-            .cx(d.div(2).add(linethickness).value)
-            .cy(d.div(2).add(linethickness).value)
-            .stroke {
-                color: "#000"
-                width: linethickness.value
-            }
-            .fill(if s then "" else "none")
 
         # last, put the origin into the lower left
         draw.flip 'y', 0
