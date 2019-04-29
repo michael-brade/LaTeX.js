@@ -43,7 +43,7 @@ describe 'LaTeX.js CLI test', !->
             .to.eventually.be.fulfilled
             .and.to.be.an 'object' .that.includes.key 'stdout'
             .and.to.satisfy (res) ->
-               res.stdout == '<html style="--size:13.333px;--textwidth:56.373%;--marginleftwidth:21.814%;--marginrightwidth:21.814%;--marginparwidth:48.614%;--marginparsep:14.667px;--marginparpush:6.667px"><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>A para­graph.</p></div></body></html>' + EOL
+               res.stdout == '<html style="--size:13.284px;--textwidth:56.162%;--marginleftwidth:21.919%;--marginrightwidth:21.919%;--marginparwidth:48.892%;--marginparsep:14.612px;--marginparpush:6.642px"><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>A para­graph.</p></div></body></html>' + EOL
 
     test 'return only the body', ->
         expect(latexjs.execute ['-b'], [ "A paragraph." ])
