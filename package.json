@@ -78,7 +78,7 @@
     "lodash": "4.x",
     "commander": "2.20.x",
     "stdin": "*",
-    "fs-extra": "7.x",
+    "fs-extra": "^8.0.0",
     "js-beautify": "1.9.x"
   },
   "devDependencies": {
