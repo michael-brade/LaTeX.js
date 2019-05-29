@@ -44,7 +44,7 @@ npm install --save-prod latex.js
 ## Usage
 
 LaTeX.js has a command line interface (CLI), it can be embedded in a website using the provided webcomponent, or it can be
-used to directly to obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each of those
+used to directly obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each of those
 use-cases is explained in the following subsections.
 
 LaTeX.js can parse full LaTeX documents as well as documents without a preamble and only the text that comes between
@@ -445,7 +445,7 @@ The title of the document.
 
 ## Limitations
 
-- I don't create an intermediate AST yet, so TeX's conditional expressions are impossible
+- I haven't created an intermediate AST yet, so TeX's conditional expressions are impossible
 - deprecated macros, or macros that are not supposed to be used in LaTeX, won't even exist in LaTeX.js.
   Examples include: `eqnarray`, the old LaTeX 2.09 font macros `\it`, `\sl`, etc. Also missing are most of the plainTeX macros.
   See also [`l2tabuen.pdf`](ftp://ftp.dante.de/tex-archive/info/l2tabu/english/l2tabuen.pdf).
@@ -482,7 +482,7 @@ TeX language with a static parser. See
 [here](https://tex.stackexchange.com/questions/4201/is-there-a-bnf-grammar-of-the-tex-language) for some interesting
 examples.
 
-It is even undecidable wheather a TeX program has a parse tree. There has been done some research
+It is unclear whether a TeX program has a parse tree. There has been done some research
 on the problem of parsing TeX, see [here](http://www.mathematik.uni-marburg.de/~seba/publications/sle10.pdf).
 
 To quote the four problems of TeX:
