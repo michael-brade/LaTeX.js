@@ -482,7 +482,7 @@ TeX language with a static parser. See
 [here](https://tex.stackexchange.com/questions/4201/is-there-a-bnf-grammar-of-the-tex-language) for some interesting
 examples.
 
-It is unclear whether a TeX program has a parse tree. There has been done some research
+It is even undecidable whether a TeX program has a parse tree. There has been done some research
 on the problem of parsing TeX, see [here](http://www.mathematik.uni-marburg.de/~seba/publications/sle10.pdf).
 
 To quote the four problems of TeX:
