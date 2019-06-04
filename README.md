@@ -550,6 +550,7 @@ that most people will probably never need.
 
 If you need a LaTeX to HTML translator that also understands TeX to some extent, take a look at:
 
+* [TeX4ht](https://tug.org/applications/tex4ht/mn.html) (TeX)
 * [LaTeXML](https://github.com/brucemiller/LaTeXML) (Perl)
 * ~~[HEVEA](http://hevea.inria.fr/) (OCaml)~~
 * ~~[plasTeX](https://github.com/tiarno/plastex) (Python)~~
