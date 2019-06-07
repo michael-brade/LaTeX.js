@@ -108,7 +108,7 @@
     "decache": "4.5.x",
     "puppeteer": "1.14.x",
     "puppeteer-firefox": "0.x",
-    "pixelmatch": "4.0.x",
+    "pixelmatch": "~5.0.0",
     "nyc": "13.x",
     "codecov": "3.x"
   },
