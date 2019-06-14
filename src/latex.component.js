@@ -27,7 +27,7 @@ customElements.define('latex-js',
       this.shadow =  this.attachShadow({mode: 'open'})
     }
 
-    onContentReady() {
+    async onContentReady() {
       // empty DOM
       while (this.shadow.lastChild) {
         this.shadow.lastChild.remove()
@@ -39,8 +39,12 @@ customElements.define('latex-js',
       if (this.hasAttribute("baseURL"))
         path = this.getAttribute("baseURL")
 
+      let CustomMacros;
+      if (this.hasAttribute("macros"))
+        CustomMacros = (await import(this.getAttribute("macros"))).default
+
       // parse
-      const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate: hyphenate }) })
+      const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate, CustomMacros }) })
 
       // create DOM
       let page = document.createElement("div")
