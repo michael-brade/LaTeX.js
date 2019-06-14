@@ -52,7 +52,7 @@ program
     # options about LaTeX and style
     .option '-c, --class <class>',      'set a default documentclass for documents without a preamble', 'article'
     .option '-m, --macros <file>',      'load a JavaScript file with additional custom macros'
-    .option '-s, --style <url>',        'specify an additional style sheet to use (can be repeated)', addStyle
+    .option '-s, --stylesheet <url>',   'specify an additional style sheet to use (can be repeated)', addStyle
 
     .option '-n, --no-hyphenation',     'don\'t insert soft hyphens (disables automatic hyphenation in the browser)'
     .option '-l, --language <lang>',    'set hyphenation language', 'en'

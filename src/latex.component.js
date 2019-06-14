@@ -43,6 +43,7 @@ customElements.define('latex-js',
       if (this.hasAttribute("macros"))
         CustomMacros = (await import(this.getAttribute("macros"))).default
 
+
       // parse
       const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate, CustomMacros }) })
 
@@ -52,6 +53,14 @@ customElements.define('latex-js',
       page.appendChild(generator.domFragment())
 
       generator.applyLengthsAndGeometryToDom(this.shadow.host)
+
+      if (this.hasAttribute("stylesheet")) {
+        const style = document.createElement("link")
+        style.type = "text/css"
+        style.rel = "stylesheet"
+        style.href = this.getAttribute("stylesheet")
+        this.shadow.appendChild(style)
+      }
 
       this.shadow.appendChild(generator.stylesAndScripts(path))
       this.shadow.appendChild(page)
