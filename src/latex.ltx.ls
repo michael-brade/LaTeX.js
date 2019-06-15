@@ -1186,7 +1186,11 @@ export class LaTeX
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
         # load and instantiate the documentclass
-        Export = (require "./documentclasses/" + documentclass + ".js")
+        Classes = 
+            \article : require "./documentclasses/article.js"
+            \book    : require "./documentclasses/book.js"
+            \report  : require "./documentclasses/article.js"
+        Export = Classes[documentclass]
         if not Class = Export.default
             Class = Export[Object.getOwnPropertyNames(Export).0]
 
