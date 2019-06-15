@@ -89,7 +89,8 @@ scripts:
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
 
-        webpack --config-name latex.js
+        webpack --config-name latex.js;
+	rollup -c
     "
     docs:  'npm run devbuild && webpack --config-name playground'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
@@ -157,6 +158,10 @@ devDependencies:
     'babel-loader': '8.0.x'
     'source-map-loader': '0.2.x'
     'copy-webpack-plugin': '5.x'
+
+    "rollup": "^1.15.5"
+    "rollup-plugin-commonjs": "^10.0.0"
+    "rollup-plugin-node-resolve": "^5.0.2"
 
     '@babel/node': '7.2.x'
     '@babel/cli': '7.4.x'
