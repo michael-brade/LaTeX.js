@@ -27,7 +27,7 @@ customElements.define('latex-js',
       this.shadow =  this.attachShadow({mode: 'open'})
     }
 
-    onContentReady() {
+    async onContentReady() {
       // empty DOM
       while (this.shadow.lastChild) {
         this.shadow.lastChild.remove()
@@ -39,8 +39,13 @@ customElements.define('latex-js',
       if (this.hasAttribute("baseURL"))
         path = this.getAttribute("baseURL")
 
+      let CustomMacros;
+      if (this.hasAttribute("macros"))
+        CustomMacros = (await import(this.getAttribute("macros"))).default
+
+
       // parse
-      const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate: hyphenate }) })
+      const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate, CustomMacros }) })
 
       // create DOM
       let page = document.createElement("div")
@@ -48,6 +53,14 @@ customElements.define('latex-js',
       page.appendChild(generator.domFragment())
 
       generator.applyLengthsAndGeometryToDom(this.shadow.host)
+
+      if (this.hasAttribute("stylesheet")) {
+        const style = document.createElement("link")
+        style.type = "text/css"
+        style.rel = "stylesheet"
+        style.href = this.getAttribute("stylesheet")
+        this.shadow.appendChild(style)
+      }
 
       this.shadow.appendChild(generator.stylesAndScripts(path))
       this.shadow.appendChild(page)

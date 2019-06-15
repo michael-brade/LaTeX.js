@@ -72,7 +72,7 @@ Options:
   -p, --pretty           beautify the html (this may add/remove spaces unintentionally)
   -c, --class <class>    set a default documentclass for documents without a preamble (default: article)
   -m, --macros <file>    load a JavaScript file with additional custom macros
-  -s, --style <url>      specify an additional style sheet to use (can be repeated)
+  -s, --stylesheet <url> specify an additional style sheet to use (can be repeated)
   -n, --no-hyphenation   don't insert soft hyphens (disables automatic hyphenation in the browser)
   -l, --language <lang>  set hyphenation language (default: en)
   -h, --help             output usage information
