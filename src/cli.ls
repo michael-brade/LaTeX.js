@@ -75,7 +75,7 @@ if program.macros
         CustomMacros = CustomMacros[path.parse macros .name]
 
 
-if program.body and (program.style or program.url)
+ if program.body and (program.stylesheet or program.url)
     console.error "error: conflicting options: 'url' and 'stylesheet' cannot be used with 'body'!"
     process.exit 1
 
