@@ -76,7 +76,7 @@ if program.macros
 
 
 if program.body and (program.style or program.url)
-    console.error "error: conflicting options: 'url' and 'style' cannot be used with 'body'!"
+    console.error "error: conflicting options: 'url' and 'stylesheet' cannot be used with 'body'!"
     process.exit 1
 
 
