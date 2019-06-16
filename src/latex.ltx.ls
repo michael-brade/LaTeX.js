@@ -1187,10 +1187,11 @@ export class LaTeX
 
         # load and instantiate the documentclass
         Classes = 
-            \article : require "./documentclasses/article.js"
-            \book    : require "./documentclasses/book.js"
-            \report  : require "./documentclasses/article.js"
-        Export = Classes[documentclass]
+            (documentclass) :-> require ("./documentclasses/"+documetclass+".js")
+            \article        :-> require "./documentclasses/article.js"
+            \book           :-> require "./documentclasses/book.js"
+            \report         :-> require "./documentclasses/article.js"
+        Export = Classes[documentclass]!
         if not Class = Export.default
             Class = Export[Object.getOwnPropertyNames(Export).0]
 
