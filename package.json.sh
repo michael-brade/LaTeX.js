@@ -56,15 +56,15 @@ scripts:
         uglifyjs latex-parser.js  -cm --source-map 'includeSources,url=\"./latex-parser.js.map\"' -o latex-parser.js;
 
         echo -n index latex.ltx symbols generator html-generator |
-                        xargs -d' ' -P8 -I{} uglifyjs {}.js              -cm --source-map 'content=inline,includeSources,url=\"./{}.js.map\"' -o {}.js;
+                        xargs -t -d' ' -P8 -I{} uglifyjs {}.js              -cm --source-map 'content=inline,includeSources,url=\"./{}.js.map\"' -o {}.js;
 
-        ls documentclasses/ | xargs -P8 -I{} uglifyjs documentclasses/{} -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o documentclasses/{};
-        ls packages/        | xargs -P8 -I{} uglifyjs packages/{}        -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o packages/{};
+        ls documentclasses/ | xargs -t -P8 -I{} uglifyjs documentclasses/{} -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o documentclasses/{};
+        ls packages/        | xargs -t -P8 -I{} uglifyjs packages/{}        -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o packages/{};
 
         cd ..;
     "
     devbuild: "
-        rimraf dist/**.js.map;
+        rimraf dist/*.js.map dist/**/*.js.map;
         mkdirp dist/documentclasses;
         mkdirp dist/packages;
         mkdirp dist/css;
