@@ -68,18 +68,18 @@
     ]
   },
   "dependencies": {
-    "@svgdotjs/svg.js": "3.x",
-    "commander": "2.20.x",
-    "fs-extra": "8.x",
     "he": "1.2.x",
-    "hyphenation.de": "*",
-    "hyphenation.en-us": "*",
-    "hypher": "0.x",
-    "js-beautify": "1.10.x",
     "katex": "0.10.0",
+    "@svgdotjs/svg.js": "3.x",
+    "svgdom": "https://github.com/michael-brade/svgdom",
+    "hypher": "0.x",
+    "hyphenation.en-us": "*",
+    "hyphenation.de": "*",
     "lodash": "4.x",
+    "commander": "2.20.x",
     "stdin": "*",
-    "svgdom": "https://github.com/michael-brade/svgdom"
+    "fs-extra": "8.x",
+    "js-beautify": "1.10.x"
   },
   "devDependencies": {
     "livescript": "https://github.com/michael-brade/LiveScript",
