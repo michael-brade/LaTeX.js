@@ -3,6 +3,7 @@ require! {
     chai
     puppeteer
     pixelmatch
+    http
     pngjs: { PNG }
 }
 
@@ -15,12 +16,13 @@ global.page = undefined         # used to make screenshots
 
 
 var browser
+global.server = undefined
 
 before !->>
     browser := await puppeteer.launch {
         devtools: false
         dumpio: false
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files']
         defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
     }
 
@@ -30,9 +32,12 @@ before !->>
         if msg._type == 'error'
             console.error msg._text
 
+    global.server = http.createServer require \serve-handler
+    global.server.listen '3000'
 
 after !->>
     await browser.close!
+    global.server.close!
 
 
 # take screenshot of current page

@@ -187,6 +187,7 @@ devDependencies:
     'nyc': '14.x'
     'codecov': '3.x'
 
+    'serve-handler': '6.x'
 
 repository:
     type: 'git'

@@ -5,9 +5,10 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta http-equiv="content-language" content="en">
 
-
-  <script src="../../dist/latex.min.js"></script>
-  <script src="../../dist/latex.component.js"></script>
+  <script type="module">
+    import latexjs from "http://localhost:3000/dist/latex.component.js";
+    customElements.define("latex-js", latexjs)
+  </script>
 
   <style>
     body {
