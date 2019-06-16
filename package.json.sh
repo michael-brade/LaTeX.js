@@ -64,7 +64,7 @@ scripts:
         cd ..;
     "
     devbuild: "
-        rimraf dist/*.js.map dist/**/*.js.map;
+        rimraf 'dist/**/*.js.map';
         mkdirp dist/documentclasses;
         mkdirp dist/packages;
         mkdirp dist/css;
