@@ -94,8 +94,10 @@ LaTeX.js can be used as a web component:
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.component.js"></script>
+  <script type="module">
+  import latexjs from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.component.js"
+  customElements.define('latex-js', latexjs)
+  </script>
 
   <style>
     latex-js {
@@ -195,6 +197,8 @@ the jsDelivr CDN:
   <h1>Compiling LaTeX</h1>
 
   <script>
+    // or ES Modules
+    // import latexjs from "https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.esm.js"
     var text = "Hi, this is a line of text."
 
     var generator = new latexjs.HtmlGenerator({ hyphenate: false })
