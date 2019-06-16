@@ -49,9 +49,6 @@ export default class extends HTMLElement {
     if (this.hasAttribute("baseURL"))
       path = this.getAttribute("baseURL")
 
-    // parse
-    const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate: hyphenate }) })
-
     // create DOM
     let page = document.createElement("div")
     page.setAttribute("class", "page")
