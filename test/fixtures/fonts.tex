@@ -82,11 +82,12 @@ Wrap all the paragraphs.
 
 
 
-!s** em lengths are relative to current font sizes
+s** em lengths are relative to current font sizes
 .
 \small
 a line of text\\[1em]
 a line of text\\[1em]
+% TODO: in LaTeX, \Huge changes ALL of the current paragraph! also above!
 \Huge
 a line of text\\[1em]
 a line of text
@@ -99,4 +100,50 @@ a line of text
 a line of text\\[1em]
 a line of text
 .
+<div class="body">
+<p>
+<span class="small">a line of text</span><span class="small"><span class="breakspace" style="margin-bottom:1em"></span></span>
+<span class="small">a line of text</span><span class="small"><span class="breakspace" style="margin-bottom:1em"></span></span>
+<span class="Huge">a line of text</span><span class="Huge"><span class="breakspace" style="margin-bottom:1em"></span></span>
+<span class="Huge">a line of text</span>
+</p>
+<p>
+<span class="small">a line of text</span><span class="small"><span class="breakspace" style="margin-bottom:1em"></span></span>
+<span class="small">a line of text</span>
+</p>
+<p>
+<span class="Huge">a line of text</span><span class="Huge"><span class="breakspace" style="margin-bottom:1em"></span></span>
+<span class="Huge">a line of text</span>
+</p>
+</div>
+.
+
+
+s** lineheight and relative widths according to font size
+.
+This is yet another paragraph. With a lot of meaningless text and meaningless text meaningless text meaningless text.
+
+\tiny This is yet another paragraph.  With a lot of meaningless\\[1em] text and meaningless text meaningless text meaningless text.
+
+This is yet another \Large paragraph. With a lot of meaningless text and meaningless text meaningless text meaningless text.
+
+This is yet another paragraph. With a\\[1em] lot of meaningless text and meaningless text meaningless text meaningless text.
+.
+<div class="body">
+<p>This is yet another paragraph. With a lot of meaningless text and meaningless text meaningless text meaningless text.</p>
+<p>
+<span class="tiny">This is yet another paragraph. With a lot of meaningless</span>
+<span class="tiny"><span class="breakspace" style="margin-bottom:1em"></span></span>
+<span class="tiny">text and meaningless text meaningless text meaningless text.</span>
+</p>
+<p>
+<span class="tiny">This is yet another </span>
+<span class="Large">paragraph. With a lot of meaningless text and meaningless text meaningless text meaningless text.</span>
+</p>
+<p>
+<span class="Large">This is yet another paragraph. With a</span>
+<span class="Large"><span class="breakspace" style="margin-bottom:1em"></span></span>
+<span class="Large">lot of meaningless text and meaningless text meaningless text meaningless text.</span>
+</p>
+</div>
 .

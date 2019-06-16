@@ -64,7 +64,7 @@ scripts:
         cd ..;
     "
     devbuild: "
-        rimraf dist/**/*.js.map;
+        rimraf dist/**.js.map;
         mkdirp dist/documentclasses;
         mkdirp dist/packages;
         mkdirp dist/css;
@@ -132,8 +132,8 @@ dependencies:
     'lodash': '4.x'
     'commander': '2.20.x'
     'stdin': '*'
-    'fs-extra': '7.x'
-    'js-beautify': '1.9.x'
+    'fs-extra': '8.x'
+    'js-beautify': '1.10.x'
 
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
@@ -146,7 +146,7 @@ devDependencies:
     'pegjs': '0.10.x'
     'mkdirp': '0.5.x'
     'rimraf': '2.6.x'
-    'uglify-js': '3.5.x'
+    'uglify-js': '3.6.x'
     'tmp': '0.x'
 
 
@@ -163,7 +163,7 @@ devDependencies:
     "rollup-plugin-commonjs": "^10.0.0"
     "rollup-plugin-node-resolve": "^5.0.2"
 
-    '@babel/node': '7.2.x'
+    '@babel/node': '7.4.x'
     '@babel/cli': '7.4.x'
     '@babel/core': '7.4.x'
     '@babel/register': '7.4.x'
@@ -174,17 +174,17 @@ devDependencies:
     ### testing
 
     'mocha': '6.x'
-    'mocha-junit-reporter': '1.21.x'
+    'mocha-junit-reporter': '1.23.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
     'slugify': '1.3.x'
     'decache': '4.5.x'
 
-    'puppeteer': '1.14.x'
+    'puppeteer': '1.17.x'
     'puppeteer-firefox': '0.x'
-    'pixelmatch': '4.0.x'
+    'pixelmatch': '5.x'
 
-    'nyc': '13.x'
+    'nyc': '14.x'
     'codecov': '3.x'
 
 

@@ -72,7 +72,7 @@ Options:
   -p, --pretty           beautify the html (this may add/remove spaces unintentionally)
   -c, --class <class>    set a default documentclass for documents without a preamble (default: article)
   -m, --macros <file>    load a JavaScript file with additional custom macros
-  -s, --style <url>      specify an additional style sheet to use (can be repeated)
+  -s, --stylesheet <url> specify an additional style sheet to use (can be repeated)
   -n, --no-hyphenation   don't insert soft hyphens (disables automatic hyphenation in the browser)
   -l, --language <lang>  set hyphenation language (default: en)
   -h, --help             output usage information
@@ -556,6 +556,7 @@ If you need a LaTeX to HTML translator that also understands TeX to some extent,
 
 * [TeX4ht](https://tug.org/applications/tex4ht/mn.html) (TeX)
 * [LaTeXML](https://github.com/brucemiller/LaTeXML) (Perl)
+* [LaTeX2HTML](https://github.com/latex2html/latex2html) (Perl)
 * ~~[HEVEA](http://hevea.inria.fr/) (OCaml)~~
 * ~~[plasTeX](https://github.com/tiarno/plastex) (Python)~~
 
@@ -569,7 +570,7 @@ There is no such alternative in JavaScript yet, though, which is why I started t
 
 [![License](https://img.shields.io/github/license/michael-brade/LaTeX.js.svg?style=plastic)](https://github.com/michael-brade/LaTeX.js/blob/master/LICENSE)
 
-Copyright (c) 2015-2018 Michael Brade
+Copyright (c) 2015-2019 Michael Brade
 
 
 [boolean]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type "Boolean"

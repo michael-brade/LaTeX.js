@@ -26,7 +26,7 @@ export default class extends HTMLElement {
     }
   }
 
-  onContentReady() {
+  async onContentReady() {
     // empty DOM
     while (this.shadow.lastChild) {
       this.shadow.lastChild.remove()
@@ -38,6 +38,17 @@ export default class extends HTMLElement {
     if (this.hasAttribute("baseURL"))
       path = this.getAttribute("baseURL")
 
+    let CustomMacros;
+    if (this.hasAttribute("macros"))
+      CustomMacros = (await import(this.getAttribute("macros"))).default
+
+
+    // parse
+    const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate, CustomMacros }) })
+
+    if (this.hasAttribute("baseURL"))
+      path = this.getAttribute("baseURL")
+
     // parse
     const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate: hyphenate }) })
 
@@ -45,6 +56,16 @@ export default class extends HTMLElement {
     let page = document.createElement("div")
     page.setAttribute("class", "page")
     page.appendChild(generator.domFragment())
+    if (this.hasAttribute("stylesheet")) {
+      const style = document.createElement("link")
+      style.type = "text/css"
+      style.rel = "stylesheet"
+      style.href = this.getAttribute("stylesheet")
+      this.shadow.appendChild(style)
+    }
+
+    this.shadow.appendChild(generator.stylesAndScripts(path))
+    this.shadow.appendChild(page)
 
     generator.applyLengthsAndGeometryToDom(this.shadow.host)
 
