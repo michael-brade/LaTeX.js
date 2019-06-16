@@ -68,18 +68,18 @@
     ]
   },
   "dependencies": {
-    "he": "1.2.x",
-    "katex": "0.10.0",
     "@svgdotjs/svg.js": "3.x",
-    "svgdom": "https://github.com/michael-brade/svgdom",
-    "hypher": "0.x",
-    "hyphenation.en-us": "*",
-    "hyphenation.de": "*",
-    "lodash": "4.x",
     "commander": "2.20.x",
-    "stdin": "*",
     "fs-extra": "8.x",
-    "js-beautify": "1.10.x"
+    "he": "1.2.x",
+    "hyphenation.de": "*",
+    "hyphenation.en-us": "*",
+    "hypher": "0.x",
+    "js-beautify": "1.10.x",
+    "katex": "0.10.0",
+    "lodash": "4.x",
+    "stdin": "*",
+    "svgdom": "https://github.com/michael-brade/svgdom"
   },
   "devDependencies": {
     "livescript": "https://github.com/michael-brade/LiveScript",
@@ -97,6 +97,7 @@
     "rollup": "^1.15.5",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.2",
+    "rollup-plugin-terser": "^5.0.0",
     "@babel/node": "7.4.x",
     "@babel/cli": "7.4.x",
     "@babel/core": "7.4.x",

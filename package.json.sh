@@ -162,6 +162,7 @@ devDependencies:
     "rollup": "^1.15.5"
     "rollup-plugin-commonjs": "^10.0.0"
     "rollup-plugin-node-resolve": "^5.0.2"
+    "rollup-plugin-terser": "^5.0.0"
 
     '@babel/node': '7.4.x'
     '@babel/cli': '7.4.x'
