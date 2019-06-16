@@ -2,8 +2,11 @@
 
 require! {
     path
+    http
+    util
     'child_process': { spawn }
     'os': { EOL }
+    'serve-handler'
 }
 
 
@@ -36,6 +39,16 @@ describe 'LaTeX.js API test', !->
 
     test 'browser API', ->
 
-    test 'web component API', !->>
-        await page.goto 'http://localhost:3000/test/api/webcomponent.html'
-        await takeScreenshot path.join __dirname, 'screenshots/webcomponent'
+    test 'web component API', ->>
+        const server = http.createServer serve-handler
+        const listen = util.promisify(server.listen.bind server)
+
+        try
+            await listen { host: 'localhost', port: 4233, exclusive: true }
+            await page.goto 'http://localhost:4233/test/api/webcomponent.html'
+            await page.waitFor 100  # it takes a while for the component to render
+            await takeScreenshot path.join __dirname, 'screenshots/webcomponent'
+        catch e
+            throw e
+        finally
+            server.close!
