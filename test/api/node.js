@@ -1,6 +1,6 @@
 #!/usr/bin/env babel-node
 
-const { parse, HtmlGenerator } = require('../..')    // from 'latex.js' when used in a normal environment
+const { parse, HtmlGenerator } = require(`../../dist/latex`)    // from 'latex.js' when used in a normal environment
 
 let latex = "Hi, this is a line of text."
 

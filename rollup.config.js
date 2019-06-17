@@ -5,6 +5,8 @@ const pegjs = require("rollup-plugin-pegjs");
 const extensions = require("rollup-plugin-extensions");
 const { terser } = require("rollup-plugin-terser");
 const replace = require("rollup-plugin-re");
+const glob = require("glob");
+const path = require("path");
 const ignoreErrors = require('./src/plugin-pegjs.js');
 
 const plugins = [
@@ -17,12 +19,10 @@ const plugins = [
                 match: /\/src\//,
                 test: /requireAll\("([^"]+)"\)/g,
                 replace(_, pattern) {
-                    const glob = require("glob")
-                    const path = require("path")
                     return "({"
                         + glob
                             .sync(pattern)
-                            .map(f=>`"${path.basename(f,path.extname(f))}": require("${path.resolve(f)}")`)
+                            .map(f=>`"${path.basename(f)}": require("${path.resolve(f)}")`)
                             .join(',')
                         + "})";
                 }
