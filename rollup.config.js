@@ -4,6 +4,15 @@ const livescript = require("rollup-plugin-livescript");
 const pegjs = require("rollup-plugin-pegjs");
 const extensions = require("rollup-plugin-extensions");
 const { terser } = require("rollup-plugin-terser");
+const ignoreErrors = require('./src/plugin-pegjs.js');
+
+const plugins = [
+    extensions({extensions: [".js", ".ls", ".pegjs"]}),
+    pegjs({plugins: [ignoreErrors], target: "commonjs", format: "commonjs"}),
+    livescript(),
+    commonjs({extensions: [".js", ".ls", ".pegjs"]}),
+    nodeResolve({extensions: [".js", ".ls", ".pegjs"]})
+];
 
 export default [
     {
@@ -22,11 +31,7 @@ export default [
             }
         ],
         plugins: [
-            extensions({extensions: [".js", ".ls", ".pegjs"]}),
-            pegjs({plugins: [require('./src/plugin-pegjs.js')]}),
-            livescript(),
-            commonjs({extensions: [".js", ".ls", ".pegjs"]}),
-            nodeResolve({extensions: [".js", ".ls", ".pegjs"]}),
+            ...plugins,
             terser({keep_classnames: true})
         ]
     },
@@ -45,13 +50,7 @@ export default [
                 file: "dist/latex.js"
             }
         ],
-        plugins: [
-            extensions({extensions: [".js", ".ls", ".pegjs"]}),
-            pegjs({plugins: [require('./src/plugin-pegjs.js')]}),
-            livescript(),
-            commonjs({extensions: [".js", ".ls", ".pegjs"]}),
-            nodeResolve({extensions: [".js", ".ls", ".pegjs"]})
-        ]
+        plugins
     },
     {
         input: "docs/js/playground.js",
@@ -62,11 +61,7 @@ export default [
             file: "docs/js/playground.bundle.min.js"
         },
         plugins: [
-            extensions({extensions: [".js", ".ls", ".pegjs"]}),
-            pegjs({plugins: [require('./src/plugin-pegjs.js')]}),
-            livescript(),
-            commonjs({extensions: [".js", ".ls", ".pegjs"]}),
-            nodeResolve({extensions: [".js", ".ls", ".pegjs"]}),
+            ...plugins,
             terser({keep_classnames: true})
         ]
     }

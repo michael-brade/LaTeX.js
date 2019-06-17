@@ -13,7 +13,7 @@ require! {
 describe 'LaTeX.js API test', !->
 
     test 'node API', ->
-        const node = spawn 'babel-node', ['test/api/node.js'], { env: { PATH: process.env.PATH } }
+        const node = spawn 'node', ['test/api/node.js'], { env: { PATH: process.env.PATH } }
 
         expect new Promise (resolve, reject) ->
             stdout = ""
