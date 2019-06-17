@@ -27,7 +27,7 @@ export default [
             livescript(),
             commonjs({extensions: [".js", ".ls", ".pegjs"]}),
             nodeResolve({extensions: [".js", ".ls", ".pegjs"]}),
-            terser()
+            terser({keep_classnames: true})
         ]
     },
     {
@@ -67,7 +67,7 @@ export default [
             livescript(),
             commonjs({extensions: [".js", ".ls", ".pegjs"]}),
             nodeResolve({extensions: [".js", ".ls", ".pegjs"]}),
-            terser()
+            terser({keep_classnames: true})
         ]
     }
 ]
