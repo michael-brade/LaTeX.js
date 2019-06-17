@@ -101,6 +101,7 @@ devDependencies:
     'mkdirp': '0.5.x'
     'rimraf': '2.6.x'
     'tmp': '0.x'
+    'glob': '^7.1.4'
 
     ### bundling
 

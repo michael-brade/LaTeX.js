@@ -64,6 +64,7 @@
     "mkdirp": "0.5.x",
     "rimraf": "2.6.x",
     "tmp": "0.x",
+    "glob": "^7.1.4",
     "rollup": "^1.15.5",
     "rollup-plugin-extensions": "^0.1.0",
     "rollup-plugin-pegjs": "^2.1.3",
