@@ -7,12 +7,12 @@ require! {
     slugify
 }
 
-const HtmlGenerator   = require '../dist/html-generator' .HtmlGenerator
 const html-beautify   = require 'js-beautify' .html
-const latexjs         = require '../dist/latex-parser'
+const latexjs         = require '../dist/latex'
 const load-fixture    = require './lib/load-fixtures' .load
 const decache         = require 'decache'
 const registerWindow  = require '@svgdotjs/svg.js' .registerWindow
+const HtmlGenerator   = latexjs.HtmlGenerator
 
 
 subdirs = []

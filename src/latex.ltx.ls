@@ -1186,12 +1186,7 @@ export class LaTeX
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
         # load and instantiate the documentclass
-        Classes = 
-            (documentclass) :-> require "./documentclasses/#{documetclass}.js"
-            article         :-> require "./documentclasses/article.js"
-            book            :-> require "./documentclasses/book.js"
-            report          :-> require "./documentclasses/report.js"
-        Export = Classes[documentclass]!
+        Export = (requireAll "**/documentclasses/*.ls")["#{documentclass}.ls"] || eval "require('./documentclasses/#{documentclass}.js')"
         if not Class = Export.default
             Class = Export[Object.getOwnPropertyNames(Export).0]
 
@@ -1210,7 +1205,7 @@ export class LaTeX
 
             # load and instantiate the package
             try
-                Export = require "./packages/" + pkg + ".js"
+                Export = (requireAll "**/packages/*.ls")["#{pkg}.ls"] || eval "require('./packages/#{pkg}.js')"
 
                 if not Package = Export.default
                     Package = Export[Object.getOwnPropertyNames(Export).0]

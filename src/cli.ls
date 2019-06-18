@@ -13,8 +13,7 @@ require! {
     commander: program
     'js-beautify': { html: beautify-html }
 
-    '../dist/latex-parser': latexjs
-    '../dist/html-generator': { HtmlGenerator }
+    '../dist/latex.js': { parse, HtmlGenerator }
 
     'hyphenation.en-us': en
     'hyphenation.de':    de
@@ -106,7 +105,7 @@ input.then (text) ->
     if text.join
         text = text.join "\n\n"
 
-    generator = latexjs.parse text, { generator: new HtmlGenerator(options) }
+    generator = parse text, { generator: new HtmlGenerator(options) }
 
     if program.body
         html = generator.domFragment!.outerHTML

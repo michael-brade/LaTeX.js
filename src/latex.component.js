@@ -1,7 +1,7 @@
-import latexjs from "./latex.esm.js";
+import latexjs from "./index";
 
 // path of this script
-let path = import.meta.url
+let path = __url
 
 // define the <latex-js> tag
 export default class extends HTMLElement {

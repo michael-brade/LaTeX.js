@@ -1,5 +1,5 @@
 {
-    var Vector = require('./types').Vector;
+    var { Vector } = require('./types');
     var g = options.generator;
     g.setErrorFn(error);
     g.location = location;

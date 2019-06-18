@@ -95,7 +95,7 @@ LaTeX.js can be used as a web component:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script type="module">
-  import latexjs from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.component.js"
+  import latexjs from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.component.esm.js"
   customElements.define('latex-js', latexjs)
   </script>
 

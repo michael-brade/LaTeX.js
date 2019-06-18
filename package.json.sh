@@ -25,43 +25,24 @@ browser:
 
 files:
     'bin/latex.js'
-
-    'dist/index.js'
-    'dist/index.js.map'
-    'dist/latex-parser.js'
-    'dist/latex-parser.js.map'
-    'dist/latex.ltx.js'
-    'dist/latex.ltx.js.map'
-    'dist/symbols.js'
-    'dist/symbols.js.map'
-    'dist/generator.js'
-    'dist/generator.js.map'
-    'dist/html-generator.js'
-    'dist/html-generator.js.map'
+    'dist/latex.js'
+    'dist/latex.js.map'
+    'dist/latex.esm.js'
+    'dist/latex.esm.js.map'
+    'dist/latex.min.js'
+    'dist/latex.esm.min.js'
     'dist/documentclasses/'
     'dist/packages/'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
-    'dist/latex.min.js'
-    'dist/latex.min.js.map'
     'dist/latex.component.js'
-
 
 scripts:
     clean: 'rimraf dist bin test/coverage docs/js/playground.bundle.*;'
     build: "
-        npm run devbuild;
-        cd dist;
-        uglifyjs latex-parser.js  -cm --source-map 'includeSources,url=\"./latex-parser.js.map\"' -o latex-parser.js;
-
-        echo -n index latex.ltx symbols generator html-generator |
-                        xargs -t -d' ' -P8 -I{} uglifyjs {}.js              -cm --source-map 'content=inline,includeSources,url=\"./{}.js.map\"' -o {}.js;
-
-        ls documentclasses/ | xargs -t -P8 -I{} uglifyjs documentclasses/{} -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o documentclasses/{};
-        ls packages/        | xargs -t -P8 -I{} uglifyjs packages/{}        -cm --source-map 'content=inline,includeSources,url=\"./{}.map\"' -o packages/{};
-
-        cd ..;
+        NODE_ENV=production npm run devbuild;
+        NODE_ENV=development npm run devbuild
     "
     devbuild: "
         rimraf 'dist/**/*.js.map';
@@ -74,22 +55,9 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
-        cp src/latex.component.js dist/;
-        lsc -c -m embedded -o dist src/plugin-pegjs.ls src/symbols.ls src/generator.ls src/html-generator.ls &
-        lsc -c -m embedded -p src/latex.ltx.ls > dist/latex.ltx.js &
-        lsc -c -m embedded -p src/types.ls > dist/types.js &
-        lsc -c -m embedded -o dist/documentclasses src/documentclasses/ &
-        lsc -c -m embedded -o dist/packages src/packages/;
-        wait;
-        pegjs -o dist/latex-parser.js --plugin ./dist/plugin-pegjs src/latex-parser.pegjs;
-        babel -o dist/latex-parser.js dist/latex-parser.js;
-        babel -o dist/index.js -s inline src/index.js;
-
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
-
-        webpack --config-name latex.js;
 	rollup -c
     "
     docs:  'npm run devbuild && webpack --config-name playground'
@@ -105,19 +73,6 @@ scripts:
         mocha -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/screenshots/test-results.xml test/*.ls;
     "
     cover: 'nyc report --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage && codecov;'
-
-babel:
-    presets:
-        * '@babel/preset-env'
-            targets:
-                node: 'current'
-                browsers: '> 0.5%, not dead'
-        ...
-
-    plugins:
-        '@babel/syntax-object-rest-spread'
-        ...
-
 
 dependencies:
     'he': '1.2.x'
@@ -146,31 +101,19 @@ devDependencies:
     'pegjs': '0.10.x'
     'mkdirp': '0.5.x'
     'rimraf': '2.6.x'
-    'uglify-js': '3.6.x'
     'tmp': '0.x'
-
+    'glob': '^7.1.4'
 
     ### bundling
 
-    'webpack': '4.x'
-    'webpack-cli': '3.x'
-    'webpack-closure-compiler': '2.x'
-    'babel-loader': '8.0.x'
-    'source-map-loader': '0.2.x'
-    'copy-webpack-plugin': '5.x'
-
     "rollup": "^1.15.5"
+    "rollup-plugin-extensions": "^0.1.0"
+    "rollup-plugin-pegjs": "^2.1.3"
+    "rollup-plugin-livescript": "^0.1.1"
     "rollup-plugin-commonjs": "^10.0.0"
     "rollup-plugin-node-resolve": "^5.0.2"
     "rollup-plugin-terser": "^5.0.0"
-
-    '@babel/node': '7.4.x'
-    '@babel/cli': '7.4.x'
-    '@babel/core': '7.4.x'
-    '@babel/register': '7.4.x'
-    '@babel/preset-env': '7.4.x'
-    '@babel/plugin-syntax-object-rest-spread': '7.2.x'
-
+    "rollup-plugin-re": "^1.0.7"
 
     ### testing
 
