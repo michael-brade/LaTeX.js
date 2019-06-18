@@ -33,10 +33,16 @@
   <textarea id="latex-editor">
     \documentclass{article}
 
+    \usepackage{comment, multicol}
+    \usepackage{hyperref}
+
+    \usepackage{calc,pict2e,picture}
+    \usepackage{textgreek,textcomp,gensymb,stix}
+
     \setcounter{secnumdepth}{2}
 
     \title{\LaTeX.js Showcase}
-    \author{made with \varheartsuit\ by Michael Brade}
+    \author{made with $\varheartsuit$ by Michael Brade}
     \date{2017--2018}
 
 
@@ -44,7 +50,11 @@
 
     \maketitle
 
-    This document will show most of the supported features of \LaTeX.js.
+
+    \begin{abstract}
+    This document will show most of the features of \LaTeX.js while at the same time being a gentle introduction to \LaTeX.
+    In the appendix, the API as well as the format of custom macro definitions in JavaScript will be explained.
+    \end{abstract}
 
 
     \section{Characters}
@@ -566,6 +576,22 @@
       \linethickness{0.3mm}
       \multiput(5,0)(10,0){2}{\line(0,1){20}}
       \multiput(0,5)(0,10){2}{\line(1,0){25}}
+    \end{picture}
+    %
+    \setlength{\unitlength}{0.7cm}
+    \begin{picture}(6,4)
+      \linethickness{0.075mm}
+      \multiput(0,0)(1,0){7}{\line(0,1){4}}
+      \multiput(0,0)(0,1){5}{\line(1,0){6}}
+      \thicklines
+      \put(2,3){\oval(3,1.8)}
+      \thinlines
+      \put(3,2){\oval(3,1.8)}
+      \thicklines
+      \put(2,1){\oval(3,1.8)[tl]}
+      \put(4,1){\oval(3,1.8)[b]}
+      \put(4,3){\oval(3,1.8)[r]}
+      \put(3,1.5){\oval(1.8,0.4)}
     \end{picture}
 
 
