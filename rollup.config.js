@@ -84,7 +84,7 @@ export default [
         output: {
             format: "umd",
             sourcemap: true,
-            name: "latexjsComponent",
+            name: "latexjs",
             file: `dist/latex.component${ext}`
         },
         plugins: plugins("umd")
