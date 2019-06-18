@@ -7,7 +7,6 @@ const { terser } = require("rollup-plugin-terser");
 const replace = require("rollup-plugin-re");
 const glob = require("glob");
 const path = require("path");
-const css = require("rollup-plugin-embed-css");
 const ignoreErrors = require('./src/plugin-pegjs.js');
 
 const plugins = (format) => [
@@ -29,7 +28,7 @@ const plugins = (format) => [
                 }
             }
         ],
-	replaces: {
+        replaces: {
             __url: format === "esm" ? "import.meta.url" : "document.currentScript.src"
         }
     }),
