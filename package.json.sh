@@ -30,9 +30,7 @@ files:
     'dist/latex.esm.js'
     'dist/latex.esm.js.map'
     'dist/latex.min.js'
-    'dist/latex.min.js.map'
     'dist/latex.esm.min.js'
-    'dist/latex.esm.min.js.map'
     'dist/documentclasses/'
     'dist/packages/'
     'dist/css/'
@@ -43,6 +41,10 @@ files:
 scripts:
     clean: 'rimraf dist bin test/coverage docs/js/playground.bundle.*;'
     build: "
+        NODE_ENV=production npm run devbuild;
+        NODE_ENV=development npm run devbuild
+    "
+    devbuild: "
         rimraf 'dist/**/*.js.map';
         mkdirp dist/documentclasses;
         mkdirp dist/packages;
@@ -53,7 +55,6 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
-        cp src/latex.component.js dist/;
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
