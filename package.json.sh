@@ -2,7 +2,7 @@
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.11.1'
+version: '0.12.0'
 
 author:
     'name': 'Michael Brade'
@@ -18,10 +18,10 @@ bin:
     'latex.js': './bin/latex.js'
 
 main:
-    'dist/index.js'
+    'dist/latex.esm.js'
 
 browser:
-    'dist/latex.min.js'
+    'dist/latex.js'
 
 files:
     'bin/latex.js'
@@ -29,14 +29,15 @@ files:
     'dist/latex.js.map'
     'dist/latex.esm.js'
     'dist/latex.esm.js.map'
-    'dist/latex.min.js'
-    'dist/latex.esm.min.js'
+    'dist/latex.component.js'
+    'dist/latex.component.js.map'
+    'dist/latex.component.esm.js'
+    'dist/latex.component.esm.js.map'
     'dist/documentclasses/'
     'dist/packages/'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
-    'dist/latex.component.js'
 
 scripts:
     clean: 'rimraf dist bin test/coverage docs/js/playground.bundle.*;'
