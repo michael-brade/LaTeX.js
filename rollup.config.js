@@ -7,9 +7,10 @@ const { terser } = require("rollup-plugin-terser");
 const replace = require("rollup-plugin-re");
 const glob = require("glob");
 const path = require("path");
+const css = require("rollup-plugin-embed-css");
 const ignoreErrors = require('./src/plugin-pegjs.js');
 
-const plugins = [
+const plugins = (format) => [
     extensions({extensions: [".js", ".ls", ".pegjs"]}),
     pegjs({plugins: [ignoreErrors], target: "commonjs", format: "commonjs"}),
     livescript(),
@@ -27,7 +28,10 @@ const plugins = [
                         + "})";
                 }
             }
-        ]
+        ],
+	replaces: {
+            __url: format === "esm" ? "import.meta.url" : "document.currentScript.src"
+        }
     }),
     commonjs({extensions: [".js", ".ls", ".pegjs"]}),
     resolve({extensions: [".js", ".ls", ".pegjs"]}),
@@ -39,20 +43,22 @@ const ext = process.env.NODE_ENV === "production" ? ".min.js" : ".js"
 export default [
     {
         input: "src/index.js",
-        output: [
-            {
-                format: "esm",
-                sourcemap: true,
-                file: `dist/latex.esm${ext}`
-            },
-            {
-                format: "umd",
-                sourcemap: true,
-                name: "latexjs",
-                file: `dist/latex${ext}`
-            }
-        ],
-        plugins
+        output: {
+            format: "esm",
+            sourcemap: true,
+            file: `dist/latex.esm${ext}`
+        },
+        plugins: plugins("esm")
+    },
+    {
+        input: "src/index.js",
+        output: {
+            format: "umd",
+            sourcemap: true,
+            name: "latexjs",
+            file: `dist/latex${ext}`
+        },
+        plugins: plugins("umd")
     },
     {
         input: "docs/js/playground.js",
@@ -62,23 +68,25 @@ export default [
             name: "Playground",
             file: `docs/js/playground.bundle${ext}`
         },
-        plugins
+        plugins: plugins("umd")
     },
     {
         input: "src/latex.component.js",
-        output: [
-            {
-                format: "esm",
-                sourcemap: true,
-                file: `dist/latex.component.esm${ext}`
-            },
-            {
-                format: "umd",
-                sourcemap: true,
-                name: "latexjsComponent",
-                file: `dist/latex.component${ext}`
-            }
-        ],
-        plugins
+        output: {
+            format: "esm",
+            sourcemap: true,
+            file: `dist/latex.component.esm${ext}`
+        },
+        plugins: plugins("esm")
+    },
+    {
+        input: "src/latex.component.js",
+        output: {
+            format: "umd",
+            sourcemap: true,
+            name: "latexjsComponent",
+            file: `dist/latex.component${ext}`
+        },
+        plugins: plugins("umd")
     }
 ]
