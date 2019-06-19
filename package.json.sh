@@ -40,10 +40,7 @@ files:
 
 scripts:
     clean: 'rimraf dist bin test/coverage docs/js/playground.bundle.*;'
-    build: "
-        NODE_ENV=production npm run devbuild;
-        NODE_ENV=development npm run devbuild
-    "
+    build: 'NODE_ENV=production npm run devbuild;'
     devbuild: "
         rimraf 'dist/**/*.js.map';
         mkdirp dist/documentclasses;
@@ -58,7 +55,7 @@ scripts:
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
-	rollup -c
+	    rollup -c;
     "
     docs:  'npm run devbuild && webpack --config-name playground'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \

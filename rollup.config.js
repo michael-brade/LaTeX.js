@@ -9,6 +9,8 @@ const glob = require("glob");
 const path = require("path");
 const ignoreErrors = require('./src/plugin-pegjs.js');
 
+const prod = process.env.NODE_ENV === "production"
+
 const plugins = (format) => [
     extensions({extensions: [".js", ".ls", ".pegjs"]}),
     pegjs({plugins: [ignoreErrors], target: "commonjs", format: "commonjs"}),
@@ -34,18 +36,17 @@ const plugins = (format) => [
     }),
     commonjs({extensions: [".js", ".ls", ".pegjs"]}),
     resolve({extensions: [".js", ".ls", ".pegjs"]}),
-    ...(process.env.NODE_ENV === "production" ? [terser({keep_classnames:true})] : [])
+    ...(prod ? [terser({keep_classnames:true})] : [])
 ];
 
-const ext = process.env.NODE_ENV === "production" ? ".min.js" : ".js"
-
 export default [
+    // library
     {
         input: "src/index.js",
         output: {
             format: "esm",
-            sourcemap: true,
-            file: `dist/latex.esm${ext}`
+            sourcemap: prod,
+            file: "dist/latex.esm.js"
         },
         plugins: plugins("esm")
     },
@@ -53,28 +54,30 @@ export default [
         input: "src/index.js",
         output: {
             format: "umd",
-            sourcemap: true,
+            sourcemap: prod,
             name: "latexjs",
-            file: `dist/latex${ext}`
+            file: "dist/latex.js"
         },
         plugins: plugins("umd")
     },
+    // playground
     {
         input: "docs/js/playground.js",
         output: {
             format: "umd",
-            sourcemap: true,
+            sourcemap: prod,
             name: "Playground",
-            file: `docs/js/playground.bundle${ext}`
+            file: "docs/js/playground.bundle.js"
         },
         plugins: plugins("umd")
     },
+    // webcomponent
     {
         input: "src/latex.component.js",
         output: {
             format: "esm",
-            sourcemap: true,
-            file: `dist/latex.component.esm${ext}`
+            sourcemap: prod,
+            file: "dist/latex.component.esm.js"
         },
         plugins: plugins("esm")
     },
@@ -82,9 +85,9 @@ export default [
         input: "src/latex.component.js",
         output: {
             format: "umd",
-            sourcemap: true,
+            sourcemap: prod,
             name: "latexjs",
-            file: `dist/latex.component${ext}`
+            file: "dist/latex.component.js"
         },
         plugins: plugins("umd")
     }
