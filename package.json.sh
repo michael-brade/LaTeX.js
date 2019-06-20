@@ -111,6 +111,7 @@ devDependencies:
     "rollup-plugin-node-resolve": "^5.0.2"
     "rollup-plugin-terser": "^5.0.0"
     "rollup-plugin-re": "^1.0.7"
+    "rollup-plugin-copy": "^3.0.0"
 
     ### testing
 

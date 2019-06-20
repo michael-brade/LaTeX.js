@@ -8,6 +8,7 @@ const replace = require("rollup-plugin-re");
 const glob = require("glob");
 const path = require("path");
 const ignoreErrors = require('./src/plugin-pegjs.js');
+import copy from 'rollup-plugin-copy';
 
 const prod = process.env.NODE_ENV === "production"
 
@@ -69,7 +70,15 @@ export default [
             name: "Playground",
             file: "docs/js/playground.bundle.js"
         },
-        plugins: plugins("umd")
+        plugins: [...plugins("umd"),
+            copy({
+                targets: [
+                    { src: 'src/css/*', dest: 'docs/css/' },
+                    { src: 'src/js/*', dest: 'docs/js/' }
+                ],
+                verbose: true
+            })
+        ]
     },
     // webcomponent
     {
