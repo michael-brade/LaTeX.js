@@ -55,9 +55,13 @@ scripts:
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
-	    rollup -c;
+	    rollup -c --environment GOAL:library-esm &
+	    rollup -c --environment GOAL:library-umd &
+	    rollup -c --environment GOAL:webcomponent-esm &
+	    rollup -c --environment GOAL:webcomponent-umd &
+	    rollup -c --environment GOAL:playground;
+        wait;
     "
-    docs:  'npm run devbuild && webpack --config-name playground'
     pgcc:  "google-closure-compiler --compilation_level SIMPLE \
                                     --externs src/externs.js \
                                     --js_output_file docs/js/playground.bundle.min.js docs/js/playground.bundle.js;"

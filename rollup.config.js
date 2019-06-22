@@ -1,14 +1,14 @@
-const resolve = require("rollup-plugin-node-resolve");
-const commonjs = require("rollup-plugin-commonjs");
-const livescript = require("rollup-plugin-livescript");
-const pegjs = require("rollup-plugin-pegjs");
-const extensions = require("rollup-plugin-extensions");
-const { terser } = require("rollup-plugin-terser");
-const replace = require("rollup-plugin-re");
-const glob = require("glob");
-const path = require("path");
-const ignoreErrors = require('./src/plugin-pegjs.js');
+import resolve from "rollup-plugin-node-resolve";
+import commonjs from "rollup-plugin-commonjs";
+import livescript from "rollup-plugin-livescript";
+import pegjs from "rollup-plugin-pegjs";
+import extensions from "rollup-plugin-extensions";
+import { terser } from "rollup-plugin-terser";
+import replace from "rollup-plugin-re";
 import copy from 'rollup-plugin-copy';
+import glob from "glob";
+import path from "path";
+const ignoreErrors = require('./src/plugin-pegjs.js');
 
 const prod = process.env.NODE_ENV === "production"
 
@@ -40,64 +40,65 @@ const plugins = (format) => [
     ...(prod ? [terser({keep_classnames:true})] : [])
 ];
 
-export default [
-    // library
-    {
-        input: "src/index.js",
-        output: {
-            format: "esm",
-            sourcemap: prod,
-            file: "dist/latex.esm.js"
-        },
-        plugins: plugins("esm")
-    },
-    {
-        input: "src/index.js",
-        output: {
-            format: "umd",
-            sourcemap: prod,
-            name: "latexjs",
-            file: "dist/latex.js"
-        },
-        plugins: plugins("umd")
-    },
-    // playground
-    {
-        input: "docs/js/playground.js",
-        output: {
-            format: "umd",
-            sourcemap: prod,
-            name: "Playground",
-            file: "docs/js/playground.bundle.js"
-        },
-        plugins: [...plugins("umd"),
-            copy({
-                targets: [
-                    { src: 'src/css/*', dest: 'docs/css/' },
-                    { src: 'src/js/*', dest: 'docs/js/' }
-                ],
-                verbose: true
-            })
-        ]
-    },
-    // webcomponent
-    {
-        input: "src/latex.component.js",
-        output: {
-            format: "esm",
-            sourcemap: prod,
-            file: "dist/latex.component.esm.js"
-        },
-        plugins: plugins("esm")
-    },
-    {
-        input: "src/latex.component.js",
-        output: {
-            format: "umd",
-            sourcemap: prod,
-            name: "latexjs",
-            file: "dist/latex.component.js"
-        },
-        plugins: plugins("umd")
-    }
-]
+export default
+process.env.GOAL === "library-esm" ?
+        {
+            input: "src/index.js",
+            output: {
+                format: "esm",
+                sourcemap: prod,
+                file: "dist/latex.esm.js"
+            },
+            plugins: plugins("esm")
+        } :
+process.env.GOAL === "library-umd" ?
+        {
+            input: "src/index.js",
+            output: {
+                format: "umd",
+                sourcemap: prod,
+                name: "latexjs",
+                file: "dist/latex.js"
+            },
+            plugins: plugins("umd")
+        } :
+process.env.GOAL === "playground" ?
+        {
+            input: "docs/js/playground.js",
+            output: {
+                format: "umd",
+                sourcemap: prod,
+                name: "Playground",
+                file: "docs/js/playground.bundle.js"
+            },
+            plugins: [...plugins("umd"),
+                copy({
+                    targets: [
+                        { src: 'src/css/*', dest: 'docs/css/' },
+                        { src: 'src/js/*', dest: 'docs/js/' }
+                    ],
+                    verbose: true
+                })
+            ]
+        } :
+process.env.GOAL === "webcomponent-esm" ?
+        {
+            input: "src/latex.component.js",
+            output: {
+                format: "esm",
+                sourcemap: prod,
+                file: "dist/latex.component.esm.js"
+            },
+            plugins: plugins("esm")
+        } :
+process.env.GOAL === "webcomponent-umd" ?
+        {
+            input: "src/latex.component.js",
+            output: {
+                format: "umd",
+                sourcemap: prod,
+                name: "latexjs",
+                file: "dist/latex.component.js"
+            },
+            plugins: plugins("umd")
+        } : {}

@@ -35,8 +35,7 @@
   "scripts": {
     "clean": "rimraf dist bin test/coverage docs/js/playground.bundle.*;",
     "build": "NODE_ENV=production npm run devbuild;",
-    "devbuild": "rimraf 'dist/**/*.js.map';mkdirp dist/documentclasses;mkdirp dist/packages;mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;rsync -a src/js/ dist/js/;mkdirp bin;lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;chmod a+x bin/latex.js;rollup -c;",
-    "docs": "npm run devbuild && webpack --config-name playground",
+    "devbuild": "rimraf 'dist/**/*.js.map';mkdirp dist/documentclasses;mkdirp dist/packages;mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;rsync -a src/js/ dist/js/;mkdirp bin;lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;chmod a+x bin/latex.js;rollup -c --environment GOAL:library-esm &rollup -c --environment GOAL:library-umd &rollup -c --environment GOAL:webcomponent-esm &rollup -c --environment GOAL:webcomponent-umd &rollup -c --environment GOAL:playground;wait;",
     "pgcc": "google-closure-compiler --compilation_level SIMPLE --externs src/externs.js --js_output_file docs/js/playground.bundle.min.js docs/js/playground.bundle.js;",
     "test": "mocha test/*.ls;",
     "iron": "iron-node node_modules/.bin/_mocha test/*.ls;",
