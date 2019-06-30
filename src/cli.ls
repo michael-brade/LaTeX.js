@@ -8,12 +8,11 @@ require! {
     util
     path
     'fs-extra': fs
-    he
     stdin
     commander: program
     'js-beautify': { html: beautify-html }
 
-    '../dist/latex.js': { parse, HtmlGenerator }
+    '../dist/latex.js': { he, parse, HtmlGenerator }
 
     'hyphenation.en-us': en
     'hyphenation.de':    de

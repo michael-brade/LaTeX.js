@@ -33,8 +33,6 @@ files:
     'dist/latex.component.js.map'
     'dist/latex.component.esm.js'
     'dist/latex.component.esm.js.map'
-    'dist/documentclasses/'
-    'dist/packages/'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
@@ -44,8 +42,6 @@ scripts:
     build: 'NODE_ENV=production npm run devbuild;'
     devbuild: "
         rimraf 'dist/**/*.js.map';
-        mkdirp dist/documentclasses;
-        mkdirp dist/packages;
         mkdirp dist/css;
         mkdirp dist/js;
         mkdirp dist/fonts;
@@ -63,39 +59,43 @@ scripts:
 	    rollup -c --environment GOAL:playground;
         wait;
     "
-    pgcc:  "google-closure-compiler --compilation_level SIMPLE \
-                                    --externs src/externs.js \
-                                    --js_output_file docs/js/playground.bundle.min.js docs/js/playground.bundle.js;"
 
     test:  'mocha test/*.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
 
     testc: "
-        nyc ./node_modules/.bin/mocha -i -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls &&
+        nyc --include='bin' --include='src' --include='dist' -e '.ls' \
+            ./node_modules/.bin/mocha -i -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls
+        &&
         mocha -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/screenshots/test-results.xml test/*.ls;
     "
     cover: 'nyc report --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage && codecov;'
 
 dependencies:
-    'he': '1.2.x'
-    'katex': '0.10.0'
-    '@svgdotjs/svg.js': '3.x',
-    'svgdom': 'https://github.com/michael-brade/svgdom'
+    ### CLI dependencies
 
-    'hypher': '0.x'
+    'commander': '2.20.x'
+    'fs-extra': '8.x'
+    'js-beautify': '1.10.x'
+    'stdin': '*'
+
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
-    'lodash': '4.x'
-    'commander': '2.20.x'
-    'stdin': '*'
-    'fs-extra': '8.x'
-    'js-beautify': '1.10.x'
-
+    'svgdom': 'https://github.com/michael-brade/svgdom'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
 
 devDependencies:
+    ### actual runtime dependencies, but bundled by rollup
+
+    'he': '1.2.x'
+    'katex': '0.10.0'
+    '@svgdotjs/svg.js': '3.x',
+
+    'hypher': '0.x'
+    'lodash': '4.x'
+
     'livescript': 'https://github.com/michael-brade/LiveScript'
 
     ### building
