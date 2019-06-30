@@ -127,7 +127,7 @@ devDependencies:
     'slugify': '1.3.x'
     'decache': '4.5.x'
 
-    'puppeteer': '1.17.x'
+    'puppeteer': '1.18.x'
     'puppeteer-firefox': '0.x'
     'pixelmatch': '5.x'
 
