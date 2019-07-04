@@ -50,7 +50,7 @@ global.takeScreenshot = (filename) !->>
 
         dfpx = pixelmatch png1.data, png2.data, diff.data, png1.width, png1.height, threshold: 0
 
-        diff.pack!.pipe(fs.createWriteStream(filename + '.diff.png'))
+        fs.writeFileSync(filename + '.diff.png', PNG.sync.write(diff))
 
         if dfpx > 0
             throw new Error "screenshots differ by #{dfpx} pixels - see #{filename + '.*.png'}"
