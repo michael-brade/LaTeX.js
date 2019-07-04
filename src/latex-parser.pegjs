@@ -244,7 +244,7 @@ key_val "key=value" =
 macro_args =
     (
         &{ return g.nextArg("X") }                                                                              { g.preExecMacro(); }
-      / &{ return g.nextArg("s") }  _ s:"*"?                                                                    { g.addParsedArg(!!s); }
+      / nextArgStar
 
       / &{ return g.nextArg("g") }    a:(arg_group      / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
       / &{ return g.nextArg("hg") }   a:(arg_hgroup     / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
@@ -277,6 +277,9 @@ macro_args =
       / &{ return g.nextArg("items") }      i:items                                                             { g.addParsedArg(i); }
       / &{ return g.nextArg("enumitems") }  i:enumitems                                                         { g.addParsedArg(i); }
     )*
+
+nextArgStar =
+      &{ return g.nextArg("s") }  _ s:"*"?   { g.addParsedArg(!!s); return !!s; }
 
 
 // {identifier}
@@ -638,18 +641,20 @@ verb            =   "verb" s:"*"? _ !char
 begin_env "\\begin" =
     // escape already eaten by macro rule
     begin
-    begin_group id:identifier end_group
+    begin_group
+        id:(id:identifier { g.begin(id); return id; })
+        s:nextArgStar?
+    end_group
     {
-        g.begin(id);
-        return id;
+        return { id, end: id + (s ? "*" : "") };
     }
 
 end_env "\\end" =
     skip_all_space
     escape end
-    begin_group id:identifier end_group
+    begin_group id:identifier _ s:"*"? end_group
     {
-        return id;
+        return id + (s ? "*" : "");
     }
 
 
@@ -664,12 +669,12 @@ end_env "\\end" =
 h_environment =
     id:begin_env
         macro_args                                          // parse macro args (which now become environment args)
-        node:( &. { return g.macro(id, g.endArgs()); })     // then execute macro with args without consuming input
+        node:( &. { return g.macro(id.id, g.endArgs()); })  // then execute macro with args without consuming input
         sb:(s:space? {return g.createText(s); })
         p:paragraph_with_linebreak*                         // then parse environment contents (if macro left some)
     end_id:end_env se:(s:space? {return g.createText(s); })
     {
-        var end = g.end(id, end_id);
+        var end = g.end(id.end, end_id);
 
         // if nodes are created by macro, add content as children to the last element
         // if node is a text node, just add it
@@ -690,11 +695,11 @@ h_environment =
 environment =
     id:begin_env  !{ g.break(); }
         macro_args                                          // parse macro args (which now become environment args)
-        node:( &. { return g.macro(id, g.endArgs()); })     // then execute macro with args without consuming input
+        node:( &. { return g.macro(id.id, g.endArgs()); })  // then execute macro with args without consuming input
         p:paragraph*                                        // then parse environment contents (if macro left some)
     end_id:end_env
     {
-        var end = g.end(id, end_id);
+        var end = g.end(id.end, end_id);
 
         // if nodes are created by macro, add content as children to the last element
         // if node is a text node, just add it
