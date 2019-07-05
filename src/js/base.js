@@ -1,3 +1,5 @@
+export default `
+
 function getVariable(el, propertyName) {
     return String(getComputedStyle(el).getPropertyValue('--' + propertyName)).trim();
 };
@@ -144,3 +146,5 @@ function completed() {
 
 document.addEventListener("DOMContentLoaded", completed);
 window.addEventListener("load", completed);
+
+`

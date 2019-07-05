@@ -5,9 +5,9 @@ import pegjs from "rollup-plugin-pegjs";
 import extensions from "rollup-plugin-extensions";
 import { terser } from "rollup-plugin-terser";
 import replace from "rollup-plugin-re";
-import copy from 'rollup-plugin-copy';
 import glob from "glob";
 import path from "path";
+import postcss from "rollup-plugin-postcss";
 const ignoreErrors = require('./src/plugin-pegjs.js');
 
 const prod = process.env.NODE_ENV === "production"
@@ -16,6 +16,10 @@ const plugins = (format) => [
     extensions({extensions: [".js", ".ls", ".pegjs"]}),
     pegjs({plugins: [ignoreErrors], target: "commonjs", format: "commonjs"}),
     livescript(),
+    postcss({
+        plugins: [require("postcss-url")({ url: "inline", filter: /\.(css|woff2?)$/ })],
+        inject: false
+    }),
     replace({
         patterns: [
             {
@@ -71,15 +75,7 @@ process.env.GOAL === "playground" ?
                 name: "Playground",
                 file: "docs/js/playground.bundle.js"
             },
-            plugins: [...plugins("umd"),
-                copy({
-                    targets: [
-                        { src: 'src/css/*', dest: 'docs/css/' },
-                        { src: 'src/js/*', dest: 'docs/js/' }
-                    ],
-                    verbose: true
-                })
-            ]
+            plugins: plugins("umd")
         } :
 process.env.GOAL === "webcomponent-esm" ?
         {

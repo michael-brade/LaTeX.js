@@ -8,7 +8,7 @@ require! {
 export class Article extends Base
 
     # public static
-    @css = "css/article.css"
+    @css = require "../css/article.css"
 
 
     # CTOR

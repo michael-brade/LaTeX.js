@@ -10,7 +10,7 @@ require! {
 export class Book extends Report
 
     # public static
-    @css = "css/book.css"
+    @css = require "../css/book.css"
 
 
     # CTOR

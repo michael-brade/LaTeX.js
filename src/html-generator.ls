@@ -258,38 +258,30 @@ export class HtmlGenerator extends Generator
     stylesAndScripts: (baseURL) ->
         el = document.createDocumentFragment!
 
-        createStyleSheet = (url) ->
+        createStyleSheet = (code) ->
+            link = document.createElement "style"
+            link.innerHTML = code
+            link
+
+        createStyleSheetLink = (url) ->
             link = document.createElement "link"
             link.type = "text/css"
             link.rel = "stylesheet"
             link.href = url
             link
 
-        createScript = (url) ->
+        createScript = (code) ->
             script = document.createElement "script"
-            script.src = url
+            script.innerHTML = code
             script
 
-        if baseURL
-            el.appendChild createStyleSheet new URL("css/katex.css", baseURL).toString!
-            el.appendChild createStyleSheet new URL(@documentClass@@css, baseURL).toString!
-
-            for style in @_options.styles
-                el.appendChild createStyleSheet new URL(style, baseURL).toString!
-
-            el.appendChild createScript new URL("js/base.js", baseURL).toString!
-        else
-            el.appendChild createStyleSheet "css/katex.css"
-            el.appendChild createStyleSheet @documentClass@@css
-
-            for style in @_options.styles
-                el.appendChild createStyleSheet style
-
-            el.appendChild createScript "js/base.js"
-
+        el.appendChild createStyleSheet require "katex/dist/katex.css"
+        el.appendChild createStyleSheet @documentClass@@css
+        el.appendChild createScript require "./js/base.js"
+        for style in @_options.styles
+            el.appendChild createStyleSheetLink style
+        
         return el
-
-
 
     /* @return DocumentFragment, the full page without stylesheets or scripts */
     domFragment: ->
