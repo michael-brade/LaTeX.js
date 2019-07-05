@@ -8,6 +8,8 @@ import replace from "rollup-plugin-re";
 import glob from "glob";
 import path from "path";
 import postcss from "rollup-plugin-postcss";
+import postcssURL from "postcss-url";
+import postcssImport from "postcss-import";
 const ignoreErrors = require('./src/plugin-pegjs.js');
 
 const prod = process.env.NODE_ENV === "production"
@@ -17,7 +19,10 @@ const plugins = (format) => [
     pegjs({plugins: [ignoreErrors], target: "commonjs", format: "commonjs"}),
     livescript(),
     postcss({
-        plugins: [require("postcss-url")({ url: "inline", filter: /\.(css|woff2?)$/ })],
+        plugins: [
+            postcssImport(),
+            postcssURL({ url: "inline", filter: /\.woff2?$/ })
+        ],
         inject: false
     }),
     replace({
