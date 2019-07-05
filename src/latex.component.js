@@ -1,4 +1,5 @@
 import latexjs from "./index";
+import cmu from "./fonts/cmu.css";
 
 // path of this script
 let path = __url
@@ -61,30 +62,15 @@ export default class extends HTMLElement {
       this.shadow.appendChild(style)
     }
 
-    this.shadow.appendChild(generator.stylesAndScripts(path))
-    this.shadow.appendChild(page)
-
     generator.applyLengthsAndGeometryToDom(this.shadow.host)
-
     this.shadow.appendChild(generator.stylesAndScripts(path))
     this.shadow.appendChild(page)
 
     // we need to add CMU fonts to the parent page (if they weren't added yet)
     const pDoc = this.ownerDocument
-    const links = pDoc.querySelectorAll('link')
-    const cmu = new URL("fonts/cmu.css", path)
-
-    for (let link of links) {
-      if (link.href == cmu.href)
-        return
-    }
-
-    const linkEl = pDoc.createElement("link")
-    linkEl.type = "text/css"
-    linkEl.rel = "stylesheet"
-    linkEl.href = cmu.href
-
-    pDoc.head.appendChild(linkEl)
+    const style = pDoc.createElement("style")
+    style.innerHTML = cmu
+    pDoc.head.appendChild(style)
   }
 
   connectedCallback() { }

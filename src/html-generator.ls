@@ -280,7 +280,7 @@ export class HtmlGenerator extends Generator
         el.appendChild createScript require "./js/base.js"
         for style in @_options.styles
             el.appendChild createStyleSheetLink style
-        
+
         return el
 
     /* @return DocumentFragment, the full page without stylesheets or scripts */
