@@ -14,7 +14,7 @@ const prod = process.env.NODE_ENV === "production"
 
 const plugins = (format) => [
     extensions({extensions: [".js", ".ls", ".pegjs"]}),
-    pegjs({plugins: [ignoreErrors], target: "commonjs", format: "commonjs"}),
+    pegjs({plugins: [ignoreErrors], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
     livescript(),
     replace({
         patterns: [
@@ -35,9 +35,16 @@ const plugins = (format) => [
             __url: format === "esm" ? "import.meta.url" : "document.currentScript.src"
         }
     }),
-    commonjs({extensions: [".js", ".ls", ".pegjs"]}),
-    resolve({extensions: [".js", ".ls", ".pegjs"]}),
-    ...(prod ? [terser({keep_classnames:true})] : [])
+    commonjs({
+        extensions: [".js", ".ls", ".pegjs"],
+        namedExports: {
+            'src/latex-parser.pegjs': [ 'parse', 'SyntaxError' ],
+            'src/generator.ls': [ 'Generator' ],
+            'src/html-generator.ls': [ 'HtmlGenerator' ]
+        }
+    }),
+    resolve({extensions: [".js", ".ls", ".pegjs"], preferBuiltins: true}),
+    ...(prod ? [terser({ keep_classnames: true })] : [])
 ];
 
 export default

@@ -15,7 +15,7 @@ require! {
 }
 
 if global.window is undefined
-    # on the server we need to include a DOM implementation - but hide the require from webpack
+    # on the server we need to include a DOM implementation - but hide the require from rollup
     global.window = eval('require')('svgdom')
         ## custom font directory
         #.setFontDir('./fonts')
