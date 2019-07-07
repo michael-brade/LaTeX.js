@@ -4,6 +4,9 @@ require! {
     './symbols': { symbols }
     './types': { Vector }
 }
+``
+import importAll from 'import-all.macro';
+``
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
@@ -1186,7 +1189,7 @@ export class LaTeX
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
         # load and instantiate the documentclass
-        Export = (requireAll "**/documentclasses/*.ls")["#{documentclass}.ls"] || eval "require('./documentclasses/#{documentclass}.js')"
+        Export = (importAll.sync "./documentclasses/*.ls")["./documentclasses/#{documentclass}.ls"].default || eval "require('./documentclasses/#{documentclass}.js')"
         if not Class = Export.default
             Class = Export[Object.getOwnPropertyNames(Export).0]
 
@@ -1205,7 +1208,7 @@ export class LaTeX
 
             # load and instantiate the package
             try
-                Export = (requireAll "**/packages/*.ls")["#{pkg}.ls"] || eval "require('./packages/#{pkg}.js')"
+                Export = (importAll.sync "./packages/*.ls")["./packages/#{pkg}.ls"].default || eval "require('./packages/#{pkg}.js')"
 
                 if not Package = Export.default
                     Package = Export[Object.getOwnPropertyNames(Export).0]

@@ -118,8 +118,14 @@ devDependencies:
     "rollup-plugin-re": "^1.0.7"
     "rollup-plugin-postcss": "^2.0.3"
     "rollup-plugin-copy": "^3.0.0"
+    "rollup-plugin-babel": "^4.3.3"
     "postcss-url": "^8.0.0"
     "postcss-import": "^12.0.1"
+    "@babel/core": "^7.5.0"
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0"
+    "babel-plugin-macros": "^2.6.1"
+    "import-all.macro": "^2.0.3"
+
 
     ### testing
 
