@@ -43,7 +43,7 @@
 
     \title{\LaTeX.js Showcase}
     \author{made with $\varheartsuit$ by Michael Brade}
-    \date{2017--2018}
+    \date{2017--2019}
 
 
     \begin{document}
@@ -749,7 +749,7 @@
   <iframe id="preview" sandbox="allow-same-origin allow-scripts"></iframe>
 
   <div id="footer">
-    <div id="copyright">Copyright &copy; 2017-2018 Michael Brade</div>
+    <div id="copyright">Copyright &copy; 2017-2019 Michael Brade</div>
   </div>
 
   <script>
@@ -778,7 +778,7 @@
 
     var iframe;
 
-    document.addEventListener("DOMContentLoaded", function() {
+    window.addEventListener("load", function() {
       iframe = document.getElementById('preview')
 
       Playground.compile(editor.getValue(), iframe)
