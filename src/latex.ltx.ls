@@ -690,6 +690,8 @@ export class LaTeX
 
     \maxovalrad         :-> "20pt"
 
+    \qbeziermax         :-> 500
+
 
     # frames
 
@@ -735,40 +737,42 @@ export class LaTeX
 
     # \qbezier[N](x1, y1)(x, y)(x2, y2)
     args.\qbezier =     <[ H n? v v v ]>
-    \qbezier            : (n, v1, v, v2) ->
+    \qbezier            : (N, v1, v, v2) ->
         # for path, v MUST be unitless - so v is always in user coordinate system, or relative
         # (and just to be safe, set size = viewbox in @_path)
-        [ @_path "M#{v1.x.pxpct},#{v1.y.pxpct} Q#{v.x.pxpct},#{v.y.pxpct} #{v2.x.pxpct},#{v2.y.pxpct}" ]
+        [ @_path "M#{v1.x.pxpct},#{v1.y.pxpct} Q#{v.x.pxpct},#{v.y.pxpct} #{v2.x.pxpct},#{v2.y.pxpct}", N ]
 
-
-
-
-    # SVG path.length()
-    # https://github.com/Pomax/bezierjs for calculating N bezier points
-    #   or use sth like  .stroke({ dasharray: "10, 5" })
 
     # \cbezier[N](x1, y1)(x, y)(x2, y2)(x3, y3)
     args.\cbezier =     <[ H n? v v v v ]>
-    \cbezier            : (n, v1, v, v2, v3) ->
-        [ @_path "M#{v1.x.pxpct},#{v1.y.pxpct} C#{v.x.pxpct},#{v.y.pxpct} #{v2.x.pxpct},#{v2.y.pxpct} #{v3.x.pxpct},#{v3.y.pxpct}" ]
-
-    #args.\graphpaper =  <[  ]>
+    \cbezier            : (N, v1, v, v2, v3) ->
+        [ @_path "M#{v1.x.pxpct},#{v1.y.pxpct} C#{v.x.pxpct},#{v.y.pxpct} #{v2.x.pxpct},#{v2.y.pxpct} #{v3.x.pxpct},#{v3.y.pxpct}", N ]
 
 
-    # typeset an SVG path
-    _path: (p) ->
+    # typeset an SVG path, optionally with N+1 points instead of smooth
+    # (https://github.com/Pomax/bezierjs for calculating bezier points manually)
+    _path: (p, N) ->
         linethickness = @g.length \@wholewidth
 
         svg = @g.create @g.inline, undefined, "picture-object"
         draw = @g.SVG!.addTo svg
 
-        bbox = draw.path p
+        path = draw.path p
                    .stroke {
                        color: "#000"
                        width: linethickness.value
                    }
                    .fill 'none'
-                   .bbox!
+
+        if N > 0
+            N = Math.min N, @\qbeziermax () - 1
+
+            pw = linethickness.px                           # width of a point
+            len-section = (path.length! - (N+1)*pw) / N     # N sections for N+1 points
+            if len-section > 0
+                path.stroke { dasharray: "#{pw} #{@g.round len-section}" }
+
+        bbox = path.bbox!
 
         bbox.x -= linethickness.px
         bbox.y -= linethickness.px
