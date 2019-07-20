@@ -715,8 +715,10 @@ export class LaTeX
         wrapper = @g.create @g.inline, obj, "put-obj"
         wrapper.setAttribute "style", "left:#{v.x.value}"
 
-        strut = @g.create @g.inline, undefined, "strut"
-        strut.setAttribute "style", "height:#{v.y.abs!.value}"
+        # only add the strut if y is non-zero
+        if 0 != v.y.cmp @g.Length.zero
+            strut = @g.create @g.inline, undefined, "strut"
+            strut.setAttribute "style", "height:#{v.y.abs!.value}"
 
         @rlap @g.create @g.inline, [wrapper, strut], "picture"
 
