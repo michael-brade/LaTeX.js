@@ -571,6 +571,8 @@ h1, h2, h3, h4 {
     display: inline-block;  /* so that it can be given a fixed size */
     position: relative;
     vertical-align: bottom; /* needed for \put */
+    text-indent: 0;         /* pictures in a paragraph still should not have indentation */
+    /* width: 0; */
 }
 
 /* the coordinate system of the picture */
