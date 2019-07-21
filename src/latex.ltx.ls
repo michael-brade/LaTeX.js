@@ -932,7 +932,7 @@ export class LaTeX
         @g.create @g.inline, svg, "picture"
 
 
-    # helper: draw arrow from vs to ve
+    # helper: draw arrow from vs to ve  TODO: somehow find a way to have a mimimum size for the head (marker)
     _vector: (vs, ve) ->
         # TODO: vs not implemented! always 0
         # TODO: em/ex should be supported!
@@ -966,7 +966,11 @@ export class LaTeX
                        width: linethickness.value
                    }
                    # marker width and height
-                   .marker 'end', hl, hw, (add) ~> add.polyline [[0, 0], [hl, @g.round(hw/2)], [0, hw]]
+                   .marker 'end', hl, hw, (marker) ~>
+                        marker.path "M0,0 \
+                                     Q#{@g.round(hl/2)},#{@g.round(hw/3)} #{hl},#{@g.round(hw/2)} \
+                                     Q#{@g.round(hl/2)},#{@g.round(2*hw/3)} 0,#{hw} \
+                                     z" #.fill ""
                    .bbox!
 
         bbox.x -= linethickness.px + hhl.px
