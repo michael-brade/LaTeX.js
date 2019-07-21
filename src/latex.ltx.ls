@@ -715,12 +715,15 @@ export class LaTeX
     args.\put =         <[ H v g is ]>
     \put                : (v, obj) ->
         wrapper = @g.create @g.inline, obj, "put-obj"
-        wrapper.setAttribute "style", "left:#{v.x.value}"
 
-        # only add the strut if y is non-zero
-        if 0 != v.y.cmp @g.Length.zero
-            strut = @g.create @g.inline, undefined, "strut"
-            strut.setAttribute "style", "height:#{v.y.abs!.value}"
+        if v.y.cmp(@g.Length.zero) >= 0
+            wrapper.setAttribute "style", "left:#{v.x.value}"
+            # only add the strut if y > 0
+            if v.y.cmp(@g.Length.zero) > 0
+                strut = @g.create @g.inline, undefined, "strut"
+                strut.setAttribute "style", "height:#{v.y.value}"
+        else
+            wrapper.setAttribute "style", "left:#{v.x.value};bottom:#{v.y.value}"
 
         @rlap @g.create @g.inline, [wrapper, strut], "picture"
 
