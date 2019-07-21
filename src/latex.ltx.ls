@@ -780,7 +780,7 @@ export class LaTeX
         bbox.height += linethickness.px * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.max(0, @g.round bbox.x)}px;bottom:#{Math.max(0, @g.round bbox.y)}px"
+        svg.setAttribute "style", "left:#{@g.round bbox.x}px;bottom:#{@g.round bbox.y}px"
 
         draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
             .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
@@ -918,7 +918,7 @@ export class LaTeX
         bbox.height += linethickness.px * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}px;bottom:#{Math.min(0, @g.round bbox.y)}px"
+        svg.setAttribute "style", "left:#{@g.round bbox.x}px;bottom:#{@g.round bbox.y}px"
 
         draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
             .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
@@ -972,7 +972,7 @@ export class LaTeX
         bbox.height += linethickness.px + hhl.px * 2
 
         # size and position
-        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}px;bottom:#{Math.min(0, @g.round bbox.y)}px"
+        svg.setAttribute "style", "left:#{@g.round bbox.x}px;bottom:#{@g.round bbox.y}px"
 
         draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
             .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
@@ -1073,7 +1073,7 @@ export class LaTeX
 
         # size and position
         svg = @g.create @g.inline, undefined, "picture-object"
-        svg.setAttribute "style", "left:#{Math.min(0, @g.round bbox.x)}px;bottom:#{Math.min(0, @g.round bbox.y)}px"
+        svg.setAttribute "style", "left:#{@g.round bbox.x}px;bottom:#{@g.round bbox.y}px"
 
         draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
             .viewbox @g.round(bbox.x), @g.round(bbox.y), @g.round(bbox.width), @g.round(bbox.height)
