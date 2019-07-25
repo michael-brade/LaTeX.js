@@ -932,7 +932,7 @@ export class LaTeX
         @g.create @g.inline, svg, "picture"
 
 
-    # helper: draw arrow from vs to ve  TODO: somehow find a way to have a mimimum size for the head (marker)
+    # helper: draw arrow from vs to ve
     _vector: (vs, ve) ->
         # TODO: vs not implemented! always 0
         # TODO: em/ex should be supported!
@@ -945,8 +945,15 @@ export class LaTeX
         draw = @g.SVG!
 
         # arrow head length and width
-        hl = 5
-        hw = 3
+        hl = 6.5
+        hw = 3.9
+
+        # if the linethickness is less than 0.6pt, don't shrink the arrow head any further
+        max = new @g.Length 0.6, "pt"
+
+        if linethickness.cmp(max) < 0
+            hl = @g.round(hl * max.ratio linethickness)
+            hw = @g.round(hw * max.ratio linethickness)
 
         hhl = linethickness.mul(hl/2)       # half the head length (the marker scales with stroke width)
         al = ve.sub(vs).norm!               # arrow length
@@ -968,8 +975,8 @@ export class LaTeX
                    # marker width and height
                    .marker 'end', hl, hw, (marker) ~>
                         marker.path "M0,0 \
-                                     Q#{@g.round(hl/2)},#{@g.round(hw/3)} #{hl},#{@g.round(hw/2)} \
-                                     Q#{@g.round(hl/2)},#{@g.round(2*hw/3)} 0,#{hw} \
+                                     Q#{@g.round(2*hl/3)},#{@g.round(hw/2)} #{hl},#{@g.round(hw/2)} \
+                                     Q#{@g.round(2*hl/3)},#{@g.round(hw/2)} 0,#{hw} \
                                      z" #.fill ""
                    .bbox!
 
