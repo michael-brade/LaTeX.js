@@ -2,7 +2,7 @@
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.12.0'
+version: '0.12.1'
 
 author:
     'name': 'Michael Brade'
@@ -127,7 +127,7 @@ devDependencies:
     'slugify': '1.3.x'
     'decache': '4.5.x'
 
-    'puppeteer': '1.18.x'
+    'puppeteer': '1.19.x'
     'puppeteer-firefox': '0.x'
     'pixelmatch': '5.x'
 
