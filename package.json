@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "he": "1.2.x",
-    "katex": "0.10.0",
+    "katex": "0.11.0",
     "@svgdotjs/svg.js": "3.x",
     "hypher": "0.x",
     "lodash": "4.x",
