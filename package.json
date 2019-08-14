@@ -58,7 +58,7 @@
     "livescript": "https://github.com/michael-brade/LiveScript",
     "pegjs": "0.10.x",
     "mkdirp": "0.5.x",
-    "rimraf": "2.6.x",
+    "rimraf": "~2.7.0",
     "tmp": "0.x",
     "glob": "^7.1.4",
     "rollup": "^1.15.5",
