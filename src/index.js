@@ -1,14 +1,11 @@
-import he from 'he'
-import { parse } from './latex-parser'
-import { Generator } from './generator'
-import { HtmlGenerator } from './html-generator'
+export { default as he } from 'he'
+export { parse } from './latex-parser'
+export { Generator } from './generator'
+export { HtmlGenerator } from './html-generator'
 
-
-const latexjs = {
+export default {
     he,
     parse,
     Generator,
     HtmlGenerator
 }
-
-export default latexjs;
