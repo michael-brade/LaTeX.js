@@ -1,7 +1,14 @@
-export { default as he } from 'he'
-export { parse } from './latex-parser'
-export { Generator } from './generator'
-export { HtmlGenerator } from './html-generator'
+import he from 'he'
+import { parse } from './latex-parser'
+import { Generator } from './generator'
+import { HtmlGenerator } from './html-generator'
+
+export {
+    he,
+    parse,
+    Generator,
+    HtmlGenerator
+}
 
 export default {
     he,
