@@ -570,7 +570,7 @@ There is no such alternative in JavaScript yet, though, which is why I started t
 
 [![License](https://img.shields.io/github/license/michael-brade/LaTeX.js.svg?style=plastic)](https://github.com/michael-brade/LaTeX.js/blob/master/LICENSE)
 
-Copyright (c) 2015-2019 Michael Brade
+Copyright (c) 2015-2020 Michael Brade
 
 
 [boolean]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type "Boolean"

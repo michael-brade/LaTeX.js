@@ -26,4 +26,4 @@
 
 12. Participation on the project equates to agreement of this Code of Merit.
 
-This document is adapted from the Code of Merit (http://code-of-merit.org), version 1.0.
+This document is adapted from the Code of Merit (https://codeofmerit.org), version 1.0.
