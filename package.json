@@ -57,7 +57,7 @@
     "lodash": "4.x",
     "livescript": "https://github.com/michael-brade/LiveScript",
     "pegjs": "0.10.x",
-    "mkdirp": "0.5.x",
+    "mkdirp": "~1.0.0",
     "rimraf": "2.6.x",
     "tmp": "0.x",
     "glob": "^7.1.4",
