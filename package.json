@@ -61,7 +61,7 @@
     "rimraf": "2.6.x",
     "tmp": "0.x",
     "glob": "^7.1.4",
-    "rollup": "^1.15.5",
+    "rollup": "^2.0.0",
     "rollup-plugin-extensions": "^0.1.0",
     "rollup-plugin-pegjs": "^2.1.3",
     "rollup-plugin-livescript": "^0.1.1",
