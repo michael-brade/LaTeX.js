@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "commander": "2.20.x",
-    "fs-extra": "8.x",
+    "fs-extra": "^9.0.0",
     "js-beautify": "1.10.x",
     "stdin": "*",
     "hyphenation.en-us": "*",
