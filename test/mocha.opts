@@ -1,9 +1,0 @@
---require livescript
---file test/lib/setup.ls
---reporter spec
---inline-diffs
---timeout 15000
---ui bdd
---check-leaks
---globals document,SVG,__core-js_shared__
---sort

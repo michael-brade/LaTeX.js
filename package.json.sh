@@ -74,8 +74,8 @@ scripts:
 dependencies:
     ### CLI dependencies
 
-    'commander': '2.20.x'
-    'fs-extra': '8.x'
+    'commander': '5.x'
+    'fs-extra': '9.x'
     'js-beautify': '1.10.x'
     'stdin': '*'
 
@@ -101,14 +101,14 @@ devDependencies:
     ### building
 
     'pegjs': '0.10.x'
-    'mkdirp': '0.5.x'
-    'rimraf': '2.6.x'
+    'mkdirp': '1.0.x'
+    'rimraf': '3.x'
     'tmp': '0.x'
     'glob': '^7.1.4'
 
     ### bundling
 
-    "rollup": "^1.15.5"
+    "rollup": "2.x"
     "rollup-plugin-extensions": "^0.1.0"
     "rollup-plugin-pegjs": "^2.1.3"
     "rollup-plugin-livescript": "^0.1.1"
@@ -120,21 +120,33 @@ devDependencies:
 
     ### testing
 
-    'mocha': '6.x'
+    'mocha': '7.x'
     'mocha-junit-reporter': '1.23.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
-    'slugify': '1.3.x'
+    'slugify': '1.4.x'
     'decache': '4.5.x'
 
-    'puppeteer': '1.19.x'
-    'puppeteer-firefox': '0.x'
+    'puppeteer': '2.1.x'
     'pixelmatch': '5.x'
 
-    'nyc': '14.x'
+    'nyc': '15.x'
     'codecov': '3.x'
 
     'serve-handler': '6.x'
+
+mocha:
+    require: 'livescript'
+    file: 'test/lib/setup.ls'
+    reporter: 'spec'
+    inlineDiffs: true
+    timeout: 10000
+    ui: 'bdd'
+    checkLeaks: true
+    globals: 'document,SVG,__core-js_shared__'
+    sort: true
+
+
 
 repository:
     type: 'git'
