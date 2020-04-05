@@ -43,7 +43,7 @@
   "dependencies": {
     "commander": "2.20.x",
     "fs-extra": "8.x",
-    "js-beautify": "1.10.x",
+    "js-beautify": "~1.11.0",
     "stdin": "*",
     "hyphenation.en-us": "*",
     "hyphenation.de": "*",
