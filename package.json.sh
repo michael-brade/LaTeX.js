@@ -106,10 +106,11 @@ scripts:
         [ ! -d website ] && git worktree add website gh-pages;
         rm -rf website/*;
         npm run devbuild && webpack --config-name playground;
+        vuepress build docs;
 
         cd website;
-        git add .
-        git commit -m 'regenerated website'
+        git add .;
+        git commit -m 'regenerated website';
     "
 
 
@@ -170,7 +171,7 @@ devDependencies:
 
     ### docs
 
-    'vuepress': '1.0.x'
+    'vuepress': '1.4.x'
 
     ### bundling
 
