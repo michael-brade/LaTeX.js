@@ -7,7 +7,7 @@ title: TEST
 heroImage: /img/latexjs.png
 
 actionText: Documentation →
-actionLink: /guide/
+actionLink: usage.md
 
 features:
 - title: 100% JavaScript

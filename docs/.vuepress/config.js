@@ -17,7 +17,7 @@ module.exports = {
     themeConfig: {
         nav: [
             { text: 'Home', link: '/' },
-            { text: 'Guide', link: '/guide/' },
+            { text: 'Guide', link: '/usage.html' },
             { text: 'Playground', link: '/playground.html' },
             { text: 'ChangeLog', link: 'https://github.com/michael-brade/LaTeX.js/releases'},
             { text: 'GitHub', link: 'https://github.com/michael-brade/LaTeX.js' },
