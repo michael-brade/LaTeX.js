@@ -449,7 +449,7 @@ The title of the document.
 
 ## Limitations
 
-- I haven't created an intermediate AST yet, so TeX's conditional expressions are impossible
+- I don't create an intermediate AST yet, so TeX's conditional expressions are impossible
 - deprecated macros, or macros that are not supposed to be used in LaTeX, won't even exist in LaTeX.js.
   Examples include: `eqnarray`, the old LaTeX 2.09 font macros `\it`, `\sl`, etc. Also missing are most of the plainTeX macros.
   See also [`l2tabuen.pdf`](ftp://ftp.dante.de/tex-archive/info/l2tabu/english/l2tabuen.pdf).
@@ -458,9 +458,18 @@ The title of the document.
 - because of the limitations when parsing TeX as a context-free grammar (see [below](#parsing-tex)), native LaTeX packages
   cannot be parsed and loaded. Instead, the macros those packages (and documentclasses) provide have to be implemented in
   JavaScript.
+- every macro in LaTeX.js has to return a document (fragment) node, so incomplete snippets of LaTeX are currently unsupported; this
+  will be fixed by an intermediate AST.
 
 
 ## Limitations of LaTeX.js due to HTML and CSS
+
+There are some limitations that could theoretically be fixed with (a lot) more effort:
+
+- TeX boxes have a height and a depth, the depth being 0 if the box doesn't contain text that needs it. CSS boxes don't know
+  about depth, they only have a height. HTML text in a box does have a baseline, but it *always* adds the space under the baseline.
+  This causes little visual differences compared to LaTeX.
+
 
 The following features in LaTeX just cannot be translated to HTML, not even when using JavaScript:
 
