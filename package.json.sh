@@ -1,4 +1,6 @@
-#!/usr/local/bin/lsc -cj
+#!/bin/bash
+
+npx lsc -cj > package.json <<EOF
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
@@ -161,3 +163,5 @@ homepage: 'https://latex.js.org'
 
 engines:
     node: '>= 8.0'
+
+EOF
