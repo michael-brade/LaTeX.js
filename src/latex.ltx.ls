@@ -920,6 +920,9 @@ export class LaTeX
         bbox.width += linethickness.px * 2
         bbox.height += linethickness.px * 2
 
+        if bbox.x > 0 or bbox.y > 0
+            console.error "line: bbox.x/y > 0!!", bbox.x, bbox.y
+
         # size and position
         svg.setAttribute "style", "left:#{@g.round bbox.x}px;bottom:#{@g.round bbox.y}px"
 
@@ -984,6 +987,9 @@ export class LaTeX
         bbox.y -= linethickness.px + hhl.px
         bbox.width += linethickness.px + hhl.px * 2
         bbox.height += linethickness.px + hhl.px * 2
+
+        if bbox.x > 0 or bbox.y > 0
+            console.error "vector: bbox.x/y > 0!!", bbox.x, bbox.y
 
         # size and position
         svg.setAttribute "style", "left:#{@g.round bbox.x}px;bottom:#{@g.round bbox.y}px"
@@ -1077,6 +1083,9 @@ export class LaTeX
         bbox.y -= linethickness.px
         bbox.width += linethickness.px * 2
         bbox.height += linethickness.px * 2
+
+        if bbox.x > 0 or bbox.y > 0
+            console.error "oval: bbox.x/y > 0!!", bbox.x, bbox.y
 
 
         clip = draw.clip!.add (draw.rect rect.w.value, rect.h.value
