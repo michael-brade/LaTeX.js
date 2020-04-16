@@ -14,6 +14,7 @@ require! {
     'lodash/compact'
 }
 
+
 if global.window is undefined
     # on the server we need to include a DOM implementation - but hide the require from rollup
     global.window = eval('require')('svgdom')
@@ -356,6 +357,8 @@ export class HtmlGenerator extends Generator
 
     ### element creation
 
+    # type: string or Element
+    # children: an Element or an array of Element
     create: (type, children, classes = "") ->
         if typeof type == "object"
             el = type.cloneNode true
