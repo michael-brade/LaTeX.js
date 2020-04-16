@@ -78,13 +78,13 @@ dependencies:
 
     'commander': '5.x'
     'fs-extra': '9.x'
-    'js-beautify': '1.10.x'
+    'js-beautify': '1.11.x'
     'stdin': '*'
 
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
-    'svgdom': 'https://github.com/michael-brade/svgdom'
+    'svgdom': '^0.0.21'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
 
@@ -129,7 +129,7 @@ devDependencies:
     'slugify': '1.4.x'
     'decache': '4.5.x'
 
-    'puppeteer': '2.1.x'
+    'puppeteer': '3.0.x'
     'pixelmatch': '5.x'
 
     'nyc': '15.x'

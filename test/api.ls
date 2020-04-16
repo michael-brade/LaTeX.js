@@ -2,18 +2,16 @@
 
 require! {
     path
-    http
-    util
+    fs: { promises: fs }
     'child_process': { spawn }
     'os': { EOL }
-    'serve-handler'
 }
 
 
 describe 'LaTeX.js API test', !->
 
     test 'node API', ->
-        const node = spawn 'node', ['test/api/node.js'], { env: { PATH: process.env.PATH } }
+        const node = spawn 'node', [path.join __dirname, 'api/node.js'], { env: { PATH: process.env.PATH } }
 
         expect new Promise (resolve, reject) ->
             stdout = ""
@@ -40,15 +38,5 @@ describe 'LaTeX.js API test', !->
     test 'browser API', ->
 
     test 'web component API', ->>
-        const server = http.createServer serve-handler
-        const listen = util.promisify(server.listen.bind server)
-
-        try
-            await listen { host: 'localhost', port: 4233, exclusive: true }
-            await page.goto 'http://localhost:4233/test/api/webcomponent.html'
-            await page.waitFor 100  # it takes a while for the component to render
-            await takeScreenshot path.join __dirname, 'screenshots/webcomponent'
-        catch e
-            throw e
-        finally
-            server.close!
+        data = await fs.readFile path.join(__dirname, 'api/webcomponent.html'), 'utf8'
+        await takeScreenshot data, path.join(__dirname, 'screenshots/webcomponent')

@@ -18,10 +18,6 @@ const HtmlGenerator   = latexjs.HtmlGenerator
 subdirs = []
 
 describe 'LaTeX.js fixtures', !->
-    before !->>
-        # set the base url for the screenshots so that CSS and fonts are found
-        await page.goto "file://" + process.cwd! + "/dist"
-
     const fixtures-path = path.join __dirname, 'fixtures'
 
     fs.readdirSync(fixtures-path).forEach (name) ->
@@ -85,6 +81,12 @@ function run-fixture (fixture, name)
         html-is = he.decode html-is.replace //\r\n|\n|\r//g, ""
         html-should = he.decode html-should.replace //\r\n|\n|\r//g, ""
 
+        if html-is is not html-should
+            filename = path.join __dirname, 'html', slugify(name + ' ' + fixture.header)
+            filename = filename.replace /\*/g, '-'
+            try fs.mkdirSync path.dirname filename
+            fs.writeFileSync filename, html-is
+
         # html-is = html-beautify html-is
         # html-should = html-beautify html-should
         expect html-is .to.equal html-should
@@ -93,10 +95,10 @@ function run-fixture (fixture, name)
     # create screenshot test
     if screenshot
         _test '   - screenshot', ->>
-            html = latexjs.parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } } .htmlDocument!.outerHTML
-            await page.setContent html
-            await page.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
+            html = latexjs.parse fixture.source, {
+                generator: new HtmlGenerator { hyphenate: false }
+            } .htmlDocument!.outerHTML
 
             filename = path.join __dirname, 'screenshots', slugify(name + ' ' + fixture.header, { remove: /[*+~()'"!:@,{}\\]/g })
 
-            takeScreenshot filename
+            await takeScreenshot html, filename
