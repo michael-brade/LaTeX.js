@@ -145,7 +145,7 @@ mocha:
     timeout: 10000
     ui: 'bdd'
     checkLeaks: true
-    globals: 'document,SVG,__core-js_shared__'
+    globals: 'firefox,chrome'
     sort: true
 
 
@@ -162,6 +162,6 @@ bugs:
 homepage: 'https://latex.js.org'
 
 engines:
-    node: '>= 8.0'
+    node: '>= 11.0'
 
 EOF

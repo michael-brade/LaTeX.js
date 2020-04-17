@@ -15,20 +15,18 @@ global.expect = chai.expect
 global.test = it                # because livescript sees "it" as reserved variable
 
 
-var chrome, firefox
 var cPage, fPage
-
 var server, testHtmlPage
 
 before !->>
-    chrome := await puppeteer.launch {
+    global.chrome = await puppeteer.launch {
         devtools: false
         dumpio: false
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files']
         defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
     }
 
-    # firefox := await puppeteer.launch {
+    # global.firefox = await puppeteer.launch {
     #     product: 'firefox'
     #     executablePath: '/opt/firefox/firefox'
     #     headless: true
