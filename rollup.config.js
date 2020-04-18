@@ -44,7 +44,7 @@ const plugins = (format) => [
         }
     }),
     resolve({extensions: [".js", ".ls", ".pegjs"], preferBuiltins: true}),
-    ...(prod ? [terser({ keep_classnames: true })] : [])
+    ...(prod ? [terser()] : [])
 ];
 
 export default
