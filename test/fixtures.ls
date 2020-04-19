@@ -96,13 +96,20 @@ function run-fixture (fixture, name)
     # create screenshot test
     if screenshot
         _test '   - screenshot', ->>
-            html = latexjs.parse fixture.source, {
+            htmlDoc = latexjs.parse fixture.source, {
                 generator: new HtmlGenerator { hyphenate: false }
-            } .htmlDocument!.outerHTML
+            } .htmlDocument!
+
+            # create null favicon to make the browser stop looking for one
+            favicon = document.createElement "link"
+            favicon.rel = "icon"
+            favicon.href = "data:;base64,iVBORw0KGgo="
+
+            htmlDoc.head.appendChild favicon
 
             filename = path.join __dirname, 'screenshots', slugify(name + ' ' + fixture.header, { remove: /[*+~()'"!:@,{}\\]/g })
 
-            await takeScreenshot html, filename
+            await takeScreenshot htmlDoc.outerHTML, filename
 
             # update native LaTeX screenshot
             latex-screenshot fixture.source, filename
