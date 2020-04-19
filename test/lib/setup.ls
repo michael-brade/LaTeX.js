@@ -81,7 +81,9 @@ function compareScreenshots(filename)
 
         diff = new PNG { width: png1.width, height: png1.height }
 
-        dfpx = pixelmatch png1.data, png2.data, diff.data, png1.width, png1.height, threshold: 0
+        dfpx = pixelmatch png1.data, png2.data, diff.data, png1.width, png1.height,
+            threshold: 0
+            diffColorAlt: [0, 255, 0]
 
         fs.writeFileSync(filename + '.diff.png', PNG.sync.write(diff))
 

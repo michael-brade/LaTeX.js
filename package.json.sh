@@ -130,7 +130,7 @@ devDependencies:
     'decache': '4.5.x'
 
     'puppeteer': '3.0.x'
-    'pixelmatch': '5.x'
+    'pixelmatch': '5.2.x'
 
     'nyc': '15.x'
     'codecov': '3.x'
