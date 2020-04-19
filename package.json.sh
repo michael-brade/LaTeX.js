@@ -66,12 +66,12 @@ scripts:
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
 
     testc: "
-        nyc --include='bin' --include='src' --include='dist' -e '.ls' \
-            ./node_modules/.bin/mocha -i -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls
+        nyc --include='bin' --include='src' --include='dist' -e '.ls' --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage \
+            npx mocha -i -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls
         &&
-        mocha -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/screenshots/test-results.xml test/*.ls;
+            npx mocha -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/screenshots/test-results.xml test/*.ls;
     "
-    cover: 'nyc report --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage && codecov;'
+    codecov: 'codecov;'
 
 dependencies:
     ### CLI dependencies

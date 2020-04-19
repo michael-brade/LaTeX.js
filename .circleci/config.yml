@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/latex.js
   docker:
-    - image: circleci/node:10-stretch-browsers
+    - image: circleci/node:12-buster-browsers
 
 jobs:
   build:
@@ -38,11 +38,11 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Run unit tests
+          name: Run unit tests with code coverage
           command: npm run testc
       - run:
-          name: Generate code coverage
-          command: npm run cover
+          name: Upload code coverage
+          command: npm run codecov
           when: always
 
       - store_artifacts:
