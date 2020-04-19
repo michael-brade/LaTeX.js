@@ -1,11 +1,11 @@
-import resolve from "rollup-plugin-node-resolve";
-import commonjs from "rollup-plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
 import livescript from "rollup-plugin-livescript";
 import pegjs from "rollup-plugin-pegjs";
-import extensions from "rollup-plugin-extensions";
 import { terser } from "rollup-plugin-terser";
 import replace from "rollup-plugin-re";
 import copy from 'rollup-plugin-copy';
+import visualizer from 'rollup-plugin-visualizer';
 import glob from "glob";
 import path from "path";
 const ignoreErrors = require('./src/plugin-pegjs.js');
@@ -13,7 +13,6 @@ const ignoreErrors = require('./src/plugin-pegjs.js');
 const prod = process.env.NODE_ENV === "production"
 
 const plugins = (format) => [
-    extensions({extensions: [".js", ".ls", ".pegjs"]}),
     pegjs({plugins: [ignoreErrors], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
     livescript(),
     replace({
@@ -44,7 +43,8 @@ const plugins = (format) => [
         }
     }),
     resolve({extensions: [".js", ".ls", ".pegjs"], preferBuiltins: true}),
-    ...(prod ? [terser()] : [])
+    ...(prod ? [terser()] : []),
+    visualizer()
 ];
 
 export default

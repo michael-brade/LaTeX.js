@@ -66,9 +66,9 @@ scripts:
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
 
     testc: "
-        nyc --include='bin' --include='src' --include='dist' -e '.ls' --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage \
+        nyc --include=bin --include=src --include=dist -e ls -e pegjs --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage \
             npx mocha -i -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls
-        &&
+            &&
             npx mocha -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/screenshots/test-results.xml test/*.ls;
     "
     codecov: 'codecov;'
@@ -111,11 +111,11 @@ devDependencies:
     ### bundling
 
     "rollup": "2.x"
-    "rollup-plugin-extensions": "^0.1.0"
+    "rollup-plugin-visualizer": "2.5.x"
     "rollup-plugin-pegjs": "^2.1.3"
     "rollup-plugin-livescript": "^0.1.1"
-    "rollup-plugin-commonjs": "^10.0.0"
-    "rollup-plugin-node-resolve": "^5.0.2"
+    "@rollup/plugin-commonjs": "11.x"
+    "@rollup/plugin-node-resolve": "7.1.x"
     "rollup-plugin-terser": "^5.0.0"
     "rollup-plugin-re": "^1.0.7"
     "rollup-plugin-copy": "^3.0.0"
