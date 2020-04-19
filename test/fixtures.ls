@@ -5,6 +5,7 @@ require! {
     fs
     he
     slugify
+    'child_process': { spawn }
 }
 
 const html-beautify   = require 'js-beautify' .html
@@ -102,3 +103,31 @@ function run-fixture (fixture, name)
             filename = path.join __dirname, 'screenshots', slugify(name + ' ' + fixture.header, { remove: /[*+~()'"!:@,{}\\]/g })
 
             await takeScreenshot html, filename
+
+            # update native LaTeX screenshot
+            latex-screenshot fixture.source, filename
+
+
+function latex-screenshot (source, filename)
+    const process = spawn (path.join __dirname, 'latex2png.sh'), [filename + ".latex.png"]
+
+    stdout = ""
+    stderr = ""
+
+    process.stdout.on 'data', (data) ->
+        stdout += data.toString!
+
+    process.stderr.on 'data', (data) ->
+        stderr += data.toString!
+
+    process.on 'exit', (code, signal) ->
+        if code != 0
+            console.warn "latex screenshot failed: " + code
+            console.log "#### std err output: " + stderr
+
+    process.on 'error', (err) ->
+        process.removeAllListeners 'exit'
+        console.warn "latex screenshot failed: " + err
+
+    process.stdin.write source
+    process.stdin.end!
