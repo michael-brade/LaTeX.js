@@ -83,8 +83,9 @@ function run-fixture (fixture, name)
         html-should = he.decode html-should.replace //\r\n|\n|\r//g, ""
 
         if html-is is not html-should
-            filename = path.join __dirname, 'html', slugify(name + ' ' + fixture.header)
-            filename = filename.replace /\*/g, '-'
+            filename = path.join __dirname, 'html', slugify(name + ' ' + fixture.header, {
+                remove: /[*+~()'"!:@,{}\\]/g
+            })
             try fs.mkdirSync path.dirname filename
             fs.writeFileSync filename, html-is
 
