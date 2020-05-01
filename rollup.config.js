@@ -43,8 +43,7 @@ const plugins = (format) => [
         }
     }),
     resolve({extensions: [".js", ".ls", ".pegjs"], preferBuiltins: true}),
-    ...(prod ? [terser()] : []),
-    visualizer()
+    ...(prod ? [terser()] : [])
 ];
 
 export default
@@ -56,7 +55,13 @@ process.env.GOAL === "library-esm" ?
                 sourcemap: prod,
                 file: "dist/latex.esm.js"
             },
-            plugins: plugins("esm")
+            plugins: [...plugins("esm"),
+                visualizer({
+                    filename: 'dist/latex.esm.stats.html',
+                    sourcemap: true,
+                    // template: 'network'
+                })
+            ]
         } :
 process.env.GOAL === "library-umd" ?
         {
@@ -85,6 +90,11 @@ process.env.GOAL === "playground" ?
                         { src: 'src/js/*', dest: 'docs/js/' }
                     ],
                     verbose: true
+                }),
+                visualizer({
+                    filename: 'docs/js/playground.stats.html',
+                    sourcemap: true,
+                    // template: 'sunburst'
                 })
             ]
         } :
@@ -96,7 +106,12 @@ process.env.GOAL === "webcomponent-esm" ?
                 sourcemap: prod,
                 file: "dist/latex.component.esm.js"
             },
-            plugins: plugins("esm")
+            plugins: [...plugins("esm"),
+                visualizer({
+                    filename: 'dist/latex.component.esm.stats.html',
+                    sourcemap: true
+                })
+            ]
         } :
 process.env.GOAL === "webcomponent-umd" ?
         {

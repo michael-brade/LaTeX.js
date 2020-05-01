@@ -111,7 +111,7 @@ devDependencies:
     ### bundling
 
     "rollup": "2.x"
-    "rollup-plugin-visualizer": "2.5.x"
+    "rollup-plugin-visualizer": "4.0.x"
     "rollup-plugin-pegjs": "^2.1.3"
     "rollup-plugin-livescript": "^0.1.1"
     "@rollup/plugin-commonjs": "11.x"
