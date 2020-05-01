@@ -1,19 +1,20 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import livescript from "rollup-plugin-livescript";
-import pegjs from "rollup-plugin-pegjs";
+import pegjs from "./lib/rollup-plugin-pegjs";
 import { terser } from "rollup-plugin-terser";
 import replace from "rollup-plugin-re";
 import copy from 'rollup-plugin-copy';
 import visualizer from 'rollup-plugin-visualizer';
 import glob from "glob";
 import path from "path";
-const ignoreErrors = require('./src/plugin-pegjs.js');
+import ignoreInfiniteLoop from './lib/pegjs-no-infinite-loop.js';
 
 const prod = process.env.NODE_ENV === "production"
 
 const plugins = (format) => [
-    pegjs({plugins: [ignoreErrors], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
+    resolve({extensions: [".js", ".ls"], preferBuiltins: true}),
+    pegjs({plugins: [ignoreInfiniteLoop], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
     livescript(),
     replace({
         patterns: [
@@ -35,14 +36,13 @@ const plugins = (format) => [
         }
     }),
     commonjs({
-        extensions: [".js", ".ls", ".pegjs"],
+        extensions: [".js", ".ls"],
         namedExports: {
-            'src/latex-parser.pegjs': [ 'parse', 'SyntaxError' ],
+            'src/latex-parser.pegjs.js': [ 'parse', 'SyntaxError' ],
             'src/generator.ls': [ 'Generator' ],
             'src/html-generator.ls': [ 'HtmlGenerator' ]
         }
     }),
-    resolve({extensions: [".js", ".ls", ".pegjs"], preferBuiltins: true}),
     ...(prod ? [terser()] : [])
 ];
 
