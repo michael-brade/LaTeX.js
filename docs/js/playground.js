@@ -1,10 +1,10 @@
-var HtmlGenerator = require('../../src/html-generator').HtmlGenerator
-var en = require('hyphenation.en-us')
+import { HtmlGenerator } from '../../src/html-generator'
+import en from 'hyphenation.en-us'
 
-var latexjs = require('../../src/latex-parser')
+import latexjs from '../../src/latex-parser'
 
 
-var generator = new HtmlGenerator({
+const generator = new HtmlGenerator({
     hyphenate: true,
     languagePatterns: en,
     styles: ['css/error.css']
@@ -28,7 +28,7 @@ function links() {
 }
 
 /* function to compile latex source into the given iframe */
-module.exports.compile = function(latex, iframe) {
+export function compile(latex, iframe) {
     var doc = iframe.contentDocument
 
     if (doc.readyState !== "complete")
