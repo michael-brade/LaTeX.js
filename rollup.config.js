@@ -13,9 +13,11 @@ import ignoreInfiniteLoop from './lib/pegjs-no-infinite-loop.js';
 const prod = process.env.NODE_ENV === "production"
 
 const plugins = (format) => [
+    // resolve before pegjs so that the filter in pegjs has less left to do
     resolve({extensions: [".js", ".ls"], preferBuiltins: true}),
     pegjs({plugins: [ignoreInfiniteLoop], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
     livescript(),
+    // replace requireAll() before commonjs() so that commonjs() can still transform the resulting require calls
     replace({
         patterns: [
             {
@@ -55,6 +57,7 @@ process.env.GOAL === "library-esm" ?
                 sourcemap: prod,
                 file: "dist/latex.esm.js"
             },
+            external: ['svgdom'],
             plugins: [...plugins("esm"),
                 visualizer({
                     filename: 'dist/latex.esm.stats.html',
@@ -72,6 +75,7 @@ process.env.GOAL === "library-umd" ?
                 name: "latexjs",
                 file: "dist/latex.js"
             },
+            external: ['svgdom'],
             plugins: plugins("umd")
         } :
 process.env.GOAL === "playground" ?
@@ -83,6 +87,7 @@ process.env.GOAL === "playground" ?
                 name: "Playground",
                 file: "docs/js/playground.bundle.js"
             },
+            external: ['svgdom'],
             plugins: [...plugins("umd"),
                 copy({
                     targets: [
@@ -106,6 +111,7 @@ process.env.GOAL === "webcomponent-esm" ?
                 sourcemap: prod,
                 file: "dist/latex.component.esm.js"
             },
+            external: ['svgdom'],
             plugins: [...plugins("esm"),
                 visualizer({
                     filename: 'dist/latex.component.esm.stats.html',
@@ -122,5 +128,6 @@ process.env.GOAL === "webcomponent-umd" ?
                 name: "latexjs",
                 file: "dist/latex.component.js"
             },
+            external: ['svgdom'],
             plugins: plugins("umd")
         } : {}

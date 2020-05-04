@@ -16,8 +16,8 @@ require! {
 
 
 if global.window is undefined
-    # on the server we need to include a DOM implementation - but hide the require from rollup
-    global.window = eval('require')('svgdom')
+    # on the server we need to include a DOM implementation
+    global.window = require 'svgdom'
         ## custom font directory
         #.setFontDir('./fonts')
         ## map the font-family to the file
