@@ -1,11 +1,8 @@
-'use strict'
-
 require! {
     './latex.ltx': { LaTeX: Macros }
     './symbols': { diacritics, symbols }
     './types': { makeLengthClass }
 }
-
 
 Object.defineProperty Array.prototype, 'top',
     enumerable: false

@@ -3,7 +3,14 @@
 require! {
     './symbols': { symbols }
     './types': { Vector }
+
+    'lodash/assign'
+    'lodash/assignIn'
+
+    './documentclasses': builtin-documentclasses
+    './packages': builtin-packages
 }
+
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
@@ -29,8 +36,8 @@ export class LaTeX
     # CTOR
     (generator, CustomMacros) ->
         if CustomMacros
-            import all new CustomMacros(generator)
-            args import CustomMacros.args
+            assignIn this, new CustomMacros(generator)
+            assign args, CustomMacros.args
             CustomMacros.symbols?.forEach (value, key) -> symbols.set key, value
 
         @g = generator
@@ -1215,13 +1222,17 @@ export class LaTeX
         @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
 
         # load and instantiate the documentclass
-        Export = (requireAll "**/documentclasses/*.ls")["#{documentclass}.ls"] || eval "require('./documentclasses/#{documentclass}.js')"
-        if not Class = Export.default
-            Class = Export[Object.getOwnPropertyNames(Export).0]
+        Class = builtin-documentclasses[documentclass]
+
+        if not Class
+            Export = eval "require('./documentclasses/#{documentclass}.js')"
+
+            if not Class = Export.default
+                Class = Export[Object.getOwnPropertyNames(Export).0]
 
         @g.documentClass = new Class @g, options
-        import all @g.documentClass
-        args import Class.args
+        assignIn this, @g.documentClass
+        assign args, Class.args
 
 
 
@@ -1234,13 +1245,16 @@ export class LaTeX
 
             # load and instantiate the package
             try
-                Export = (requireAll "**/packages/*.ls")["#{pkg}.ls"] || eval "require('./packages/#{pkg}.js')"
+                Package = builtin-packages[pkg]
 
-                if not Package = Export.default
-                    Package = Export[Object.getOwnPropertyNames(Export).0]
+                if not Package
+                    Export = eval "require('./packages/#{pkg}.js')"
 
-                import all new Package @g, options
-                args import Package.args
+                    if not Package = Export.default
+                        Package = Export[Object.getOwnPropertyNames(Export).0]
+
+                assignIn this, new Package @g, options
+                assign args, Package.args
                 Package.symbols?.forEach (value, key) -> symbols.set key, value
             catch
                 # log error but continue anyway

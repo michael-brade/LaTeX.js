@@ -1,9 +1,8 @@
-'use strict'
-
-
-require! {
+import
     './generator': { Generator }
     './symbols': { ligatures, diacritics }
+
+require! {
     katex
     hypher: Hypher
     'hyphenation.en-us': h-en
@@ -15,7 +14,7 @@ require! {
 }
 
 
-if global.window is undefined
+if typeof window == 'undefined'
     # on the server we need to include a DOM implementation
     global.window = require 'svgdom'
         ## custom font directory

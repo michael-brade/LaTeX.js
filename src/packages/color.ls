@@ -1,3 +1,5 @@
 # forward to xcolor
 
-export Color: require './xcolor' .XColor
+import './xcolor': { XColor }
+
+export Color = XColor

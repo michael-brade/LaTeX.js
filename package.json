@@ -15,7 +15,12 @@
   "bin": {
     "latex.js": "./bin/latex.js"
   },
-  "main": "dist/latex.esm.js",
+  "module": "dist/latex.esm.js",
+  "main": "dist/latex.js",
+  "exports": {
+    "import": "dist/latex.esm.js",
+    "require": "dist/latex.js"
+  },
   "browser": "dist/latex.js",
   "files": [
     "bin/latex.js",
@@ -56,6 +61,9 @@
     "hypher": "0.x",
     "lodash": "4.x",
     "livescript": "https://github.com/michael-brade/LiveScript",
+    "livescript-transform-esm": "^3.1.0",
+    "livescript-transform-implicit-async": "^1.1.0",
+    "livescript-transform-object-create": "^1.1.0",
     "pegjs": "0.10.x",
     "mkdirp": "1.0.x",
     "rimraf": "3.x",

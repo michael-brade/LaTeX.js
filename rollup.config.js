@@ -1,13 +1,11 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import livescript from "rollup-plugin-livescript";
+import livescript from "./lib/rollup-plugin-livescript";
 import pegjs from "./lib/rollup-plugin-pegjs";
 import { terser } from "rollup-plugin-terser";
 import replace from "rollup-plugin-re";
 import copy from 'rollup-plugin-copy';
 import visualizer from 'rollup-plugin-visualizer';
-import glob from "glob";
-import path from "path";
 import ignoreInfiniteLoop from './lib/pegjs-no-infinite-loop.js';
 
 const prod = process.env.NODE_ENV === "production"
@@ -17,22 +15,7 @@ const plugins = (format) => [
     resolve({extensions: [".js", ".ls"], preferBuiltins: true}),
     pegjs({plugins: [ignoreInfiniteLoop], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
     livescript(),
-    // replace requireAll() before commonjs() so that commonjs() can still transform the resulting require calls
     replace({
-        patterns: [
-            {
-                match: /\/src\//,
-                test: /requireAll\("([^"]+)"\)/g,
-                replace(_, pattern) {
-                    return "({"
-                        + glob
-                            .sync(pattern)
-                            .map(f=>`"${path.basename(f)}": require("${path.resolve(f)}")`)
-                            .join(',')
-                        + "})";
-                }
-            }
-        ],
         replaces: {
             __url: format === "esm" ? "import.meta.url" : "document.currentScript.src"
         }
@@ -40,9 +23,7 @@ const plugins = (format) => [
     commonjs({
         extensions: [".js", ".ls"],
         namedExports: {
-            'src/latex-parser.pegjs.js': [ 'parse', 'SyntaxError' ],
-            'src/generator.ls': [ 'Generator' ],
-            'src/html-generator.ls': [ 'HtmlGenerator' ]
+            'src/latex-parser.pegjs.js': [ 'parse', 'SyntaxError' ]
         }
     }),
     ...(prod ? [terser()] : [])

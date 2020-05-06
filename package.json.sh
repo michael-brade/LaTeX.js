@@ -19,8 +19,19 @@ keywords:
 bin:
     'latex.js': './bin/latex.js'
 
-main:
+## we must not use require in .js files anymore when enabling this
+# type:
+#     'module'
+
+module:
     'dist/latex.esm.js'
+
+main:
+    'dist/latex.js'
+
+exports:
+    import: 'dist/latex.esm.js'
+    require: 'dist/latex.js'
 
 browser:
     'dist/latex.js'
@@ -99,6 +110,9 @@ devDependencies:
     'lodash': '4.x'
 
     'livescript': 'https://github.com/michael-brade/LiveScript'
+    'livescript-transform-esm': '^3.1.0'
+    'livescript-transform-implicit-async': '^1.1.0'
+    'livescript-transform-object-create': '^1.1.0'
 
     ### building
 

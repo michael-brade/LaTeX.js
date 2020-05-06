@@ -1,3 +1,5 @@
 # graphics just uses graphicx
 
-export Graphics: require './graphicx' .Graphicx
+import './graphicx': { Graphicx }
+
+export Graphics = Graphicx
