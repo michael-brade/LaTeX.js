@@ -1224,16 +1224,24 @@ export class LaTeX
         # load and instantiate the documentclass
         Class = builtin-documentclasses[documentclass]
 
+        importDocumentclass = !~>
+            @g.documentClass = new Class @g, options
+            assignIn this, @g.documentClass
+            assign args, Class.args
+
+
+
         if not Class
-            Export = eval "require('./documentclasses/#{documentclass}.js')"
+            # Export = require "./documentclasses/#{documentclass}"
+            ``import("./documentclasses/" + documentclass)`` .then (Export) !->
+                Class := Export.default || Export[Object.getOwnPropertyNames(Export).0]
 
-            if not Class = Export.default
-                Class = Export[Object.getOwnPropertyNames(Export).0]
+                importDocumentclass!
 
-        @g.documentClass = new Class @g, options
-        assignIn this, @g.documentClass
-        assign args, Class.args
-
+            .catch (e) ->
+                console.error "error loading documentclass \"#{documentclass}\": #{e}"
+        else
+            importDocumentclass!
 
 
     args.\usepackage    =  <[ P kv? csv k? ]>
@@ -1247,15 +1255,21 @@ export class LaTeX
             try
                 Package = builtin-packages[pkg]
 
+                importPackage = !~>
+                    assignIn this, new Package @g, options
+                    assign args, Package.args
+                    Package.symbols?.forEach (value, key) -> symbols.set key, value
+
                 if not Package
-                    Export = eval "require('./packages/#{pkg}.js')"
+                    # Export = require "./packages/#{pkg}"
+                    ``import("./packages/" + pkg)`` .then (Export) !->
+                        Package := Export.default || Export[Object.getOwnPropertyNames(Export).0]
 
-                    if not Package = Export.default
-                        Package = Export[Object.getOwnPropertyNames(Export).0]
-
-                assignIn this, new Package @g, options
-                assign args, Package.args
-                Package.symbols?.forEach (value, key) -> symbols.set key, value
+                        importPackage!
+                    .catch (e) ->
+                        throw e
+                else
+                    importPackage!
             catch
                 # log error but continue anyway
                 console.error "error loading package \"#{pkg}\": #{e}"
