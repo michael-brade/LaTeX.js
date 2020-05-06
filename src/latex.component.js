@@ -1,4 +1,4 @@
-import latexjs from "./index";
+import { parse, HtmlGenerator } from "./index";
 
 // path of this script
 let path = __url
@@ -44,7 +44,7 @@ export default class extends HTMLElement {
 
 
     // parse
-    const generator = latexjs.parse(this.textContent, { generator: new latexjs.HtmlGenerator({ hyphenate, CustomMacros }) })
+    const generator = parse(this.textContent, { generator: new HtmlGenerator({ hyphenate, CustomMacros }) })
 
     if (this.hasAttribute("baseURL"))
       path = this.getAttribute("baseURL")

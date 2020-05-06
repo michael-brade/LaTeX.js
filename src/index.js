@@ -9,10 +9,3 @@ export {
     Generator,
     HtmlGenerator
 }
-
-export default {
-    he,
-    parse,
-    Generator,
-    HtmlGenerator
-}
