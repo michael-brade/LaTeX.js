@@ -36,7 +36,10 @@ process.env.GOAL === "library-esm" ?
             output: {
                 format: "esm",
                 sourcemap: prod,
-                file: "dist/latex.esm.js"
+                file: "dist/latex.esm.js",
+                globals: {
+                    svgdom: 'svgdom'
+                }
             },
             external: ['svgdom'],
             plugins: [...plugins("esm"),
@@ -54,7 +57,10 @@ process.env.GOAL === "library-umd" ?
                 format: "umd",
                 sourcemap: prod,
                 name: "latexjs",
-                file: "dist/latex.js"
+                file: "dist/latex.js",
+                globals: {
+                    svgdom: 'svgdom'
+                }
             },
             external: ['svgdom'],
             plugins: plugins("umd")
@@ -66,7 +72,10 @@ process.env.GOAL === "playground" ?
                 format: "umd",
                 sourcemap: prod,
                 name: "Playground",
-                file: "docs/js/playground.bundle.js"
+                file: "docs/js/playground.bundle.js",
+                globals: {
+                    svgdom: 'svgdom'
+                }
             },
             external: ['svgdom'],
             plugins: [...plugins("umd"),
@@ -90,7 +99,10 @@ process.env.GOAL === "webcomponent-esm" ?
             output: {
                 format: "esm",
                 sourcemap: prod,
-                file: "dist/latex.component.esm.js"
+                file: "dist/latex.component.esm.js",
+                globals: {
+                    svgdom: 'svgdom'
+                }
             },
             external: ['svgdom'],
             plugins: [...plugins("esm"),
@@ -107,7 +119,10 @@ process.env.GOAL === "webcomponent-umd" ?
                 format: "umd",
                 sourcemap: prod,
                 name: "latexjs",
-                file: "dist/latex.component.js"
+                file: "dist/latex.component.js",
+                globals: {
+                    svgdom: 'svgdom'
+                }
             },
             external: ['svgdom'],
             plugins: plugins("umd")

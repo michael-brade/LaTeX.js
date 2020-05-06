@@ -1,6 +1,6 @@
 .uuid
 .vscode
-*-stats.html
+*.stats.html
 /bin/
 /dist/
 /node_modules/
