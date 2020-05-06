@@ -1,6 +1,6 @@
 import { parse, HtmlGenerator } from "./index";
 
-// path of this script
+//  path of this script
 let path = __url
 
 // define the <latex-js> tag
@@ -46,9 +46,6 @@ export default class extends HTMLElement {
     // parse
     const generator = parse(this.textContent, { generator: new HtmlGenerator({ hyphenate, CustomMacros }) })
 
-    if (this.hasAttribute("baseURL"))
-      path = this.getAttribute("baseURL")
-
     // create DOM
     let page = document.createElement("div")
     page.setAttribute("class", "page")
@@ -65,9 +62,6 @@ export default class extends HTMLElement {
     this.shadow.appendChild(page)
 
     generator.applyLengthsAndGeometryToDom(this.shadow.host)
-
-    this.shadow.appendChild(generator.stylesAndScripts(path))
-    this.shadow.appendChild(page)
 
     // we need to add CMU fonts to the parent page (if they weren't added yet)
     const pDoc = this.ownerDocument
