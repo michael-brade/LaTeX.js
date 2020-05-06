@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/latex.js
   docker:
-    - image: circleci/node:12-buster-browsers
+    - image: circleci/node:14-buster
 
 jobs:
   build:
