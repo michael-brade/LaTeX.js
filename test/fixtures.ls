@@ -113,7 +113,7 @@ function run-fixture (fixture, name)
             await takeScreenshot htmlDoc.outerHTML, filename
 
             # update native LaTeX screenshot
-            latex-screenshot fixture.source, filename
+            # latex-screenshot fixture.source, filename
 
 
 function latex-screenshot (source, filename)

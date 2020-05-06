@@ -11,10 +11,16 @@
 
   <base href="../../dist/">
 
+  <!-- modules cannot be used without MIME types, so they don't work from local files
   <script type="module">
-    import LaTeXJS from "./latex.component.esm.js"
-    // "https://cdn.jsdelivr.net/npm/latex.js@0.12.1/dist/latex.component.js"
+    import LaTeXJS from "https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/latex.component.esm.js"
     customElements.define("latex-js", LaTeXJS)
+  </script>
+  -->
+
+  <script src="./latex.component.js"></script>
+  <script>
+    customElements.define("latex-js", latexjs)
   </script>
 
   <style>

@@ -32,11 +32,8 @@ describe 'LaTeX.js CLI test', !->
             expect(latexjs.execute ['-b', '-s']).to.eventually.be.rejected
             expect(latexjs.execute ['-b', '-u']).to.eventually.be.rejected
             expect(latexjs.execute ['-bus']).to.eventually.be.rejected
+            expect(latexjs.execute ['-b -s style.css']).to.eventually.be.rejected
         ]
-
-    test.skip 'TODO: parsing bug in commander', ->
-        latexjs.execute ['-b -s style.css'] .then (r) -> console.log r
-
 
     test 'default translation', ->
         expect(latexjs.execute [], [ "A paragraph." ])
