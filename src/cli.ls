@@ -1,7 +1,9 @@
 ``#!/usr/bin/env node``
 
 # on the server we need to include a DOM implementation - BEFORE requiring HtmlGenerator below
-global.window = require 'svgdom'
+require! 'svgdom': { createHTMLWindow, config }
+
+global.window = createHTMLWindow!
 global.document = window.document
 
 require! {
@@ -107,9 +109,11 @@ input.then (text) ->
     generator = parse text, { generator: new HtmlGenerator(options) }
 
     if program.body
-        html = generator.domFragment!.outerHTML
+        div = document.createElement 'div'
+        div.appendChild generator.domFragment!.cloneNode true
+        html = div.innerHTML
     else
-        html = generator.htmlDocument(program.url).outerHTML
+        html = generator.htmlDocument(program.url).documentElement.outerHTML
 
     if program.entities
         html = he.encode html, 'allowUnsafeSymbols': true

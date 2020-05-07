@@ -71,7 +71,11 @@ function run-fixture (fixture, name)
 
 
         try
-            html-is     = latexjs.parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } } .domFragment!.outerHTML
+            generator = latexjs.parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } }
+
+            div = document.createElement 'div'
+            div.appendChild generator.domFragment!.cloneNode true
+            html-is = div.innerHTML
             html-should = fixture.result
         catch
             if e.location
@@ -110,7 +114,7 @@ function run-fixture (fixture, name)
 
             filename = path.join __dirname, 'screenshots', slugify(name + ' ' + fixture.header, { remove: /[*+~()'"!:@,{}\\]/g })
 
-            await takeScreenshot htmlDoc.outerHTML, filename
+            await takeScreenshot htmlDoc.documentElement.outerHTML, filename
 
             # update native LaTeX screenshot
             # latex-screenshot fixture.source, filename

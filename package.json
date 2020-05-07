@@ -52,7 +52,7 @@
     "stdin": "*",
     "hyphenation.en-us": "*",
     "hyphenation.de": "*",
-    "svgdom": "^0.0.21"
+    "svgdom": "^0.1.4"
   },
   "devDependencies": {
     "he": "1.2.x",

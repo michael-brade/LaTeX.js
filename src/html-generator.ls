@@ -16,7 +16,9 @@ require! {
 
 if typeof window == 'undefined'
     # on the server we need to include a DOM implementation
-    global.window = require 'svgdom'
+    require! 'svgdom': { createHTMLWindow, config }
+
+    #config
         ## custom font directory
         #.setFontDir('./fonts')
         ## map the font-family to the file
@@ -24,6 +26,8 @@ if typeof window == 'undefined'
         ## you can preload your fonts to avoid the loading delay
         ## when the font is used the first time
         #.preloadFonts()
+
+    global.window = createHTMLWindow!
     global.document = window.document
 
     registerWindow window, document
