@@ -6,14 +6,15 @@ require! {
     he
     slugify
     'child_process': { spawn }
+
+    '../dist/latex': { parse, HtmlGenerator }
+
+    decache
 }
 
 const html-beautify   = require 'js-beautify' .html
-const latexjs         = require '../dist/latex'
 const load-fixture    = require './lib/load-fixtures' .load
-const decache         = require 'decache'
 const registerWindow  = require '@svgdotjs/svg.js' .registerWindow
-const HtmlGenerator   = latexjs.HtmlGenerator
 
 
 subdirs = []
@@ -71,7 +72,7 @@ function run-fixture (fixture, name)
 
 
         try
-            generator = latexjs.parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } }
+            generator = parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } }
 
             div = document.createElement 'div'
             div.appendChild generator.domFragment!.cloneNode true
@@ -101,7 +102,7 @@ function run-fixture (fixture, name)
     # create screenshot test
     if screenshot
         _test '   - screenshot', ->>
-            htmlDoc = latexjs.parse fixture.source, {
+            htmlDoc = parse fixture.source, {
                 generator: new HtmlGenerator { hyphenate: false }
             } .htmlDocument!
 

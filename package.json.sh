@@ -140,7 +140,7 @@ devDependencies:
     'chai': '4.x'
     'chai-as-promised': '7.x'
     'slugify': '1.4.x'
-    'decache': '4.5.x'
+    'decache': '4.6.x'
 
     'puppeteer': '3.0.x'
     'pixelmatch': '5.2.x'
