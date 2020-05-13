@@ -95,7 +95,7 @@ dependencies:
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
-    'svgdom': '^0.1.4'
+    'svgdom': '^0.1.8'
     #'cheerio': '0.x'
     #'xmldom': '^0.1.19'
 
