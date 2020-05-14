@@ -88,11 +88,13 @@ scripts:
     "
 
     docs: "
-        [ ! -d website ] && git worktree add website gh-pages;
-        rm -rf website/*;
         npm run assets;
         NODE_ENV=production rollup -c --environment GOAL:playground;
+
+        [ ! -d website ] && git worktree add website gh-pages;
+        mv website/.git .website.git;
         vuepress build docs;
+        mv .website.git website/.git;
 
         cd website;
         git add .;
