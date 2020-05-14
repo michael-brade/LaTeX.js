@@ -66,7 +66,7 @@ process.env.GOAL === "library-umd" ?
         } :
 process.env.GOAL === "playground" ?
         {
-            input: "docs/.vuepress/public/js/playground.js",
+            input: "docs/playground.js",
             output: {
                 format: "umd",
                 sourcemap: prod,
@@ -79,7 +79,7 @@ process.env.GOAL === "playground" ?
             external: ['svgdom'],
             plugins: [...plugins("umd"),
                 visualizer({
-                    filename: 'docs/js/playground.stats.html',
+                    filename: 'docs/.vuepress/public/js/playground.stats.html',
                     sourcemap: true,
                     // template: 'sunburst'
                 })

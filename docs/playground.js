@@ -1,7 +1,7 @@
-import { HtmlGenerator } from '../../src/html-generator'
+import { HtmlGenerator } from '../src/html-generator'
 import en from 'hyphenation.en-us'
 
-import latexjs from '../../src/latex-parser'
+import latexjs from '../src/latex-parser'
 
 
 const generator = new HtmlGenerator({

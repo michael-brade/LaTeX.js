@@ -51,10 +51,9 @@ files:
     'dist/js/'
 
 scripts:
-    clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js/playground.bundle.*;'
-    build: 'NODE_ENV=production npm run devbuild;'
-    devbuild: "
-        rimraf 'dist/**/*.js.map';
+    clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;'
+
+    assets: "
         mkdirp dist/css;
         mkdirp dist/js;
         mkdirp dist/fonts;
@@ -62,28 +61,37 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
+    "
+
+    devbuild: "
+        rimraf 'dist/**/*.js.map';
+        npm run assets;
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
 	    rollup -c --environment GOAL:library-esm &
 	    rollup -c --environment GOAL:library-umd &
 	    rollup -c --environment GOAL:webcomponent-esm &
-	    rollup -c --environment GOAL:webcomponent-umd &
-	    rollup -c --environment GOAL:playground;
+	    rollup -c --environment GOAL:webcomponent-umd;
         wait;
     "
 
+    build: 'NODE_ENV=production npm run devbuild;'
 
 
+    # docs/website and playground
 
-    # docs and website
-
-    devdocs: 'vuepress dev docs'
+    devdocs: "
+        npm run assets;
+        rollup -c --environment GOAL:playground;
+        vuepress dev docs;
+    "
 
     docs: "
         [ ! -d website ] && git worktree add website gh-pages;
         rm -rf website/*;
-        npm run devbuild && webpack --config-name playground;
+        npm run assets;
+        NODE_ENV=production rollup -c --environment GOAL:playground;
         vuepress build docs;
 
         cd website;
@@ -145,7 +153,9 @@ devDependencies:
 
     ### docs
 
-    'vuepress': '1.4.x'
+    'vuepress': '1.5.x'
+    'split-grid': '1.0.x'
+    'codemirror': '5.53.x'
 
     ### bundling
 

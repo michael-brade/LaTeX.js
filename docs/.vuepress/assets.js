@@ -1,28 +1,41 @@
 const path = require('path')
 
 module.exports = (options, ctx) => {
-  const styleAssetsPath = path.resolve(process.cwd(), 'dist/css')
-  const fontAssetsPath = path.resolve(process.cwd(), 'dist/fonts')
-  const jsAssetsPath = path.resolve(process.cwd(), 'dist/js')
+    const styleAssetsPath = 'dist/css'
+    const fontAssetsPath = 'dist/fonts'
+    const jsAssetsPath = 'dist/js'
+    const editorAssets = [
+        'node_modules/codemirror/lib/codemirror.js',
+        'node_modules/codemirror/mode/stex/stex.js',
+        'node_modules/split-grid/dist/split-grid.min.js'
+    ]
 
-  return {
-      // For development
-      enhanceDevServer (app) {
-        const mount = require('koa-mount')
-        const serveStatic = require('koa-static')
+    return {
+        // For development
+        beforeDevServer(app, server) {
+            const express = require('express')
+            // const serveStatic = require('serve-static')
+            const serveStatic = express.static
 
-        app.use(mount(path.join(ctx.base, 'css'), serveStatic(styleAssetsPath)))
-        app.use(mount(path.join(ctx.base, 'fonts'), serveStatic(fontAssetsPath)))
-        app.use(mount(path.join(ctx.base, 'js'), serveStatic(jsAssetsPath)))
-      },
+            // path.resolve uses cwd if argument is relative
+            app.use('/css', serveStatic(path.resolve(styleAssetsPath)))
+            app.use('/fonts', serveStatic(path.resolve(fontAssetsPath)))
+            app.use('/js', serveStatic(path.resolve(jsAssetsPath)))
 
-      // For production
-      async generated () {
-        const { fs } = require('@vuepress/shared-utils')
+            for (var file of editorAssets)
+                app.use('/js', serveStatic(path.resolve(path.dirname(file))))
+        },
 
-        await fs.copy(styleAssetsPath, path.resolve(ctx.outDir, 'css'))
-        await fs.copy(fontAssetsPath, path.resolve(ctx.outDir, 'fonts'))
-        await fs.copy(jsAssetsPath, path.resolve(ctx.outDir, 'js'))
-      }
-  }
+        // For production
+        async generated() {
+            const { fs } = require('@vuepress/shared-utils')
+
+            await fs.copy(path.resolve(styleAssetsPath), path.resolve(ctx.outDir, 'css'))
+            await fs.copy(path.resolve(fontAssetsPath), path.resolve(ctx.outDir, 'fonts'))
+            await fs.copy(path.resolve(jsAssetsPath), path.resolve(ctx.outDir, 'js'))
+
+            for (var file of editorAssets)
+                await fs.copy(path.resolve(file), path.resolve(ctx.outDir, 'js', path.basename(file)))
+        }
+    }
 }
