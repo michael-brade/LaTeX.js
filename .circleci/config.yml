@@ -62,6 +62,10 @@ workflows:
   build-and-test:
     jobs:
       - build
+          filters:
+            branches:
+              ignore:
+                - gh-pages
       - test:
           requires:
             - build
