@@ -1,10 +1,4 @@
----
-id: doc1
-title: Latin-ish
-sidebar_label: Example Page
----
-
-## Usage
+# Usage
 
 LaTeX.js has a command line interface (CLI), it can be embedded in a website using the provided webcomponent, or it can be
 used to directly obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each of those
@@ -15,7 +9,7 @@ LaTeX.js can parse full LaTeX documents as well as documents without a preamble 
 used, which is `article` unless specified otherwise.
 
 
-### CLI
+## CLI
 
 For CLI usage, you will probably want to install LaTeX.js globally:
 
@@ -49,7 +43,7 @@ Options:
 If no input files are given, STDIN is read.
 ```
 
-### WebComponent
+## WebComponent
 
 LaTeX.js can be used as a web component:
 
@@ -114,7 +108,7 @@ The `<latex-js>` element supports a few attributes to configure LaTeX.js:
 - `hyphenate`: enable or disable hyphenation (default: enabled)
 
 
-### Library
+## Library
 
 For library usage add it to your project:
 
@@ -145,7 +139,7 @@ console.log(doc.outerHTML)
 The `HtmlGenerator` takes several options, see the API section below.
 
 
-### In the Browser
+## In the Browser
 
 If you want to use the parser and the generator manually, you can either use your own build or use a link directly to
 the jsDelivr CDN:
@@ -173,7 +167,7 @@ the jsDelivr CDN:
 
   <script>
     // or ES Modules
-    // import latexjs from "https://cdn.jsdelivr.net/npm/latex.js@0.11.1/dist/latex.esm.js"
+    // import latexjs from "https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/latex.esm.js"
     var text = "Hi, this is a line of text."
 
     var generator = new latexjs.HtmlGenerator({ hyphenate: false })

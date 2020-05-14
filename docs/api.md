@@ -1,18 +1,12 @@
----
-id: doc1
-title: Latin-ish
-sidebar_label: Example Page
----
-
-## API
+# API
 
 This section is going to describe the low-level API of the generator and the parser. You will only need it if you
 implement your own macros, or if you want to access parts of the result and keep processing them.
 
 
-### Parser
+## Parser
 
-#### `parser.parse(latex, { generator: <HtmlGenerator> })`
+### `parser.parse(latex, { generator: <HtmlGenerator> })`
 
 This function parses the given input LaTeX document and returns a generator that creates the output document.
 
@@ -25,15 +19,18 @@ Returns the `HtmlGenerator` instance.
 
 
 
-### AST
+## AST
+
+TODO
+
+## class: Generator
 
 TODO
 
 
+## class: HtmlGenerator
 
-### class: HtmlGenerator
-
-#### CTOR: `new HtmlGenerator(options)`
+### CTOR: `new HtmlGenerator(options)`
 
 Create a new HTML generator. `options` is an <[Object]> that can have the following properties:
 
@@ -43,11 +40,11 @@ Create a new HTML generator. `options` is an <[Object]> that can have the follow
 - `languagePatterns`: language patterns object to use for hyphenation if it is enabled
 - `styles`: <[Array]<[string]>> additional CSS stylesheets
 
-#### `htmlGenerator.reset()`
+### `htmlGenerator.reset()`
 
 Reset the generator. Needs to be called before the generator is used for creating a second document.
 
-#### `htmlGenerator.htmlDocument(baseURL)`
+### `htmlGenerator.htmlDocument(baseURL)`
 
 Returns the full DOM `HTMLDocument` representation of the LaTeX source, including `<head>` and `<body`>. This is meant
 to be used as its own standalone webpage or in an `<iframe>`.
@@ -57,18 +54,18 @@ if not available, scripts and stylesheets will have relative URLs.
 
 To serialize it, use `htmlGenerator.htmlDocument().outerHTML`.
 
-#### `htmlGenerator.stylesAndScripts(baseURL)`
+### `htmlGenerator.stylesAndScripts(baseURL)`
 
 Returns a `DocumentFragment` with `<link>` and `<script>` elements. This usually is part of the `<head>` element.
 
 If `baseURL` is given, the files will be referenced with absolute URLs, otherwise with relative URLs.
 
-#### `htmlGenerator.domFragment()`
+### `htmlGenerator.domFragment()`
 
 Returns the DOM `DocumentFragment`. This does not include the scripts and stylesheets and is meant for testing and
 low-level embedding.
 
-#### `htmlGenerator.documentTitle()`
+### `htmlGenerator.documentTitle()`
 
 The title of the document.
 

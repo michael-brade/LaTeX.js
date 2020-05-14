@@ -1,8 +1,4 @@
----
-id: doc1
-title: Latin-ish
-sidebar_label: Example Page
----
+# Extending LaTeX.js
 
 To work on LaTeX.js itself and to extend it, first clone this repository.
 

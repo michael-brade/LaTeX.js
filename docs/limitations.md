@@ -1,10 +1,4 @@
----
-id: doc1
-title: Latin-ish
-sidebar_label: Example Page
----
-
-## Limitations
+# Limitations
 
 - I don't create an intermediate AST yet, so TeX's conditional expressions are impossible
 - deprecated macros, or macros that are not supposed to be used in LaTeX, won't even exist in LaTeX.js.

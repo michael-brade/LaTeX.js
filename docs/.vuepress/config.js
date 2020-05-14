@@ -18,11 +18,18 @@ module.exports = {
         nav: [
             { text: 'Home', link: '/' },
             { text: 'Guide', link: '/usage.html' },
-            { text: 'Playground', link: '/playground.html' },
+            { text: 'Playground', link: '/playground.html', target:'_self', rel:'' },
             { text: 'ChangeLog', link: 'https://github.com/michael-brade/LaTeX.js/releases'},
             { text: 'GitHub', link: 'https://github.com/michael-brade/LaTeX.js' },
         ],
-        sidebar: 'auto',
+        sidebar: [
+            '',                 // Home
+            'usage',
+            'api',
+            'extending',
+            'limitations'
+        ],
+
         // sidebar: [
         //     '/',
         //     '/page-a',
