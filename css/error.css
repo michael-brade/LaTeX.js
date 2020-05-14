@@ -1,0 +1,5 @@
+pre.error {
+    grid-column: 1 / span 3;
+    white-space: pre-wrap;
+    margin: 1em;
+}

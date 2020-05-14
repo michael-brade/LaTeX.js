@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+}
+
+.banner {
+  padding: 32px 48px;
+
+  color: #e2e5e9;
+  text-align: center;
+
+  background: linear-gradient(to right, #210d00 0%, #3d2a00 100%);
+}
+
+.banner h1 {
+  font-family: serif;
+  font-size: 5em;
+}
+
+section {
+  padding: 32px 48px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  grid-column-gap: 20px;
+  grid-row-gap: 30px;
+}
+
+section > h1 {
+  grid-column: 1 / -1;
+}
+
+
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 .5em;
+}
+
+
+.btn {
+  background-color: #a8b2bd;
+  border: 0;
+  border-radius: .25em;
+  cursor: pointer;
+  display: inline-block;
+  padding: .5em 1.5em;
+  outline: 0;
+  text-align: center;
+}
+
+a.btn {
+  background: linear-gradient(to bottom, #d9cabf 0%, #bfb2a8 100%);
+  color: inherit;
+  text-decoration: none;
+}
+
+a.btn-brand {
+  background: #db5800;
+}
+
