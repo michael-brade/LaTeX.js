@@ -63,5 +63,11 @@ module.exports = {
 
     plugins: [
         require('./assets.js')
-    ]
+    ],
+
+    configureWebpack: (config, isServer) => {
+        config.externals = {
+            'svgdom': 'commonjs svgdom'
+        }
+    }
 }

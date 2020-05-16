@@ -21,6 +21,7 @@ const plugins = (format) => [
     }),
     commonjs({
         extensions: [".js", ".ls"],
+        ignore: ["svgdom"],
         namedExports: {
             'src/latex-parser.pegjs.js': [ 'parse', 'SyntaxError' ]
         }
@@ -35,16 +36,12 @@ process.env.GOAL === "library-esm" ?
             output: {
                 format: "esm",
                 sourcemap: prod,
-                file: "dist/latex.esm.js",
-                globals: {
-                    svgdom: 'svgdom'
-                }
+                file: "dist/latex.esm.js"
             },
-            external: ['svgdom'],
             plugins: [...plugins("esm"),
                 visualizer({
                     filename: 'dist/latex.esm.stats.html',
-                    sourcemap: true,
+                    sourcemap: prod,
                     // template: 'network'
                 })
             ]
@@ -56,12 +53,8 @@ process.env.GOAL === "library-umd" ?
                 format: "umd",
                 sourcemap: prod,
                 name: "latexjs",
-                file: "dist/latex.js",
-                globals: {
-                    svgdom: 'svgdom'
-                }
+                file: "dist/latex.js"
             },
-            external: ['svgdom'],
             plugins: plugins("umd")
         } :
 process.env.GOAL === "webcomponent-esm" ?
@@ -70,16 +63,12 @@ process.env.GOAL === "webcomponent-esm" ?
             output: {
                 format: "esm",
                 sourcemap: prod,
-                file: "dist/latex.component.esm.js",
-                globals: {
-                    svgdom: 'svgdom'
-                }
+                file: "dist/latex.component.esm.js"
             },
-            external: ['svgdom'],
             plugins: [...plugins("esm"),
                 visualizer({
                     filename: 'dist/latex.component.esm.stats.html',
-                    sourcemap: true
+                    sourcemap: prod
                 })
             ]
         } :
@@ -90,11 +79,7 @@ process.env.GOAL === "webcomponent-umd" ?
                 format: "umd",
                 sourcemap: prod,
                 name: "latexjs",
-                file: "dist/latex.component.js",
-                globals: {
-                    svgdom: 'svgdom'
-                }
+                file: "dist/latex.component.js"
             },
-            external: ['svgdom'],
             plugins: plugins("umd")
         } : {}
