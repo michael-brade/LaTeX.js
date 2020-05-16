@@ -49,23 +49,23 @@ files:
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
+    'dist/packages/'
+    'dist/documentclasses/'
 
 scripts:
     clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;'
 
-    assets: "
+    devbuild: "
+        rimraf 'dist/**/*.js.map';
         mkdirp dist/css;
         mkdirp dist/js;
         mkdirp dist/fonts;
+        mkdirp dist/documentclasses;
+        mkdirp dist/packages;
         rsync -a src/css/ dist/css/;
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
-    "
-
-    devbuild: "
-        rimraf 'dist/**/*.js.map';
-        npm run assets;
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
@@ -82,14 +82,12 @@ scripts:
     # docs/website and playground
 
     devdocs: "
-        npm run assets;
-        rollup -c --environment GOAL:playground;
-        vuepress dev docs;
+        npm run devbuild;
+        vuepress dev docs --no-clear-screen;
     "
 
     docs: "
-        npm run assets;
-        NODE_ENV=production rollup -c --environment GOAL:playground;
+        npm run build;
 
         [ ! -d website ] && git worktree add website gh-pages;
         mv website/.git .website.git;

@@ -34,15 +34,16 @@
     "dist/latex.component.esm.js.map",
     "dist/css/",
     "dist/fonts/",
-    "dist/js/"
+    "dist/js/",
+    "dist/packages/",
+    "dist/documentclasses/"
   ],
   "scripts": {
     "clean": "rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;",
-    "assets": "mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;rsync -a src/js/ dist/js/;",
-    "devbuild": "rimraf 'dist/**/*.js.map';npm run assets;mkdirp bin;lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;chmod a+x bin/latex.js;rollup -c --environment GOAL:library-esm &rollup -c --environment GOAL:library-umd &rollup -c --environment GOAL:webcomponent-esm &rollup -c --environment GOAL:webcomponent-umd;wait;",
-    "build": "NODE_ENV=production npm run devbuild;",
-    "devdocs": "npm run assets;rollup -c --environment GOAL:playground;vuepress dev docs;",
-    "docs": "npm run assets;NODE_ENV=production rollup -c --environment GOAL:playground;[ ! -d website ] && git worktree add website gh-pages;mv website/.git .website.git;vuepress build docs;mv .website.git website/.git;cd website;git add .;git commit -m 'regenerated website';",
+    "devbuild": "rimraf 'dist/**/*.js.map';mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;mkdirp dist/documentclasses;mkdirp dist/packages;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;rsync -a src/js/ dist/js/;mkdirp bin;lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;chmod a+x bin/latex.js;rollup -c --environment GOAL:library-esm &rollup -c --environment GOAL:library-umd &rollup -c --environment GOAL:webcomponent-esm &rollup -c --environment GOAL:webcomponent-umd;wait;",
+    "build": "npm run devbuild;",
+    "devdocs": "npm run devbuild;vuepress dev docs;",
+    "docs": "mv website/.git .website.git;vuepress build docs;mv .website.git website/.git;",
     "test": "mocha test/*.ls;",
     "iron": "iron-node node_modules/.bin/_mocha test/*.ls;",
     "testc": "nyc --include=bin --include=src --include=dist -e ls --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage             npx mocha -i -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls&&npx mocha -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/screenshots/test-results.xml test/*.ls;",

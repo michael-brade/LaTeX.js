@@ -1,6 +1,5 @@
 ---
 title: LaTeX.js Live Playground
-navbar: false
 sidebar: false
 meta:
   - name: description
@@ -9,4 +8,6 @@ meta:
     content: LaTeX,LaTeX.js,JavaScript,HTML,editor,live,preview
 ---
 
-<LtxPlayground />
+<ClientOnly>
+  <LtxPlayground />
+</ClientOnly>
