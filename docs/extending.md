@@ -1,10 +1,10 @@
-# Extending LaTeX.js
+# Extending <LaTeX/>.js
 
-To work on LaTeX.js itself and to extend it, first clone this repository.
+To work on <LaTeX/>.js itself and to extend it, first clone this repository.
 
 ## Architecture
 
-The generated PEG parser parses the LaTeX code. While doing so, it calls appropriate generator functions.
+The generated PEG parser parses the <LaTeX/> code. While doing so, it calls appropriate generator functions.
 The generator then uses the Macros class to execute the macros that the parser encounters.
 
 Both, the parser and the macros create the resulting HTML DOM tree by calling the HtmlGenerator functions.
@@ -16,13 +16,13 @@ TeX's primitives and basic functionality, so to speak.
 
 General structure:
 
-- `src`: all the LaTeX.js sources
+- `src`: all the <LaTeX/>.js sources
 - `bin`: the compiled CLI
 - `dist`: the compiled and minified source
 - `docs`: the webpage and (compiled) playground
 - `test`: unit tests and test driver
 
-Files and classes needed to translate LaTeX documents to HTML documents:
+Files and classes needed to translate <LaTeX/> documents to HTML documents:
 
 - the parser: `src/latex-parser.pegjs`
 - the generator: `src/html-generator.ls`
@@ -62,7 +62,7 @@ npm run docs
 
 ## Definition of Custom Macros
 
-To define your own LaTeX macros in JavaScript and extend LaTeX.js, you have to create a class that contains these macros
+To define your own <LaTeX/> macros in JavaScript and extend <LaTeX/>.js, you have to create a class that contains these macros
 and pass it to the `HtmlGenerator` constructor in the `options` object as `CustomMacros` property. For instance:
 
 ```js
@@ -85,7 +85,7 @@ var generator = new latexjs.HtmlGenerator({
 });
 ```
 
-to define the LaTeX2.09 macro `\bf`.
+to define the <LaTeX/>2.09 macro `\bf`.
 
 If you are going to define custom macros in an external file and you want to use that with the CLI, you will have to
 name the file just like the class, or you will have to default export it.
@@ -111,9 +111,9 @@ The rest of the list (array entries) declares the arguments:
 | ---- | --- |--------------------------------------|------|-----|
 | `s`  |     | optional star                        |||
 |||||
-|  `g` | { } | LaTeX code group (possibly long)     | TeX allows `\endgraf`, but not `\par`... so allow `\par` as well | |
+|  `g` | { } | <LaTeX/> code group (possibly long)     | TeX allows `\endgraf`, but not `\par`... so allow `\par` as well | |
 | `hg` | { } | restricted horizontal mode material  |||
-| `o?` | [ ] | optional arg                         | LaTeX code |  |
+| `o?` | [ ] | optional arg                         | <LaTeX/> code |  |
 |||||
 |  `h` |     | restricted horizontal mode material  ||  |
 |||||

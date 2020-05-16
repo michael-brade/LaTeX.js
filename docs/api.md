@@ -8,11 +8,11 @@ implement your own macros, or if you want to access parts of the result and keep
 
 ### `parser.parse(latex, { generator: <HtmlGenerator> })`
 
-This function parses the given input LaTeX document and returns a generator that creates the output document.
+This function parses the given input <LaTeX/> document and returns a generator that creates the output document.
 
 Arguments:
 
-- `latex` is the LaTeX source document
+- `latex` is the <LaTeX/> source document
 - options object: must contain a `generator` property with an instance of `HtmlGenerator`
 
 Returns the `HtmlGenerator` instance.
@@ -46,7 +46,7 @@ Reset the generator. Needs to be called before the generator is used for creatin
 
 ### `htmlGenerator.htmlDocument(baseURL)`
 
-Returns the full DOM `HTMLDocument` representation of the LaTeX source, including `<head>` and `<body`>. This is meant
+Returns the full DOM `HTMLDocument` representation of the <LaTeX/> source, including `<head>` and `<body`>. This is meant
 to be used as its own standalone webpage or in an `<iframe>`.
 
 `baseURL` will be used as base for the scripts and stylesheets; if omitted, the base will be `window.location.href` or,
