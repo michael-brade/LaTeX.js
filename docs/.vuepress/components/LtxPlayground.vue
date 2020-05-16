@@ -6,9 +6,9 @@
 
         <codemirror id="latex-editor" :value="code" :options="cmOptions" @input="onCmCodeChange" />
 
-        <div id="gutter"></div>
+        <div id="gutter" ref="gutter"></div>
 
-        <iframe id="preview" sandbox="allow-same-origin allow-scripts"></iframe>
+        <iframe id="preview" ref="preview" sandbox="allow-same-origin allow-scripts"></iframe>
 
         <div id="footer">
             <div id="copyright">Copyright &copy; 2017-2020 Michael Brade</div>
@@ -60,9 +60,8 @@ function compile(latex, iframe) {
         return
 
     try {
-        // generator.reset()
+        generator.reset()
         var newDoc = parse(latex, { generator: generator }).htmlDocument()
-        // var newDoc = document
 
         // we need to disable normal processing of same-page links in the iframe
         // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame
@@ -164,12 +163,6 @@ function errorMessage(e, noFinalNewline) {
 
 // LtxPlayground component
 export default {
-    props: {
-        // source: {
-        //     type: String,
-        //     default: '',
-        // }
-    },
     data() {
         return {
             code: showcase,
@@ -193,18 +186,10 @@ export default {
         codemirror: () => import('vue-codemirror').then(module => module.codemirror)
     },
     methods: {
-        onCmReady(cm) {
-            console.log('the editor is readied!', cm)
-        },
-        onCmFocus(cm) {
-            console.log('the editor is focused!', cm)
-        },
         onCmCodeChange(newCode) {
-            console.log('new code')
             this.code = newCode
 
-            // TODO: can this be bound to the component somehow?
-            var iframe = document.getElementById('preview')
+            var iframe = this.$refs.preview
             compile(newCode, iframe)
             iframe.contentDocument.dispatchEvent(new Event('change'))
         }
@@ -218,22 +203,14 @@ export default {
         import('codemirror/addon/edit/matchbrackets.js')
     },
     mounted() {
-        console.log("mounted")
-        // console.log(this.source) // this.$refs.mySlot.innerHTML);
-
         Split({
             columnGutters: [{
                 track: 1,
-                element: document.querySelector('#gutter')
+                element: this.$refs.gutter
             }]
         });
 
-
-        // TODO: can this be bound to the component somehow?
-        var iframe = document.getElementById('preview')
-        compile(this.code, iframe)
-
-        // editor.refresh()
+        compile(this.code, this.$refs.preview)
     }
 }
 </script>
