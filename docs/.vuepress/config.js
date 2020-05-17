@@ -52,11 +52,8 @@ module.exports = {
     },
 
     markdown: {
-        config: md => {
-            md.set({
-                html: true,
-                breaks: true
-            })
+        breaks: false,
+        extendMarkdown: md => {
             //md.use(require('markdown-it-xxx'))
         }
     },

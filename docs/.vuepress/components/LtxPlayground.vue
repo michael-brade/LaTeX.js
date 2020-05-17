@@ -1,6 +1,6 @@
 <template>
     <div id="playground">
-        <codemirror id="latex-editor" :value="code" :options="cmOptions" @input="onCmCodeChange" />
+        <codemirror id="latex-editor" :value="code" :options="cmOptions" @input="onCmCodeChange" @ready="onCmReady" />
 
         <div id="gutter" ref="gutter"></div>
 
@@ -182,11 +182,15 @@ export default {
         codemirror: () => import('vue-codemirror').then(module => module.codemirror)
     },
     methods: {
+        onCmReady(cm) {
+            compile(this.code, this.$refs.preview)
+        },
         onCmCodeChange(newCode) {
             this.code = newCode
             compile(newCode, this.$refs.preview)
         }
     },
+
     beforeMount() {
         // import language
         import('codemirror/mode/stex/stex.js')
@@ -195,6 +199,7 @@ export default {
         import('codemirror/addon/selection/active-line.js')
         import('codemirror/addon/edit/matchbrackets.js')
     },
+
     mounted() {
         Split({
             columnGutters: [{
@@ -202,8 +207,6 @@ export default {
                 element: this.$refs.gutter
             }]
         });
-
-        compile(this.code, this.$refs.preview)
     }
 }
 </script>
