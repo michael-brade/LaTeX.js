@@ -1,9 +1,5 @@
 <template>
     <div id="playground">
-        <div id="header">
-            <span><LaTeX.js /> Live Playground</span>
-        </div>
-
         <codemirror id="latex-editor" :value="code" :options="cmOptions" @input="onCmCodeChange" />
 
         <div id="gutter" ref="gutter"></div>
@@ -188,10 +184,7 @@ export default {
     methods: {
         onCmCodeChange(newCode) {
             this.code = newCode
-
-            var iframe = this.$refs.preview
-            compile(newCode, iframe)
-            iframe.contentDocument.dispatchEvent(new Event('change'))
+            compile(newCode, this.$refs.preview)
         }
     },
     beforeMount() {
@@ -220,18 +213,19 @@ export default {
 <style scoped>
 #playground {
     margin: 0;
-    height: 100vh;
+    height: 100%;
 
     display: grid;
-    grid-template-rows: 5% 92% 3%;
+    grid-template-rows: 97% 3%;
     grid-template-columns: 1fr 6px 1fr;
     grid-template-areas:
-        "header header header"
         "latex gutter preview"
         "footer footer footer";
 }
+</style>
 
-#header, #footer {
+<style scoped lang="stylus">
+#footer {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -241,12 +235,6 @@ export default {
     font-size: 1.5vh;
 }
 
-#header {
-    grid-area: header;
-    font-size: 3vh;
-    font-family: sans-serif;
-}
-
 #footer {
     grid-area: footer;
 }
@@ -254,7 +242,12 @@ export default {
 #latex-editor {
     grid-area: latex;
     height: 100%;
+
+    >>> .CodeMirror {
+        height: 100%;
+    }
 }
+
 
 #preview {
     grid-area: preview;
@@ -272,18 +265,18 @@ export default {
     justify-content: center;
     align-items: center;
     cursor: col-resize;
-}
 
-#gutter:before {
-    display: block;
-    content: "";
-    width: 2px;
-    height: 40px;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-}
+    &:before {
+        display: block;
+        content: "";
+        width: 2px;
+        height: 40px;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+    }
 
-#gutter:hover:before {
-    border-color: #999;
+    &:hover:before {
+        border-color: #999;
+    }
 }
 </style>

@@ -1,4 +1,5 @@
 ---
+pageClass: fullWidth
 title: LaTeX.js Live Playground
 sidebar: false
 meta:
