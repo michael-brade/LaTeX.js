@@ -69,10 +69,8 @@ scripts:
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
-	    rollup -c --environment GOAL:library-esm &
-	    rollup -c --environment GOAL:library-umd &
-	    rollup -c --environment GOAL:webcomponent-esm &
-	    rollup -c --environment GOAL:webcomponent-umd;
+	    rollup -c --environment GOAL:library &
+	    rollup -c --environment GOAL:webcomponent;
         wait;
     "
 
@@ -161,12 +159,9 @@ devDependencies:
 
     "rollup": "2.x"
     "rollup-plugin-visualizer": "4.0.x"
-    "rollup-plugin-livescript": "^0.1.1"
     "@rollup/plugin-commonjs": "11.x"
-    "@rollup/plugin-node-resolve": "7.1.x"
-    "rollup-plugin-terser": "^5.0.0"
-    "rollup-plugin-re": "^1.0.7"
-    "rollup-plugin-copy": "^3.0.0"
+    "@rollup/plugin-node-resolve": "8.0.x"
+    "rollup-plugin-terser": "6.1.x"
 
     ### testing
 
