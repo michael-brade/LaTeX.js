@@ -19,18 +19,20 @@ keywords:
 bin:
     'latex.js': './bin/latex.js'
 
-## we must not use require in .js files anymore when enabling this
+## we must not use require in .js files anymore when enabling this,
+## nor can .ls files be imported as modules in tests
+## bugs: https://github.com/mochajs/mocha/issues/4267, https://github.com/nodejs/node/issues/33226
 # type:
 #     'module'
 
 module:
-    'dist/latex.esm.js'
+    'dist/latex.mjs'
 
 main:
-    'dist/latex.js'
+    'dist/latex.cjs'
 
 exports:
-    import: 'dist/latex.esm.js'
+    import: 'dist/latex.mjs'
     require: 'dist/latex.js'
 
 browser:
@@ -40,12 +42,11 @@ files:
     'bin/latex.js'
     'dist/latex.js'
     'dist/latex.js.map'
-    'dist/latex.esm.js'
-    'dist/latex.esm.js.map'
+    'dist/latex.mjs'
+    'dist/latex.mjs.map'
     'dist/latex.component.js'
     'dist/latex.component.js.map'
-    'dist/latex.component.esm.js'
-    'dist/latex.component.esm.js.map'
+    'dist/latex.component.mjs'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
@@ -66,12 +67,11 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
+        cp -a src/latex.component.mjs dist/;
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
-	    rollup -c --environment GOAL:library &
-	    rollup -c --environment GOAL:webcomponent;
-        wait;
+	    rollup -c;
     "
 
     build: 'NODE_ENV=production npm run devbuild;'
@@ -158,10 +158,11 @@ devDependencies:
     ### bundling
 
     "rollup": "2.x"
-    "rollup-plugin-visualizer": "4.0.x"
     "@rollup/plugin-commonjs": "11.x"
     "@rollup/plugin-node-resolve": "8.0.x"
     "rollup-plugin-terser": "6.1.x"
+    "rollup-plugin-sourcemaps": "0.6.x"
+    "rollup-plugin-visualizer": "4.0.x"
 
     ### testing
 

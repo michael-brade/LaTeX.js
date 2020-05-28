@@ -12,8 +12,8 @@
   <base href="../../dist/">
 
   <script src="latex.js"></script>
-  <!-- <script src="node_modules/latex.js/dist/latex.min.js"></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/latex.js@0.12.1/dist/latex.min.js"></script> -->
+  <!-- <script src="node_modules/latex.js/dist/latex.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/latex.js"></script> -->
 
   <title>LaTeX.js Browser Test</title>
 </head>
@@ -28,7 +28,7 @@
 
     generator = latexjs.parse(text, { generator: generator })
 
-    // document.head.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.12.1/dist/"))
+    // document.head.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/"))
     document.head.appendChild(generator.stylesAndScripts(""))
     document.body.appendChild(generator.domFragment())
   </script>

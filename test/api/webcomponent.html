@@ -13,14 +13,14 @@
 
   <!-- modules cannot be used without MIME types, so they don't work from local files
   <script type="module">
-    import LaTeXJS from "https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/latex.component.esm.js"
-    customElements.define("latex-js", LaTeXJS)
+    import LaTeXJSComponent from "https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/latex.component.mjs"
+    customElements.define("latex-js", LaTeXJSComponent)
   </script>
   -->
 
   <script src="./latex.component.js"></script>
   <script>
-    customElements.define("latex-js", latexjs)
+    customElements.define("latex-js", LaTeXJSComponent)
   </script>
 
   <style>

@@ -1,7 +1,10 @@
-import { parse, HtmlGenerator } from "./index";
+import { parse, HtmlGenerator } from "../";
 
 //  path of this script
-let path = import.meta ? import.meta.url : document.currentScript.src
+let path = document.currentScript && document.currentScript.src || import.meta.url
+
+console.log("path:", path)
+
 
 // define the <latex-js> tag
 export default class extends HTMLElement {
