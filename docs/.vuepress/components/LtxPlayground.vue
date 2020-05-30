@@ -14,7 +14,7 @@
 
 
 <script>
-import { parse, HtmlGenerator, SyntaxError } from '../../../dist/latex.js'
+import { parse, HtmlGenerator, SyntaxError } from '../../../dist/latex.mjs'
 import en from 'hyphenation.en-us'
 
 import Split from 'split-grid'

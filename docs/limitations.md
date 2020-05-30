@@ -1,28 +1,28 @@
 # Limitations
 
 - I don't create an intermediate AST yet, so <TeX/>'s conditional expressions are impossible
-- deprecated macros, or macros that are not supposed to be used in <LaTeX/>, won't even exist in <LaTeX/>.js.
-  Examples include: `eqnarray`, the old <LaTeX/> 2.09 font macros `\it`, `\sl`, etc. Also missing are most of the plain<TeX/> macros.
+- deprecated macros, or macros that are not supposed to be used in <latex/>, won't even exist in <latex/>.js.
+  Examples include: `eqnarray`, the old <latex/> 2.09 font macros `\it`, `\sl`, etc. Also missing are most of the plain<TeX/> macros.
   See also [`l2tabuen.pdf`](ftp://ftp.dante.de/tex-archive/info/l2tabu/english/l2tabuen.pdf).
-- incorrect but legal markup in <LaTeX/> won't produce the same result in <LaTeX/>.js - like when using `\raggedleft` in the
-  middle of a paragraph; but the <LaTeX/>.js result should be intuitively correct.
-- because of the limitations when parsing <TeX/> as a context-free grammar (see [below](#parsing-tex)), native <LaTeX/> packages
+- incorrect but legal markup in <latex/> won't produce the same result in <latex/>.js - like when using `\raggedleft` in the
+  middle of a paragraph; but the <latex/>.js result should be intuitively correct.
+- because of the limitations when parsing <TeX/> as a context-free grammar (see [below](#parsing-tex)), native <latex/> packages
   cannot be parsed and loaded. Instead, the macros those packages (and documentclasses) provide have to be implemented in
   JavaScript.
-- every macro in <LaTeX/>.js has to return a document (fragment) node, so incomplete snippets of <LaTeX/> are currently unsupported; this
+- every macro in <latex/>.js has to return a document (fragment) node, so incomplete snippets of <latex/> are currently unsupported; this
   will be fixed by an intermediate AST.
 
 
-## Limitations of <LaTeX/>.js due to HTML and CSS
+## ... due to HTML and CSS
 
 There are some limitations that could theoretically be fixed with (a lot) more effort:
 
 - <TeX/> boxes have a height and a depth, the depth being 0 if the box doesn't contain text that needs it. CSS boxes don't know
   about depth, they only have a height. HTML text in a box does have a baseline, but it *always* adds the space under the baseline.
-  This causes little visual differences compared to <LaTeX/>.
+  This causes little visual differences compared to <latex/>.
 
 
-The following features in <LaTeX/> just cannot be translated to HTML, not even when using JavaScript:
+The following features in <latex/> just cannot be translated to HTML, not even when using JavaScript:
 
 - <TeX/> removes any whitespace from the beginning and end of a line, even consecutive ones that would be printed in the middle
   of a line, like `\ ` or `~` or ^^0020. This is not possible in HTML (yet - maybe it will be with CSS4).
@@ -38,9 +38,9 @@ like on a real page.
 
 
 
-## <a name="parsing-tex"></a> Limitations when parsing <TeX/> as a context-free grammar
+## <a name="parsing-tex"></a> ... when parsing TeX as a context-free grammar
 
-This is a PEG parser, which means it interprets <LaTeX/> as a context-free language. However, <TeX/> (and therefore <LaTeX/>) is
+This is a PEG parser, which means it interprets <latex/> as a context-free language. However, <TeX/> (and therefore <latex/>) is
 Turing complete, so <TeX/> can only really be parsed by a complete Turing machine. It is not possible to parse the full
 <TeX/> language with a static parser. See
 [here](https://tex.stackexchange.com/questions/4201/is-there-a-bnf-grammar-of-the-tex-language) for some interesting
@@ -72,11 +72,11 @@ To quote the four problems of <TeX/>:
 
 I therefore take a slightly different approach:
 
-- First, I don't care about <TeX/>, but only <LaTeX/>, and most <LaTeX/> documents do not use <TeX/> syntax, or `\def` in
-  particular. Therefore, this parser assumes standard <LaTeX/> syntax and catcodes.
+- First, I don't care about <TeX/>, but only <latex/>, and most <latex/> documents do not use <TeX/> syntax, or `\def` in
+  particular. Therefore, this parser assumes standard <latex/> syntax and catcodes.
 
 - Second, for now there is no way of defining macros, only expanding macros is supported. So if a new
-  <LaTeX/> macro is needed, reimplement it in JavaScript directly, thus circumventing the problem altogether.
+  <latex/> macro is needed, reimplement it in JavaScript directly, thus circumventing the problem altogether.
 
 
 ### Expansion and Execution
@@ -99,11 +99,11 @@ which would place a penalty of 200, and typeset the digit 0. Instead, it expands
 ```tex
 \penalty2000
 ```
-because the space after \a is skipped in the input processor. Later stages of processing then receive the sequence
+because the space after `\a` is skipped in the input processor. Later stages of processing then receive the sequence
 ```tex
 \a0
 ```
-However, <LaTeX/> documents themselves usually don't rely on or need this feature--that is, until I'm convinced otherwise.
+However, <latex/> documents themselves usually don't rely on or need this feature—that is, until I'm convinced otherwise.
 
-This also means that you cannot use `\vs^^+ip` to have <LaTeX/>.js interpret it as `\vskip`. Again, this is a feature
+This also means that you cannot use `\vs^^+ip` to have <latex/>.js interpret it as `\vskip`. Again, this is a feature
 that most people will probably never need.

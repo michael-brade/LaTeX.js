@@ -1,17 +1,17 @@
 # Usage
 
-<LaTeX/>.js has a command line interface (CLI), it can be embedded in a website using the provided webcomponent, or it can be
-used to directly obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each of those
-use-cases is explained in the following subsections.
+LaTeX.js has a command line interface (CLI), it can be embedded in a website using the provided webcomponent, or it
+can be used to directly obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each of those use-cases is explained in the following subsections.
 
-<LaTeX/>.js can parse full <LaTeX/> documents as well as documents without a preamble and only the text that comes between
-`\begin{document}` and `\end{document}` in a full <LaTeX/> document. In that latter case, the default documentclass is
-used, which is `article` unless specified otherwise.
+
+<latex/>.js can parse full <latex/> documents as well as documents without a preamble and only the text that comes
+between `\begin{document}` and `\end{document}` in a full <latex/> document. In that latter case, the default
+documentclass is used, which is `article` unless specified otherwise.
 
 
 ## CLI
 
-For CLI usage, you will probably want to install <LaTeX/>.js globally:
+For CLI usage, you will probably want to install <latex/>.js globally:
 
 ```
 npm install -g latex.js
@@ -45,7 +45,7 @@ If no input files are given, STDIN is read.
 
 ## WebComponent
 
-<LaTeX/>.js can be used as a web component:
+<latex/>.js can be used as a web component:
 
 ```html
 <!DOCTYPE html>
@@ -100,9 +100,9 @@ This, however, requires a browser with support for the shadow DOM.
 Then you need to decide how to embed the `<latex-js>` element and style it accordingly with CSS; most importantly, set
 the `display:` property. It is `inline` by default.
 
-The `<latex-js>` element supports a few attributes to configure <LaTeX/>.js:
+The `<latex-js>` element supports a few attributes to configure <latex/>.js:
 
-- `baseURL`: if you want the <LaTeX/>.js component to use a different set of stylesheets than the ones delivered along
+- `baseURL`: if you want the <latex/>.js component to use a different set of stylesheets than the ones delivered along
   with the `latex.component.js`, then you need to set the base using this attribute.
 
 - `hyphenate`: enable or disable hyphenation (default: enabled)
@@ -118,8 +118,8 @@ npm install --save-prod latex.js
 
 This is the low-level use-case which gives the greatest control over the translation process.
 
-<LaTeX/>.js is divided into a parser and a generator, so that in theory you could switch the generator to create e.g. plain
-text instead of HTML. Currently, only a HTML generator exists.
+ <latex/>.js is divided into a parser and a generator, so that in theory you could switch the generator to create e.g.
+plain text instead of HTML. Currently, only a HTML generator exists.
 
 Import the parser and generator, then parse and translate to HTML:
 

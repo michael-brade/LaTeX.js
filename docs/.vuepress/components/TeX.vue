@@ -16,7 +16,5 @@ span.tex span:first-child {
 
 
 <template>
-    <span>
-        <span class="tex">T<span>e</span>X</span>
-    </span>
+    <span class="tex">T<span>e</span>X</span>
 </template>

@@ -153,7 +153,9 @@ devDependencies:
 
     'vuepress': '1.5.x'
     'split-grid': '1.0.x'
-    'codemirror': '5.53.x'
+    'codemirror': '5.54.x'
+    'vue-codemirror': '4.0.x'
+    'raw-loader': '4.0.x'
 
     ### bundling
 

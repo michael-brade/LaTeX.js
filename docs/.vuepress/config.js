@@ -15,6 +15,7 @@ module.exports = {
     ],
 
     themeConfig: {
+        logo: '/img/latexjs.png',
         nav: [
             { text: 'Home', link: '/' },
             { text: 'Guide', link: '/usage.html' },
