@@ -19,18 +19,20 @@ keywords:
 bin:
     'latex.js': './bin/latex.js'
 
-## we must not use require in .js files anymore when enabling this
+## we must not use require in .js files anymore when enabling this,
+## nor can .ls files be imported as modules in tests
+## bugs: https://github.com/mochajs/mocha/issues/4267, https://github.com/nodejs/node/issues/33226
 # type:
 #     'module'
 
 module:
-    'dist/latex.esm.js'
+    'dist/latex.mjs'
 
 main:
-    'dist/latex.js'
+    'dist/latex.cjs'
 
 exports:
-    import: 'dist/latex.esm.js'
+    import: 'dist/latex.mjs'
     require: 'dist/latex.js'
 
 browser:
@@ -40,38 +42,63 @@ files:
     'bin/latex.js'
     'dist/latex.js'
     'dist/latex.js.map'
-    'dist/latex.esm.js'
-    'dist/latex.esm.js.map'
+    'dist/latex.mjs'
+    'dist/latex.mjs.map'
     'dist/latex.component.js'
     'dist/latex.component.js.map'
-    'dist/latex.component.esm.js'
-    'dist/latex.component.esm.js.map'
+    'dist/latex.component.mjs'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
+    'dist/packages/'
+    'dist/documentclasses/'
 
 scripts:
-    clean: 'rimraf dist bin test/coverage docs/js/playground.bundle.*;'
-    build: 'NODE_ENV=production npm run devbuild;'
+    clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;'
+
     devbuild: "
         rimraf 'dist/**/*.js.map';
         mkdirp dist/css;
         mkdirp dist/js;
         mkdirp dist/fonts;
+        mkdirp dist/documentclasses;
+        mkdirp dist/packages;
         rsync -a src/css/ dist/css/;
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
+        cp -a src/latex.component.mjs dist/;
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
-	    rollup -c --environment GOAL:library-esm &
-	    rollup -c --environment GOAL:library-umd &
-	    rollup -c --environment GOAL:webcomponent-esm &
-	    rollup -c --environment GOAL:webcomponent-umd &
-	    rollup -c --environment GOAL:playground;
-        wait;
+	    rollup -c;
     "
+
+    build: 'NODE_ENV=production npm run devbuild;'
+
+
+    # docs/website and playground
+
+    devdocs: "
+        npm run devbuild;
+        vuepress dev docs --no-clear-screen;
+    "
+
+    docs: "
+        npm run build;
+
+        [ ! -d website ] && git worktree add website gh-pages;
+        mv website/.git .website.git;
+        vuepress build docs;
+        mv .website.git website/.git;
+
+        cd website;
+        git add .;
+        git commit -m 'regenerated website';
+    "
+
+
+    # unit tests
 
     test:  'mocha test/*.ls;'
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
@@ -122,16 +149,22 @@ devDependencies:
     'tmp': '0.x'
     'glob': '^7.1.4'
 
+    ### docs
+
+    'vuepress': '1.5.x'
+    'split-grid': '1.0.x'
+    'codemirror': '5.54.x'
+    'vue-codemirror': '4.0.x'
+    'raw-loader': '4.0.x'
+
     ### bundling
 
     "rollup": "2.x"
-    "rollup-plugin-visualizer": "4.0.x"
-    "rollup-plugin-livescript": "^0.1.1"
     "@rollup/plugin-commonjs": "11.x"
-    "@rollup/plugin-node-resolve": "7.1.x"
-    "rollup-plugin-terser": "^5.0.0"
-    "rollup-plugin-re": "^1.0.7"
-    "rollup-plugin-copy": "^3.0.0"
+    "@rollup/plugin-node-resolve": "8.0.x"
+    "rollup-plugin-terser": "6.1.x"
+    "rollup-plugin-sourcemaps": "0.6.x"
+    "rollup-plugin-visualizer": "4.0.x"
 
     ### testing
 
@@ -142,7 +175,7 @@ devDependencies:
     'slugify': '1.4.x'
     'decache': '4.6.x'
 
-    'puppeteer': '3.0.x'
+    'puppeteer': '3.1.x'
     'pixelmatch': '5.2.x'
 
     'nyc': '15.x'

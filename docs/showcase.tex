@@ -1,0 +1,731 @@
+\documentclass{article}
+
+\usepackage{comment, multicol}
+\usepackage{hyperref}
+
+\usepackage{calc,pict2e,picture}
+\usepackage{textgreek,textcomp,gensymb,stix}
+
+\setcounter{secnumdepth}{2}
+
+\title{\LaTeX.js Showcase}
+\author{made with $\varheartsuit$ by Michael Brade}
+\date{2017--2020}
+
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+This document will show most of the features of \LaTeX.js while at the same time being a gentle introduction to \LaTeX.
+In the appendix, the API as well as the format of custom macro definitions in JavaScript will be explained.
+\end{abstract}
+
+
+\section{Characters}
+
+It is possible to input any UTF-8 character either directly or by character code
+using one of the following:
+
+\begin{itemize}
+    \item \texttt{\textbackslash symbol\{"00A9\}}: \symbol{"00A9}
+    \item \verb|\char"A9|: \char"A9
+    \item \verb|^^A9 or ^^^^00A9|: ^^A9 or ^^^^00A9
+\end{itemize}
+
+\bigskip
+
+\noindent
+Special characters, like those:
+\begin{center}
+\$ \& \% \# \_ \{ \} \~{} \^{} \textbackslash % \< \>  \"   % TODO cannot be typeset
+\end{center}
+%
+have to be escaped.
+
+More than 200 symbols are accessible through macros. For instance: 30\,\textcelsius{} is
+86\,\textdegree{}F. See also Section~\ref{sec:symbols}.
+
+
+
+\section{Spaces and Comments}
+
+Spaces and comments, of course, work just as they do in \LaTeX.
+This is an            % stupid
+% Better: instructive <----
+example: Supercal%
+                ifragilist%
+    icexpialidocious
+
+It does not matter whether you enter one or several     spaces after a word, it
+will always be typeset as one space---unless you force several spaces, like\ \ now.
+
+New \TeX users may miss whitespaces after a command. % renders wrong
+Experienced \TeX{} users are \TeX perts, and know how to use whitespaces. % renders correct
+
+Longer comments can be embedded in the \texttt{comment} environment:
+This is another  \begin  {comment}
+rather stupid,
+but helpful
+\end
+{comment}
+example for embedding comments in your document.
+
+
+
+\section{Dashes and Hyphens}
+
+\LaTeX\ knows four kinds of dashes. Access three of them with different numbers
+of consecutive dashes. The fourth sign is actually not a dash at all---it is the
+mathematical minus sign:
+
+\begin{quote}
+    daughter-in-law, X-rated\\
+    pages 13--67\\
+    yes---or no? \\
+    $0$, $1$ and $-1$
+\end{quote}
+%
+The names for these dashes are: ‘-’ hyphen, ‘--’ en-dash, ‘---’ em-dash,
+and ‘$-$’ minus sign. \LaTeX.js outputs the actual true unicode character for those
+instead of using the hypen-minus.
+
+
+
+\section{Text and Paragraphs, Ligatures}
+
+An empty line starts a new paragraph, and so does \verb|\par|.
+\par Like this. A new line usually starts automatically when the previous one is
+full. However, using \verb+\newline+ or \verb|\\|,\newline one can force \\ to start a new line.
+
+Ligatures are supported as well, for instance:
+
+\begin{center}
+fi, fl, ff, ffi, ffl \dots{} instead of f\/i, f\/l, f\/f\/l \dots
+\end{center}
+
+Use \texttt{\textbackslash\slash} to prevent a ligature.
+
+
+
+\begin{multicols}{2}[\subsection{Multicolumns}]
+
+The multi-column layout, using the \texttt{multicols} environment, allows easy
+definition of multiple columns of text---just like in newspapers. The first
+and mandatoriy argument specifies the number of columns the text should be divided into.
+
+It is often convenient to spread some text over all columns, just before the multicolumn
+output. In \LaTeX, this was needed to prevent any page break in between. To achieve this,
+the \texttt{multicols} environment has an optional second argument which can be used for
+this purpose.
+
+For instance, this text you are reading now was started with the argument
+\texttt{\textbackslash subsection\{Multicolumns\}}.
+
+\end{multicols}
+
+
+
+\section{Boxes}
+
+\LaTeX.js supports most of the standard \LaTeX\ boxes.
+
+\medbreak
+
+\noindent\fbox{\verb|\mbox{|\emph{text}\verb|}|}
+
+\smallbreak
+
+We already know one of them: it's called \verb|\mbox|. It simply packs up a series of boxes into another one, and
+can be used to prevent \LaTeX.js from breaking two words. As boxes can be put inside boxes, these horizontal box
+packers give you ultimate flexibility.
+
+\bigbreak
+
+% yes, unlike in LaTeX, you may put \verb|| anywhere, here it is inside an \fbox :)
+\noindent\fbox{
+\verb|\makebox[|\emph{width}\verb|][|\emph{pos}\verb|]{|\emph{text}\verb|}|
+}
+
+\noindent\fbox{
+\verb|\framebox[|\emph{width}\verb|][|\emph{pos}\verb|]{|\emph{text}\verb|}|
+}
+
+\smallbreak
+
+\noindent
+\emph{width} defines the width of the resulting box as seen from the outside.
+The \emph{pos} parameter takes a one letter value: \textbf{c}enter,
+flush\textbf{l}eft, or flush\textbf{r}ight. \textbf{s}pread is not really working
+in HTML.
+
+
+The command \verb|framebox| works exactly the same as \verb|makebox|, but it
+draws a box around the text.
+
+The following example shows you some things you could do with
+the \verb|makebox| and \verb|framebox| commands.
+
+\begin{quote}
+    \fbox{\makebox[10cm][c]{\textbf{c} e \textbf{n} t r a l}}\par
+
+    \framebox{Guess I'm framed now!} \par
+    \framebox[2cm][r]{Bummer, I am too wide} \par
+    \framebox[1cm][l]{never mind, so am I}
+    Can you read this?
+\end{quote}
+
+
+\bigbreak
+
+\noindent\fbox{
+\verb|\parbox[|\emph{pos}\verb|][|\emph{height}\verb|][|\emph{inner-pos}\verb|]{|\emph{width}\verb|}{|\emph{text}\verb|}|
+}
+
+\smallbreak
+
+\noindent
+The \verb|\parbox| command produces a box the contents of which are created in paragraph mode. However, only small
+pieces of text should be used, paragraph-making environments shouldn't be used inside a \verb|\parbox| argument. For
+larger pieces of text, including ones containing a paragraph-making environment, you should use a \verb|minipage|
+environment.
+
+By default LaTeX will position vertically a parbox so its center lines up with the center of the surrounding text line.
+When the optional position argument is present and equal either to ‘\verb|t|’ or ‘\verb|b|’, this allows you respectively
+to align either the top or bottom line in the parbox with the baseline of the surrounding text. You may also specify
+‘\verb|m|’ for position to get the default behaviour.
+
+The optional \emph{height} argument overrides the natural height of the box.
+
+The \emph{inner-pos} argument controls the placement of the text inside the box, as follows; if it is not specified, \emph{pos} is used.
+
+\verb|t| text is placed at the top of the box.
+
+\verb|c| text is centered in the box.
+
+\verb|b| text is placed at the bottom of the box.
+
+\verb|s| is not supported in HTML
+
+\smallbreak\noindent
+The following examples demonstrate simple positioning:
+
+\begin{itemize}
+\item simple alignment:
+
+Some text
+\fbox{\parbox{2cm}{parbox default alignment, parbox test text}}
+some text
+\fbox{\parbox[t]{2cm}{parbox top alignment, text parbox test text}}
+some text
+\fbox{\parbox[b]{2cm}{parbox bottom alignment, text parbox test text}}
+some text.
+
+
+\item alignment with a given height:
+
+Some text
+\fbox{\parbox[c][3cm]{2cm}{parbox default alignment, parbox test text}}
+some text
+\fbox{\parbox[t][3cm]{2cm}{parbox top alignment, text parbox test text}}
+some text
+\fbox{\parbox[b][3cm]{2cm}{parbox bottom alignment, text parbox test text}}
+some text.
+% BUG: empty line here causes parse error!
+\end{itemize}
+
+\noindent
+The following examples demonstrate all explicit \emph{pos}/\emph{inner-pos} combinations:
+\begin{itemize}
+\item center alignment:
+
+\noindent
+Some text
+\fbox{\parbox[c][3cm][t]{2cm}{parbox default alignment, parbox test text}}
+some text
+\fbox{\parbox[c][3cm][c]{2cm}{parbox top alignment, text parbox test text}}
+some text
+\fbox{\parbox[c][3cm][b]{2cm}{parbox bottom alignment, text parbox test text}}
+some text.
+
+
+\item top alignment:
+
+\noindent
+Some text
+\fbox{\parbox[t][3cm][t]{2cm}{parbox default alignment, parbox test text}}
+some text
+\fbox{\parbox[t][3cm][c]{2cm}{parbox top alignment, text parbox test text}}
+some text
+\fbox{\parbox[t][3cm][b]{2cm}{parbox bottom alignment, text parbox test text}}
+some text.
+
+\item bottom alignment:
+
+\noindent
+Some text
+\fbox{\parbox[b][3cm][t]{2cm}{parbox default alignment, parbox test text}}
+some text
+\fbox{\parbox[b][3cm][c]{2cm}{parbox top alignment, text parbox test text}}
+some text
+\fbox{\parbox[b][3cm][b]{2cm}{parbox bottom alignment, text parbox test text}}
+some text.
+
+
+\item top/bottom in one line:
+
+\noindent
+Some text
+\fbox{\parbox[b][3cm][t]{2cm}{parbox default alignment, parbox test text}}
+some text
+\fbox{\parbox[t][3cm][c]{2cm}{parbox top alignment, text parbox test text}}
+some text.
+\end{itemize}
+
+
+
+\subsection{Low-level box-interface}
+
+\LaTeX.js supports the following low-level \TeX\ commands:
+%\noindent\fbox{
+    \verb|\llap{|\emph{text}\verb|}|%}
+,
+%\noindent\fbox{
+    \verb|\rlap{|\emph{text}\verb|}|%}
+, and
+    \verb|\smash{|\emph{text}\verb|}|, as well as
+    \verb|\hphantom{|\emph{text}\verb|}|,
+    \verb|\vphantom{|\emph{text}\verb|}|, and
+    \verb|\phantom{|\emph{text}\verb|}|.
+
+A phantom looks like this: \phantom{phantom} yes, now the phantom is gone.
+
+\noindent
+\llap{\verb|\llap |}could be used to put something in the margin. However, there are better alternatives for that.
+See \verb|\marginpar|. \marginpar{{\huge test} in margin here}
+
+
+\section{Spacing}
+
+The following horizontal spaces are supported:
+\\[8pt]
+Negative thin space: |\negthinspace| \\
+No space (natural): || \\
+Thin space: |\,| or |\thinspace| \\
+Normal space: | | \\
+Normal space: |\ | \\
+Non-break space: |~| \\
+en-space: |\enspace| \\
+em-space: |\quad| \\
+2x em-space: |\qquad|\\
+3cm horizontal space: |\hspace{3cm}| \\
+
+
+
+\section{Environments}
+
+\subsection{Lists: Itemize, Enumerate, and Description}
+
+The \texttt{itemize} environment is suitable for simple lists, the \texttt{enumerate} environment for
+enumerated lists, and the \texttt{description} environment for descriptions.
+
+\begin{enumerate}
+    \item You can nest the list environments to your taste:
+        \begin{itemize}
+            \item But it might start to look silly.
+            \item[-] With a dash.
+        \end{itemize}
+    \item Therefore remember: \label{remember}
+        \begin{description}
+            \item[Stupid] things will not become smart because they are in a list.
+            \item[Smart] things, though, can be presented beautifully in a list.
+        \end{description}
+    \item[important] Technical note: Viewing this in Chrome, however, will show too much vertical space
+        at the end of a nested environment (see above). On top of that, margin collapsing for inline-block
+        boxes is not allowed. Maybe using \texttt{dl} elements is too complicated for this and a simple nested
+        \texttt{div} should be used instead.
+\end{enumerate}
+%
+Lists can be deeply nested:
+%
+\begin{itemize}
+    \item list text, level one
+    \begin{itemize}
+        \item list text, level two
+        \begin{itemize}
+            \item list text, level three
+
+            And a new paragraph can be started, too.
+            \begin{itemize}
+                \item list text, level four
+
+                And a new paragraph can be started, too.
+                This is the maximum level.
+
+                \item list text, level four
+            \end{itemize}
+
+            \item list text, level three
+        \end{itemize}
+        \item list text, level two
+    \end{itemize}
+    \item list text, level one
+    \item list text, level one
+\end{itemize}
+
+
+\subsection{Flushleft, Flushright, and Center}
+
+The \texttt{flushleft} environment:
+%
+\begin{flushleft}
+This text is\\ left-aligned.
+\LaTeX{} is not trying to make
+each line the same length.
+\end{flushleft}
+%
+The \texttt{flushright} environment:
+%
+\begin{flushright}
+This text is right-\\aligned.
+\LaTeX{} is not trying to make
+each line the same length.
+\end{flushright}
+%
+And the \texttt{center} environment:
+%
+\begin{center}
+At the centre\\of the earth
+\end{center}
+
+
+
+\subsection{Quote, Quotation, and Verse}
+
+The \texttt{quote} environment is useful for quotes, important phrases and examples.
+A typographical rule of thumb for the line length is:
+\begin{quote}
+On average, no line should be longer than 66 characters.
+\end{quote}
+
+There are two similar environments: the \texttt{quotation} and the \texttt{verse} environments.
+The \texttt{quotation} environment is useful for longer quotes going over several paragraphs,
+because it indents the first line of each paragraph.
+
+The \texttt{verse} environment is useful for poems where the line breaks are important.
+The lines are separated by issuing a \texttt{\textbackslash\textbackslash} at the end of a line
+and an empty line after each verse.
+
+\begin{verse}
+Humpty Dumpty sat on a wall:\\
+Humpty Dumpty had a great fall.\\
+All the King’s horses and all the King’s men\\
+Couldn’t put Humpty together again.
+
+{\raggedleft ---J.W. Elliott\par}
+\end{verse}
+
+
+\subsection{Picture}
+
+\frame{\setlength{\unitlength}{20.4mm}
+\begin{picture}(3,2.1)(-1.2,-0.05)
+    \put(0,1){\vector(1,0){1}}
+    \put(0,1){\circle{2}}
+    \thicklines
+    \put(0,0){\line(1,0){1}}
+    \put(0,0.01){xxxxxxxxxxx}
+    \put(0,0.1){XXXX}
+\end{picture}}
+%
+\frame{\setlength{\unitlength}{1mm}
+\begin{picture}(60, 50)
+    \put(20,30){\circle{1}}
+    \put(20,30){\circle{2}}
+    \put(20,30){\circle{4}}
+    \put(20,30){\circle{8}}
+    \put(20,30){\circle{16}}
+    \put(20,30){\circle{32}}
+    \put(40,30){\circle{1}}
+    \put(40,30){\circle{2}}
+    \put(40,30){\circle{3}}
+    \put(40,30){\circle{4}}
+    \put(40,30){\circle{5}}
+    \put(40,30){\circle{6}}
+    \put(40,30){\circle{7}}
+    \put(40,30){\circle{8}}
+    \put(40,30){\circle{9}}
+    \put(40,30){\circle{10}}
+    \put(40,30){\circle{11}}
+    \put(40,30){\circle{12}}
+    \put(40,30){\circle{13}}
+    \put(40,30){\circle{14}}
+    \put(15,10){\circle*{1}}
+    \put(20,10){\circle*{2}}
+    \put(25,10){\circle*{3}}
+    \put(30,10){\circle*{4}}
+    \put(35,10){\circle*{5}}
+\end{picture}}
+
+\frame{\setlength{\unitlength}{0.75mm}
+\begin{picture}(60,40)
+    \put(30,20){\vector(1,0){30}}
+    \put(30,20){\vector(4,1){20}}
+    \put(30,20){\vector(3,1){25}}
+    \put(30,20){\vector(2,1){30}}
+    \put(30,20){\vector(1,2){10}}
+    \thicklines
+    \put(30,20){\vector(-4,1){30}}
+    \put(30,20){\vector(-1,4){5}}
+    \thinlines
+    \put(30,20){\vector(-1,-1){5}}
+    \put(30,20){\vector(-1,-4){5}}
+\end{picture}}
+%
+\setlength{\unitlength}{5cm}
+\begin{picture}(1,1)
+    \put(0,0){\line(0,1){1}}
+    \put(0,0){\line(1,0){1}}
+    \put(0,0){\line(1,1){1}}
+    \put(0,0){\line(1,2){.5}}
+    \put(0,0){\line(1,3){.3333}}
+    \put(0,0){\line(1,4){.25}}
+    \put(0,0){\line(1,5){.2}}
+    \put(0,0){\line(1,6){.1667}}
+    \put(0,0){\line(2,1){1}}
+    \put(0,0){\line(2,3){.6667}}
+    \put(0,0){\line(2,5){.4}}
+    \put(0,0){\line(3,1){1}}
+    \put(0,0){\line(3,2){1}}
+    \put(0,0){\line(3,4){.75}}
+    \put(0,0){\line(3,5){.6}}
+    \put(0,0){\line(4,1){1}}
+    \put(0,0){\line(4,3){1}}
+    \put(0,0){\line(4,5){.8}}
+    \put(0,0){\line(5,1){1}}
+    \put(0,0){\line(5,2){1}}
+    \put(0,0){\line(5,3){1}}
+    \put(0,0){\line(5,4){1}}
+    \put(0,0){\line(5,6){.8333}}
+    \put(0,0){\line(6,1){1}}
+    \put(0,0){\line(6,5){1}}
+\end{picture}
+
+
+\frame{
+    \setlength{\unitlength}{1cm}
+    \begin{picture}(6,5)
+    \thicklines
+    \put(1,0.5){\line(2,1){3}}
+    \put(4,2){\line(-2,1){2}}
+    \put(2,3){\line(-2,-5){1}}
+    \put(0.7,0.3){$A$}
+    \put(4.05,1.9){$B$}
+    \put(1.7,2.9){$C$}
+    \put(3.1,2.5){$a$}
+    \put(1.3,1.7){$b$}
+    \put(2.5,1){$c$}
+    \put(0.3,4){$F=\sqrt{s(s-a)(s-b)(s-c)}$}
+    \put(3.5,0.4){$\displaystyle s:=\frac{a+b+c}{2}$}
+    \end{picture}
+}
+
+\setlength{\unitlength}{2mm}
+\begin{picture}(30,20)
+    \linethickness{0.075mm}
+    \multiput(0,0)(1,0){26}{\line(0,1){20}}
+    \multiput(0,0)(0,1){21}{\line(1,0){25}}
+    \linethickness{0.15mm}
+    \multiput(0,0)(5,0){6}{\line(0,1){20}}
+    \multiput(0,0)(0,5){5}{\line(1,0){25}}
+    \linethickness{0.3mm}
+    \multiput(5,0)(10,0){2}{\line(0,1){20}}
+    \multiput(0,5)(0,10){2}{\line(1,0){25}}
+\end{picture}
+%
+\setlength{\unitlength}{0.7cm}
+\begin{picture}(6,4)
+    \linethickness{0.075mm}
+    \multiput(0,0)(1,0){7}{\line(0,1){4}}
+    \multiput(0,0)(0,1){5}{\line(1,0){6}}
+    \thicklines
+    \put(2,3){\oval(3,1.8)}
+    \thinlines
+    \put(3,2){\oval(3,1.8)}
+    \thicklines
+    \put(2,1){\oval(3,1.8)[tl]}
+    \put(4,1){\oval(3,1.8)[b]}
+    \put(4,3){\oval(3,1.8)[r]}
+    \put(3,1.5){\oval(1.8,0.4)}
+\end{picture}
+
+\setlength{\unitlength}{0.8cm}
+\begin{picture}(6,4)
+    \linethickness{0.075mm}
+    \multiput(0,0)(1,0){7}{\line(0,1){4}}
+    \multiput(0,0)(0,1){5}{\line(1,0){6}}
+    \thicklines
+    \put(0.5,0.5){\line(1,5){0.5}}
+    \put(1,3){\line(4,1){2}}
+    \qbezier(0.5,0.5)(1,3)(3,3.5)
+    \thinlines
+    \put(2.5,2){\line(2,-1){3}}
+    \put(5.5,0.5){\line(-1,5){0.5}}
+    \linethickness{1mm}
+    \qbezier(2.5,2)(5.5,0.5)(5,3)
+    \thinlines
+    \qbezier(4,2)(4,3)(3,3)
+    \qbezier(3,3)(2,3)(2,2)
+    \qbezier(2,2)(2,1)(3,1)
+    \qbezier(3,1)(4,1)(4,2)
+\end{picture}
+
+
+
+\section{Labels and References}
+
+Labels can be attached to parts, chapters, sections, items of enumerations, footnotes, tables and figures.
+For instance: item~\ref{remember} was important, and regarding fonts, read Section~\ref{sec:advice}. And
+below, we can reference item~\ref{key-1} and \ref{key-2}.
+
+\begin{enumerate}
+    \item list text, level one
+    \begin{enumerate}
+        \item list text, level two
+        \begin{enumerate}
+            \item list text, level three
+
+            And a new paragraph can be started, too.
+            \begin{enumerate}
+                \item list text, level four
+
+                And a new paragraph can be started, too.
+                This is the maximum level.
+
+                \item list text, level four \label{key-1}
+            \end{enumerate}
+
+            \item list text, level three
+        \end{enumerate}
+        \item\label{key-2} list text, level two
+    \end{enumerate}
+    \item list text, level one
+    \item list text, level one
+\end{enumerate}
+
+
+\section{Mathematical Formulae}
+
+Math is typeset using KaTeX. Inline math:
+$
+f(x) = \int_{-\infty}^\infty \hat f(\xi)\,e^{2 \pi i \xi x} \, d\xi
+$
+as well as display math is supported:
+$$
+f(n) = \begin{cases} \frac{n}{2}, & \text{if } n\text{ is even} \\ 3n+1, & \text{if } n\text{ is odd} \end{cases}
+$$
+
+
+\section{Groups}
+
+
+Today is \today.
+
+Actually, what about { some groups? } They\,are\ \ \ \ \ nice.
+
+
+\section{Symbols}
+\label{sec:symbols}
+
+\noindent
+lowercase greek letters:
+\textalpha \textbeta \textgamma \textdelta \textepsilon \textzeta \texteta \texttheta \textiota \textkappa
+\textlambda \textmu \textnu \textxi \textomikron \textpi \textrho \textsigma \texttau \textupsilon \textphi \textchi
+\textpsi \textomega
+
+\noindent
+uppercase greek letters:
+\textAlpha \textBeta \textGamma \textDelta \textEpsilon \textZeta \textEta \textTheta \textIota \textKappa
+\textLambda \textMu \textNu \textXi \textOmikron \textPi \textRho \textSigma \textTau \textUpsilon \textPhi \textChi
+\textPsi \textOmega
+
+\noindent
+currencies:
+\texteuro \textcent \textsterling \pounds \textbaht \textcolonmonetary \textcurrency \textdong \textflorin \textlira
+\textnaira \textpeso \textwon \textyen
+
+\noindent
+old-style numerals:
+\textzerooldstyle \textoneoldstyle \texttwooldstyle \textthreeoldstyle \textfouroldstyle \textfiveoldstyle
+\textsixoldstyle \textsevenoldstyle \texteightoldstyle \textnineoldstyle
+
+\noindent
+math:
+\textperthousand \perthousand \textpertenthousand \textonehalf \textthreequarters \textonequarter
+\textfractionsolidus \textdiv \texttimes \textminus \textpm \textsurd \textlnot \textasteriskcentered
+\textonesuperior \texttwosuperior \textthreesuperior
+
+\noindent
+arrows:
+\textleftarrow \textuparrow \textrightarrow \textdownarrow
+
+\noindent
+misc:
+\checkmark \textreferencemark \textordfeminine \textordmasculine \textmarried \textdivorced \textbar \textbardbl
+\textbrokenbar \textbigcircle \textcopyright \copyright \textcircledP \textregistered \textservicemark
+\texttrademark \textnumero \textrecipe \textestimated \textmusicalnote \textdiscount
+
+\noindent
+non-ASCII:
+\AE \ae \IJ \ij \OE \oe \TH \th \SS \ss \DH \dh \O \o \DJ \dj \L \l \i \j \NG \ng
+
+
+\section{Fonts}
+
+Usually, \LaTeX.js chooses the right font---just like \LaTeX.  In some cases,
+one might like to change fonts and sizes by hand. To do this, use the standard
+commands. The actual size of each font is a design issue and depends
+on the document class (in this case on the CSS file).
+
+{\small The small and
+    \textbf{bold} Romans ruled}
+    {\Large all of great big
+    \textit{Italy}.}
+
+\textit{You can also
+    \emph{emphasize} text if
+    it is set in italics,}
+    \textsf{in a
+    \emph{sans-serif} font,}
+    \texttt{or in
+    \emph{typewriter} style.}
+
+The environment form of the font commands is available, too:
+
+\begin{center}
+\begin{itshape}
+This whole paragraph is emphasized, for instance.
+\end{itshape}
+\end{center}
+
+
+\subsection{An advice}
+\label{sec:advice}
+\begin{center}
+    \underline{\textbf{Remember\Huge!}} \textit{The}
+    \textsf{M\textbf{\LARGE O}\texttt{R}\textsl{E}} fonts \Huge you
+    \tiny use \footnotesize \textbf{in} a \small \texttt{document},
+    \large \textit{the} \normalsize more \textsc{readable} and
+    \textsl{\textsf{beautiful} it bec\large o\Large m\LARGE e\huge s}.
+\end{center}
+
+
+\appendix
+
+\section{Source}
+
+The source of \LaTeX.js is here on GitHub: \url{https://github.com/michael-brade/LaTeX.js}
+
+\end{document}

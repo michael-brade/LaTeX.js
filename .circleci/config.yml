@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/latex.js
   docker:
-    - image: circleci/node:14-buster
+    - image: circleci/node:14-buster-browsers
 
 jobs:
   build:
@@ -61,7 +61,11 @@ workflows:
   version: 2
   build-and-test:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
       - test:
           requires:
             - build

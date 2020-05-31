@@ -1,0 +1,47 @@
+.page {
+    padding-top: 3.6rem;
+    text-align: justify;
+}
+
+.theme-container {
+    .navbar {
+        line-height: 2rem;
+
+        &, & .links, & a {
+            background-color: #3eaf7c !important;  // #2e8555
+            color: white;
+            border: none;
+        }
+
+        & .home-link {
+            .logo {
+                height: 2rem
+                padding-bottom: 0.2rem
+                vertical-align: middle
+                margin-right: 0
+            }
+            font-family: 'Liberation Serif', serif
+            font-size: 1.5rem;
+        }
+    }
+}
+
+.fullWidth {
+    .page {
+        padding-top: 3.6rem;
+        padding-left: 0;
+        padding-bottom: 0;
+        height: calc(100vh - 3.6rem);
+    }
+
+    .theme-default-content {
+        padding: 0;
+        margin: 0;
+        max-width: none;
+        height: 100%;
+    }
+
+    footer {
+        display: none;
+    }
+}
