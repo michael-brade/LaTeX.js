@@ -3,12 +3,28 @@
     text-align: justify;
 }
 
-.navbar, .navbar .links {
-    background-color: #2e8555 !important;
-    color: white;
-    border: none;
-}
+.theme-container {
+    .navbar {
+        line-height: 2rem;
 
+        &, & .links, & a {
+            background-color: #3eaf7c !important;  // #2e8555
+            color: white;
+            border: none;
+        }
+
+        & .home-link {
+            .logo {
+                height: 2rem
+                padding-bottom: 0.2rem
+                vertical-align: middle
+                margin-right: 0
+            }
+            font-family: 'Liberation Serif', serif
+            font-size: 1.5rem;
+        }
+    }
+}
 
 .fullWidth {
     .page {

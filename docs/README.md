@@ -12,6 +12,7 @@ footer: MIT Licensed | Copyright © 2017-2020 Michael Brade
 
   <p class="action">
     <a href="/usage.html" class="nav-link action-button">Documentation →</a>
+    &nbsp;
     <a href="/playground.html" class="nav-link action-button">Playground →</a>
   </p>
 </header>
@@ -41,6 +42,13 @@ footer: MIT Licensed | Copyright © 2017-2020 Michael Brade
 
   <div class="feature">
     <h2>Speed</h2>
-    <p><latex/>.js only needs one pass over the document instead of several. References can be filled in by remembering and later modifying the relevant part of the DOM tree.</p>
+    <p><latex/>.js only needs one pass over the document instead of several. References can be filled in by remembering
+    and later modifying the relevant part of the DOM tree.</p>
+  </div>
+
+  <div class="feature">
+    <h2>Open Source</h2>
+    <p>Of course, <latex/>.js is completely Open Source. You can find the code on
+    <a href="https://github.com/michael-brade/LaTeX.js">GitHub</a>.</p>
   </div>
 </div>

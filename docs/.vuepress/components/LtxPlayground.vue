@@ -5,10 +5,6 @@
         <div id="gutter" ref="gutter"></div>
 
         <iframe id="preview" ref="preview" sandbox="allow-same-origin allow-scripts"></iframe>
-
-        <div id="footer">
-            <div id="copyright">Copyright &copy; 2017-2020 Michael Brade</div>
-        </div>
     </div>
 </template>
 
@@ -213,21 +209,17 @@ export default {
 
 
 
-<style scoped>
+<style scoped lang="stylus">
 #playground {
     margin: 0;
     height: 100%;
 
     display: grid;
-    grid-template-rows: 97% 3%;
+    grid-template-rows: 100%;
     grid-template-columns: 1fr 6px 1fr;
-    grid-template-areas:
-        "latex gutter preview"
-        "footer footer footer";
+    grid-template-areas: "latex gutter preview";
 }
-</style>
 
-<style scoped lang="stylus">
 #footer {
     display: flex;
     align-items: center;

@@ -1,6 +1,6 @@
 # Usage
 
-LaTeX.js has a command line interface (CLI), it can be embedded in a website using the provided webcomponent, or it
+<latex/>.js has a command line interface (CLI), it can be embedded in a website using the provided webcomponent, or it
 can be used to directly obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each of those use-cases is explained in the following subsections.
 
 

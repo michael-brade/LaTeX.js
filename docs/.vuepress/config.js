@@ -23,6 +23,7 @@ module.exports = {
             { text: 'ChangeLog', link: 'https://github.com/michael-brade/LaTeX.js/releases'},
             { text: 'GitHub', link: 'https://github.com/michael-brade/LaTeX.js' },
         ],
+        search: false,
         sidebar: [
             '',                 // Home
             'usage',
@@ -47,7 +48,7 @@ module.exports = {
         //         children: [ /* ... */ ]
         //       }
         // ],
-        sidebarDepth: 2,
+        sidebarDepth: 1,
         displayAllHeaders: true,
         activeHeaderLinks: true
     },
