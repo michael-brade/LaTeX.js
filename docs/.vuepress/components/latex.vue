@@ -8,12 +8,12 @@
 .latex span:first-child {
     font-size: 0.8em;
     vertical-align: 0.2em;
-    margin-left:  -0.45em;
-    margin-right: -0.15em;
+    margin-left:  -0.4em;
+    margin-right: -0.1em;
 }
 .latex span:last-child {
     margin-left: -0.2em;
-    margin-right: -0.2em;
+    margin-right: -0.1em;
     position: relative;
     top: 0.45ex;
 }

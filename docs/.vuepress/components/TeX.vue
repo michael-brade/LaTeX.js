@@ -7,7 +7,7 @@ span.tex span {
 
 span.tex span:first-child {
     margin-left: -0.2em;
-    margin-right: -0.2em;
+    margin-right: -0.1em;
     position: relative;
     top: 0.45ex;
 }
