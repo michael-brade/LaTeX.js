@@ -16,10 +16,7 @@ export default [{
         resolve({extensions: [".js", ".ls"], preferBuiltins: true}),
         pegjs({plugins: [ignoreInfiniteLoop], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
         livescript(),
-        commonjs({
-            extensions: [".js", ".ls"],
-            ignore: ["svgdom"]
-        }),
+        commonjs(),
         visualizer({
             filename: 'dist/latex.stats.html',
             sourcemap: prod,
