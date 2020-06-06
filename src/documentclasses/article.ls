@@ -1,8 +1,5 @@
-'use strict'
-
-require! {
+import
     './base': { Base }
-}
 
 
 export class Article extends Base

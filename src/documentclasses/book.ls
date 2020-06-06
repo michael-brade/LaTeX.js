@@ -1,8 +1,5 @@
-'use strict'
-
-require! {
+import
     './report': { Report }
-}
 
 
 # book in LaTeX has no abstract

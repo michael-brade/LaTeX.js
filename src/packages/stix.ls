@@ -1,6 +1,6 @@
 'use strict'
 
-require! he
+import 'he'
 
 export class Stix
 

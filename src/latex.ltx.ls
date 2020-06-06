@@ -1,15 +1,12 @@
-'use strict'
-
-require! {
+import
     './symbols': { symbols }
     './types': { Vector }
 
-    'lodash/assign'
-    'lodash/assignIn'
-
     './documentclasses': builtin-documentclasses
     './packages': builtin-packages
-}
+
+    'lodash/assign'
+    'lodash/assignIn'
 
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.

@@ -18,9 +18,6 @@ export default [{
         livescript(),
         commonjs({
             extensions: [".js", ".ls"],
-            namedExports: {
-                'src/latex-parser.pegjs.js': [ 'parse', 'SyntaxError' ]
-            },
             ignore: ["svgdom"]
         }),
         visualizer({

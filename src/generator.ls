@@ -1,8 +1,9 @@
-require! {
-    './latex.ltx': { LaTeX: Macros }
+import
+    './latex.ltx': { LaTeX }
     './symbols': { diacritics, symbols }
     './types': { makeLengthClass }
-}
+
+Macros = LaTeX
 
 Object.defineProperty Array.prototype, 'top',
     enumerable: false

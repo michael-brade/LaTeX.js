@@ -1,6 +1,4 @@
-'use strict'
-
-require! he
+import 'he'
 
 export ligatures = new Map([
     * 'ff'                  he.decode '&fflig;'     #     U+FB00

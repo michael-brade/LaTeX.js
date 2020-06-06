@@ -1,17 +1,15 @@
 import
     './generator': { Generator }
     './symbols': { ligatures, diacritics }
-
-require! {
-    katex
-    hypher: Hypher
-    'hyphenation.en-us': h-en
     '@svgdotjs/svg.js': { SVG, registerWindow }
-    he
+    'katex/dist/katex.mjs': katex
+
+    'hypher': Hypher
+    'hyphenation.en-us': h-en
+    'he'
 
     'lodash/flattenDeep'
     'lodash/compact'
-}
 
 
 if typeof window == 'undefined'
