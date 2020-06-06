@@ -4,7 +4,7 @@ npx lsc -cj > package.json <<EOF
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.12.1'
+version: '0.12.2'
 
 author:
     'name': 'Michael Brade'
@@ -123,8 +123,9 @@ dependencies:
     'hyphenation.de': '*'
 
     'svgdom': '^0.1.8'
-    #'cheerio': '0.x'
-    #'xmldom': '^0.1.19'
+    #'xmldom': '0.3.x'
+    #'jsdom': '16.x'
+    #'cheerio': '1.0.x'
 
 devDependencies:
     ### actual runtime dependencies, but bundled by rollup
@@ -208,6 +209,6 @@ bugs:
 homepage: 'https://latex.js.org'
 
 engines:
-    node: '>= 11.0'
+    node: '>= 14.0'
 
 EOF
