@@ -26,17 +26,17 @@ bin:
 #     'module'
 
 module:
-    'dist/latex.mjs'
+    './dist/latex.mjs'
 
 main:
-    'dist/latex.js'
+    './dist/latex.js'
 
 exports:
-    import: 'dist/latex.mjs'
-    require: 'dist/latex.js'
+    import: './dist/latex.mjs'
+    require: './dist/latex.js'
 
 browser:
-    'dist/latex.js'
+    './dist/latex.js'
 
 files:
     'bin/latex.js'

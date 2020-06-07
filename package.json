@@ -15,13 +15,13 @@
   "bin": {
     "latex.js": "./bin/latex.js"
   },
-  "module": "dist/latex.mjs",
-  "main": "dist/latex.js",
+  "module": "./dist/latex.mjs",
+  "main": "./dist/latex.js",
   "exports": {
-    "import": "dist/latex.mjs",
-    "require": "dist/latex.js"
+    "import": "./dist/latex.mjs",
+    "require": "./dist/latex.js"
   },
-  "browser": "dist/latex.js",
+  "browser": "./dist/latex.js",
   "files": [
     "bin/latex.js",
     "dist/latex.js",
