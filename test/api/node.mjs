@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { parse, HtmlGenerator } = require('latex.js')
+import { parse, HtmlGenerator } from 'latex.js'
 
 let latex = "Hi, this is a line of text."
 
