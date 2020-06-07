@@ -9,8 +9,8 @@
 </template>
 
 
-<script>
-import { parse, HtmlGenerator, SyntaxError } from '../../../dist/latex.mjs'
+<script type="module">
+import { parse, HtmlGenerator, SyntaxError } from '../../..'
 import en from 'hyphenation.en-us'
 
 import Split from 'split-grid'
