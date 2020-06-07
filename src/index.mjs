@@ -1,5 +1,5 @@
 import he from 'he'
-import { parse } from './latex-parser'
+import { parse, SyntaxError } from './latex-parser'
 import { Generator } from './generator'
 import { HtmlGenerator } from './html-generator'
 import { LaTeXJSComponent } from './latex.component'
@@ -7,6 +7,7 @@ import { LaTeXJSComponent } from './latex.component'
 export {
     he,
     parse,
+    SyntaxError,
     Generator,
     HtmlGenerator,
     LaTeXJSComponent
