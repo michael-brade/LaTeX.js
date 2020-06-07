@@ -1,5 +1,10 @@
 'use strict'
 
+require! 'svgdom': { createHTMLWindow }
+
+global.window = createHTMLWindow!
+global.document = window.document
+
 require! {
     path
     fs
@@ -8,7 +13,6 @@ require! {
     'child_process': { spawn }
 
     '../dist/latex': { parse, HtmlGenerator }
-    'svgdom': { createHTMLWindow, config }
 
     decache
 }
@@ -17,8 +21,13 @@ const html-beautify   = require 'js-beautify' .html
 const load-fixture    = require './lib/load-fixtures' .load
 const registerWindow  = require '@svgdotjs/svg.js' .registerWindow
 
-global.window = createHTMLWindow!
-global.document = window.document
+
+function reset-svg-ids ()
+    decache '@svgdotjs/svg.js'
+    delete HtmlGenerator.prototype.SVG
+    HtmlGenerator.prototype.SVG = require '@svgdotjs/svg.js' .SVG
+    registerWindow window, document
+
 
 
 subdirs = []
@@ -69,11 +78,7 @@ function run-fixture (fixture, name)
 
     # create syntax test
     _test fixture.header || 'fixture number ' + fixture.id, !->
-        decache '@svgdotjs/svg.js'
-        delete HtmlGenerator.prototype.SVG
-        HtmlGenerator.prototype.SVG = require '@svgdotjs/svg.js' .SVG
-        registerWindow window, document
-
+        reset-svg-ids!
 
         try
             generator = parse fixture.source, { generator: new HtmlGenerator { hyphenate: false } }
@@ -106,6 +111,8 @@ function run-fixture (fixture, name)
     # create screenshot test
     if screenshot
         _test '   - screenshot', ->>
+            reset-svg-ids!
+
             htmlDoc = parse fixture.source, {
                 generator: new HtmlGenerator { hyphenate: false }
             } .htmlDocument!
