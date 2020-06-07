@@ -70,3 +70,7 @@ describe 'LaTeX.js API test', !->
     test 'web component API', ->>
         data = await fs.readFile path.join(__dirname, 'api/webcomponent.html'), 'utf8'
         await takeScreenshot data, path.join(__dirname, 'screenshots/webcomponent')
+
+    test 'web component module API', ->>
+        data = await fs.readFile path.join(__dirname, 'api/webcomponent.module.html'), 'utf8'
+        await takeScreenshot data, path.join(__dirname, 'screenshots/webcomponent')

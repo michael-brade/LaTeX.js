@@ -11,9 +11,11 @@
 
   <base href="../../dist/">
 
-  <script src="./latex.js"></script>
-  <script>
-    customElements.define("latex-js", latexjs.LaTeXJSComponent)
+  <!-- ES6 Modules cannot be used without MIME types, so they don't work from local files! Use http-server etc. -->
+  <script type="module">
+    // import { LaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js@0.12.4/dist/latex.mjs"
+    import { LaTeXJSComponent } from "./latex.mjs"
+    customElements.define("latex-js", LaTeXJSComponent)
   </script>
 
   <style>

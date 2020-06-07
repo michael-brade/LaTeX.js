@@ -8,6 +8,7 @@ require! {
     'child_process': { spawn }
 
     '../dist/latex': { parse, HtmlGenerator }
+    'svgdom': { createHTMLWindow, config }
 
     decache
 }
@@ -15,6 +16,9 @@ require! {
 const html-beautify   = require 'js-beautify' .html
 const load-fixture    = require './lib/load-fixtures' .load
 const registerWindow  = require '@svgdotjs/svg.js' .registerWindow
+
+global.window = createHTMLWindow!
+global.document = window.document
 
 
 subdirs = []
