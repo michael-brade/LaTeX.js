@@ -23,13 +23,19 @@ export default [{
             // template: 'network'
         })
     ],
+    external: ['svgdom'],
+    inlineDynamicImports: true,
     output: [{
-        file: "dist/latex.mjs",
-        format: "esm",
+        // file: "dist/latex.mjs",
+        dir: "dist",
+        entryFileNames: "latex.mjs",
+        format: "es",
         sourcemap: prod,
         plugins: [...(prod ? [terser()] : [])]
     }, {
-        file: "dist/latex.js",
+        // file: "dist/latex.js",
+        dir: "dist",
+        entryFileNames: "latex.js",
         format: "umd",
         name: "latexjs",
         sourcemap: prod,

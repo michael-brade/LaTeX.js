@@ -14,21 +14,31 @@ import
 
 if typeof window == 'undefined'
     # on the server we need to include a DOM implementation
-    require! 'svgdom': { createHTMLWindow, config }
 
-    #config
-        ## custom font directory
-        #.setFontDir('./fonts')
-        ## map the font-family to the file
-        #.setFontFamilyMappings({'Arial': 'arial.ttf'})
-        ## you can preload your fonts to avoid the loading delay
-        ## when the font is used the first time
-        #.preloadFonts()
+    # This code should work but it doesn't:
+    #  - Chrome/Firefox don't support top-level await (TLA) and crash already when parsing it
+    #  - node 14.x needs the special flag --experimental-top-level-await
+    #  - rollup won't output cjs or umd with TLA
+    try
+        require! 'svgdom': { createHTMLWindow }
+    catch
+        svgdom = ``await import('svgdom')``
+        createHTMLWindow = svgdom.createHTMLWindow
 
     global.window = createHTMLWindow!
     global.document = window.document
 
     registerWindow window, document
+
+#     #svgdom.config
+#         ## custom font directory
+#         #.setFontDir('./fonts')
+#         ## map the font-family to the file
+#         #.setFontFamilyMappings({'Arial': 'arial.ttf'})
+#         ## you can preload your fonts to avoid the loading delay
+#         ## when the font is used the first time
+#         #.preloadFonts()
+
 
 
 he.decode.options.strict = true
