@@ -3,7 +3,6 @@ import commonjs from "@rollup/plugin-commonjs";
 import livescript from "./lib/rollup-plugin-livescript";
 import pegjs from "./lib/rollup-plugin-pegjs";
 import { terser } from "rollup-plugin-terser";
-import sourcemaps from 'rollup-plugin-sourcemaps';
 import visualizer from 'rollup-plugin-visualizer';
 import ignoreInfiniteLoop from './lib/pegjs-no-infinite-loop.js';
 
@@ -23,36 +22,27 @@ export default [{
             // template: 'network'
         })
     ],
-    external: ['svgdom'],
-    inlineDynamicImports: true,
     output: [{
-        // file: "dist/latex.mjs",
-        dir: "dist",
-        entryFileNames: "latex.mjs",
+        file: "dist/latex.mjs",
         format: "es",
         sourcemap: prod,
         plugins: [...(prod ? [terser()] : [])]
     }, {
-        // file: "dist/latex.js",
-        dir: "dist",
-        entryFileNames: "latex.js",
+        file: "dist/latex.js",
         format: "umd",
         name: "latexjs",
         sourcemap: prod,
-        plugins: [...(prod ? [terser()] : [])]
+        plugins: [
+            {
+                name: 'import-meta-to-umd',
+                resolveImportMeta(property) {
+                    if (property === 'url') {
+                      return `document.currentScript && document.currentScript.src`;
+                    }
+                    return null;
+                }
+            },
+            ...(prod ? [terser()] : [])
+        ]
     }]
-}, {
-    // ES6 modules cannot be used without MIME types, so they don't work from local files,
-    // therefore also create a commonjs webcomponent for local usage
-    input: "src/latex.component.mjs",
-    plugins: [
-        resolve(),
-        sourcemaps()
-    ],
-    output: {
-        file: "dist/latex.component.js",
-        format: "umd",
-        name: "LaTeXJSComponent",
-        sourcemap: prod
-    }
 }]

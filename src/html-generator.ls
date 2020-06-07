@@ -1,7 +1,7 @@
 import
     './generator': { Generator }
     './symbols': { ligatures, diacritics }
-    '@svgdotjs/svg.js': { SVG, registerWindow }
+    '@svgdotjs/svg.js': { SVG }
     'katex/dist/katex.mjs': katex
 
     'hypher': Hypher
@@ -10,35 +10,6 @@ import
 
     'lodash/flattenDeep'
     'lodash/compact'
-
-
-if typeof window == 'undefined'
-    # on the server we need to include a DOM implementation
-
-    # This code should work but it doesn't:
-    #  - Chrome/Firefox don't support top-level await (TLA) and crash already when parsing it
-    #  - node 14.x needs the special flag --experimental-top-level-await
-    #  - rollup won't output cjs or umd with TLA
-    try
-        require! 'svgdom': { createHTMLWindow }
-    catch
-        svgdom = ``await import('svgdom')``
-        createHTMLWindow = svgdom.createHTMLWindow
-
-    global.window = createHTMLWindow!
-    global.document = window.document
-
-    registerWindow window, document
-
-#     #svgdom.config
-#         ## custom font directory
-#         #.setFontDir('./fonts')
-#         ## map the font-family to the file
-#         #.setFontFamilyMappings({'Arial': 'arial.ttf'})
-#         ## you can preload your fonts to avoid the loading delay
-#         ## when the font is used the first time
-#         #.preloadFonts()
-
 
 
 he.decode.options.strict = true
@@ -50,95 +21,88 @@ export class HtmlGenerator extends Generator
     ### public instance vars
 
     # tokens translated to html
-    sp:                         ' '
-    brsp:                       '\u200B '               # U+200B + ' ' breakable but non-collapsible space
-    nbsp:                       he.decode "&nbsp;"      # U+00A0
-    visp:                       he.decode "&blank;"     # U+2423  visible space
-    zwnj:                       he.decode "&zwnj;"      # U+200C  prevent ligatures
-    shy:                        he.decode "&shy;"       # U+00AD  word break/hyphenation marker
-    thinsp:                     he.decode "&thinsp;"    # U+2009
+    sp:                 ' '
+    brsp:               '\u200B '               # U+200B + ' ' breakable but non-collapsible space
+    nbsp:               he.decode "&nbsp;"      # U+00A0
+    visp:               he.decode "&blank;"     # U+2423  visible space
+    zwnj:               he.decode "&zwnj;"      # U+200C  prevent ligatures
+    shy:                he.decode "&shy;"       # U+00AD  word break/hyphenation marker
+    thinsp:             he.decode "&thinsp;"    # U+2009
 
 
     ### private static vars
-    create =                    (type, classes) -> el = document.createElement type; el.setAttribute "class", classes;  return el
+    create =            (type, classes) -> el = document.createElement type; el.setAttribute "class", classes; return el
 
-    blockRegex =                //^(address|blockquote|body|center|dir|div|dl|fieldset|form|h[1-6]|hr
-                                   |isindex|menu|noframes|noscript|ol|p|pre|table|ul|dd|dt|frameset
-                                   |li|tbody|td|tfoot|th|thead|tr|html)$//i
+    blockRegex =        //^(address|blockquote|body|center|dir|div|dl|fieldset|form|h[1-6]|hr|isindex|menu|noframes
+                           |noscript|ol|p|pre|table|ul|dd|dt|frameset|li|tbody|td|tfoot|th|thead|tr|html)$//i
 
-    isBlockLevel =              (el) -> blockRegex.test el.nodeName
+    isBlockLevel =      (el) -> blockRegex.test el.nodeName
 
 
     # generic elements
 
-    inline:                     "span"
-    block:                      "div"
+    inline:             "span"
+    block:              "div"
 
 
     # typographic elements
 
-    titlepage:                  do -> create ::block, "titlepage"
-    title:                      do -> create ::block, "title"
-    author:                     do -> create ::block, "author"
-    date:                       do -> create ::block, "date"
+    titlepage:          ~> create @block, "titlepage"
+    title:              ~> create @block, "title"
+    author:             ~> create @block, "author"
+    date:               ~> create @block, "date"
 
-    abstract:                   do -> create ::block, "abstract"
+    abstract:           ~> create @block, "abstract"
 
-    part:                       "part"
-    chapter:                    "h1"
-    section:                    "h2"
-    subsection:                 "h3"
-    subsubsection:              "h4"
-    paragraph:                  "h5"
-    subparagraph:               "h6"
+    part:               "part"
+    chapter:            "h1"
+    section:            "h2"
+    subsection:         "h3"
+    subsubsection:      "h4"
+    paragraph:          "h5"
+    subparagraph:       "h6"
 
-    linebreak:                  "br"
+    linebreak:          "br"
 
-    par:                        "p"
+    par:                "p"
 
-    list:                       do -> create ::block, "list"
+    list:               ~> create @block, "list"
 
-    unordered-list:             do -> create "ul",  "list"
-    ordered-list:               do -> create "ol",  "list"
-    description-list:           do -> create "dl",  "list"
+    unordered-list:     ~> create "ul",   "list"
+    ordered-list:       ~> create "ol",   "list"
+    description-list:   ~> create "dl",   "list"
 
-    listitem:                   "li"
-    term:                       "dt"
-    description:                "dd"
+    listitem:           "li"
+    term:               "dt"
+    description:        "dd"
 
-    itemlabel:                  do -> create ::inline, "itemlabel"
+    itemlabel:          ~> create @inline, "itemlabel"
 
-    quote:                      do -> create ::block, "list quote"
-    quotation:                  do -> create ::block, "list quotation"
-    verse:                      do -> create ::block, "list verse"
+    quote:              ~> create @block, "list quote"
+    quotation:          ~> create @block, "list quotation"
+    verse:              ~> create @block, "list verse"
 
-    multicols:                  do ->
-                                    el = create ::block, "multicols"
-                                    return (c) ->
-                                        el.setAttribute "style", "column-count:" + c
-                                        return el
+    multicols:          (c) ~> ~>
+                            el = create @block, "multicols"
+                            el.setAttribute "style", "column-count:" + c
+                            return el
 
 
-    anchor:                     do ->
-                                    el = document.createElement "a"
-                                    return (id) ->
-                                        el.id? = id
-                                        return el
+    anchor:             (id) ~> ->
+                            el = document.createElement "a"
+                            el.id? = id
+                            return el
 
-    link:                       do ->
-                                    el = document.createElement "a"
-                                    return (u) ->
-                                        if u
-                                            el.setAttribute "href", u
-                                        else
-                                            el.removeAttribute "href"
-                                        return el
+    link:               (url) ~> ->
+                            el = document.createElement "a"
+                            el.setAttribute "href", url if url
+                            return el
 
-    verb:                       do -> create "code", "tt"
-    verbatim:                   "pre"
+    verb:               ~> create "code", "tt"
+    verbatim:           "pre"
 
-    picture:                    do -> create ::inline, "picture"
-    picture-canvas:             do -> create ::inline, "picture-canvas"
+    picture:            ~> create @inline, "picture"
+    picture-canvas:     ~> create @inline, "picture-canvas"
 
 
 
@@ -368,11 +332,11 @@ export class HtmlGenerator extends Generator
 
     ### element creation
 
-    # type: string or Element
+    # type: string or function/element factory
     # children: an Element or an array of Element
     create: (type, children, classes = "") ->
-        if typeof type == "object"
-            el = type.cloneNode true
+        if typeof type == "function"
+            el = type!
             if el.hasAttribute "class"
                 classes = el.getAttribute("class") + " " + classes
         else

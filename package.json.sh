@@ -44,9 +44,6 @@ files:
     'dist/latex.js.map'
     'dist/latex.mjs'
     'dist/latex.mjs.map'
-    'dist/latex.component.js'
-    'dist/latex.component.js.map'
-    'dist/latex.component.mjs'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
@@ -57,7 +54,7 @@ scripts:
     clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;'
 
     devbuild: "
-        rimraf 'dist/**/*.js.map';
+        rimraf 'dist/**/*.map';
         mkdirp dist/css;
         mkdirp dist/js;
         mkdirp dist/fonts;
@@ -67,7 +64,6 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
         rsync -a src/js/ dist/js/;
-        cp -a src/latex.component.mjs dist/;
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
         chmod a+x bin/latex.js;
@@ -164,7 +160,6 @@ devDependencies:
     "@rollup/plugin-commonjs": "13.x"
     "@rollup/plugin-node-resolve": "8.0.x"
     "rollup-plugin-terser": "6.1.x"
-    "rollup-plugin-sourcemaps": "0.6.x"
     "rollup-plugin-visualizer": "4.0.x"
 
     ### testing
