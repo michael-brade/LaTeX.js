@@ -23,19 +23,20 @@ General structure:
 - `src`: all the <latex/>.js sources
 - `bin`: the compiled CLI
 - `dist`: the compiled and minified source
-- `docs`: the webpage and (compiled) playground
+- `docs`: the webpage and playground
+- `webpage`: the compiled webpage and playground
 - `test`: unit tests and test driver
 
 Files and classes needed to translate <latex/> documents to HTML documents:
 
 - the parser: `src/latex-parser.pegjs`
-- the generator: `src/html-generator.ls`
-- macros and documentclasses: `src/macros.ls`, `src/symbols.ls`, `src/documentclasses/*.ls`
+- the generator: `src/generator.ls` and `src/html-generator.ls`
+- macros and documentclasses: `src/latex.ltx.ls`, `src/symbols.ls`, `src/documentclasses/*.ls`
 - packages: `src/packages/*.ls`
 
 - the CLI: `src/latex.js.ls`
-- the webcomponent: `src/latex.component.js`
-- the library API: `src/index.js`
+- the webcomponent: `src/latex.component.mjs`
+- the library API: `src/index.mjs`
 
 Files needed to display the generated HTML document:
 
@@ -53,7 +54,7 @@ npm run build   # or devbuild
 npm test
 ```
 
-To verify the screenshots (the CSS tests), ImageMagick needs to be installed. Screenshots are taken
+To verify the screenshots (the CSS tests), `ImageMagick` needs to be installed. Screenshots are taken
 with Chromium using `puppeteer`.
 
 ## Documentation and Playground

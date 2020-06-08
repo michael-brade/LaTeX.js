@@ -9,8 +9,9 @@
 </template>
 
 
-<script type="module">
-import { parse, HtmlGenerator, SyntaxError } from '../../..'
+<script>
+// webpack doesn't handle import.meta.url yet, so don't use latex.mjs
+import { parse, HtmlGenerator, SyntaxError } from '../../../dist/latex.js'
 import en from 'hyphenation.en-us'
 
 import Split from 'split-grid'

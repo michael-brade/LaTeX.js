@@ -17,6 +17,7 @@ Arguments:
 
 Returns the `HtmlGenerator` instance.
 
+### `SyntaxError`
 
 
 ## AST

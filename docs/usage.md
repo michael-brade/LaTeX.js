@@ -58,8 +58,8 @@ If no input files are given, STDIN is read.
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script type="module">
-  import latexjs from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.component.esm.js"
-  customElements.define('latex-js', latexjs)
+    import { LaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.mjs"
+    customElements.define("latex-js", LaTeXJSComponent)
   </script>
 
   <style>
@@ -77,7 +77,7 @@ If no input files are given, STDIN is read.
 <body>
   <h1>Compiling LaTeX</h1>
 
-  <latex-js baseURL="https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/">
+  <latex-js baseURL="https://cdn.jsdelivr.net/npm/latex.js/dist/">
     \documentclass{article}
 
     \begin{document}
@@ -123,18 +123,11 @@ plain text instead of HTML. Currently, only a HTML generator exists.
 
 Import the parser and generator, then parse and translate to HTML:
 
-```js
-import { parse, HtmlGenerator } from 'latex.js'
+<<< @/test/api/node.mjs#code
 
-let latex = "Hi, this is a line of text."
+Or using the CommonJS module syntax:
 
-
-let generator = new HtmlGenerator({ hyphenate: false })
-
-let doc = parse(latex, { generator: generator }).htmlDocument()
-
-console.log(doc.outerHTML)
-```
+<<< @/test/api/node.js#code
 
 The `HtmlGenerator` takes several options, see the API section below.
 
@@ -144,43 +137,7 @@ The `HtmlGenerator` takes several options, see the API section below.
 If you want to use the parser and the generator manually, you can either use your own build or use a link directly to
 the jsDelivr CDN:
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<< @/test/api/browser.html
 
-  <meta charset="UTF-8">
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta http-equiv="content-language" content="en">
-
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-  <!-- <script src="node_modules/latex.js/dist/latex.min.js"></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/latex.min.js"></script>
-
-  <title>LaTeX.js API Test</title>
-</head>
-
-<body>
-  <h1>Compiling LaTeX</h1>
-
-  <script>
-    // or ES Modules
-    // import latexjs from "https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/latex.esm.js"
-    var text = "Hi, this is a line of text."
-
-    var generator = new latexjs.HtmlGenerator({ hyphenate: false })
-
-    generator = latexjs.parse(text, { generator: generator })
-
-    document.body.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.12.2/dist/"))
-    document.body.appendChild(generator.domFragment())
-  </script>
-</body>
-
-</html>
-```
-
-Note that in this case the styles and scripts are not encapsulated, so they clash with the text and style of the
+Note that in this case the styles and scripts are not encapsulated, so they can clash with the text and style of the
 containing page.
