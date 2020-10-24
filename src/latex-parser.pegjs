@@ -252,6 +252,7 @@ macro_args =
       / &{ return g.nextArg("o?") }   o: opt_group?                                                             { g.addParsedArg(o); }
 
       / &{ return g.nextArg("i") }    i:(id_group       / &{ g.argError("id group argument expected") })        { g.addParsedArg(i); }
+      / &{ return g.nextArg("ie") }   i:(ide_group      / &{ g.argError("id or empty group arg expected") })    { g.addParsedArg(i); }
       / &{ return g.nextArg("i?") }   i: id_optgroup?                                                           { g.addParsedArg(i); }
       / &{ return g.nextArg("k") }    k:(key_group      / &{ g.argError("key group argument expected") })       { g.addParsedArg(k); }
       / &{ return g.nextArg("k?") }   k: key_optgroup?                                                          { g.addParsedArg(k); }
@@ -265,7 +266,12 @@ macro_args =
       / &{ return g.nextArg("l?") }   l: length_optgroup?                                                       { g.addParsedArg(l); }
       / &{ return g.nextArg("m") }    m:(macro_group    / &{ g.argError("macro group argument expected") })     { g.addParsedArg(m); }
       / &{ return g.nextArg("u") }    u:(url_group      / &{ g.argError("url group argument expected") })       { g.addParsedArg(u); }
-      / &{ return g.nextArg("c") }    c:(color_group    / &{ g.argError("color group expected") })              { g.addParsedArg(c); }
+
+      / &{ return g.nextArg("c") }     c:(color_group          / &{ g.argError("color group expected") })       { g.addParsedArg(c); }
+      / &{ return g.nextArg("c-ml") }  c:(color_modellist_group/ &{ g.argError("color model list expected") })  { g.addParsedArg(c); }
+      / &{ return g.nextArg("c-ssp") } c:(color_setspec_group  / &{ g.argError("color set spec expected") })    { g.addParsedArg(c); }
+      / &{ return g.nextArg("c-spl") } c:(color_speclist_group / &{ g.argError("color spec list expected") })   { g.addParsedArg(c); }
+
       / &{ return g.nextArg("cl") }   c:(coord_group    / &{ g.argError("coordinate/length group expected") })  { g.addParsedArg(c); }
       / &{ return g.nextArg("cl?") }  c: coord_optgroup?                                                        { g.addParsedArg(c); }
       / &{ return g.nextArg("v") }    v:(vector         / &{ g.argError("coordinate pair expected") })          { g.addParsedArg(v); }
@@ -285,6 +291,12 @@ nextArgStar =
 // {identifier}
 id_group        =   _ begin_group _
                         id:identifier
+                    _ end_group
+                    { return id; }
+
+// {identifier or empty}
+ide_group       =   _ begin_group _
+                        id:identifier?
                     _ end_group
                     { return id; }
 
@@ -369,11 +381,6 @@ float_group     =   _ begin_group
                     { return f; }
 
 
-// {color}
-color_group     =   _ begin_group
-                        c:color
-                    end_group
-                    { return c; }
 
 
 // picture coordinates and vectors
@@ -483,7 +490,7 @@ num_value       =   "(" expr:num_expr ")"                   { return expr; }
                   / real
                   / c:value                                 { return g.counter(c); }
 
-num_factor      =   s:("+"/"-") _ n:num_factor     { return s == "-" ? -n : n; }
+num_factor      =   s:("+"/"-") _ n:num_factor              { return s == "-" ? -n : n; }
                   / num_value
 
 num_term        =   head:num_factor tail:(_ ("*" / "/") _ num_factor)*
@@ -514,6 +521,32 @@ num_expr        =   _ head:num_term tail:(_ ("+" / "-") _ num_term)* _
 
 // xcolor expressions //
 
+// {color expression}
+color_group             =   _ begin_group
+                                c:color
+                            end_group
+                            { return c; }
+
+// {color model-list}
+color_modellist_group   =   _ begin_group
+                                ml:model_list
+                            end_group
+                            { return ml; }
+
+// {color spec-list}
+color_setspec_group     =   _ begin_group
+                                cssp:color_set_spec
+                            end_group
+                            { return cssp; }
+
+// {color set spec}
+color_speclist_group    =   _ begin_group
+                                csl:color_spec_list
+                            end_group
+                            { return csl; }
+
+
+
 color           = (c_name / c_ext_expr / c_expr) func_expr*
 
 c_ext_expr      = core_model "," d:int ":" (c_expr "," float)+
@@ -543,7 +576,7 @@ c_postfix       = "!!" (m:"+"+ / "[" int "]")
 
 color_model     = core_model / int_model / dec_model / pseudo_model
 
-core_model      = "rgb" / "cmy" / "cmyk" / "hsb" / "gray"
+core_model      = "rgb" / "cmyk" / "cmy" / "hsb" / "gray"
 
 int_model       = "RBG" / "HTML" / "HSB" / "Gray"
 
@@ -554,13 +587,46 @@ pseudo_model    = "named"
 c_type          = "named" / "ps"
 
 
+model_list      = core:(core_model ":")? cm:color_model cml:("/" color_model)*
+                {
+                    if (core) core = core[0];
+
+                    var list = [ cm ];
+                    cml.forEach(m => list.push(m[1]));
+
+                    return {
+                        core: core,
+                        models: list
+                    }
+                }
+
+
 color_spec      = float ((sp / ",") float)*
                 / c_name
 
-color_spec_list = color_spec ("/" color_spec)*
+color_spec_list = cs:color_spec csl:("/" color_spec)*
+                {
+                    var list = [ cs ];
+                    csl.forEach(s => list.push(s[1]));
+                    return list;
+                }
+
+color_set_spec  = n:c_name "," s:color_spec_list sl:(";" c_name "," color_spec_list)*
+                {
+                    var list = [ { name: n, speclist: s } ];
+
+                    sl.forEach(s => list.push({
+                        name: s[1],
+                        speclist: s[3]
+                    }));
+
+                    return list;
+                }
 
 
-model_list      = (core_model ":")? color_model ("/" color_model)*
+
+
+
 
 
 // column spec for tables like tabular
