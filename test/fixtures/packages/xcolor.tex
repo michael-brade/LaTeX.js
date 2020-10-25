@@ -1,0 +1,28 @@
+** simple \textcolor
+.
+\documentclass{article}
+\usepackage{xcolor}
+
+\definecolor{red}{rgb}{1,0,0}
+\definecolor{red}{rgb}{1,0,0}
+\definecolor{red}{rgb/cmyk}{1,0,0/0,1,1,0}
+\definecolor{red}{hsb:rgb/cmyk}{1,0,0/0,1,1,0}
+\definecolor[named]{Black}{cmyk}{0,0,0,1}
+
+\definecolor{myblack}{named}{Black}
+
+\definecolorset{cmyk/rgb/hsb/gray}{}{}%
+ {cyan,1,0,0,0/0,1,1/.5,1,1/.7;%
+  magenta,0,1,0,0/1,0,1/.83333,1,1/.41;%
+  yellow,0,0,1,0/1,1,0/.16667,1,1/.89;%
+  olive,0,0,1,.5/.5,.5,0/.16667,1,.5/.39}
+
+
+\begin{document}
+This is \textcolor{magenta}{kind of red} text.
+\end{document}
+.
+<div class="body">
+<p>This is  text.</p>
+</div>
+.

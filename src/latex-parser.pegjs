@@ -601,7 +601,8 @@ model_list      = core:(core_model ":")? cm:color_model cml:("/" color_model)*
                 }
 
 
-color_spec      = float ((sp / ",") float)*
+color_spec      = f:float fl:((sp / ",") float)*
+                  { var list = [ f ]; fl.forEach(f => list.push(f[1])); return list; }
                 / c_name
 
 color_spec_list = cs:color_spec csl:("/" color_spec)*
@@ -611,13 +612,13 @@ color_spec_list = cs:color_spec csl:("/" color_spec)*
                     return list;
                 }
 
-color_set_spec  = n:c_name "," s:color_spec_list sl:(";" c_name "," color_spec_list)*
+color_set_spec  = n:c_name "," s:color_spec_list sl:(";" _ c_name "," color_spec_list)*
                 {
                     var list = [ { name: n, speclist: s } ];
 
                     sl.forEach(s => list.push({
-                        name: s[1],
-                        speclist: s[3]
+                        name: s[2],
+                        speclist: s[4]
                     }));
 
                     return list;
