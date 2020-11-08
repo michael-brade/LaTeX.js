@@ -559,7 +559,7 @@ color_speclist_group    =   _ begin_group
 
 color           = (c_ext_expr / c_expr / c_name) func_expr*
 
-c_ext_expr      = core_model "," d:int ":" (c_expr "," float)+
+c_ext_expr      = core_model ("," div:int)? ":" c_expr "," float (";" c_expr "," float)*
 
 c_expr          = c_prefix? c_name c_mix_expr? c_postfix?
 
