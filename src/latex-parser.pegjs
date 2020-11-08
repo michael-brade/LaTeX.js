@@ -269,6 +269,7 @@ macro_args =
 
       / &{ return g.nextArg("c") }     c:(color_group          / &{ g.argError("color group expected") })       { g.addParsedArg(c); }
       / &{ return g.nextArg("c-ml") }  c:(color_modellist_group/ &{ g.argError("color model list expected") })  { g.addParsedArg(c); }
+      / &{ return g.nextArg("c-ml?") } c: color_modellist_optgroup?                                             { g.addParsedArg(c); }
       / &{ return g.nextArg("c-ssp") } c:(color_setspec_group  / &{ g.argError("color set spec expected") })    { g.addParsedArg(c); }
       / &{ return g.nextArg("c-spl") } c:(color_speclist_group / &{ g.argError("color spec list expected") })   { g.addParsedArg(c); }
 
@@ -282,6 +283,9 @@ macro_args =
 
       / &{ return g.nextArg("items") }      i:items                                                             { g.addParsedArg(i); }
       / &{ return g.nextArg("enumitems") }  i:enumitems                                                         { g.addParsedArg(i); }
+
+      / &(_ begin_optgroup) !{ g.selectArgsBranch("[") }
+      / &(_ begin_group)    !{ g.selectArgsBranch("{") /* requirement in pegjs: balance } */ }
     )*
 
 nextArgStar =
@@ -533,6 +537,12 @@ color_modellist_group   =   _ begin_group
                             end_group
                             { return ml; }
 
+// [color model-list]
+color_modellist_optgroup=   _ begin_optgroup
+                                ml:model_list
+                            end_optgroup
+                            { return ml; }
+
 // {color spec-list}
 color_setspec_group     =   _ begin_group
                                 cssp:color_set_spec
@@ -547,16 +557,13 @@ color_speclist_group    =   _ begin_group
 
 
 
-color           = (c_name / c_ext_expr / c_expr) func_expr*
+color           = (c_ext_expr / c_expr / c_name) func_expr*
 
 c_ext_expr      = core_model "," d:int ":" (c_expr "," float)+
 
-c_expr          = c_prefix? c_name c_mix_expr c_postfix?
+c_expr          = c_prefix? c_name c_mix_expr? c_postfix?
 
-c_mix_expr      = ("!" c_pct "!" c_name)* "!" c_pct ("!" c_name)?
-
-// c_mix_expr      = ("!" c_pct "!" c_name)+
-//                 / ("!" c_pct "!" c_name)* "!" c_pct ("!" c_name)?
+c_mix_expr      = "!" c_pct ("!" c_name "!" c_pct)* ("!" c_name)?
 
 func_expr       = fn ("," fn_arg)*
 
@@ -567,7 +574,7 @@ fn_arg          = float     // TODO...
 
 c_prefix        = m:"-"* { return m.length % 2 == 0; }
 
-c_name          = $(char / digit / ".")+
+c_name          = $(char / digit)+ / $(".")
 
 c_pct           = float
 

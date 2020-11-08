@@ -1,4 +1,45 @@
-** simple \textcolor
+** simple \color
+.
+\documentclass{article}
+\usepackage{xcolor}
+
+\begin{document}
+\color[cmyk]{1,0,0,0}
+\color[wave]{485}
+\color{red}
+This is \textcolor{magenta}{kind of red} text.
+\end{document}
+.
+<div class="body">
+<p>This is  text.</p>
+</div>
+.
+
+
+** \color expressions
+.
+\documentclass{article}
+\usepackage{xcolor}
+
+\begin{document}
+\color{-red}
+\color{red!50}
+\color{-green!40!yellow}
+\color{--red!50!green!12.345}
+\color{red!50!green!20!blue}
+\color{foo!!+}
+\color{foo!![7]}
+\color{foo!25!red!!+++}
+\color{foo!25!red!70!green!![7]}
+\end{document}
+.
+<div class="body">
+<p>This is  text.</p>
+</div>
+.
+
+
+** defining colors
 .
 \documentclass{article}
 \usepackage{xcolor}
@@ -19,7 +60,6 @@
 
 
 \begin{document}
-This is \textcolor{magenta}{kind of red} text.
 \end{document}
 .
 <div class="body">

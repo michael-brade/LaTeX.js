@@ -86,7 +86,6 @@ export class XColor
         hd = "" if not hd
         tl = "" if not tl
 
-        # TODO: deal with models.core
         for spec in setspec
             @definecolor type, hd + spec.name + tl, models, spec.speclist
 
@@ -98,6 +97,8 @@ export class XColor
 
         color = {}
 
+        # TODO: deal with models.core
+
         for model, i in models.models
             color[model] = colorspec[i]
 
@@ -108,12 +109,26 @@ export class XColor
 
     # using colors
 
-    # {name} or [model]{color specification}
-    args.\color =       <[ HV i? c ]>
+    # {name/expression} or [model-list]{color spec list}
+    args.\color     = [ "HV" [ <[ c-ml? c-spl ]>
+                               <[ c ]>            ] ]
+    \color          : !->
+        if &.length == 1
+            console.log "got color expression"
+        else
+            console.log "got model/color spec"
 
-    # {name}{text} or [model]{color specification}{text}
-    args.\textcolor =   <[ H i? c g ]>
-    \textcolor      : (model, color, text) ->
+    # args.\color =       <[ HV c-ml? c-spl ]>
+    # \color      : (model, colorspec) ->
+
+    # {name/expression}{text} or [model-list]{color spec list}{text}
+    args.\textcolor = [ "HV" [ <[ c-ml? c-spl ]>
+                               <[ c ]>            ] "g" ]
+    \textcolor      : ->
+        if &.length == 2
+            return
+
+        return
 
 
 

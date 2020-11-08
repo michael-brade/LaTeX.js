@@ -161,7 +161,21 @@ export class Generator
                 parsed: []
             }
 
-    # check the next argument type to parse
+    # if next char matches arg of branch, choose that branch
+    selectArgsBranch: (nextChar) !->
+        optArgs = <[ o? i? k? kv? n? l? c-ml? cl? ]>
+
+        if Array.isArray @_curArgs.top.args.0
+            # check which alternative branch to choose, discard the others only if it was a match
+            branches = @_curArgs.top.args.0
+            for b in branches
+                if (nextChar == '[' and b.0 in optArgs) or (nextChar == '{' and b.0 not in optArgs)
+                    @_curArgs.top.args.shift!           # remove all branches
+                    @_curArgs.top.args.unshift ...b     # prepend remaining args
+
+
+    # check the next argument type to parse, returns true if arg is the next expected argument
+    # if the next expected argument is an array, it is treated as a list of alternative next arguments
     nextArg: (arg) ->
         if @_curArgs.top.args.0 == arg
             @_curArgs.top.args.shift!
