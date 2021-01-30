@@ -284,10 +284,12 @@ macro_args =
       / &{ return g.nextArg("items") }      i:items                                                             { g.addParsedArg(i); }
       / &{ return g.nextArg("enumitems") }  i:enumitems                                                         { g.addParsedArg(i); }
 
-      / &(_ begin_optgroup) !{ g.selectArgsBranch("[") }
-      / &(_ begin_group)    !{ g.selectArgsBranch("{") /* requirement in pegjs: balance } */ }
+      // if the next char is one of optgroup or group but no branches available, continue with next rule or stop => fail the match
+      / &(_ begin_optgroup) &{ return g.selectArgsBranch("[") }
+      / &(_ begin_group)    &{ return g.selectArgsBranch("{") /* requirement in pegjs: balance } */ }
     )*
 
+// check if next possible argument is a star
 nextArgStar =
       &{ return g.nextArg("s") }  _ s:"*"?   { g.addParsedArg(!!s); return !!s; }
 
