@@ -62,7 +62,7 @@ scripts:
         mkdirp dist/packages;
         rsync -a src/css/ dist/css/;
         rsync -a src/fonts/ dist/fonts/;
-        rsync -a node_modules/katex/dist/fonts/*.woff dist/fonts/;
+        rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
         rsync -a src/js/ dist/js/;
         mkdirp bin;
         lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
@@ -127,7 +127,7 @@ devDependencies:
     ### actual runtime dependencies, but bundled by rollup
 
     'he': '1.2.x'
-    'katex': '0.10.0'
+    'katex': '0.12.0'
     '@svgdotjs/svg.js': '3.x',
 
     'hypher': '0.x'

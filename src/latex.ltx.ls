@@ -721,6 +721,8 @@ export class LaTeX
         wrapper = @g.create @g.inline, obj, "put-obj"
 
         if v.y.cmp(@g.Length.zero) >= 0
+            # TODO: CSS: this case should align the text (put-obj) on baseline... otherwise, strut is too high
+            #       (see mixing math, text and lines unit test)
             wrapper.setAttribute "style", "left:#{v.x.value}"
             # only add the strut if y > 0
             if v.y.cmp(@g.Length.zero) > 0
