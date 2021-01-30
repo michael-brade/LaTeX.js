@@ -112,7 +112,7 @@ dependencies:
 
     'commander': '5.x'
     'fs-extra': '9.x'
-    'js-beautify': '1.11.x'
+    'js-beautify': '1.13.x'
     'stdin': '*'
 
     'hyphenation.en-us': '*'
@@ -148,9 +148,9 @@ devDependencies:
 
     ### docs
 
-    'vuepress': '1.5.x'
+    'vuepress': '1.8.x'
     'split-grid': '1.0.x'
-    'codemirror': '5.54.x'
+    'codemirror': '5.59.x'
     'vue-codemirror': '4.0.x'
     'raw-loader': '4.0.x'
 
@@ -159,19 +159,19 @@ devDependencies:
     "rollup": "2.x"
     "@rollup/plugin-commonjs": "13.x"
     "@rollup/plugin-node-resolve": "8.0.x"
-    "rollup-plugin-terser": "6.1.x"
-    "rollup-plugin-visualizer": "4.0.x"
+    "rollup-plugin-terser": "7.0.x"
+    "rollup-plugin-visualizer": "4.2.x"
 
     ### testing
 
-    'mocha': '7.x'
-    'mocha-junit-reporter': '1.23.x'
+    'mocha': '8.x'
+    'mocha-junit-reporter': '2.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
     'slugify': '1.4.x'
     'decache': '4.6.x'
 
-    'puppeteer': '3.3.x'
+    'puppeteer': '5.5.x'
     'pixelmatch': '5.2.x'
 
     'nyc': '15.x'
