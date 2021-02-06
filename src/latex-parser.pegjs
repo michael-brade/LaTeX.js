@@ -238,7 +238,7 @@ key =
 
 key_val "key=value" =
     k:key v:(_ '=' _ v:(key / &{ error("value expected") }) { return v.trim(); })?
-    { return { [k.trim()]: v == null ? true : v }; }
+    { return [k.trim(), v == null ? true : v ]; }
 
 
 macro_args =
@@ -279,6 +279,7 @@ macro_args =
       / &{ return g.nextArg("v?") }   v: vector?                                                                { g.addParsedArg(v); }
       / &{ return g.nextArg("cols") } c:(columns        / &{ g.argError("column specification missing") })      { g.addParsedArg(c); }
 
+        // ignore spaces
       / &{ return g.nextArg("is") }   skip_space
 
       / &{ return g.nextArg("items") }      i:items                                                             { g.addParsedArg(i); }
@@ -336,7 +337,7 @@ keyval_optgroup =   _ begin_optgroup
                         kv_list:(_ ',' {return null;} / _ kv:key_val {return kv;})*
                     _ end_optgroup
                     {
-                        return kv_list.filter(kv => kv != null);
+                        return new Map(kv_list.filter(kv => kv != null));
                     }
 
 // {val1,val2,val3}

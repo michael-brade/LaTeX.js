@@ -131,6 +131,12 @@ export class XColor
         return
 
 
+    # \colorbox{name}{text}
+    # \colorbox[model]{specification}{text}
+    args.\colorbox  = <[ H i? c g ]>
+    \colorbox       : (model, color, text) ->
 
-    args.\colorbox =    <[ H i? c g ]>
-    args.\fcolorbox =   <[ H i? c c g ]>
+    # \fcolorbox{name1}{name2}{text}
+    # \fcolorbox[model]{specification1}{specification2}{text}
+    args.\fcolorbox = <[ H i? c c g ]>
+    \fcolorbox      : (model, color, text) ->
