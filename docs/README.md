@@ -1,7 +1,7 @@
 ---
 home: true
 navbar: false
-footer: MIT Licensed | Copyright © 2017-2020 Michael Brade
+footer: MIT Licensed | Copyright © 2017-2021 Michael Brade
 ---
 <header class="hero">
   <h1 id="main-title">
