@@ -7,7 +7,7 @@ export class Base
     args = @args = {}
 
     # class options
-    options: {}
+    options: new Map
 
     # CTOR
     (generator, options) ->
@@ -33,9 +33,8 @@ export class Base
         @g.setLength \paperwidth        new @g.Length 8.5, "in"
         @g.setLength \@@size            new @g.Length 10, "pt"
 
-        for opt in @options
-            opt = Object.keys(opt).0
-            switch opt
+        @options.forEach (v, k) ~>
+            switch k
             | "oneside" =>
             | "twoside" =>      # twoside doesn't make sense in single-page HTML
 
@@ -73,8 +72,8 @@ export class Base
 
             | otherwise =>
                 # check if a point size was given -> set font size
-                value = parseFloat opt
-                if value != NaN and opt.endsWith "pt" and String(value) == opt.substring 0, opt.length - 2
+                value = parseFloat k
+                if value != NaN and k.endsWith "pt" and String(value) == k.substring 0, k.length - 2
                     @g.setLength \@@size new @g.Length value, "pt"
 
 
