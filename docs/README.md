@@ -25,7 +25,7 @@ footer: MIT Licensed | Copyright © 2017-2021 Michael Brade
 
   <div class="feature">
     <h2>CLI</h2>
-    <p>The <code>latex.js</code> binary allows to translate <latex/> files in the console.</p>
+    <p>The <code>latex.js</code> binary allows to translate <latex/> files in the console. It depends on a DOM implementation (svgdom in this case).</p>
   </div>
 
   <div class="feature">
