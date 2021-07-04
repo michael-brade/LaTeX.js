@@ -1223,24 +1223,17 @@ export class LaTeX
         # load and instantiate the documentclass
         Class = builtin-documentclasses[documentclass]
 
-        importDocumentclass = !~>
-            @g.documentClass = new Class @g, options
-            assignIn this, @g.documentClass
-            assign args, Class.args
-
-
-
         if not Class
-            # Export = require "./documentclasses/#{documentclass}"
-            ``import("./documentclasses/" + documentclass)`` .then (Export) !->
+            try
+                Export = require "./documentclasses/#{documentclass}"
                 Class := Export.default || Export[Object.getOwnPropertyNames(Export).0]
-
-                importDocumentclass!
-
-            .catch (e) ->
+            catch e
                 console.error "error loading documentclass \"#{documentclass}\": #{e}"
-        else
-            importDocumentclass!
+                throw new Error "error loading documentclass \"#{documentclass}\""
+
+        @g.documentClass = new Class @g, options
+        assignIn this, @g.documentClass
+        assign args, Class.args
 
 
     args.\usepackage    =  <[ P kv? csv k? ]>
@@ -1251,25 +1244,17 @@ export class LaTeX
             continue if providedPackages.includes pkg
 
             # load and instantiate the package
+            Package = builtin-packages[pkg]
+
             try
-                Package = builtin-packages[pkg]
-
-                importPackage = !~>
-                    assignIn this, new Package @g, options
-                    assign args, Package.args
-                    Package.symbols?.forEach (value, key) -> symbols.set key, value
-
                 if not Package
-                    # Export = require "./packages/#{pkg}"
-                    ``import("./packages/" + pkg)`` .then (Export) !->
-                        Package := Export.default || Export[Object.getOwnPropertyNames(Export).0]
+                    Export = require "./packages/#{pkg}"
+                    Package := Export.default || Export[Object.getOwnPropertyNames(Export).0]
 
-                        importPackage!
-                    .catch (e) ->
-                        throw e
-                else
-                    importPackage!
-            catch
+                assignIn this, new Package @g, options
+                assign args, Package.args
+                Package.symbols?.forEach (value, key) -> symbols.set key, value
+            catch e
                 # log error but continue anyway
                 console.error "error loading package \"#{pkg}\": #{e}"
 
