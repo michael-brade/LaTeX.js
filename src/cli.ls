@@ -62,9 +62,9 @@ program
 
     .parse process.argv
 
+const options = program.opts!
 
-
-if program.macros
+if options.macros
     macros = path.resolve process.cwd!, that
     CustomMacros = (require macros)
     if CustomMacros.default
@@ -75,20 +75,20 @@ if program.macros
         CustomMacros = CustomMacros[path.parse macros .name]
 
 
-if program.body and (program.stylesheet or program.url)
+if options.body and (options.stylesheet or options.url)
     console.error "error: conflicting options: 'url' and 'stylesheet' cannot be used with 'body'!"
     process.exit 1
 
 
-const options =
-    hyphenate:          program.hyphenation
-    languagePatterns:   switch program.language
+const htmlOptions =
+    hyphenate:          options.hyphenation
+    languagePatterns:   switch options.language
                         | 'en' => en
                         | 'de' => de
                         | otherwise console.error "error: language '#{that}' is not supported yet"; process.exit 1
-    documentClass:      program.class
+    documentClass:      options.class
     CustomMacros:       CustomMacros
-    styles:             program.style || []
+    styles:             options.style || []
 
 
 
@@ -96,6 +96,7 @@ const options =
 
 const readFile = util.promisify(fs.readFile)
 
+# number of args not consumed by the program options
 if program.args.length
     input = Promise.all program.args.map (file) -> readFile file
 else
@@ -106,27 +107,27 @@ input.then (text) ->
     if text.join
         text = text.join "\n\n"
 
-    generator = parse text, { generator: new HtmlGenerator(options) }
+    generator = parse text, { generator: new HtmlGenerator(htmlOptions) }
 
-    if program.body
+    if options.body
         div = document.createElement 'div'
         div.appendChild generator.domFragment!.cloneNode true
         html = div.innerHTML
     else
-        html = generator.htmlDocument(program.url).documentElement.outerHTML
+        html = generator.htmlDocument(options.url).documentElement.outerHTML
 
-    if program.entities
+    if options.entities
         html = he.encode html, 'allowUnsafeSymbols': true
 
-    if program.pretty
+    if options.pretty
         html = beautify-html html,
             'end_with_newline': true
             'wrap_line_length': 120
             'wrap_attributes' : 'auto'
             'unformatted': ['span']
 
-    if program.output
-        fs.writeFileSync program.output, html
+    if options.output
+        fs.writeFileSync options.output, html
     else
         process.stdout.write html + '\n'
 .catch (err) ->
@@ -135,14 +136,14 @@ input.then (text) ->
 
 
 # assets
-dir = program.assets
+dir = options.assets
 
-if program.assets == true
-    if not program.output
+if options.assets == true
+    if not options.output
         console.error "assets error: either a directory has to be given, or -o"
         process.exit 1
     else
-        dir = path.posix.dirname path.resolve program.output
+        dir = path.posix.dirname path.resolve options.output
 else if fs.existsSync(dir) and not fs.statSync(dir).isDirectory!
     console.error "assets error: the given path exists but is not a directory: ", dir
     process.exit 1

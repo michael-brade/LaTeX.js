@@ -110,7 +110,7 @@ scripts:
 dependencies:
     ### CLI dependencies
 
-    'commander': '5.x'
+    'commander': '8.x'
     'fs-extra': '10.x'
     'js-beautify': '1.14.x'
     'stdin': '*'
@@ -156,8 +156,8 @@ devDependencies:
 
     ### bundling
 
-    "rollup": "2.52.x"
-    "@rollup/plugin-commonjs": "19.0.x"
+    "rollup": "2.56.x"
+    "@rollup/plugin-commonjs": "20.0.x"
     "@rollup/plugin-node-resolve": "13.0.x"
     "rollup-plugin-terser": "7.0.x"
     "rollup-plugin-visualizer": "5.5.x"
@@ -168,10 +168,10 @@ devDependencies:
     'mocha-junit-reporter': '2.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
-    'slugify': '1.5.x'
+    'slugify': '1.6.x'
     'decache': '4.6.x'
 
-    'puppeteer': '10.1.x'
+    'puppeteer': '10.2.x'
     'pixelmatch': '5.2.x'
 
     'nyc': '15.x'
