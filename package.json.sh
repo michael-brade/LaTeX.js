@@ -127,7 +127,7 @@ devDependencies:
     ### actual runtime dependencies, but bundled by rollup
 
     'he': '1.2.x'
-    'katex': '0.12.0'
+    'katex': '0.13.13'
     '@svgdotjs/svg.js': '3.x',
 
     'hypher': '0.x'
