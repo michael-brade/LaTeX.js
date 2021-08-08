@@ -60,6 +60,8 @@ scripts:
         mkdirp dist/fonts;
         mkdirp dist/documentclasses;
         mkdirp dist/packages;
+        touch dist/documentclasses/.keep;
+        touch dist/packages/.keep;
         rsync -a src/css/ dist/css/;
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;

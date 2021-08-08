@@ -36,7 +36,7 @@
   ],
   "scripts": {
     "clean": "rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;",
-    "devbuild": "rimraf 'dist/**/*.map';mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;mkdirp dist/documentclasses;mkdirp dist/packages;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;rsync -a src/js/ dist/js/;mkdirp bin;lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;chmod a+x bin/latex.js;rollup -c;",
+    "devbuild": "rimraf 'dist/**/*.map';mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;mkdirp dist/documentclasses;mkdirp dist/packages;touch dist/documentclasses/.keep;touch dist/packages/.keep;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;rsync -a src/js/ dist/js/;mkdirp bin;lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;chmod a+x bin/latex.js;rollup -c;",
     "build": "NODE_ENV=production npm run devbuild;",
     "devdocs": "npm run devbuild;vuepress dev docs --no-clear-screen;",
     "docs": "npm run build;[ ! -d website ] && git worktree add website gh-pages;mv website/.git .website.git;vuepress build docs;mv .website.git website/.git;cd website;git add .;git commit -m 'regenerated website';",
