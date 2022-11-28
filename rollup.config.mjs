@@ -1,10 +1,10 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import livescript from "./lib/rollup-plugin-livescript";
-import pegjs from "./lib/rollup-plugin-pegjs";
-import { terser } from "rollup-plugin-terser";
-import visualizer from 'rollup-plugin-visualizer';
-import ignoreInfiniteLoop from './lib/pegjs-no-infinite-loop.js';
+import livescript from "./lib/rollup-plugin-livescript.js";
+import pegjs from "./lib/rollup-plugin-pegjs.mjs";
+import terser from "@rollup/plugin-terser";
+import { visualizer } from "rollup-plugin-visualizer";
+import ignoreInfiniteLoop from "./lib/pegjs-no-infinite-loop.mjs";
 
 const prod = process.env.NODE_ENV === "production"
 

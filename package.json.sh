@@ -158,11 +158,11 @@ devDependencies:
 
     ### bundling
 
-    "rollup": "2.56.x"
-    "@rollup/plugin-commonjs": "20.0.x"
-    "@rollup/plugin-node-resolve": "13.0.x"
-    "rollup-plugin-terser": "7.0.x"
-    "rollup-plugin-visualizer": "5.5.x"
+    'rollup': '3.5.x'
+    '@rollup/plugin-commonjs': '23.0.x'
+    '@rollup/plugin-node-resolve': '15.0.x'
+    '@rollup/plugin-terser': '0.1.x'
+    'rollup-plugin-visualizer': '5.8.x'
 
     ### testing
 
