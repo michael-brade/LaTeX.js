@@ -112,6 +112,8 @@ global.takeScreenshot = (html, filename) !->>
 
     await cPage.screenshot {
         omitBackground: true
+        fullPage: false
+        captureBeyondViewport: false
         path: cfile + '.new.png'
     }
 

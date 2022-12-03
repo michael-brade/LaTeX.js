@@ -173,7 +173,7 @@ devDependencies:
     'slugify': '1.6.x'
     'decache': '4.6.x'
 
-    'puppeteer': '19.0.0'
+    'puppeteer': '19.1.x'
     'pixelmatch': '5.3.x'
 
     'nyc': '15.x'
