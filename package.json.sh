@@ -166,15 +166,15 @@ devDependencies:
 
     ### testing
 
-    'mocha': '9.x'
+    'mocha': '10.1.x'
     'mocha-junit-reporter': '2.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
     'slugify': '1.6.x'
     'decache': '4.6.x'
 
-    'puppeteer': '10.2.x'
-    'pixelmatch': '5.2.x'
+    'puppeteer': '19.0.0'
+    'pixelmatch': '5.3.x'
 
     'nyc': '15.x'
     'codecov': '3.x'
