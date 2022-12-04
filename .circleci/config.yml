@@ -13,7 +13,9 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run: sudo apt-get install -y rsync
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
