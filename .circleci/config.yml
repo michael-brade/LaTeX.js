@@ -1,9 +1,12 @@
-version: 2
+version: 2.1
+
+orbs:
+  browser-tools: circleci/browser-tools@1.4.0
 
 defaults: &defaults
   working_directory: ~/latex.js
   docker:
-    - image: circleci/node:14-buster-browsers
+    - image: cimg/node:18.12.1-browsers
 
 jobs:
   build:
@@ -32,6 +35,7 @@ jobs:
   test:
     <<: *defaults
     steps:
+      - browser-tools/install-chrome
       - checkout
       - attach_workspace:
           at: ~/latex.js
