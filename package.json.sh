@@ -146,7 +146,7 @@ devDependencies:
     'mkdirp': '1.0.x'
     'rimraf': '3.x'
     'tmp': '0.x'
-    'glob': '^7.1.4'
+    'glob': '8.0.x'
 
     ### docs
 
