@@ -22,6 +22,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+            - ~/.cache/puppeteer
       - run:
           name: Build LaTeX.js
           command: npm run build
