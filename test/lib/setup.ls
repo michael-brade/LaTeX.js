@@ -26,25 +26,25 @@ before !->>
         defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
     }
 
-    # global.firefox = await puppeteer.launch {
-    #     product: 'firefox'
-    #     executablePath: '/opt/firefox/firefox'
-    #     headless: true
-    #     devtools: false
-    #     dumpio: false
-    #     defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
-    # }
+    global.firefox = await puppeteer.launch {
+        product: 'firefox'
+        executablePath: '/opt/firefox/firefox'
+        headless: true
+        devtools: false
+        dumpio: false
+        defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
+    }
 
     cPage := (await chrome.pages!).0              # there is always one page available
-    # fPage := (await firefox.pages!).0
+    fPage := (await firefox.pages!).0
 
     cPage.on 'console', (msg) ->
         if msg._type == 'error'
             console.error "Error in chrome: ", msg._text
 
-    # fPage.on 'console', (msg) ->
-    #     if msg._type == 'error'
-    #         console.error "Error in firefox: ", msg._text
+    fPage.on 'console', (msg) ->
+        if msg._type == 'error'
+            console.error "Error in firefox: ", msg._text
 
 
     # start the webserver in the dist directory so that CSS and fonts are found
@@ -69,7 +69,7 @@ before !->>
 
 after !->>
     await chrome.close!
-    # await firefox.close!
+    await firefox.close!
     server.close!
 
 
@@ -104,11 +104,11 @@ global.takeScreenshot = (html, filename) !->>
     await cPage.goto 'http://localhost:' + server.address!.port
     await cPage.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
 
-    # await fPage.goto 'http://localhost:' + server.address!.port
-    # await fPage.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
+    await fPage.goto 'http://localhost:' + server.address!.port
+    await fPage.addStyleTag content: ".body { border: .4px solid; height: max-content; }"
 
     cfile = filename + ".ch"
-    # ffile = filename + ".ff"
+    ffile = filename + ".ff"
 
     await cPage.screenshot {
         omitBackground: true
@@ -117,12 +117,12 @@ global.takeScreenshot = (html, filename) !->>
         path: cfile + '.new.png'
     }
 
-    # await fPage.screenshot {
-    #     # omitBackground: true
-    #     path: ffile + '.new.png'
-    # }
+    await fPage.screenshot {
+        # omitBackground: true
+        path: ffile + '.new.png'
+    }
 
     compareScreenshots cfile
-    # compareScreenshots ffile
+    compareScreenshots ffile
 
     testHtmlPage := ""
