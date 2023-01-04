@@ -1,6 +1,27 @@
-const description = require('../../package.json').description
+import { defaultTheme } from '@vuepress/theme-default'
+import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
+import { getDirname, path } from '@vuepress/utils'
 
-module.exports = {
+// import { defineConfig } from '@vuepress/config'
+import { defineUserConfig } from '@vuepress/cli'
+
+// import { webpackBundler } from '@vuepress/bundler-webpack'
+import { viteBundler } from '@vuepress/bundler-vite'
+
+import { description } from '../../package.json'
+import assets from './assets'
+
+import { string } from 'rollup-plugin-string'
+
+
+
+const __dirname = getDirname(import.meta.url)
+
+
+// export default {
+// export default defineConfig({
+export default defineUserConfig({
+
     title: 'LaTeX.js',
     description: description,
 
@@ -14,16 +35,16 @@ module.exports = {
         }]
     ],
 
-    themeConfig: {
+    theme: defaultTheme({
         logo: '/img/latexjs.png',
-        nav: [
+
+        navbar: [
             { text: 'Home', link: '/' },
             { text: 'Guide', link: '/usage.html' },
-            { text: 'Playground', link: '/playground.html', target:'_self', rel:'' },
+            { text: 'Playground', link: '/playground.html', target:'_self', rel: '' },
             { text: 'ChangeLog', link: 'https://github.com/michael-brade/LaTeX.js/releases'},
             { text: 'GitHub', link: 'https://github.com/michael-brade/LaTeX.js' },
         ],
-        search: false,
         sidebar: [
             '',                 // Home
             'usage',
@@ -31,42 +52,63 @@ module.exports = {
             'extending',
             'limitations'
         ],
-
-        // sidebar: [
-        //     '/',
-        //     '/page-a',
-        //     ['/page-b', 'Explicit link text'],
-        //     {
-        //         title: 'Group 1',
-        //         collapsable: false,
-        //         children: [
-        //           '/'
-        //         ]
-        //       },
-        //       {
-        //         title: 'Group 2',
-        //         children: [ /* ... */ ]
-        //       }
-        // ],
         sidebarDepth: 1,
-        displayAllHeaders: true,
-        activeHeaderLinks: true
-    },
+
+        // search: false,
+        // displayAllHeaders: true,
+        // activeHeaderLinks: true
+    }),
 
     markdown: {
-        breaks: false,
-        extendMarkdown: md => {
-            //md.use(require('markdown-it-xxx'))
-        }
+        // extendMarkdown: md => {
+        //     md.set({ breaks: true })
+        //     //md.use(require('markdown-it-xxx'))
+        // }
+
+        breaks: true
     },
 
     plugins: [
-        require('./assets.js')
+        require('./assets'),
+
+        registerComponentsPlugin({
+            componentsDir: path.resolve(__dirname, './components')
+        }),
     ],
 
-    configureWebpack: (config, isServer) => {
-        config.externals = {
-            'svgdom': 'commonjs svgdom'
-        }
-    }
-}
+    bundler: viteBundler({
+        viteOptions: {
+            appType: 'spa',
+            // mode: 'development' / 'production',
+            // plugins: ,
+            build: {
+                rollupOptions: {
+                    plugins: [
+                        string({
+                            // Required to be specified
+                            include: "./docs/showcase.tex",
+
+                            // Undefined by default
+                            // exclude: ["**/index.html"]
+                        })
+                    ]
+                }
+            }
+        },
+        vuePluginOptions: {
+            customElement: true
+        },
+    })
+
+    // bundler: webpackBundler({
+    //     sass: { /* ... */ },
+
+    //     configureWebpack: (config, isServer) => {
+    //         config.externals = {
+    //             'svgdom': 'commonjs svgdom'
+    //         }
+
+    //         config.output.hashFunction = 'xxhash64'
+    //     },
+    // })
+})

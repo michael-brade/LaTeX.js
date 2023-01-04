@@ -1,6 +1,7 @@
 <template>
     <div id="playground">
-        <codemirror id="latex-editor" :value="code" :options="cmOptions" @input="onCmCodeChange" @ready="onCmReady" />
+        <!-- <codemirror id="latex-editor" :value="code" :options="cmOptions" @input="onCmCodeChange" @ready="onCmReady" /> -->
+        <div id="latex-editor" />
 
         <div id="gutter" ref="gutter"></div>
 
@@ -9,17 +10,18 @@
 </template>
 
 
-<script>
+<script lang="ts">
+
 // webpack doesn't handle import.meta.url yet, so don't use latex.mjs
 import { parse, HtmlGenerator, SyntaxError } from '../../../dist/latex.js'
 import en from 'hyphenation.en-us'
 
 import Split from 'split-grid'
-import showcase from 'raw-loader!../../showcase.tex'
+import { showcase } from '../../showcase.tex'
 
 // codemirror base style
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/monokai.css'
+// import 'codemirror/lib/codemirror.css'
+// import 'codemirror/theme/monokai.css'
 
 
 const generator = new HtmlGenerator({
@@ -153,6 +155,16 @@ function errorMessage(e, noFinalNewline) {
 
 
 
+// <script lang="ts">
+//   import { defineComponent, reactive, shallowRef, computed, watch, onMounted } from 'vue'
+//   import { EditorView, ViewUpdate } from '@codemirror/view'
+//   import { redo, undo } from '@codemirror/commands'
+//   import { Codemirror } from 'vue-codemirror'
+
+//   export default defineComponent({
+//     name: 'LtxPlayground',
+//     title: 'Web IDE example',
+//     url: import.meta.url,
 
 // LtxPlayground component
 export default {
@@ -188,14 +200,14 @@ export default {
         }
     },
 
-    beforeMount() {
-        // import language
-        import('codemirror/mode/stex/stex.js')
+    // beforeMount() {
+    //     // import language
+    //     import('codemirror/mode/stex/stex.js')
 
-        // addons
-        import('codemirror/addon/selection/active-line.js')
-        import('codemirror/addon/edit/matchbrackets.js')
-    },
+    //     // addons
+    //     import('codemirror/addon/selection/active-line.js')
+    //     import('codemirror/addon/edit/matchbrackets.js')
+    // },
 
     mounted() {
         Split({
@@ -210,7 +222,7 @@ export default {
 
 
 
-<style scoped lang="stylus">
+<style scoped lang="styl">
 #playground {
     margin: 0;
     height: 100%;

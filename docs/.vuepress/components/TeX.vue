@@ -1,4 +1,4 @@
-<style scoped>
+<style scoped lang="styl">
 
 /* TeX logo */
 span.tex span {

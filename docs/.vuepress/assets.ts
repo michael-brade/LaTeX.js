@@ -1,6 +1,7 @@
-const path = require('path')
+import path from 'path'
 
-module.exports = (options, ctx) => {
+
+export default (options, ctx) => {
     const styleAssetsPath = 'dist/css'
     const fontAssetsPath = 'dist/fonts'
     const jsAssetsPath = 'dist/js'
