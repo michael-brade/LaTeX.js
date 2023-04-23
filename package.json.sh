@@ -79,7 +79,7 @@ scripts:
 
     devdocs: "
         npm run devbuild;
-        vuepress dev docs --no-clear-screen;
+        vuepress dev docs --no-clear-screen --debug;
     "
 
     docs: "
@@ -150,7 +150,7 @@ devDependencies:
 
     ### docs
 
-    'vuepress': '2.0.0-beta.60'
+    'vuepress': '2.0.0-beta.61'
     '@vuepress/plugin-register-components': 'next'
     'rollup-plugin-string': '3.0.x'
     'split-grid': '1.0.x'
@@ -167,10 +167,10 @@ devDependencies:
 
     ### bundling
 
-    'rollup': '3.9.x'
-    '@rollup/plugin-commonjs': '23.0.x'
+    'rollup': '3.20.x'
+    '@rollup/plugin-commonjs': '24.1.x'
     '@rollup/plugin-node-resolve': '15.0.x'
-    '@rollup/plugin-terser': '0.2.x'
+    '@rollup/plugin-terser': '0.4.x'
     'rollup-plugin-visualizer': '5.8.x'
 
     ### testing
