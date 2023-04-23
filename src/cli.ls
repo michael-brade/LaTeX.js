@@ -160,4 +160,3 @@ if dir
     fs.copySync (path.join __dirname, '../dist/css'), css
     fs.copySync (path.join __dirname, '../dist/fonts'), fonts
     fs.copySync (path.join __dirname, '../dist/js'), js
-    fs.copySync (path.join __dirname, '../node_modules/katex/dist/fonts/'), fonts, (src) -> src == /\.woff$/ or fs.statSync(src).isDirectory!
