@@ -12,13 +12,12 @@ jobs:
   build:
     <<: *defaults
     steps:
-      - browser-tools/install-chrome
-      - browser-tools/install-firefox:
-          install-dir: /opt/firefox
+      - run:
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y rsync
+          name: Update/prepare system
       - checkout
-      - run: |
-          sudo apt-get update
-          sudo apt-get install -y rsync
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
@@ -41,6 +40,16 @@ jobs:
   test:
     <<: *defaults
     steps:
+      - run:
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y rsync
+          name: Update/prepare system
+      - browser-tools/install-chrome
+      - browser-tools/install-firefox:
+          install-dir: /opt
+      - run: |
+            sudo ln -s /opt/firefox-* /opt/firefox
       - checkout
       - attach_workspace:
           at: ~/latex.js
