@@ -1,14 +1,20 @@
 version: 2.1
 
+orbs:
+  browser-tools: circleci/browser-tools@1.4.1
+
 defaults: &defaults
   working_directory: ~/latex.js
   docker:
-    - image: cimg/node:18.12.1-browsers
+    - image: cimg/node:18.16-browsers
 
 jobs:
   build:
     <<: *defaults
     steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-firefox:
+          install-dir: /opt/firefox
       - checkout
       - run: |
           sudo apt-get update
