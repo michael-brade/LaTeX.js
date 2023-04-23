@@ -4,7 +4,7 @@ npx lsc -cj > package.json <<EOF
 
 name: 'latex.js'
 description: 'JavaScript LaTeX to HTML5 translator'
-version: '0.12.4'
+version: '0.12.5'
 
 author:
     'name': 'Michael Brade'
