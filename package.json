@@ -109,7 +109,8 @@
     "ui": "bdd",
     "checkLeaks": true,
     "globals": "firefox,chrome",
-    "sort": true
+    "sort": true,
+    "reporterOption": "maxDiffSize=0"
   },
   "repository": {
     "type": "git",

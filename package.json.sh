@@ -200,6 +200,7 @@ mocha:
     checkLeaks: true
     globals: 'firefox,chrome'
     sort: true
+    reporter-option: 'maxDiffSize=0'
 
 
 
