@@ -120,7 +120,7 @@ dependencies:
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
-    'svgdom': '^0.1.8'
+    'svgdom': '0.1.x'
     #'xmldom': '0.3.x'
     #'jsdom': '16.x'
     #'cheerio': '1.0.x'
@@ -143,10 +143,9 @@ devDependencies:
     ### building
 
     'pegjs': '0.10.x'
-    'mkdirp': '1.0.x'
-    'rimraf': '3.x'
+    'mkdirp': '3.x'
+    'rimraf': '5.x'
     'tmp': '0.x'
-    'glob': '8.0.x'
 
     ### docs
 
@@ -167,15 +166,15 @@ devDependencies:
 
     ### bundling
 
-    'rollup': '3.20.x'
-    '@rollup/plugin-commonjs': '24.1.x'
-    '@rollup/plugin-node-resolve': '15.0.x'
+    'rollup': '3.25.x'
+    '@rollup/plugin-commonjs': '25.0.x'
+    '@rollup/plugin-node-resolve': '15.1.x'
     '@rollup/plugin-terser': '0.4.x'
-    'rollup-plugin-visualizer': '5.8.x'
+    'rollup-plugin-visualizer': '5.9.x'
 
     ### testing
 
-    'mocha': '10.1.x'
+    'mocha': '10.2.x'
     'mocha-junit-reporter': '2.x'
     'chai': '4.x'
     'chai-as-promised': '7.x'
