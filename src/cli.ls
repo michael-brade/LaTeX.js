@@ -88,7 +88,7 @@ const htmlOptions =
                         | otherwise console.error "error: language '#{that}' is not supported yet"; process.exit 1
     documentClass:      options.class
     CustomMacros:       CustomMacros
-    styles:             options.style || []
+    styles:             options.stylesheet || []
 
 
 
