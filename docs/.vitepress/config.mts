@@ -1,31 +1,17 @@
-import { defaultTheme } from '@vuepress/theme-default'
-import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
-import { getDirname, path } from '@vuepress/utils'
-
-// import { defineConfig } from '@vuepress/config'
-import { defineUserConfig } from '@vuepress/cli'
-
-// import { webpackBundler } from '@vuepress/bundler-webpack'
-import { viteBundler } from '@vuepress/bundler-vite'
+import { defineConfig, defineConfigWithTheme } from 'vitepress'
+// import type { ThemeConfig } from 'your-theme'
 
 import { description } from '../../package.json'
-import assets from './assets'
-
-import { string } from 'rollup-plugin-string'
 
 
+// https://vitepress.dev/reference/site-config
+export default defineConfig({
+    //export default defineConfigWithTheme<ThemeConfig>({
 
-const __dirname = getDirname(import.meta.url)
+    lang: "en-US",
 
-
-// export default {
-// export default defineConfig({
-export default defineUserConfig({
-
-    title: 'LaTeX.js',
+    title: "LaTeX.js",
     description: description,
-
-    dest: 'website',
 
     head: [
         ['link', {
@@ -35,29 +21,61 @@ export default defineUserConfig({
         }]
     ],
 
-    theme: defaultTheme({
-        logo: '/img/latexjs.png',
+    base: '/',
 
-        navbar: [
-            { text: 'Home', link: '/' },
+    srcDir: '.',                  // project root (docs)
+    outDir: 'website',
+    cacheDir: '.vitepress/cache',
+
+    assetsDir: 'assets',          // relative to outDir
+
+    // Type is `DefaultTheme.Config` (or `ThemeConfig`)
+    themeConfig: {
+        // https://vitepress.dev/reference/default-theme-config
+        logo: '/img/latexjs.png',
+        // logo: { src: '/img/latexjs.svg', width: 24, height: 24 },
+
+        nav: [
+            // { text: 'Home', link: '/' },
             { text: 'Guide', link: '/usage.html' },
             { text: 'Playground', link: '/playground.html', target:'_self', rel: '' },
             { text: 'ChangeLog', link: 'https://github.com/michael-brade/LaTeX.js/releases'},
             { text: 'GitHub', link: 'https://github.com/michael-brade/LaTeX.js' },
         ],
-        sidebar: [
-            '',                 // Home
-            'usage',
-            'api',
-            'extending',
-            'limitations'
-        ],
-        sidebarDepth: 1,
 
-        // search: false,
+        sidebar: [
+            { text: 'Home', link: '/' },
+            { text: 'Usage', link: 'usage.html' },
+            { text: 'API', link: 'api.html' },
+            { text: 'Extending LaTeX.js', link: 'extending.html' },
+            //     items: [
+            //       { text: 'Markdown Examples', link: '/markdown-examples' },
+            //       { text: 'Runtime API Examples', link: '/api-examples' }
+            //     ]
+            { text: 'Limitations', link: 'limitations.html' }
+        ],
+
+        search: {
+            provider: 'local',
+            options: {
+
+            }
+        },
+
         // displayAllHeaders: true,
         // activeHeaderLinks: true
-    }),
+
+        // socialLinks: [
+        //     { icon: 'github', link: 'https://github.com/michael-brade/LaTeX.js' }
+        // ],
+
+        lastUpdated: undefined,
+
+        footer: {
+            message: 'Released under the MIT License.',
+            copyright: 'Copyright © 2015-2024 Michael Brade'
+        }
+    },
 
     markdown: {
         // extendMarkdown: md => {
@@ -67,6 +85,39 @@ export default defineUserConfig({
 
         breaks: true
     },
+
+    vue: {
+
+    },
+
+    vite: {
+        clearScreen: false,
+        build: {
+            assetsInlineLimit: 4096
+        }
+    }
+})
+
+
+/*
+import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
+import { getDirname, path } from '@vuepress/utils'
+
+import { viteBundler } from '@vuepress/bundler-vite'
+
+import assets from './assets'
+
+import { string } from 'rollup-plugin-string'
+
+
+
+const __dirname = getDirname(import.meta.url)
+
+{
+
+
+    dest: 'website',
+
 
     plugins: [
         require('./assets'),
@@ -89,7 +140,7 @@ export default defineUserConfig({
                             include: "./docs/showcase.tex",
 
                             // Undefined by default
-                            // exclude: ["**/index.html"]
+                            // exclude: ["** /index.html"]
                         })
                     ]
                 }
@@ -101,7 +152,7 @@ export default defineUserConfig({
     })
 
     // bundler: webpackBundler({
-    //     sass: { /* ... */ },
+    //     sass: { ...  },
 
     //     configureWebpack: (config, isServer) => {
     //         config.externals = {
@@ -111,4 +162,5 @@ export default defineUserConfig({
     //         config.output.hashFunction = 'xxhash64'
     //     },
     // })
-})
+}
+*/

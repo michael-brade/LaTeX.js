@@ -51,7 +51,7 @@ files:
     'dist/documentclasses/'
 
 scripts:
-    clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;'
+    clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vitepress/public/js;'
 
     devbuild: "
         rimraf 'dist/**/*.map';
@@ -79,7 +79,7 @@ scripts:
 
     devdocs: "
         npm run devbuild;
-        vuepress dev docs --no-clear-screen --debug;
+        vitepress dev docs;
     "
 
     docs: "
@@ -87,7 +87,7 @@ scripts:
 
         [ ! -d website ] && git worktree add website gh-pages;
         mv website/.git .website.git;
-        vuepress build docs;
+        vitepress build docs;
         mv .website.git website/.git;
 
         cd website;
@@ -149,8 +149,7 @@ devDependencies:
 
     ### docs
 
-    'vuepress': '2.0.0-beta.61'
-    '@vuepress/plugin-register-components': 'next'
+    'vitepress': '1.2.x'
     'rollup-plugin-string': '3.0.x'
     'split-grid': '1.0.x'
     '@codemirror/autocomplete': '6.x'
@@ -161,6 +160,8 @@ devDependencies:
     '@codemirror/search': '6.x'
     '@codemirror/state': '6.x'
     '@codemirror/view': '6.x'
+
+    'vue': '^3.4.27'
     'vue-codemirror': '6.1.x'
     'stylus': '0.59.x'
 
