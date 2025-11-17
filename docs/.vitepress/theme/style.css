@@ -1,0 +1,28 @@
+/* Replaces .page */
+.VPDoc.vp-doc {
+  padding-top: 3.6rem;
+  text-align: justify;
+}
+
+/* Replaces .theme-container .navbar */
+.VPNavbar {
+  line-height: 2rem !important;
+}
+
+/* Replaces .navbar a, .links, etc. */
+.VPNavbar,
+.VPNavbar .links,
+.VPNavbar a {
+  background-color: #3eaf7c !important; /* #2e8555 */
+  color: white !important;
+  border: none !important;
+}
+
+/* Ensure navbar text/icons are white */
+.VPNavbar .VPNavBarTitle .text,
+.VPNavbar .VPNavBarMenu .VPNavBarMenuLink,
+.VPNavbar .VPNavBarAppearance,
+.VPNavbar .VPSocialLink {
+  color: white !important;
+  fill: white !important;
+}

@@ -1,14 +1,19 @@
 ---
-pageClass: fullWidth
-title: LaTeX.js Live Playground
-sidebar: false
-meta:
-  - name: description
-    content: This is the LaTeX.js editor with live preview.
-  - name: keywords
-    content: LaTeX,LaTeX.js,JavaScript,HTML,editor,live,preview
+layout: false     # no default theme: full-page playground
 ---
 
-<ClientOnly>
+<div id="playground-page">
   <LtxPlayground />
-</ClientOnly>
+</div>
+
+<script setup>
+import LtxPlayground from './.vitepress/theme/components/LtxPlayground.vue'
+</script>
+
+<style>
+#playground-page,
+#playground-page > * {
+  height: 100vh;
+  margin: 0;
+}
+</style>
