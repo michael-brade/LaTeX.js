@@ -66,7 +66,7 @@
   },
   "devDependencies": {
     "he": "1.2.x",
-    "katex": "0.13.13",
+    "katex": "^0.16.10",
     "@svgdotjs/svg.js": "https://github.com/michael-brade/svg.js",
     "hypher": "0.x",
     "lodash": "4.x",
