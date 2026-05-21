@@ -8,41 +8,59 @@ import ignoreInfiniteLoop from "./lib/pegjs-no-infinite-loop.mjs";
 
 const prod = process.env.NODE_ENV === "production"
 
-export default [{
-    input: "src/index.mjs",
-    plugins: [
-        // resolve before pegjs so that the filter in pegjs has less left to do
-        resolve({extensions: [".js", ".ls"], preferBuiltins: true}),
-        pegjs({plugins: [ignoreInfiniteLoop], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
-        livescript(),
-        commonjs({ ignoreDynamicRequires: true }),
-        visualizer({
-            filename: 'dist/latex.stats.html',
+// Shared plugin chain - inlined into each config below so each
+// output can have its own externals.
+const buildPlugins = () => [
+    // resolve before pegjs so that the filter in pegjs has less left to do
+    resolve({extensions: [".js", ".ls"], preferBuiltins: true}),
+    pegjs({plugins: [ignoreInfiniteLoop], target: "commonjs", exportVar: "parser", format: "bare", trace: false}),
+    livescript(),
+    commonjs({ ignoreDynamicRequires: true }),
+    visualizer({
+        filename: 'dist/latex.stats.html',
+        sourcemap: prod,
+        // template: 'network'
+    })
+]
+
+export default [
+    // ESM output: externalize katex so bundler-using consumers
+    // (esbuild, vite, rollup with externals, webpack with
+    // externals) supply it themselves and don't ship two copies.
+    // Listed as a peerDependency so consumers know they have to.
+    {
+        input: "src/index.mjs",
+        external: ["katex"],
+        plugins: buildPlugins(),
+        output: [{
+            file: "dist/latex.mjs",
+            format: "es",
             sourcemap: prod,
-            // template: 'network'
-        })
-    ],
-    output: [{
-        file: "dist/latex.mjs",
-        format: "es",
-        sourcemap: prod,
-        plugins: [...(prod ? [terser()] : [])]
-    }, {
-        file: "dist/latex.js",
-        format: "umd",
-        name: "latexjs",
-        sourcemap: prod,
-        plugins: [
-            {
-                name: 'import-meta-to-umd',
-                resolveImportMeta(property) {
-                    if (property === 'url') {
-                      return `document.currentScript && document.currentScript.src`;
+            plugins: [...(prod ? [terser()] : [])]
+        }]
+    },
+    // UMD output: legacy <script> users have no peer-dep
+    // mechanism, so keep KaTeX bundled here.
+    {
+        input: "src/index.mjs",
+        plugins: buildPlugins(),
+        output: [{
+            file: "dist/latex.js",
+            format: "umd",
+            name: "latexjs",
+            sourcemap: prod,
+            plugins: [
+                {
+                    name: 'import-meta-to-umd',
+                    resolveImportMeta(property) {
+                        if (property === 'url') {
+                          return `document.currentScript && document.currentScript.src`;
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            },
-            ...(prod ? [terser()] : [])
-        ]
-    }]
-}]
+                },
+                ...(prod ? [terser()] : [])
+            ]
+        }]
+    }
+]
