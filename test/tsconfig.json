@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+
+  "compilerOptions": {
+    "types": ["mocha", "chai", "node"],
+    // "module": "commonjs",
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+
+  "include": [
+    "**/*.ts"
+  ]
+}

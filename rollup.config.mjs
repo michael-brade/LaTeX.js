@@ -28,7 +28,12 @@ export default [{
         sourcemap: prod,
         plugins: [...(prod ? [terser()] : [])]
     }, {
-        file: "dist/latex.js",
+        file: "dist/latex.cjs",
+        format: "cjs",
+        sourcemap: prod,
+        plugins: [...(prod ? [terser()] : [])]
+    }, {
+        file: "dist/latex.umd.js",
         format: "umd",
         name: "latexjs",
         sourcemap: prod,

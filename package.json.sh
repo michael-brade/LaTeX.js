@@ -22,21 +22,16 @@ bin:
 ## we must not use require in .js files anymore when enabling this,
 ## nor can .ls files be imported as modules in tests
 ## bugs: https://github.com/mochajs/mocha/issues/4267, https://github.com/nodejs/node/issues/33226
-# type:
-#     'module'
-
-module:
-    './dist/latex.mjs'
-
-main:
-    './dist/latex.js'
+type:
+    'module'
 
 exports:
     import: './dist/latex.mjs'
-    require: './dist/latex.js'
+    require: './dist/latex.cjs'
 
 browser:
-    './dist/latex.js'
+    './dist/latex.umd.js'
+
 
 files:
     'bin/latex.js'
@@ -98,7 +93,7 @@ scripts:
 
     # unit tests
 
-    test:  'mocha test/*.ls;'
+    test:  'mocha test/*.ts;'
     iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
 
     testc: "
@@ -113,8 +108,8 @@ dependencies:
     ### CLI dependencies
 
     'commander': '8.x'
-    'fs-extra': '11.1.x'
-    'js-beautify': '1.14.x'
+    'fs-extra': '11.3.x'
+    'js-beautify': '1.15.x'
     'stdin': '*'
 
     'hyphenation.en-us': '*'
@@ -145,12 +140,17 @@ devDependencies:
     'pegjs': '0.10.x'
     'mkdirp': '3.x'
     'rimraf': '5.x'
-    'tmp': '0.x'
+
+    'typescript': '5.x'
+    'tsx': '^4.22.4'
+    "@tsconfig/node-ts": "^23.6.4"
+    "@tsconfig/node24": "^24.0.4"
 
     ### docs
 
     'vuepress': '2.0.0-beta.61'
     '@vuepress/plugin-register-components': 'next'
+
     'rollup-plugin-string': '3.0.x'
     'split-grid': '1.0.x'
     '@codemirror/autocomplete': '6.x'
@@ -161,27 +161,29 @@ devDependencies:
     '@codemirror/search': '6.x'
     '@codemirror/state': '6.x'
     '@codemirror/view': '6.x'
-    'vue-codemirror': '6.1.x'
+    'vue-tsc': '3.3.x'
+    'vue-codemirror6': '1.5.x'
     'stylus': '0.59.x'
 
     ### bundling
 
-    'rollup': '3.25.x'
-    '@rollup/plugin-commonjs': '25.0.x'
-    '@rollup/plugin-node-resolve': '15.1.x'
-    '@rollup/plugin-terser': '0.4.x'
-    'rollup-plugin-visualizer': '5.9.x'
+    'rollup': '4.61.x'
+    '@rollup/plugin-commonjs': '29.0.x'
+    '@rollup/plugin-node-resolve': '16.0.x'
+    '@rollup/plugin-terser': '1.0.x'
+    'rollup-plugin-visualizer': '7.0.x'
 
     ### testing
 
-    'mocha': '10.2.x'
+    'mocha': '11.7.x'
     'mocha-junit-reporter': '2.x'
-    'chai': '4.x'
-    'chai-as-promised': '7.x'
+    'chai': '6.x'
+    'chai-as-promised': '8.0.x'
     'slugify': '1.6.x'
     'decache': '4.6.x'
+    'tmp': '0.2.x'
 
-    'puppeteer': '20.7.x'
+    'puppeteer': '25.1.x'
     'pixelmatch': '5.3.x'
 
     'nyc': '15.x'
@@ -189,9 +191,17 @@ devDependencies:
 
     'serve-handler': '6.x'
 
+    "@types/mocha": "^10.0.10"
+    "@types/chai": "^5.2.3"
+    "@types/chai-as-promised": "^8.0.2"
+    "@types/pixelmatch": "^5.2.6"
+    "@types/pngjs": "^6.0.5"
+    "@types/serve-handler": "^6.1.4"
+    "@types/tmp": "^0.2.6"
+
 mocha:
-    require: 'livescript'
-    file: 'test/lib/setup.ls'
+    require: 'tsx'
+    file: 'test/lib/setup.ts'
     reporter: 'spec'
     inlineDiffs: true
     timeout: 10000
@@ -215,6 +225,6 @@ bugs:
 homepage: 'https://latex.js.org'
 
 engines:
-    node: '>= 14.0'
+    node: '>= 24.0'
 
 EOF

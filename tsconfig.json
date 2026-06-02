@@ -1,0 +1,10 @@
+{
+    "extends": [
+        "@tsconfig/node24/tsconfig.json",
+        "@tsconfig/node-ts/tsconfig.json"
+    ],
+
+    "compilerOptions": {
+        "alwaysStrict": true          /* Ensures 'use strict' is emitted in all JS files */
+    }
+}
