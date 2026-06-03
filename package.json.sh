@@ -61,10 +61,9 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
         rsync -a src/js/ dist/js/;
-        mkdirp bin;
-        lsc -bc --no-header -m embedded -p src/cli.ls > bin/latex.js;
-        chmod a+x bin/latex.js;
+
 	    rollup -c;
+        chmod a+x bin/latex.js;
     "
 
     build: 'NODE_ENV=production npm run devbuild;'
@@ -116,9 +115,15 @@ dependencies:
     'hyphenation.de': '*'
 
     'svgdom': '0.1.x'
+
     #'xmldom': '0.3.x'
     #'jsdom': '16.x'
     #'cheerio': '1.0.x'
+
+    "@types/svgdom": "^0.1.2"
+    "@types/fs-extra": "^11.0.4"
+    "@types/stdin": "^0.0.2"
+    "@types/js-beautify": "^1.14.3"
 
 devDependencies:
     ### actual runtime dependencies, but bundled by rollup
@@ -141,7 +146,7 @@ devDependencies:
     'mkdirp': '3.x'
     'rimraf': '5.x'
 
-    'typescript': '5.x'
+    'typescript': '6.x'
     'tsx': '^4.22.4'
     "@tsconfig/node-ts": "^23.6.4"
     "@tsconfig/node24": "^24.0.4"
@@ -168,6 +173,7 @@ devDependencies:
     ### bundling
 
     'rollup': '4.61.x'
+    "@rollup/plugin-typescript": "^12.3.0"
     '@rollup/plugin-commonjs': '29.0.x'
     '@rollup/plugin-node-resolve': '16.0.x'
     '@rollup/plugin-terser': '1.0.x'

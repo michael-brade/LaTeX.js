@@ -19,12 +19,15 @@ describe('LaTeX.js CLI test', () => {
 
     test('get help', () => {
         return expect(latexjs.execute(['-h'])).to.eventually.be.fulfilled
-            .and.to.be.an('object')
-            .that.satisfies((h: any) => h.stdout.includes(pkg.description));
+            .and.to.have.property('stdout')
+                .that.matches(new RegExp(pkg.description));
     });
 
     test('error on unknown option', () => {
-        return expect(latexjs.execute(['-x'])).to.eventually.be.rejectedWith(/error: unknown option/);
+        return expect(latexjs.execute(['-x'])).to.eventually.be.rejected
+            .and.to.be.an('object')
+                .that.has.property('stderr')
+                .that.matches(/error: unknown option/);
     });
 
     test('error on incorrect use', () => {
@@ -37,20 +40,18 @@ describe('LaTeX.js CLI test', () => {
     });
 
     test('default translation', () => {
-        return expect(latexjs.execute([], ["A paragraph."]))
-            .to.eventually.be.fulfilled
-            .and.to.be.an('object').that.has.property('stdout')
-            .and.to.satisfy((res: any) => {
-                expect(res.stdout).to.equal('<html style="--size: 13.284px; --textwidth: 56.162%; --marginleftwidth: 21.919%; --marginrightwidth: 21.919%; --marginparwidth: 48.892%; --marginparsep: 14.612px; --marginparpush: 6.642px;"><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>A para\u00ADgraph.</p></div></body></html>' + EOL);
-                return true;
-            });
+        return expect(latexjs.execute([], ["A paragraph."])).to.eventually.be.fulfilled
+            .and.to.be.an('object')
+                .that.has.property('stdout')
+                .that.equals('<html style="--size: 13.284px; --textwidth: 56.162%; --marginleftwidth: 21.919%; --marginrightwidth: 21.919%; --marginparwidth: 48.892%; --marginparsep: 14.612px; --marginparpush: 6.642px;"><head><title>untitled</title><meta charset="UTF-8"></meta><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>A para\u00ADgraph.</p></div></body></html>' + EOL);
     });
 
     test('return only the body', () => {
         return expect(latexjs.execute(['-b'], ["A paragraph."]))
             .to.eventually.be.fulfilled
-            .and.to.be.an('object').that.has.property('stdout')
-            .and.to.satisfy((res: any) => res.stdout === '<div class="body"><p>A para\u00ADgraph.</p></div>' + EOL);
+            .and.to.be.an('object')
+                .that.has.property('stdout')
+                .that.equals('<div class="body"><p>A para\u00ADgraph.</p></div>' + EOL);
     });
 
     test('include custom macros', () => {
@@ -62,7 +63,9 @@ describe('LaTeX.js CLI test', () => {
 
         return expect(latexjs.execute(['-b', '-m', tmpfile.name], ["A \\myMacro[custom] macro."]))
             .to.eventually.be.fulfilled
-            .and.to.satisfy((res: any) => res.stdout === '<div class="body"><p>A -cus\u00ADtom- macro.</p></div>' + EOL);
+            .and.to.be.an('object')
+                .that.has.property('stdout')
+                .that.equals('<div class="body"><p>A -cus\u00ADtom- macro.</p></div>' + EOL);
     });
 
     test.skip('include custom package', () => {});

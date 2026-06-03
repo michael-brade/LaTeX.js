@@ -3,8 +3,12 @@
         "@tsconfig/node24/tsconfig.json",
         "@tsconfig/node-ts/tsconfig.json"
     ],
-
     "compilerOptions": {
-        "alwaysStrict": true          /* Ensures 'use strict' is emitted in all JS files */
-    }
+        "alwaysStrict": true,          /* Ensures 'use strict' is emitted in all JS files */
+        "lib": ["ESNext", "DOM"],
+        "typeRoots": ["./src/types"]
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
 }
