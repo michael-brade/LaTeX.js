@@ -6,10 +6,11 @@ import { create as cmd } from './lib/cmd.ts';
 
 import pkg from '../package.json' with { type: 'json' };
 
+tmp.setGracefulCleanup();
+
 const binFile = path.resolve((pkg.bin as Record<string, string>)[pkg.name]);
 const latexjs = cmd(binFile);
 
-tmp.setGracefulCleanup();
 
 describe('LaTeX.js CLI test', () => {
 
