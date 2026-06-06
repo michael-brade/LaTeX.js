@@ -5,7 +5,10 @@
     "types": ["mocha", "chai", "node"],
     // "module": "commonjs",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+
+    // test/ is usually not compiled, but don't clutter the directory by accident
+    "outDir": "tmp"
   },
 
   "include": [

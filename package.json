@@ -17,14 +17,21 @@
   },
   "type": "module",
   "exports": {
-    "import": "./dist/latex.mjs",
-    "require": "./dist/latex.cjs"
+    "import": {
+      "types": "./dist/latex.d.ts",
+      "default": "./dist/latex.mjs"
+    },
+    "require": {
+      "types": "./dist/latex.d.ts",
+      "default": "./dist/latex.cjs"
+    }
   },
   "browser": "./dist/latex.umd.js",
   "files": [
     "bin/latex.js",
-    "dist/latex.js",
-    "dist/latex.js.map",
+    "dist/latex.d.ts",
+    "dist/latex.cjs",
+    "dist/latex.cjs.map",
     "dist/latex.mjs",
     "dist/latex.mjs.map",
     "dist/css/",
@@ -67,6 +74,7 @@
     "livescript-transform-esm": "^3.1.0",
     "livescript-transform-implicit-async": "^1.1.0",
     "livescript-transform-object-create": "^1.1.0",
+    "@types/he": "^1.2.3",
     "pegjs": "0.10.x",
     "mkdirp": "3.x",
     "rimraf": "5.x",
@@ -116,7 +124,10 @@
     "@types/tmp": "^0.2.6"
   },
   "mocha": {
-    "require": "tsx",
+    "require": [
+      "tsx",
+      "test/lib/globals.ts"
+    ],
     "file": "test/lib/setup.ts",
     "reporter": "spec",
     "inlineDiffs": true,

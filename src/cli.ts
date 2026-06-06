@@ -1,8 +1,8 @@
 // on the server we need to include a DOM implementation - BEFORE requiring HtmlGenerator below
 import { createHTMLWindow } from 'svgdom';
 
-(global as any).window = createHTMLWindow();
-(global as any).document = (global as any).window.document;
+global.window = createHTMLWindow() as any;
+global.document = (global.window as any).document;
 
 import util from 'node:util';
 import path from 'node:path';
@@ -10,7 +10,7 @@ import fs from 'fs-extra';
 import stdin from 'stdin';
 import { program } from 'commander';
 import beautify from 'js-beautify';
-import { he, parse, HtmlGenerator } from '../dist/latex.mjs';
+import { he, parse, HtmlGenerator } from 'latex.js';
 import en from 'hyphenation.en-us';
 import de from 'hyphenation.de';
 import info from '../package.json' with { type: 'json' };

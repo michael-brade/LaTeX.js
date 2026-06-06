@@ -19,15 +19,16 @@ keywords:
 bin:
     'latex.js': './bin/latex.js'
 
-## we must not use require in .js files anymore when enabling this,
-## nor can .ls files be imported as modules in tests
-## bugs: https://github.com/mochajs/mocha/issues/4267, https://github.com/nodejs/node/issues/33226
 type:
     'module'
 
 exports:
-    import: './dist/latex.mjs'
-    require: './dist/latex.cjs'
+    import:
+        types: './dist/latex.d.ts'
+        default: './dist/latex.mjs'
+    require:
+        types: './dist/latex.d.ts'
+        default: './dist/latex.cjs'
 
 browser:
     './dist/latex.umd.js'
@@ -35,8 +36,9 @@ browser:
 
 files:
     'bin/latex.js'
-    'dist/latex.js'
-    'dist/latex.js.map'
+    'dist/latex.d.ts'
+    'dist/latex.cjs'
+    'dist/latex.cjs.map'
     'dist/latex.mjs'
     'dist/latex.mjs.map'
     'dist/css/'
@@ -130,7 +132,7 @@ devDependencies:
 
     'he': '1.2.x'
     'katex': '0.13.13'
-    '@svgdotjs/svg.js': '3.x',
+    '@svgdotjs/svg.js': '3.x'
 
     'hypher': '0.x'
     'lodash': '4.x'
@@ -139,6 +141,8 @@ devDependencies:
     'livescript-transform-esm': '^3.1.0'
     'livescript-transform-implicit-async': '^1.1.0'
     'livescript-transform-object-create': '^1.1.0'
+
+    "@types/he": "^1.2.3"
 
     ### building
 
@@ -206,7 +210,7 @@ devDependencies:
     "@types/tmp": "^0.2.6"
 
 mocha:
-    require: 'tsx'
+    require: ['tsx', 'test/lib/globals.ts']
     file: 'test/lib/setup.ts'
     reporter: 'spec'
     inlineDiffs: true

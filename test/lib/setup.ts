@@ -1,24 +1,10 @@
 import fs from 'node:fs';
 import http from 'node:http';
 import serveHandler from 'serve-handler';
-import puppeteer, { Browser, ConsoleMessage, Page } from 'puppeteer';
+import puppeteer, { ConsoleMessage, Page } from 'puppeteer';
 import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 
-import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
-chai.use(chaiAsPromised);
-
-declare global {
-    var expect: Chai.ExpectStatic;
-    var test: Mocha.TestFunction;
-    var chrome: Browser;
-    var firefox: Browser;
-    var takeScreenshot: (html: string, filename: string) => Promise<void>;
-}
-
-global.expect = chai.expect;
 global.test = it;
 
 let cPage: Page,
