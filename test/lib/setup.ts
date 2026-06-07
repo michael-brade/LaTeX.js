@@ -16,10 +16,10 @@ let server: http.Server,
 before(async () => {
     global.chrome = await puppeteer.launch({
         browser: 'chrome',
+        headless: true,
         devtools: false,
         dumpio: false,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files'],
-        defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
+        // args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files']
     });
 
     global.firefox = await puppeteer.launch({
@@ -27,16 +27,23 @@ before(async () => {
         executablePath: '/opt/firefox/firefox',
         headless: true,
         devtools: false,
-        dumpio: false,
-        defaultViewport: { width: 1000, height: 0, deviceScaleFactor: 2 }
+        dumpio: false
     });
 
-    const chromePages = (await chrome.pages());
-    cPage = chromePages[0]; // there is always one page available
-    const firefoxPages = await firefox.pages();
-    fPage = firefoxPages[0];
+    cPage = (await chrome.pages())[0]; // there is always one page available
+    cPage.setViewport({
+        width: 1000,
+        height: 1,
+        deviceScaleFactor: 2
+    });
+    fPage = (await firefox.pages())[0];
+    fPage.setViewport({
+        width: 1000,
+        height: 1,
+        deviceScaleFactor: 2
+    });
 
-    cPage.on('console', (msg) => {
+    cPage.on('console', (msg: ConsoleMessage) => {
         if (msg.type() === 'error') {
             console.error("Error in chrome: ", msg.text());
         }
@@ -119,24 +126,26 @@ global.takeScreenshot = async (html: string, filename: string): Promise<void> =>
 
     const address = server.address();
     const port = typeof address === 'string' ? address : address?.port;
-    await cPage.goto(`http://localhost:${port}`);
+    await cPage.goto(`http://localhost:${port}`, { waitUntil: 'load' });
     await cPage.addStyleTag({ content: ".body { border: .4px solid; height: max-content; }" });
 
-    await fPage.goto(`http://localhost:${port}`);
+    await fPage.goto(`http://localhost:${port}`, { waitUntil: 'load' });
     await fPage.addStyleTag({ content: ".body { border: .4px solid; height: max-content; }" });
 
     const cfile = filename + ".ch";
     const ffile = filename + ".ff";
 
-    await cPage.screenshot({
+    let page = await cPage.$('body');
+
+    await page!.screenshot({
         omitBackground: true,
-        fullPage: false,
-        captureBeyondViewport: false,
         path: cfile + '.new.png'
     });
 
-    await fPage.screenshot({
-        // omitBackground: true
+    page = await fPage.$('body');
+
+    await page!.screenshot({
+        // omitBackground: true,
         path: ffile + '.new.png'
     });
 
