@@ -63,6 +63,7 @@ scripts:
         rsync -a src/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
         rsync -a src/js/ dist/js/;
+        rsync -a src/types/latex.d.ts dist;
 
 	    rollup -c;
         chmod a+x bin/latex.js;
@@ -132,7 +133,7 @@ devDependencies:
 
     'he': '1.2.x'
     'katex': '0.13.13'
-    '@svgdotjs/svg.js': '3.x'
+    '@svgdotjs/svg.js': 'https://github.com/michael-brade/svg.js'  # '3.x'
 
     'hypher': '0.x'
     'lodash': '4.x'
@@ -194,7 +195,7 @@ devDependencies:
     'tmp': '0.2.x'
 
     'puppeteer': '25.1.x'
-    'pixelmatch': '5.3.x'
+    'pixelmatch': '7.2.x'
 
     'nyc': '15.x'
     'codecov': '3.x'
@@ -204,7 +205,6 @@ devDependencies:
     "@types/mocha": "^10.0.10"
     "@types/chai": "^5.2.3"
     "@types/chai-as-promised": "^8.0.2"
-    "@types/pixelmatch": "^5.2.6"
     "@types/pngjs": "^6.0.5"
     "@types/serve-handler": "^6.1.4"
     "@types/tmp": "^0.2.6"
