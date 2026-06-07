@@ -6,6 +6,7 @@ global.document = (global.window as any).document;
 
 import util from 'node:util';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import fs from 'fs-extra';
 import stdin from 'stdin';
 import { program } from 'commander';
@@ -17,6 +18,8 @@ import info from '../package.json' with { type: 'json' };
 
 he.encode.options.strict = true;
 he.encode.options.useNamedReferences = true;
+
+const binPath = fileURLToPath(new URL('.', import.meta.url));
 
 const addStyle = (url: string, styles?: string[]): string[] => {
     if (!styles)
@@ -164,7 +167,8 @@ if (dir) {
     fs.mkdirpSync(css);
     fs.mkdirpSync(fonts);
     fs.mkdirpSync(js);
-    fs.copySync(path.join(__dirname, '../dist/css'), css);
-    fs.copySync(path.join(__dirname, '../dist/fonts'), fonts);
-    fs.copySync(path.join(__dirname, '../dist/js'), js);
+
+    fs.copySync(path.join(binPath, '../dist/css'), css);
+    fs.copySync(path.join(binPath, '../dist/fonts'), fonts);
+    fs.copySync(path.join(binPath, '../dist/js'), js);
 }

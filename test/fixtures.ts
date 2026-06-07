@@ -3,10 +3,11 @@ import { createHTMLWindow } from 'svgdom';
 global.window = createHTMLWindow() as any;
 global.document = (global.window as any).document;
 
-import { registerWindow } from '@svgdotjs/svg.js';
+import { registerWindow, resetDid } from '@svgdotjs/svg.js';
 registerWindow(global.window, global.document);
 
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import { spawn } from 'node:child_process';
 
@@ -25,15 +26,12 @@ interface Fixture {
     result: string;
 }
 
-function resetSvgIds(): void {
-    registerWindow(global.window, global.document);
-}
-
+const dirname = fileURLToPath(new URL('.', import.meta.url));
 const subdirs: string[] = [];
 
 
 describe('LaTeX.js fixtures', () => {
-    const fixturesPath = path.join(__dirname, 'fixtures');
+    const fixturesPath = path.join(dirname, 'fixtures');
 
     fs.readdirSync(fixturesPath).forEach((name) => {
         const fixtureFile = path.join(fixturesPath, name);
@@ -91,7 +89,7 @@ function runFixture(fixture: Fixture, name: string): void {
 
     // create syntax test
     _test(fixture.header || 'fixture number ' + fixture.id, () => {
-        resetSvgIds();
+        resetDid();
 
         let htmlIs: string;
         let htmlShould: string;
@@ -118,7 +116,7 @@ function runFixture(fixture: Fixture, name: string): void {
         htmlShould = he.decode(htmlShould.replace(/\r\n|\n|\r/g, ""));
 
         if (htmlIs !== htmlShould) {
-            const filename = path.join(__dirname, 'html', slugify(name + ' ' + fixture.header, {
+            const filename = path.join(dirname, 'html', slugify(name + ' ' + fixture.header, {
                 remove: /[*+~()'"!:@,{}\\]/g
             }));
             try {
@@ -135,7 +133,7 @@ function runFixture(fixture: Fixture, name: string): void {
     // create screenshot test
     if (screenshot) {
         _test('   - screenshot', async () => {
-            resetSvgIds();
+            resetDid();
 
             const htmlDoc = parse(fixture.source, {
                 generator: new HtmlGenerator({ hyphenate: false })
@@ -148,7 +146,7 @@ function runFixture(fixture: Fixture, name: string): void {
 
             htmlDoc.head.appendChild(favicon);
 
-            const filename = path.join(__dirname, 'screenshots', slugify(name + ' ' + fixture.header, {
+            const filename = path.join(dirname, 'screenshots', slugify(name + ' ' + fixture.header, {
                 remove: /[*+~()'"!:@,{}\\]/g
             }));
 
@@ -162,7 +160,7 @@ function runFixture(fixture: Fixture, name: string): void {
 
 
 function latexScreenshot(source: string, filename: string): void {
-    const process = spawn(path.join(__dirname, 'latex2png.sh'), [filename + ".latex.png"]);
+    const process = spawn(path.join(dirname, 'latex2png.sh'), [filename + ".latex.png"]);
 
     let stdout = "";
     let stderr = "";
