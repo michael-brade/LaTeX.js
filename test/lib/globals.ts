@@ -1,11 +1,9 @@
-import { Browser } from 'puppeteer';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-await import('puppeteer-core/lib/puppeteer/puppeteer-core.js');
-
 chai.use(chaiAsPromised);
 
+import { Browser } from 'puppeteer';
 import { createHTMLWindow } from 'svgdom';
 
 declare global {

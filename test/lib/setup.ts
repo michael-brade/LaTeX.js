@@ -137,17 +137,19 @@ global.takeScreenshot = async (html: string, filename: string): Promise<void> =>
 
     let page = await cPage.$('body');
 
-    await page!.screenshot({
-        omitBackground: true,
-        path: cfile + '.new.png'
+    let screenshot = await page!.screenshot({
+        omitBackground: true
     });
+
+    fs.writeFileSync(cfile + '.new.png', screenshot);
 
     page = await fPage.$('body');
 
-    await page!.screenshot({
-        // omitBackground: true,
-        path: ffile + '.new.png'
+    screenshot = await page!.screenshot({
+        // omitBackground: true
     });
+
+    fs.writeFileSync(ffile + '.new.png', screenshot);
 
     compareScreenshots(cfile);
     compareScreenshots(ffile);
