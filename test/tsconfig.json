@@ -3,7 +3,6 @@
 
   "compilerOptions": {
     "types": ["mocha", "chai", "node"],
-    // "module": "commonjs",
     "esModuleInterop": true,
     "resolveJsonModule": true,
 

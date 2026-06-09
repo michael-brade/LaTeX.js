@@ -6,7 +6,10 @@
     "compilerOptions": {
         "alwaysStrict": true,          /* Ensures 'use strict' is emitted in all JS files */
         "lib": ["ESNext", "DOM"],
-        "typeRoots": ["./node_modules/@types", "./src/types"]
+        "typeRoots": ["./node_modules/@types", "./src/types"],
+
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext"
     },
     "include": [
         "src/**/*.ts"
