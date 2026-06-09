@@ -15,7 +15,7 @@ import he from 'he'; // TODO: switch to html-entities (?)
 import slugify from 'slugify';
 import { parse, HtmlGenerator } from 'latex.js';
 // import beautify from 'js-beautify';
-import { load as loadFixture } from './lib/load-fixtures.js';
+import { load as loadFixture } from './lib/load-fixtures.ts';
 
 
 
