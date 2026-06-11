@@ -2,7 +2,7 @@ import
     './generator': { Generator }
     './symbols': { ligatures, diacritics }
     '@svgdotjs/svg.js': { SVG }
-    'katex/dist/katex.mjs': katex
+    'katex': katex
 
     'hypher': Hypher
     'hyphenation.en-us': h-en
