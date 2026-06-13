@@ -1,10 +1,5 @@
 declare module 'latex.js' {
 
-  export interface ParseOptions {
-    generator?: HtmlGenerator;
-    [key: string]: any;
-  }
-
   export interface HtmlGeneratorOptions {
     hyphenate?: boolean;
     languagePatterns?: any;
@@ -20,12 +15,23 @@ declare module 'latex.js' {
     htmlDocument(baseUrl?: string): Document;
     [key: string]: any;
   }
+
+  // parse
+
+  export interface ParseOptions {
+    generator?: HtmlGenerator;
+    [key: string]: any;
+  }
+
   export interface ParseResult {
     domFragment(): DocumentFragment;
     htmlDocument(baseUrl?: string): Document;
     [key: string]: any;
   }
+
   export function parse(text: string, options?: ParseOptions): ParseResult;
+
+
   export namespace he {
     interface EncodeOptions {
       strict?: boolean;
