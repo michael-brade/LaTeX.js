@@ -5,9 +5,6 @@ import
     './documentclasses': builtin-documentclasses
     './packages': builtin-packages
 
-    'lodash/assign'
-    'lodash/assignIn'
-
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
@@ -33,8 +30,9 @@ export class LaTeX
     # CTOR
     (generator, CustomMacros) ->
         if CustomMacros
-            assignIn this, new CustomMacros(generator)
-            assign args, CustomMacros.args
+            Object.defineProperties this, Object.getOwnPropertyDescriptors(CustomMacros.prototype)
+            Object.assign this, new CustomMacros(generator)
+            Object.assign args, CustomMacros.args
             CustomMacros.symbols?.forEach (value, key) -> symbols.set key, value
 
         @g = generator
@@ -1232,8 +1230,10 @@ export class LaTeX
                 throw new Error "error loading documentclass \"#{documentclass}\""
 
         @g.documentClass = new Class @g, options
-        assignIn this, @g.documentClass
-        assign args, Class.args
+
+        Object.defineProperties this, Object.getOwnPropertyDescriptors(Class.prototype)
+        Object.assign this, @g.documentClass
+        Object.assign args, Class.args
 
 
     args.\usepackage    =  <[ P kv? csv k? ]>
@@ -1251,8 +1251,9 @@ export class LaTeX
                     Export = require "./packages/#{pkg}"
                     Package := Export.default || Export[Object.getOwnPropertyNames(Export).0]
 
-                assignIn this, new Package @g, options
-                assign args, Package.args
+                Object.defineProperties this, Object.getOwnPropertyDescriptors(Package.prototype)
+                Object.assign this, new Package @g, options
+                Object.assign args, Package.args
                 Package.symbols?.forEach (value, key) -> symbols.set key, value
             catch e
                 # log error but continue anyway
