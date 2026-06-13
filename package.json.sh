@@ -48,7 +48,7 @@ files:
     'dist/documentclasses/'
 
 scripts:
-    clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;'
+    clean: 'rimraf dist bin test/coverage test/test-results.xml website docs/.vitepress/.temp docs/.vitepress/.cache;'
 
     devbuild: "
         rimraf 'dist/**/*.map';
@@ -74,24 +74,32 @@ scripts:
 
     # docs/website and playground
 
+    prepare-latex-assets: "
+        rimraf docs/public/latexjs;
+        mkdirp docs/public/latexjs/css docs/public/latexjs/fonts docs/public/latexjs/js;
+        rsync -a dist/css/ docs/public/latexjs/css/;
+        rsync -a dist/fonts/ docs/public/latexjs/fonts/;
+        rsync -a dist/js/ docs/public/latexjs/js/;
+    "
+
     devdocs: "
         npm run devbuild;
-        vuepress dev docs --no-clear-screen --debug;
-    "
+        npm run prepare-latex-assets;
+        vitepress dev docs"
 
     docs: "
         npm run build;
+        npm run prepare-latex-assets;
 
         [ ! -d website ] && git worktree add website gh-pages;
         mv website/.git .website.git;
-        vuepress build docs;
+        vitepress build docs;
         mv .website.git website/.git;
 
         cd website;
         git add .;
         git commit -m 'regenerated website';
     "
-
 
     # unit tests
 
@@ -113,6 +121,8 @@ dependencies:
     'fs-extra': '11.3.x'
     'js-beautify': '1.15.x'
     'stdin': '*'
+
+    # "express": "^5.1.0"  # TODO
 
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
@@ -145,6 +155,7 @@ devDependencies:
 
     "@types/he": "^1.2.3"
 
+    # "glob": "8.0.x" # TODO
 
     ### building
 
@@ -159,9 +170,8 @@ devDependencies:
 
     ### docs
 
-    'vuepress': '2.0.0-beta.61'
-    '@vuepress/plugin-register-components': 'next'
-    'rollup-plugin-string': '3.0.x'
+    'vitepress': '^1.6.4'
+
     'split-grid': '1.0.x'
     '@codemirror/autocomplete': '6.x'
     '@codemirror/commands': '6.x'
@@ -171,8 +181,13 @@ devDependencies:
     '@codemirror/search': '6.x'
     '@codemirror/state': '6.x'
     '@codemirror/view': '6.x'
-    'vue-codemirror': '6.1.x'
+    '@codemirror/theme-one-dark': '6.x'
+    'codemirror-lang-latex': '0.4.x'
+    'vue-tsc': '3.3.x'
+    # 'vue-codemirror6': '1.5.x'
+    'vue-codemirror': '^6.1.1'
     'stylus': '0.59.x'
+    # 'sass-embedded': '1.93.x' # TODO
 
     ### bundling
 

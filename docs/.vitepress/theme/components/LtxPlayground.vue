@@ -29,15 +29,15 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { basicSetup } from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
+import { latex } from 'codemirror-lang-latex';
 import { oneDark } from '@codemirror/theme-one-dark'
 
-import { parse, HtmlGenerator, SyntaxError } from '../../../../dist/latex.mjs'
+import { parse, HtmlGenerator, SyntaxError } from 'latex.js'
 import en from 'hyphenation.en-us'
 import Split from 'split-grid'
 import showcase from '../../../showcase.tex?raw'
 
-const extensions = [basicSetup, javascript(), oneDark]
+const extensions = [basicSetup, latex(), oneDark]
 
 // --- generator + helpers -----------------------------------------------------
 function getAssetsBase(): string | undefined {
