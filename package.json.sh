@@ -74,7 +74,7 @@ scripts:
 
     # docs/website and playground
 
-    prepare-latex-assets: "
+    'prepare-latex-assets': "
         rimraf docs/public/latexjs;
         mkdirp docs/public/latexjs/css docs/public/latexjs/fonts docs/public/latexjs/js;
         rsync -a dist/css/ docs/public/latexjs/css/;
@@ -167,6 +167,8 @@ devDependencies:
     'tsx': '^4.22.4'
     "@tsconfig/node-ts": "^23.6.4"
     "@tsconfig/node24": "^24.0.4"
+
+    "@types/pegjs": "0.10.x"
 
     ### docs
 

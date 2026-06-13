@@ -1,3 +1,5 @@
+import { PegjsError } from 'pegjs';
+
 declare module 'latex.js' {
 
   export interface HtmlGeneratorOptions {
@@ -17,6 +19,8 @@ declare module 'latex.js' {
   }
 
   // parse
+
+  export type SyntaxError = PegjsError;
 
   export interface ParseOptions {
     generator?: HtmlGenerator;
