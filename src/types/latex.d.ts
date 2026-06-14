@@ -1,4 +1,4 @@
-import { PegjsError } from 'pegjs';
+import { SyntaxError as PegjsSyntaxError } from 'pegjs';
 
 declare module 'latex.js' {
 
@@ -20,8 +20,6 @@ declare module 'latex.js' {
 
   // parse
 
-  export type SyntaxError = PegjsError;
-
   export interface ParseOptions {
     generator?: HtmlGenerator;
     [key: string]: any;
@@ -34,6 +32,11 @@ declare module 'latex.js' {
   }
 
   export function parse(text: string, options?: ParseOptions): ParseResult;
+
+  // SyntaxError: export the type for compiler checks
+  export interface SyntaxError extends PegjsSyntaxError {}
+  // and export the value (constructor) for runtime 'instanceof' checks
+  export const SyntaxError: typeof PegjsSyntaxError;
 
 
   export namespace he {

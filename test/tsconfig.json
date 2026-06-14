@@ -2,6 +2,8 @@
   "extends": "../tsconfig.json",
 
   "compilerOptions": {
+    "composite": true,
+
     "types": ["mocha", "chai", "node"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
