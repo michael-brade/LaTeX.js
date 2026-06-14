@@ -7,7 +7,7 @@ layout: false     # no default theme: full-page playground
 </div>
 
 <script setup>
-import LtxPlayground from './.vitepress/theme/components/LtxPlayground.vue'
+import LtxPlayground from './components/LtxPlayground.vue'
 </script>
 
 <style>

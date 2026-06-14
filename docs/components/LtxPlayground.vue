@@ -35,7 +35,7 @@ import { oneDark } from '@codemirror/theme-one-dark'
 import { parse, HtmlGenerator, SyntaxError } from 'latex.js'
 import en from 'hyphenation.en-us'
 import Split from 'split-grid'
-import showcase from '../../../showcase.tex?raw'
+import showcase from '../showcase.tex?raw'
 
 const extensions = [basicSetup, latex(), oneDark]
 
@@ -196,19 +196,25 @@ function compile(latex: string, iframe: HTMLIFrameElement) {
 
 export default defineComponent({
   name: 'LtxPlayground',
-  components: { Codemirror },
+
+  components: {
+    Codemirror
+  },
+
   setup() {
     const code = ref(showcase)
     const preview = ref<HTMLIFrameElement | null>(null)
     const gutter = ref<HTMLDivElement | null>(null)
 
     const onCmReady = () => {
-      if (preview.value) compile(code.value, preview.value)
+      if (preview.value)
+        compile(code.value, preview.value)
     }
 
     const onCmCodeChange = (value: string) => {
       code.value = value
-      if (preview.value) compile(value, preview.value)
+      if (preview.value)
+        compile(value, preview.value)
     }
 
     onMounted(() => {
