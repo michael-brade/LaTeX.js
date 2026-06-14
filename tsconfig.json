@@ -6,11 +6,11 @@
     "compilerOptions": {
         "alwaysStrict": true,          // Ensures 'use strict' is emitted in all JS files
         "lib": ["ESNext", "DOM"],
-
-        // makes the "latex.js" self-reference import in cli.ts and the tests type-check against the source,
-        // so no build is needed for its types (see the "latex.js-source" condition in package.json "exports");
-        // unlike "paths", tsx ignores this, so at runtime "latex.js" still resolves to dist/
-        "customConditions": ["latex.js-source"],
+        "types": ["hypenation"],
+        "typeRoots": [
+            "./node_modules/@types",
+            "./src/types"
+        ],
 
         "noEmit": true,     // we are using vite, so no need for TypeScript to emit transpiled files
         "allowJs": true,    // TODO: remove once everything is ported to TypeScript
@@ -20,5 +20,9 @@
     },
     "include": [
         "src/**/*.ts"
+    ],
+    "references": [
+        { "path": "./docs/.vitepress" },
+        { "path": "./test" }
     ]
 }
