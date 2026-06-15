@@ -124,8 +124,6 @@ dependencies:
     'js-beautify': '1.15.x'
     'stdin': '*'
 
-    # "express": "^5.1.0"  # TODO
-
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
@@ -179,7 +177,6 @@ devDependencies:
     '@codemirror/autocomplete': '6.x'
     '@codemirror/commands': '6.x'
     '@codemirror/language': '6.x'
-    '@codemirror/legacy-modes': '6.x'
     '@codemirror/lint': '6.x'
     '@codemirror/search': '6.x'
     '@codemirror/state': '6.x'
@@ -187,10 +184,8 @@ devDependencies:
     '@codemirror/theme-one-dark': '6.x'
     'codemirror-lang-latex': '0.4.x'
     'vue-tsc': '3.3.x'
-    # 'vue-codemirror6': '1.5.x'
-    'vue-codemirror': '^6.1.1'
-    'stylus': '0.59.x'
-    # 'sass-embedded': '1.93.x' # TODO
+    'vue-codemirror6': '1.5.x'
+    # 'sass-embedded': '1.100.x'
 
     ### bundling
 

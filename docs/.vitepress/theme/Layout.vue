@@ -1,3 +1,9 @@
+<script setup>
+import DefaultTheme from 'vitepress/theme'
+import LaTeX from '@theme/components/LaTeX.vue'
+</script>
+
+
 <template>
   <DefaultTheme.Layout>
     <template #navbar-brand>
@@ -14,10 +20,6 @@
   </DefaultTheme.Layout>
 </template>
 
-<script setup>
-import DefaultTheme from 'vitepress/theme'
-import LaTeX from './components/LaTeX.vue'
-</script>
 
 <style scoped>
 /* Style to match old home-link */
