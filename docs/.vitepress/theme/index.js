@@ -1,6 +1,6 @@
 import DefaultTheme from 'vitepress/theme'
-import LaTeX from './components/LaTeX.vue'
-import TeX from './components/TeX.vue'
+import LaTeX from '@theme/components/LaTeX.vue'
+import TeX from '@theme/components/TeX.vue'
 
 export default {
   extends: DefaultTheme,
