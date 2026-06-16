@@ -128,9 +128,10 @@ export class Generator
     ### macros
 
     hasMacro: (name) ->
-        typeof @_macros[name] == "function"
-        and name !== "constructor"
-        and (@_macros.hasOwnProperty name or Macros.prototype.hasOwnProperty name)
+        # block core JavaScript keywords from being treated as LaTeX macros
+        return false if name in <[ constructor toString valueOf hasOwnProperty ]>
+
+        return typeof @_macros[name] == "function"
 
 
     isHmode:    (marco) -> Macros.args[marco]?.0 == \H  or not Macros.args[marco]

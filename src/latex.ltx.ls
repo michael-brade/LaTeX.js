@@ -5,6 +5,7 @@ import
     './documentclasses': builtin-documentclasses
     './packages': builtin-packages
 
+``import { createRequire } from 'node:module'``
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
@@ -29,12 +30,6 @@ export class LaTeX
 
     # CTOR
     (generator, CustomMacros) ->
-        if CustomMacros
-            Object.defineProperties this, Object.getOwnPropertyDescriptors(CustomMacros.prototype)
-            Object.assign this, new CustomMacros(generator)
-            Object.assign args, CustomMacros.args
-            CustomMacros.symbols?.forEach (value, key) -> symbols.set key, value
-
         @g = generator
 
         @g.newCounter \secnumdepth
@@ -113,6 +108,43 @@ export class LaTeX
         @g.newLength \intextsep
         @g.newLength \dblfloatsep
         @g.newLength \dbltextfloatsep
+
+        # central ordered list of all loaded package instances
+        @_packages = []
+
+        if CustomMacros
+            @_usepackage CustomMacros
+
+        return new Proxy this, {
+            get: (target, prop) ->
+                # if the property exists on this main LaTeX instance, use it
+                if typeof target[prop] == "function"
+                    return target[prop].bind(target)
+
+                if Reflect.has target, prop
+                    return target[prop]
+
+                # search packages in reverse order (newest packages override older ones)
+                for pkg in target._packages by -1
+                    if typeof pkg[prop] == "function"
+                        return pkg[prop].bind(pkg)
+
+                    if Reflect.has pkg, prop
+                        return pkg[prop]
+
+            set: (target, prop, value) ->
+                # Always write properties directly onto this main LaTeX instance
+                # Reflect.set returns a boolean indicating if the assignment succeeded
+                return Reflect.set target, prop, value
+        }
+
+
+    _usepackage: (PkgClass, options) !->
+        # Instantiate the package with arguments
+        @_packages.push new PkgClass @g, options
+
+        Object.assign args, PkgClass.args
+        PkgClass.symbols?.forEach (value, key) !-> symbols.set key, value
 
 
     @symbols = symbols
@@ -1229,16 +1261,16 @@ export class LaTeX
                 console.error "error loading documentclass \"#{documentclass}\": #{e}"
                 throw new Error "error loading documentclass \"#{documentclass}\""
 
-        @g.documentClass = new Class @g, options
-
-        Object.defineProperties this, Object.getOwnPropertyDescriptors(Class.prototype)
-        Object.assign this, @g.documentClass
-        Object.assign args, Class.args
+        @_usepackage Class, options
+        @g.documentClass = @_packages.0     # new Class @g, options
 
 
     args.\usepackage    =  <[ P kv? csv k? ]>
     \usepackage         : (opts, packages, version) !->
         options = Object.assign {}, @g.documentClass.options, opts
+
+        # create a dynamic synchronous loader using Node's native ESM API
+        require-sync = ``createRequire(import.meta.url)``
 
         for pkg in packages
             continue if providedPackages.includes pkg
@@ -1248,13 +1280,10 @@ export class LaTeX
 
             try
                 if not Package
-                    Export = require "./packages/#{pkg}"
+                    Export = require-sync "./packages/#{pkg}"
                     Package := Export.default || Export[Object.getOwnPropertyNames(Export).0]
 
-                Object.defineProperties this, Object.getOwnPropertyDescriptors(Package.prototype)
-                Object.assign this, new Package @g, options
-                Object.assign args, Package.args
-                Package.symbols?.forEach (value, key) -> symbols.set key, value
+                @_usepackage Package, options
             catch e
                 # log error but continue anyway
                 console.error "error loading package \"#{pkg}\": #{e}"
