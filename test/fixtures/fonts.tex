@@ -1,4 +1,4 @@
-** \bfseries declaration
+\bfseries declaration
 .
 Hello \bfseries is emphasized.
 .
@@ -8,7 +8,7 @@ Hello \bfseries is emphasized.
 .
 
 
-** \em and \emph{}
+\em and \emph{}
 .
 \em You can also \emph{emphasize} text.
 .
@@ -22,7 +22,8 @@ Hello \bfseries is emphasized.
 .
 
 
-s** \emph{} command and nesting
+#
+\emph{} command and nesting
 .
 Hello, \emph{this} is emphasized.
 
@@ -44,7 +45,7 @@ test {test \em\em\em test \em test}
 .
 
 
-** fonts stay until the surrounding group ends      TODO: same spans should be merged
+fonts stay until the surrounding group ends      TODO: same spans should be merged
 .
 outer { text \bfseries {what} more text } end outer
 .
@@ -54,7 +55,7 @@ outer { text \bfseries {what} more text } end outer
 .
 
 
-** fonts reach across paragraphs if no group ends
+fonts reach across paragraphs if no group ends
 .
 hello, \itshape what
 
@@ -71,7 +72,7 @@ Wrap all the paragraphs.
 .
 
 
-** monospaced fonts do not use ligatures
+monospaced fonts do not use ligatures
 .
 \texttt{first test of -- and ---}
 .
@@ -81,8 +82,8 @@ Wrap all the paragraphs.
 .
 
 
-
-s** em lengths are relative to current font sizes
+#
+em lengths are relative to current font sizes
 .
 \small
 a line of text\\[1em]
@@ -119,7 +120,8 @@ a line of text
 .
 
 
-s** lineheight and relative widths according to font size
+#
+lineheight and relative widths according to font size
 .
 This is yet another paragraph. With a lot of meaningless text and meaningless text meaningless text meaningless text.
 

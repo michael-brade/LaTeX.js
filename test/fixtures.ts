@@ -15,16 +15,8 @@ import he from 'he'; // TODO: switch to html-entities (?)
 import slugify from 'slugify';
 import { parse, HtmlGenerator } from 'latex.js';
 // import beautify from 'js-beautify';
-import { load as loadFixture } from './lib/load-fixtures.ts';
+import { load as loadFixture, type Fixture } from './lib/load-fixtures.ts';
 
-
-
-interface Fixture {
-    id: number;
-    header?: string;
-    source: string;
-    result: string;
-}
 
 const dirname = fileURLToPath(new URL('.', import.meta.url));
 const subdirs: string[] = [];
@@ -33,7 +25,7 @@ const subdirs: string[] = [];
 describe('LaTeX.js fixtures', () => {
     const fixturesPath = path.join(dirname, 'fixtures');
 
-    fs.readdirSync(fixturesPath).forEach((name) => {
+    fs.readdirSync(fixturesPath).forEach((name: string) => {
         const fixtureFile = path.join(fixturesPath, name);
         const stat = fs.statSync(fixtureFile);
         if (stat.isDirectory()) {
@@ -68,23 +60,18 @@ function runFixture(fixture: Fixture, name: string): void {
     let _test: (title: string, fn?: Mocha.Func | Mocha.AsyncFunc) => Mocha.Test;
     _test = it;
 
-    // "!": run all tests except those that start with "!", i.e., disable a test by prefixing it with "!"
-    // "+": run only those tests that start with "+"
+    // "!": run all tests except those with attribute "!"
+    // "+": run only those tests with attribute "+"
 
-    if (fixture.header?.charAt(0) === "!") {
+    if (fixture.attrs.has("!"))
         _test = it.skip;
-        fixture.header = fixture.header.substring(1);
-    } else if (fixture.header?.charAt(0) === "+") {
+    else if (fixture.attrs.has("+"))
         _test = it.only;
-        fixture.header = fixture.header.substring(1);
-    }
 
-    // make a screenshot by prefixing it with "s"
+    // make a screenshot by adding the attribute "#"
     let screenshot = false;
-    if (fixture.header?.charAt(0) === "s") {
+    if (fixture.attrs.has("#"))
         screenshot = true;
-        fixture.header = fixture.header.substring(1);
-    }
 
 
     // create syntax test

@@ -1,4 +1,4 @@
-** whitespaces are compressed, comments are discarded
+whitespaces are compressed, comments are discarded
 .
 three
 \par
@@ -9,14 +9,14 @@ paragraphs
     % comment
  separated by par.
 
-   this     paragraph  has a 	    few 
+   this     paragraph  has a 	    few
  words,   including
  % comment
  a comment.
 
 
  % spaces at the end
- 
+
 .
 <div class="body">
 <p>three</p><p>paragraphs</p><p>separated by par.</p>
@@ -25,7 +25,7 @@ paragraphs
 .
 
 
-** how to force two paragraphs
+how to force two paragraphs
 .
 text  \par
 ~
@@ -38,9 +38,10 @@ more text
 .
 
 
-** standard double-newline paragraph separation (with OSX and Windows EOL support)
+standard double-newline paragraph separation (with OSX and Windows EOL support)
 .
-firstparagraph
+first
+paragraph
 
  second
 paragraph
@@ -52,7 +53,7 @@ paragraph
 .
 
 
-** \\ and \newline do not add spaces (they \unskip)
+\\ and \newline do not add spaces (they \unskip)
 .
 first line \\
  second line
@@ -67,7 +68,8 @@ first line \newline
 .
 
 
-!** \mbox: restricted horizontal mode and linebreaks and paragraphs
+!
+\mbox: restricted horizontal mode and linebreaks and paragraphs
 .
 x\mbox{
 one \gobbleO space,
@@ -99,7 +101,8 @@ space at the beginning and two at the end } .
 .
 
 
-!** \unskip breaks out of groups, \ignorespaces does not
+!
+\unskip breaks out of groups, \ignorespaces does not
 .
 text {\unskip} text, text {\ignorespaces} text,
 .
@@ -110,7 +113,8 @@ text {\unskip} text, text {\ignorespaces} text,
 
 
 
-!** a space is added after macros that take arguments
+!
+a space is added after macros that take arguments
 .
 % TODO: add a brsp after ] and }
 one \gobbleO space,
@@ -126,7 +130,8 @@ two \echoO[] spaces.
 
 
 
-!** space hack to prevent multiple spaces
+!
+space hack to prevent multiple spaces
 .
 x \pagebreak x \nopagebreak x \vspace{1mm} x \label{hi} x \marginpar{test} x \index{something} x \glossary{word} x \nocite x \enlargethispage x
 .
@@ -136,12 +141,12 @@ x \pagebreak x \nopagebreak x \vspace{1mm} x \label{hi} x \marginpar{test} x \in
 .
 
 
-** more than two newlines, including spaces, equal two newlines
+more than two newlines, including spaces, equal two newlines
 .
 first paragraph
 
-   
-  
+
+
 
 
 second paragraph
@@ -153,7 +158,7 @@ second paragraph
 .
 
 
-** comments are disregarded and won't add a paragraph
+comments are disregarded and won't add a paragraph
 .
 first paragraph
 
@@ -169,7 +174,7 @@ second paragraph
 </div>
 .
 
-** comments are disregarded and won't prevent a paragraph
+comments are disregarded and won't prevent a paragraph
 .
 first paragraph % this should not prevent the paragraph
 
@@ -185,7 +190,7 @@ third paragraph
 .
 
 
-** comments can remove a linebreak (i.e. space) and thus join lines
+comments can remove a linebreak (i.e. space) and thus join lines
 .
 This is an % stupid
 % Better: instructive <----
@@ -200,7 +205,7 @@ example: Supercal%
 
 
 
-** one space inside as well as after a group is kept, the rest is compressed or skipped
+one space inside as well as after a group is kept, the rest is compressed or skipped
 .
 text with empty group {  } and more text
 
@@ -222,7 +227,7 @@ text with {  a group  }  and more text
 .
 
 
-** macros without arguments ignore spaces afterwards
+macros without arguments ignore spaces afterwards
 .
 some \empty  text.
 .
@@ -232,7 +237,7 @@ some \empty  text.
 .
 
 
-** force a space after a macro with {}
+force a space after a macro with {}
 .
 some \empty{} text.
 .
@@ -242,7 +247,7 @@ some \empty{} text.
 .
 
 
-** force a space after a macro with \
+force a space after a macro with \
 .
 some \empty\ text.
 .
@@ -252,7 +257,7 @@ some \empty\ text.
 .
 
 
-** \ followed by tab or linebreak is also a space
+\ followed by tab or linebreak is also a space
 .
 some \empty\
 text. And\	these
@@ -268,7 +273,7 @@ this.
 .
 
 
-** escaped newlines in an empty document (or at the end of a document)
+escaped newlines in an empty document (or at the end of a document)
 .
 \
 
@@ -280,7 +285,7 @@ this.
 .
 
 
-** escaped newlines at the start of a paragraph
+escaped newlines at the start of a paragraph
 .
 \
 x
@@ -292,7 +297,7 @@ x
 .
 
 
-** escaped newlines after an environment
+escaped newlines after an environment
 .
 \begin{center}
 \end{center}
@@ -306,7 +311,7 @@ x
 .
 
 
-** spaces before and after horizontal environments
+spaces before and after horizontal environments
 .
 xx
 \begin{empty}
