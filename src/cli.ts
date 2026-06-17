@@ -16,6 +16,9 @@ import en from 'hyphenation.en-us';
 import de from 'hyphenation.de';
 import info from '../package.json' with { type: 'json' };
 
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
 he.encode.options.strict = true;
 he.encode.options.useNamedReferences = true;
 
@@ -68,7 +71,7 @@ const options = program.opts<ProgramOptions>();
 let CustomMacros: any;
 if (options.macros) {
     const macros = path.resolve(process.cwd(), options.macros);
-    const CustomMacrosModule = await import(macros);
+    const CustomMacrosModule = require(macros);
     if (CustomMacrosModule.default) {
         // class is the default export
         CustomMacros = CustomMacrosModule.default;
