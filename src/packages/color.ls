@@ -1,5 +1,5 @@
 # forward to xcolor
 
-import './xcolor': { XColor }
+import './xcolor.ls': { XColor }
 
 export Color = XColor

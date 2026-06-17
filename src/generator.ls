@@ -1,7 +1,7 @@
 import
-    './latex.ltx': { LaTeX }
-    './symbols': { diacritics, symbols }
-    './types': { makeLengthClass }
+    './latex.ltx.ls': { LaTeX }
+    './symbols.ls': { diacritics, symbols }
+    './types.ls': { makeLengthClass }
 
 Macros = LaTeX
 

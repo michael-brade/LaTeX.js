@@ -1,6 +1,6 @@
 import
-    './generator': { Generator }
-    './symbols': { ligatures, diacritics }
+    './generator.ls': { Generator }
+    './symbols.ls': { ligatures, diacritics }
     '@svgdotjs/svg.js': { SVG }
     'katex': katex
 

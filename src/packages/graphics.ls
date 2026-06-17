@@ -1,5 +1,5 @@
 # graphics just uses graphicx
 
-import './graphicx': { Graphicx }
+import './graphicx.ls': { Graphicx }
 
 export Graphics = Graphicx

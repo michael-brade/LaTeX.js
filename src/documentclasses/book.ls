@@ -1,5 +1,5 @@
 import
-    './report': { Report }
+    './report.ls': { Report }
 
 
 # book in LaTeX has no abstract

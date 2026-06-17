@@ -1,6 +1,6 @@
 import
-    './symbols': { symbols }
-    './types': { Vector }
+    './symbols.ls': { symbols }
+    './types.ls': { Vector }
 
     './documentclasses': builtin-documentclasses
     './packages': builtin-packages
@@ -136,6 +136,39 @@ export class LaTeX
                 # Always write properties directly onto this main LaTeX instance
                 # Reflect.set returns a boolean indicating if the assignment succeeded
                 return Reflect.set target, prop, value
+
+            # --- HAS: Handles the native JS `in` operator ---
+            has: (target, prop) ->
+                console.error("Proxy.has", prop)
+                return true if Reflect.has target, prop
+
+                # if it's a structural JS property not on this, don't check packages
+                if prop in <[ constructor toString valueOf hasOwnProperty ]>
+                    return false
+
+                for pkg in target._packages by -1
+                    if Reflect.has pkg, prop and typeof pkg[prop] == "function"
+                        return true
+
+                return false
+
+            getOwnPropertyDescriptor: (target, prop) ->
+                console.error("Proxy.getOwnPropertyDescriptor", prop)
+
+                # if it's physically defined on this instance, return its true descriptor
+                desc = Reflect.getOwnPropertyDescriptor target, prop
+                return desc if desc
+
+                # check packages: if a package owns it as a macro, fake a valid descriptor
+                for pkg in target._packages by -1
+                    # check the package instance OR its prototype chain for the method
+                    if Reflect.has pkg, prop and typeof pkg[prop] == "function"
+                        return {
+                            value: pkg[prop]
+                            enumerable: true
+                            configurable: true
+                            writable: true
+                        }
         }
 
 
@@ -1280,6 +1313,7 @@ export class LaTeX
 
             try
                 if not Package
+                    # Export = ``await globalThis.import("./packages/" + pkg)``
                     Export = require-sync "./packages/#{pkg}"
                     Package := Export.default || Export[Object.getOwnPropertyNames(Export).0]
 

@@ -1,5 +1,5 @@
 import
-    './base': { Base }
+    './base.ls': { Base }
 
 
 export class Report extends Base

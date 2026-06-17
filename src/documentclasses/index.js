@@ -1,6 +1,6 @@
-import { Article } from './article'
-import { Book } from './book'
-import { Report } from './report'
+import { Article } from './article.ls'
+import { Book } from './book.ls'
+import { Report } from './report.ls'
 
 export default {
     article: Article,
