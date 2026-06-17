@@ -12,7 +12,6 @@ declare global {
     var test: Mocha.TestFunction;
     var chrome: Browser;
     var firefox: Browser;
-    var takeScreenshot: (html: string, filename: string) => Promise<void>;
 }
 
 global.window = createHTMLWindow() as any;

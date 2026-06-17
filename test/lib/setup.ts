@@ -121,7 +121,8 @@ function compareScreenshots(filename: string): void {
 }
 
 // render html and take screenshot
-global.takeScreenshot = async (html: string, filename: string): Promise<void> => {
+export async function takeScreenshot(html: string, filename: string): Promise<void>
+{
     testHtmlPage = html;
 
     const address = server.address();

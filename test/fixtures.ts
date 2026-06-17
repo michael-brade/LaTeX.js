@@ -16,6 +16,7 @@ import slugify from 'slugify';
 import { parse, HtmlGenerator } from 'latex.js';
 // import beautify from 'js-beautify';
 import { load as loadFixture, type Fixture } from './lib/load-fixtures.ts';
+import { takeScreenshot } from './lib/setup.ts';
 
 
 const dirname = fileURLToPath(new URL('.', import.meta.url));
