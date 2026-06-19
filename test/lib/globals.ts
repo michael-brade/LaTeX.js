@@ -10,11 +10,10 @@ import { createHTMLWindow } from 'svgdom';
 declare global {
     var expect: Chai.ExpectStatic;
     var test: Mocha.TestFunction;
-    var chrome: Browser;
-    var firefox: Browser;
 }
 
 global.window = createHTMLWindow() as any;
 global.document = (global.window as any).document;
 
+global.test = it
 global.expect = chai.expect;

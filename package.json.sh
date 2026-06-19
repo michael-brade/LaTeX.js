@@ -208,14 +208,16 @@ devDependencies:
     "@types/tmp": "^0.2.6"
 
 mocha:
-    require: ['tsx', 'test/lib/globals.ts']
-    file: 'test/lib/setup.ts'
+    extension: ['ts']
+    'node-option': [ "import=tsx" ]
+    file:
+        'test/lib/globals.ts'
+        'test/lib/setup.ts'
     reporter: 'spec'
     inlineDiffs: true
     timeout: 10000
     ui: 'bdd'
     checkLeaks: true
-    globals: 'firefox,chrome'
     sort: true
     reporter-option: 'maxDiffSize=0'
 

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { promises as fs } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { EOL } from 'node:os';
-import { takeScreenshot } from './lib/setup.ts';
+import { chrome, takeScreenshot } from './lib/setup.ts';
 
 
 const dirname = fileURLToPath(new URL('.', import.meta.url));

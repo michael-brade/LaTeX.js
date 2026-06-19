@@ -1,32 +1,40 @@
 import fs from 'node:fs';
 import http from 'node:http';
 import serveHandler from 'serve-handler';
-import puppeteer, { ConsoleMessage, Page } from 'puppeteer';
+import puppeteer, { Browser, ConsoleMessage, Page } from 'puppeteer';
 import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 
-global.test = it;
+
+export let chrome: Browser;
+export let firefox: Browser;
 
 let cPage: Page,
     fPage: Page;
 
-let server: http.Server,
-    testHtmlPage: string;
+let server: http.Server;
+
+// map for html pages to serve (allows for parallel tests)
+const htmlRegistry = new Map<string, string>();
+
+// DEBUG=chrome npm test
+const DEBUG = process.env.DEBUG as 'chrome' | 'firefox' | undefined;
+
 
 before(async () => {
-    global.chrome = await puppeteer.launch({
+    chrome = await puppeteer.launch({
         browser: 'chrome',
-        headless: true,
-        devtools: false,
+        headless: DEBUG != 'chrome',
+        devtools: DEBUG === 'chrome',
         dumpio: false,
         // args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files']
     });
 
-    global.firefox = await puppeteer.launch({
+    firefox = await puppeteer.launch({
         browser: 'firefox',
         executablePath: '/opt/firefox/firefox',
-        headless: true,
-        devtools: false,
+        headless: DEBUG != 'firefox',
+        devtools: DEBUG === 'firefox',
         dumpio: false
     });
 
@@ -43,33 +51,48 @@ before(async () => {
         deviceScaleFactor: 2
     });
 
-    cPage.on('console', (msg: ConsoleMessage) => {
-        if (msg.type() === 'error') {
-            console.error("Error in chrome: ", msg.text());
-        }
-    });
+    const logErrors = (browserName: string) => (msg: ConsoleMessage) => {
+        if (msg.type() === 'error')
+            console.error(`Error in ${browserName}: `, msg.text());
+    };
+    cPage.on('console', logErrors('chrome'));
+    fPage.on('console', logErrors('firefox'));
 
-    fPage.on('console', (msg: ConsoleMessage) => {
-        if (msg.type() === 'error') {
-            console.error("Error in firefox: ", msg.text());
+
+    const handleDisconnect = (browserName: string) => async () => {
+        if (DEBUG === browserName) {
+            console.log(`\n🛑 Browser [${browserName}] was closed. Shutting down server...`);
+
+            if (server)
+                server.close();
+
+            process.exit(0);
         }
-    });
+    };
+
+    chrome.on("disconnected", handleDisconnect('chrome'));
+    firefox.on("disconnected", handleDisconnect('firefox'));
 
     // start the webserver in the dist directory so that CSS and fonts are found
     // redirect from /dist to /
-    server = http.createServer(async (request, response) => {
-        if (request.url === "/") {
-            response.writeHead(200, { 'Content-Type': 'text/html' });
-            response.end(testHtmlPage);
-        } else {
-            await serveHandler(request, response, {
-                public: process.cwd() + "/dist",
-                redirects: [
-                    { source: "/dist/:file", destination: "/:file", type: 301 },
-                    { source: "/dist/:dir/:file", destination: "/:dir/:file", type: 301 }
-                ]
-            });
+    server = http.createServer(async (request: http.IncomingMessage, response) => {
+        const url = new URL(request.url || '', `http://${request.headers.host}`);
+        const testId = url.searchParams.get('testId');
+
+        // if a test-ID was given and the registry has it, serve it
+        if (testId && htmlRegistry.has(testId)) {
+            response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            response.end(htmlRegistry.get(testId));
+            return;
         }
+
+        await serveHandler(request, response, {
+            public: process.cwd() + "/dist",
+            redirects: [
+                { source: "/dist/:file", destination: "/:file", type: 301 },
+                { source: "/dist/:dir/:file", destination: "/:dir/:file", type: 301 }
+            ]
+        });
     });
 
     await new Promise<void>((resolve, reject) => {
@@ -81,9 +104,10 @@ before(async () => {
 });
 
 after(async () => {
-    await chrome.close();
-    await firefox.close();
-    server.close();
+    // only close if we are not debugging
+    if (DEBUG !== 'chrome')   await chrome.close();
+    if (DEBUG !== 'firefox')  await firefox.close();
+    if (!DEBUG)               server.close();
 });
 
 function compareScreenshots(filename: string): void {
@@ -123,37 +147,52 @@ function compareScreenshots(filename: string): void {
 // render html and take screenshot
 export async function takeScreenshot(html: string, filename: string): Promise<void>
 {
-    testHtmlPage = html;
+    htmlRegistry.set(filename, html);
 
     const address = server.address();
     const port = typeof address === 'string' ? address : address?.port;
-    await cPage.goto(`http://localhost:${port}`, { waitUntil: 'load' });
-    await cPage.addStyleTag({ content: ".body { border: .4px solid; height: max-content; }" });
 
-    await fPage.goto(`http://localhost:${port}`, { waitUntil: 'load' });
-    await fPage.addStyleTag({ content: ".body { border: .4px solid; height: max-content; }" });
+    const screenshotPage = async (page: Page) => {
+        await page.goto(`http://localhost:${port}/?testId=${encodeURIComponent(filename)}`, { waitUntil: 'load' });
+        await page.addStyleTag({ content: ".body { border: .4px solid; height: max-content; }" });
 
-    const cfile = filename + ".ch";
-    const ffile = filename + ".ff";
+        // wait for fonts to be loaded
+        await page.evaluate(() => document.fonts.ready);
 
-    let page = await cPage.$('body');
+        const bodyElement = await page.$('body');
+        if (!bodyElement) throw new Error("Body element not found");
 
-    let screenshot = await page!.screenshot({
-        omitBackground: true
-    });
+        // find the real hight of the page and adjust viewport
+        // const boundingBox = await bodyElement.boundingBox();
+        // if (!boundingBox) throw new Error("Could not calculate bounding box");
 
-    fs.writeFileSync(cfile + '.new.png', screenshot);
+        // await page.setViewport({
+        //     width: 1000,
+        //     height: Math.ceil(boundingBox.height),
+        //     deviceScaleFactor: 2
+        // });
 
-    page = await fPage.$('body');
+        return await bodyElement.screenshot({
+            omitBackground: page.browser() == chrome
+        });
+    };
 
-    screenshot = await page!.screenshot({
-        // omitBackground: true
-    });
+    // parallel screenshots for speed
+    const [cScreenshot, fScreenshot] = await Promise.all([
+        screenshotPage(cPage),
+        screenshotPage(fPage)
+    ]);
 
-    fs.writeFileSync(ffile + '.new.png', screenshot);
+    const cfile = `${filename}.ch`;
+    const ffile = `${filename}.ff`;
+
+    fs.writeFileSync(`${cfile}.new.png`, cScreenshot);
+    fs.writeFileSync(`${ffile}.new.png`, fScreenshot);
 
     compareScreenshots(cfile);
     compareScreenshots(ffile);
 
-    testHtmlPage = "";
+    // only delete the page again when not debugging
+    if (!DEBUG)
+        htmlRegistry.delete(filename);
 };
