@@ -13,8 +13,9 @@
 
   <!-- ES6 Modules cannot be used without MIME types, so they don't work from local files! Use http-server etc. -->
   <script type="module">
-    // import { LaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js@0.12.4/dist/latex.mjs"
-    import { LaTeXJSComponent } from "./latex.mjs"
+    // import { LaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js@0.12.4/dist/latex.js"
+    // import { LaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js@0.13.0"
+    import { LaTeXJSComponent } from "./latex.js"
     customElements.define("latex-js", LaTeXJSComponent)
   </script>
 

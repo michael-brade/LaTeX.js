@@ -25,13 +25,13 @@ type:
 exports:
     import:
         types: './dist/latex.d.ts'
-        default: './dist/latex.mjs'
+        default: './dist/latex.js'
     require:
         types: './dist/latex.d.ts'
         default: './dist/latex.cjs'
 
 browser:
-    './dist/latex.umd.js'
+    './dist/latex.umd.cjs'
 
 
 files:
@@ -39,8 +39,10 @@ files:
     'dist/latex.d.ts'
     'dist/latex.cjs'
     'dist/latex.cjs.map'
-    'dist/latex.mjs'
-    'dist/latex.mjs.map'
+    'dist/latex.js'
+    'dist/latex.js.map'
+    'dist/latex.und.cjs'
+    'dist/latex.und.cjs.map'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
@@ -65,7 +67,7 @@ scripts:
         rsync -a src/js/ dist/js/;
         rsync -a src/types/latex.d.ts dist;
 
-	    rollup -c;
+	    vite build;
         chmod a+x bin/latex.js;
     "
 
@@ -129,7 +131,7 @@ dependencies:
     "@types/js-beautify": "^1.14.3"
 
 devDependencies:
-    ### actual runtime dependencies, but bundled by rollup
+    ### actual runtime dependencies, but bundled by vite
 
     'he': '1.2.x'
     'katex': '^0.16.10'
@@ -158,10 +160,6 @@ devDependencies:
 
     ### docs
 
-    'vuepress': '2.0.0-beta.61'
-    '@vuepress/plugin-register-components': 'next'
-
-    'rollup-plugin-string': '3.0.x'
     'split-grid': '1.0.x'
     '@codemirror/autocomplete': '6.x'
     '@codemirror/commands': '6.x'
@@ -177,12 +175,13 @@ devDependencies:
 
     ### bundling
 
-    'rollup': '4.61.x'
-    "@rollup/plugin-typescript": "^12.3.0"
-    '@rollup/plugin-commonjs': '29.0.x'
-    '@rollup/plugin-node-resolve': '16.0.x'
-    '@rollup/plugin-terser': '1.0.x'
+    'vite': '8.0.x'
+    'vite-plugin-node-polyfills': '0.28.x'
+    "vite-plugin-checker": '0.14.x'
+    'unplugin-dts': '1.0.x'
     'rollup-plugin-visualizer': '7.0.x'
+    'esbuild': '0.28.x'
+    'terser': '5.48.x'
 
     ### testing
 
@@ -191,7 +190,6 @@ devDependencies:
     'chai': '6.x'
     'chai-as-promised': '8.0.x'
     'slugify': '1.6.x'
-    'decache': '4.6.x'
     'tmp': '0.2.x'
 
     'puppeteer': '25.1.x'
