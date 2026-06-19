@@ -3,57 +3,63 @@ import { HtmlGenerator } from './html-generator.ls'
 
 export let LaTeXJSComponent = null
 
-// only define LaTeXJSComponent in browser context, i.e., if HTMLElement exists
-if (typeof HTMLElement != 'undefined') {
-  //  path of this script
-  let path = import.meta.url
+// fallback for environments without import.meta.url
+const DEFAULT_BASE_PATH = typeof import.meta?.url !== 'undefined' ? import.meta.url : window.location.href
 
-  LaTeXJSComponent = class extends HTMLElement {
-    constructor() {
+// only define LaTeXJSComponent in browser context, i.e., if HTMLElement exists
+if (typeof HTMLElement !== 'undefined') {
+
+  LaTeXJSComponent = class extends HTMLElement
+  {
+    constructor()
+    {
       super()
-      this.shadow =  this.attachShadow({mode: 'open'})
+      this.shadow = this.attachShadow({ mode: 'open' })
+      this._observer = null
       // wait for some LaTeX source to appear in the upgrade-case
       if (!this.textContent) {
-        const observer = new MutationObserver(mutationList => {
+        this._observer = new MutationObserver(() => {
           if (this.textContent) {
             // no longer need to watch for change
             // TODO: actually, we could keep watching to support editing!
-            observer.disconnect();
-            this.onContentReady();
+            this._observer.disconnect()
+            this._observer = null
+            this.onContentReady()
           }
         })
-        observer.observe(this, {
-          childList: true
-        })
+        this._observer.observe(this, { childList: true })
       } else {
-        this.onContentReady();
+        this.onContentReady()
       }
     }
 
-    async onContentReady() {
+    async onContentReady()
+    {
       // empty DOM
-      while (this.shadow.lastChild) {
-        this.shadow.lastChild.remove()
-      }
+      this.shadow.innerHTML = ''
 
       // read options
       const hyphenate = this.getAttribute("hyphenate") !== "false"
 
-      if (this.hasAttribute("baseURL"))
-        path = this.getAttribute("baseURL")
+      const basePath = this.getAttribute("baseURL") || DEFAULT_BASE_PATH
 
-      let CustomMacros;
-      if (this.hasAttribute("macros"))
-        CustomMacros = (await import(this.getAttribute("macros"))).default
-
+      let CustomMacros
+      if (this.hasAttribute("macros")) {
+        const macrosPath = new URL(this.getAttribute("macros"), basePath).href
+        CustomMacros = (await import(/* @vite-ignore */ macrosPath)).default
+      }
 
       // parse
-      const generator = parse(this.textContent, { generator: new HtmlGenerator({ hyphenate, CustomMacros }) })
+      const generator = parse(this.textContent, {
+        generator: new HtmlGenerator({ hyphenate, CustomMacros })
+      })
 
       // create DOM
-      let page = document.createElement("div")
-      page.setAttribute("class", "page")
+      const page = document.createElement("div")
+      page.className = "page"
       page.appendChild(generator.domFragment())
+
+      // load optional stylesheet
       if (this.hasAttribute("stylesheet")) {
         const style = document.createElement("link")
         style.type = "text/css"
@@ -62,29 +68,33 @@ if (typeof HTMLElement != 'undefined') {
         this.shadow.appendChild(style)
       }
 
-      this.shadow.appendChild(generator.stylesAndScripts(path))
+      // inject styles, scripts, and page
+      this.shadow.appendChild(generator.stylesAndScripts(basePath))
       this.shadow.appendChild(page)
 
       generator.applyLengthsAndGeometryToDom(this.shadow.host)
 
       // we need to add CMU fonts to the parent page (if they weren't added yet)
       const pDoc = this.ownerDocument
-      const links = pDoc.querySelectorAll('link')
-      const cmu = new URL("fonts/cmu.css", path)
+      const cmu = new URL("./fonts/cmu.css", basePath)
 
-      for (let link of links) {
-        if (link.href == cmu.href)
-          return
+      // check if fonts have been included already
+      const exists = Array.from(pDoc.querySelectorAll('link')).some(link => link.href === cmu.href)
+
+      if (!exists) {
+        const linkEl = pDoc.createElement("link")
+        linkEl.type = "text/css"
+        linkEl.rel = "stylesheet"
+        linkEl.href = cmu.href
+        pDoc.head.appendChild(linkEl)
       }
-
-      const linkEl = pDoc.createElement("link")
-      linkEl.type = "text/css"
-      linkEl.rel = "stylesheet"
-      linkEl.href = cmu.href
-
-      pDoc.head.appendChild(linkEl)
     }
 
-    connectedCallback() { }
+    disconnectedCallback()
+    {
+      // cleanup to avoid memory leaks
+      if (this._observer)
+        this._observer.disconnect()
+    }
   }
 }
