@@ -39,9 +39,9 @@ export class Article extends Base
         head = @g.create @g.list, @g.macro("abstractname"), "center"
         @g.exitGroup!
 
-        [ head ] ++ @quotation!
+        [ head ] ++ @g.macro \quotation
 
-    \endabstract        :!-> @endquotation!
+    \endabstract        :!-> @g.macro \endquotation
 
 
     args.\appendix =    <[ V ]>
