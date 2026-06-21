@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 
-import { defineConfig } from 'vite';
+import { defineConfig, ConfigEnv } from 'vite';
 
 import { checker } from 'vite-plugin-checker';
 import dts from 'unplugin-dts/vite'
@@ -13,17 +13,16 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import ignoreInfiniteLoop from "./lib/peggy-plugin-no-infinite-loop.ts";
 
 
-const mode = process.env.NODE_ENV || 'development';
-const prod = mode === "production";
+export default defineConfig((env: ConfigEnv) => {
 
+    const prod = env.mode !== 'development';
 
-export default defineConfig({
-    mode: mode,
-    appType: "custom",
+    return {
+        appType: "custom",
 
-    logLevel: "info",
+        logLevel: "info",
 
-    plugins: [
+        plugins: [
         checker({
             typescript: true
         }),
@@ -40,40 +39,41 @@ export default defineConfig({
         }),
 
         peggy({
-            plugins: [ignoreInfiniteLoop],
-            trace: false
-        }),
-        dts({
-            insertTypesEntry: true,
-            bundleTypes: false          // TODO: try true on prod builds
-        })
-    ],
+                plugins: [ignoreInfiniteLoop],
+                trace: false
+            }),
+            dts({
+                insertTypesEntry: true,
+                bundleTypes: false          // TODO: try true on prod builds
+            })
+        ],
 
-    oxc: false, // then requires esbuild
+        oxc: false, // then requires esbuild
 
-    build: {
-        sourcemap: prod,
-        minify: prod ? 'esbuild' : false,
+        build: {
+            sourcemap: prod,
+            minify: prod ? 'esbuild' : false,
 
-        outDir: 'dist',
-        emptyOutDir: false,
+            outDir: 'dist',
+            emptyOutDir: true,
 
-        copyPublicDir: false,
+            copyPublicDir: false,
 
-        lib: {
-            entry: resolve(import.meta.dirname, "src/index.ts"),
-            name: "latexjs",
-            fileName: "latex",
-            formats: ["es", "cjs", "umd"]
-        },
+            lib: {
+                entry: resolve(import.meta.dirname, "src/index.ts"),
+                name: "latexjs",
+                fileName: "latex",
+                formats: ["es", "cjs", "umd"]
+            },
 
-        rolldownOptions: {
-            plugins: [
-                visualizer({
-                    filename: './dist/latex.stats.html',
-                    sourcemap: prod
-                })
-            ]
+            rolldownOptions: {
+                plugins: [
+                    visualizer({
+                        filename: './dist/latex.stats.html',
+                        sourcemap: prod
+                    })
+                ]
+            }
         }
     }
 });

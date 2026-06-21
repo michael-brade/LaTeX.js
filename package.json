@@ -48,8 +48,9 @@
   "scripts": {
     "postinstall": "patch-package",
     "clean": "rimraf dist bin website test/coverage test/test-results.xml docs/.vitepress/.temp docs/.vitepress/.cache;",
-    "devbuild": "rimraf 'dist/**/*.map'; rimraf dist/src; mkdirp dist/css; mkdirp dist/js; mkdirp dist/fonts; mkdirp dist/documentclasses; mkdirp dist/packages; touch dist/documentclasses/.keep; touch dist/packages/.keep; rsync -a src/css/ dist/css/; rsync -a public/fonts/ dist/fonts/; rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/; rsync -a public/js/ dist/js/; vite build; chmod a+x bin/latex.js;",
-    "build": "NODE_ENV=production npm run devbuild;",
+    "assets": "rimraf 'dist/**/*.map'; rimraf dist/src; mkdirp dist/css; mkdirp dist/js; mkdirp dist/fonts; mkdirp dist/documentclasses; mkdirp dist/packages; touch dist/documentclasses/.keep; touch dist/packages/.keep; rsync -a src/css/ dist/css/; rsync -a public/fonts/ dist/fonts/; rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/; rsync -a public/js/ dist/js/;",
+    "devbuild": "vite build --mode development; npm run assets; chmod a+x bin/latex.js;",
+    "build": "vite build --mode production; npm run assets;",
     "prepare-latex-assets": "rimraf docs/public/latexjs; mkdirp docs/public/latexjs/css docs/public/latexjs/fonts docs/public/latexjs/js; rsync -a dist/css/ docs/public/latexjs/css/; rsync -a dist/fonts/ docs/public/latexjs/fonts/; rsync -a dist/js/ docs/public/latexjs/js/;",
     "devdocs": "npm run prepare-latex-assets; vitepress dev docs;",
     "docs": "npm run build; npm run prepare-latex-assets; [ ! -d website ] && git worktree add website gh-pages; mv website/.git .website.git; vitepress build docs; mv .website.git website/.git; cd website; git add .; git commit -m 'regenerated website';",
@@ -82,7 +83,7 @@
     "@typescript/typescript6": "*",
     "tsx": "^4.22.4",
     "@tsconfig/node-ts": "^23.6.4",
-    "@tsconfig/node24": "^24.0.4",
+    "@tsconfig/node22": "^22.0.7",
     "vitepress": "^1.6.4",
     "split-grid": "1.0.x",
     "@codemirror/autocomplete": "6.x",
@@ -113,6 +114,7 @@
     "slugify": "1.6.x",
     "tmp": "0.2.x",
     "puppeteer": "25.17.x",
+    "pngjs": "7.0.x",
     "pixelmatch": "8.x",
     "c8": "12.x",
     "codecov": "3.x",
@@ -182,6 +184,6 @@
   },
   "homepage": "https://latex.js.org",
   "engines": {
-    "node": ">= 24.0"
+    "node": ">= 22.0"
   }
 }
