@@ -41,7 +41,15 @@ onMounted(() => {
             columnGutters: [{
                 track: 1,
                 element: gutter.value
-            }]
+            }],
+            onDragEnd: () => {
+                // microscopic opacity shift forces Chrome to reset the scroll tree
+                // without this, scrolling with the mousewheel is not possible after using the splitter
+                if (preview.value) {
+                    preview.value.style.opacity = '0.999';
+                    requestAnimationFrame(() => preview.value!.style.opacity = '1');
+                }
+            }
         })
     }
 })
@@ -71,11 +79,9 @@ onMounted(() => {
 
         <!-- Right side: LaTeX preview -->
         <div class="pane-wrapper">
-            <div class="preview-content">
-                <iframe id="preview" ref="preview"
-                    sandbox="allow-same-origin allow-scripts"
-                ></iframe>
-            </div>
+            <iframe id="preview" ref="preview"
+                sandbox="allow-same-origin allow-scripts"
+            ></iframe>
         </div>
     </div>
 </template>
@@ -95,7 +101,6 @@ onMounted(() => {
     position: relative;
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 .absolute-container {
