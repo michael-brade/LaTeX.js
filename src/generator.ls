@@ -38,6 +38,12 @@ export class Generator
 
     Length: null
 
+
+    _title: null
+    _author: null
+    _date: null
+
+
     reset: !->
         @Length = makeLengthClass @
 
@@ -72,6 +78,10 @@ export class Generator
         @_resets = new Map()
 
         @_continue = false
+
+        @_title = null
+        @_author = null
+        @_date = null
 
         @newCounter \enumi
         @newCounter \enumii

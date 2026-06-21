@@ -157,11 +157,11 @@ export class Base
     args.\maketitle =   <[ V ]>
 
     \maketitle          :->
-        @g.setTitle @_title
+        @g.setTitle @g._title
 
-        title = @g.create @g.title, @_title
-        author = @g.create @g.author, @_author
-        date = @g.create @g.date, if @_date then that else @g.macro \today
+        title = @g.create @g.title, @g._title
+        author = @g.create @g.author, @g._author
+        date = @g.create @g.date, if @g._date then that else @g.macro \today
 
         maketitle = @g.create @g.list, [
             @g.createVSpace new @g.Length 2, "em"
@@ -178,11 +178,10 @@ export class Base
         @g.setCounter \footnote 0
 
         # reset - maketitle can only be used once
-        @_title = null
-        @_author = null
-        @_date = null
-        @_thanks = null
+        @g._title = null
+        @g._author = null
+        @g._date = null
 
-        @\title = @\author = @\date = @\thanks = @\and = @\maketitle = !->
+        @\title = @\author = @\date = @\maketitle = !->
 
         [ maketitle ]

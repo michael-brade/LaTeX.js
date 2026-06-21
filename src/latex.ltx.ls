@@ -22,11 +22,6 @@ export class LaTeX
     # this LaTeX implementation already covers these packages
     providedPackages = <[ calc pspicture picture pict2e keyval comment ]>
 
-    _title: null
-    _author: null
-    _date: null
-    _thanks: null
-
 
     # CTOR
     (generator, CustomMacros) ->
@@ -132,10 +127,6 @@ export class LaTeX
                     if Reflect.has pkg, prop
                         return pkg[prop]
 
-            set: (target, prop, value) ->
-                # Always write properties directly onto this main LaTeX instance
-                # Reflect.set returns a boolean indicating if the assignment succeeded
-                return Reflect.set target, prop, value
 
             # --- HAS: Handles the native JS `in` operator ---
             has: (target, prop) ->
@@ -286,9 +277,9 @@ export class LaTeX
     args.\date =        <[ HV g ]>
     args.\thanks =      <[ HV g ]>
 
-    \title              : (t) !-> @_title = t
-    \author             : (a) !-> @_author = a
-    \date               : (d) !-> @_date = d
+    \title              : (t) !-> @g._title = t
+    \author             : (a) !-> @g._author = a
+    \date               : (d) !-> @g._date = d
 
     \and                :-> @g.macro \quad
     \thanks             : @\footnote
