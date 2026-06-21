@@ -211,7 +211,7 @@ devDependencies:
     tmp: 0.2.x
 
     puppeteer: 25.17.x
-    pngjs: 7.0.x
+    pngjs: 7.0.x        # really needed
     pixelmatch: 8.x
 
     c8: 12.x
