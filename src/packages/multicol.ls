@@ -6,6 +6,7 @@ export class Multicol
 
     # CTOR
     (generator, options) ->
+        @g = generator
 
 
     # multicolumns

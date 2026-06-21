@@ -6,6 +6,7 @@ export class Hyperref
 
     # CTOR
     (generator, options) ->
+        @g = generator
 
 
     # package: hyperref

@@ -6,6 +6,8 @@ export class Graphicx
 
     # CTOR
     (generator, options) ->
+        @g = generator
+
 
     # 3 Colour   TODO: also in xcolor - include xcolor instead?
 
