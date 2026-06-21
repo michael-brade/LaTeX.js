@@ -44,8 +44,9 @@
   ],
   "scripts": {
     "clean": "rimraf dist bin test/coverage test/test-results.xml website docs/.vitepress/.temp docs/.vitepress/.cache;",
-    "devbuild": "rimraf 'dist/**/*.map';mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;mkdirp dist/documentclasses;mkdirp dist/packages;touch dist/documentclasses/.keep;touch dist/packages/.keep;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;rsync -a src/js/ dist/js/;rsync -a src/types/latex.d.ts dist;vite build;chmod a+x bin/latex.js;",
-    "build": "NODE_ENV=production npm run devbuild;",
+    "assets": "rimraf 'dist/**/*.map';mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;mkdirp dist/documentclasses;mkdirp dist/packages;touch dist/documentclasses/.keep;touch dist/packages/.keep;rsync -a src/css/ dist/css/;rsync -a src/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;rsync -a src/js/ dist/js/;rsync -a src/types/latex.d.ts dist;",
+    "devbuild": "vite build --mode development;npm run assets;chmod a+x bin/latex.js;",
+    "build": "vite build --mode production;npm run assets;",
     "prepare-latex-assets": "rimraf docs/public/latexjs;mkdirp docs/public/latexjs/css docs/public/latexjs/fonts docs/public/latexjs/js;rsync -a dist/css/ docs/public/latexjs/css/;rsync -a dist/fonts/ docs/public/latexjs/fonts/;rsync -a dist/js/ docs/public/latexjs/js/;",
     "devdocs": "npm run devbuild;npm run prepare-latex-assets;vitepress dev docs",
     "docs": "npm run build;npm run prepare-latex-assets;[ ! -d website ] && git worktree add website gh-pages;mv website/.git .website.git;vitepress build docs;mv .website.git website/.git;cd website;git add .;git commit -m 'regenerated website';",
@@ -83,8 +84,8 @@
     "rimraf": "5.x",
     "typescript": "6.x",
     "tsx": "^4.22.4",
-    "@tsconfig/node-ts": "^23.6.4",
-    "@tsconfig/node24": "^24.0.4",
+    "@tsconfig/node-ts": "23.6.x",
+    "@tsconfig/node22": "22.0.x",
     "@types/pegjs": "0.10.x",
     "vitepress": "^1.6.4",
     "split-grid": "1.0.x",
@@ -113,6 +114,7 @@
     "slugify": "1.6.x",
     "tmp": "0.2.x",
     "puppeteer": "25.1.x",
+    "pngjs": "7.0.x",
     "pixelmatch": "7.2.x",
     "nyc": "15.x",
     "codecov": "3.x",
@@ -153,6 +155,6 @@
   },
   "homepage": "https://latex.js.org",
   "engines": {
-    "node": ">= 24.0"
+    "node": ">= 22.0"
   }
 }

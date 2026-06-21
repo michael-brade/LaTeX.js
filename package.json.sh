@@ -52,7 +52,7 @@ files:
 scripts:
     clean: 'rimraf dist bin test/coverage test/test-results.xml website docs/.vitepress/.temp docs/.vitepress/.cache;'
 
-    devbuild: "
+    assets: "
         rimraf 'dist/**/*.map';
         mkdirp dist/css;
         mkdirp dist/js;
@@ -66,12 +66,18 @@ scripts:
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
         rsync -a src/js/ dist/js/;
         rsync -a src/types/latex.d.ts dist;
+    "
 
-	    vite build;
+    devbuild: "
+	    vite build --mode development;
+        npm run assets;
         chmod a+x bin/latex.js;
     "
 
-    build: 'NODE_ENV=production npm run devbuild;'
+    build: "
+	    vite build --mode production;
+        npm run assets;
+    "
 
 
     # docs/website and playground
@@ -164,8 +170,8 @@ devDependencies:
 
     'typescript': '6.x'
     'tsx': '^4.22.4'
-    "@tsconfig/node-ts": "^23.6.4"
-    "@tsconfig/node24": "^24.0.4"
+    "@tsconfig/node-ts": "23.6.x"
+    "@tsconfig/node22": "22.0.x"
 
     "@types/pegjs": "0.10.x"
 
@@ -207,6 +213,7 @@ devDependencies:
     'tmp': '0.2.x'
 
     'puppeteer': '25.1.x'
+    'pngjs': '7.0.x'
     'pixelmatch': '7.2.x'
 
     'nyc': '15.x'
@@ -249,6 +256,6 @@ bugs:
 homepage: 'https://latex.js.org'
 
 engines:
-    node: '>= 24.0'
+    node: '>= 22.0'
 
 EOF
