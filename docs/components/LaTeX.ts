@@ -5,59 +5,43 @@ import en from 'hyphenation.en-us'
 
 let generator: HtmlGenerator | null = null
 
-function getGenerator()
-{
-    if (typeof document === 'undefined')
-        return null // SSR
-
-    if (!generator) {
-        generator = new HtmlGenerator({
-            hyphenate: true,
-            languagePatterns: en,
-            styles: ['css/error.css']
-        })
-    }
-    return generator
-}
-
 
 function links()
 {
     const as: HTMLCollectionOf<HTMLAnchorElement> = document.getElementsByTagName('a')
     for (const a of as) {
         const href = a.getAttribute('href')
-        if (!href || !href.startsWith('#')) continue
+        if (!href || !href.startsWith('#'))
+            continue
 
         a.addEventListener('click', (e: PointerEvent) => {
             e.preventDefault()
-            const targetId = href.substring(1)
-            const target = document.getElementById(targetId)
-            if (!target || !document.scrollingElement) return
-            document.scrollingElement.scrollTop = target.getBoundingClientRect().top
+            const target = href.substring(1)
+            const targetEl = document.getElementById(target)
+            if (!targetEl || !document.scrollingElement)
+                return
+            document.scrollingElement.scrollTop = targetEl.getBoundingClientRect().top
         })
     }
 }
 
 
-
-function definedOrElse<T>(value: T | undefined, fallback: T): T
-{
-    return typeof value !== 'undefined' ? value : fallback
-}
-
+// take 20 chars before and after o from txt
 function excerpt(txt: string, o: number)
 {
     const l = txt.length
-    let b = o - 20
-    if (b < 0) b = 0
-    let e = o + 20
-    if (e > l) e = l
+
+    // clamp boundaries safely between 0 and text length
+    const b = Math.max(0, o - 20)
+    const e = Math.min(l, o + 20)
 
     const hex = (ch: string) => ch.charCodeAt(0).toString(16).toUpperCase()
 
-    const extract = (txt: string, pos: number, len: number) =>
-        txt
-            .substr(pos, len)
+    const extract = (start: number, end: number) => {
+        if (start >= end) return ''
+
+        return txt
+            .slice(start, end)
             .replace(/\\/g, '\\\\')
             .replace(/\x08/g, '\\b')
             .replace(/\t/g, '\\t')
@@ -68,36 +52,28 @@ function excerpt(txt: string, o: number)
             .replace(/[\x10-\x1F\x80-\xFF]/g, ch => '\\x' + hex(ch))
             .replace(/[\u0100-\u0FFF]/g, ch => '\\u0' + hex(ch))
             .replace(/[\u1000-\uFFFF]/g, ch => '\\u' + hex(ch))
+    }
 
     return {
-        prolog: extract(txt, b, o - b),
-        token: extract(txt, o, 1),
-        epilog: extract(txt, o + 1, e - (o + 1))
+        prolog: extract(b, o),
+        token: extract(o, o + 1),
+        epilog: extract(o + 1, e)
     }
 }
 
-function errorMessage(e: any, noFinalNewline?: boolean)
+function errorMessage(e: any): string
 {
-    const l = e.location
-    const prefix1 = 'line ' + e.line + ' (column ' + e.column + '): '
-    let prefix2 = ''
-    for (let i = 0; i < prefix1.length + l.prolog.length; i++)
-        prefix2 += '-'
-    const msg = prefix1 + l.prolog + l.token + l.epilog + '\n' +
-        prefix2 + '^\n' + e.message + (noFinalNewline ? '' : '\n')
+    const { line, column, location: l, message } = e
 
-    return msg
+    const prefix1 = `line ${line} (column ${column}): `
+    const prefix2 = '-'.repeat(prefix1.length + l.prolog.length)
+
+    return `${prefix1}${l.prolog}${l.token}${l.epilog}\n` +
+           `${prefix2}^\n` +
+           `${message}`
 }
 
 
-
-function getAssetsBase(): string | undefined
-{
-    if (typeof window === 'undefined')
-        return undefined
-
-    return window.location.origin + '/latexjs/'
-}
 
 let scrollY = 0
 
@@ -105,32 +81,43 @@ let scrollY = 0
 // core compile function with SSR guard
 export function compile(latex: string, iframe: HTMLIFrameElement)
 {
-    if (typeof document === 'undefined')
+    if (typeof window === 'undefined' || typeof document === 'undefined')
         return // SSR
-
-    const generator = getGenerator()
-    if (!generator)
-        return
 
     const doc = iframe.contentDocument
     if (!doc || doc.readyState !== 'complete')
         return
 
+    if (!generator) {
+        generator = new HtmlGenerator({
+            hyphenate: true,
+            languagePatterns: en,
+            styles: ['css/error.css']
+        })
+    } else {
+        generator.reset();
+    }
+
     try {
-        generator.reset()
-        const baseURL = getAssetsBase()
+        const baseURL = window.location.origin + '/latexjs/'
         const newDoc = parse(latex, { generator }).htmlDocument(baseURL)
 
+        // we need to disable normal processing of same-page links in the iframe
+        // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame
         const linkScript = newDoc.createElement('script')
         linkScript.text = 'document.addEventListener("DOMContentLoaded", ' + links.toString() + ')'
         newDoc.head.appendChild(linkScript)
 
+        // don't reload all the styles and fonts if not needed!
         if (doc.head.innerHTML === newDoc.head.innerHTML) {
             const newBody = doc.adoptNode(newDoc.body)
             doc.documentElement.replaceChild(newBody, doc.body)
             doc.documentElement.style.cssText = newDoc.documentElement.style.cssText
         } else {
             iframe.srcdoc = newDoc.documentElement.outerHTML
+
+            // var blob = new Blob([newDoc.documentElement.innerHTML], {type : 'text/html'});
+            // iframe.src = URL.createObjectURL(blob);
         }
 
         if (scrollY) {
@@ -139,25 +126,22 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
         }
     } catch (e: any) {
         console.error(e)
-        if (doc && iframe.contentWindow) {
-            if (!scrollY) scrollY = iframe.contentWindow.pageYOffset
-        }
+
+        // save scrolling position and restore on next successful compile
+        if (iframe.contentWindow && !scrollY)
+            scrollY = iframe.contentWindow.pageYOffset
+
 
         if (e instanceof SyntaxError) {
-            const err = {
-                line: definedOrElse(e.location?.start?.line, 0),
-                column: definedOrElse(e.location?.start?.column, 0),
-                message: e.message,
-                found: definedOrElse(e.found, ''),
-                expected: definedOrElse(e.expected, ''),
-                location: excerpt(
-                    latex,
-                    definedOrElse(e.location?.start?.offset, 0)
-                )
-            }
-
             doc.body.innerHTML ='<pre class="error">ERROR: Parsing failure:\n\n' +
-                errorMessage(err, true) +
+                errorMessage({
+                    line: e.location?.start?.line ?? 0,
+                    column: e.location?.start?.column ?? 0,
+                    message: e.message,
+                    found: e.found ?? '',
+                    expected: e.expected ?? '',
+                    location: excerpt(latex, e.location?.start?.offset ?? 0)
+                }) +
             '</pre>'
         } else {
             doc.body.innerHTML = '<pre class="error">ERROR: ' + e.message + '</pre>'
