@@ -50,9 +50,9 @@ files:
     'dist/documentclasses/'
 
 scripts:
-    clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;'
+    clean: 'rimraf dist bin test/coverage test/test-results.xml website docs/.vitepress/.temp docs/.vitepress/.cache;'
 
-    devbuild: "
+    assets: "
         rimraf 'dist/**/*.map';
         mkdirp dist/css;
         mkdirp dist/js;
@@ -66,34 +66,48 @@ scripts:
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
         rsync -a src/js/ dist/js/;
         rsync -a src/types/latex.d.ts dist;
+    "
 
-	    vite build;
+    devbuild: "
+	    vite build --mode development;
+        npm run assets;
         chmod a+x bin/latex.js;
     "
 
-    build: 'NODE_ENV=production npm run devbuild;'
+    build: "
+	    vite build --mode production;
+        npm run assets;
+    "
 
 
     # docs/website and playground
 
+    'prepare-latex-assets': "
+        rimraf docs/public/latexjs;
+        mkdirp docs/public/latexjs/css docs/public/latexjs/fonts docs/public/latexjs/js;
+        rsync -a dist/css/ docs/public/latexjs/css/;
+        rsync -a dist/fonts/ docs/public/latexjs/fonts/;
+        rsync -a dist/js/ docs/public/latexjs/js/;
+    "
+
     devdocs: "
         npm run devbuild;
-        vuepress dev docs --no-clear-screen --debug;
-    "
+        npm run prepare-latex-assets;
+        vitepress dev docs"
 
     docs: "
         npm run build;
+        npm run prepare-latex-assets;
 
         [ ! -d website ] && git worktree add website gh-pages;
         mv website/.git .website.git;
-        vuepress build docs;
+        vitepress build docs;
         mv .website.git website/.git;
 
         cd website;
         git add .;
         git commit -m 'regenerated website';
     "
-
 
     # unit tests
 
@@ -147,6 +161,7 @@ devDependencies:
 
     "@types/he": "^1.2.3"
 
+    # "glob": "8.0.x" # TODO
     ### building
 
     'pegjs': '0.10.x'
@@ -155,23 +170,28 @@ devDependencies:
 
     'typescript': '6.x'
     'tsx': '^4.22.4'
-    "@tsconfig/node-ts": "^23.6.4"
-    "@tsconfig/node24": "^24.0.4"
+    "@tsconfig/node-ts": "23.6.x"
+    "@tsconfig/node22": "22.0.x"
+
+    "@types/pegjs": "0.10.x"
 
     ### docs
+
+    'vitepress': '^1.6.4'
 
     'split-grid': '1.0.x'
     '@codemirror/autocomplete': '6.x'
     '@codemirror/commands': '6.x'
     '@codemirror/language': '6.x'
-    '@codemirror/legacy-modes': '6.x'
     '@codemirror/lint': '6.x'
     '@codemirror/search': '6.x'
     '@codemirror/state': '6.x'
     '@codemirror/view': '6.x'
+    '@codemirror/theme-one-dark': '6.x'
+    'codemirror-lang-latex': '0.4.x'
     'vue-tsc': '3.3.x'
     'vue-codemirror6': '1.5.x'
-    'stylus': '0.59.x'
+    'sass-embedded': '1.100.x'
 
     ### bundling
 
@@ -193,6 +213,7 @@ devDependencies:
     'tmp': '0.2.x'
 
     'puppeteer': '25.1.x'
+    'pngjs': '7.0.x'
     'pixelmatch': '7.2.x'
 
     'nyc': '15.x'
@@ -235,6 +256,6 @@ bugs:
 homepage: 'https://latex.js.org'
 
 engines:
-    node: '>= 24.0'
+    node: '>= 22.0'
 
 EOF

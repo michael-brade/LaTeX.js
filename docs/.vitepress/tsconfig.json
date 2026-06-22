@@ -1,0 +1,24 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "composite": true,
+
+        "isolatedModules": true,
+        "skipLibCheck": true,
+        "emitDeclarationOnly": true,
+
+        "paths": {
+            // must be in sync with aliases in config.ts
+            "@theme/components/*": ["./theme/components/*"]
+        }
+    },
+    "include": [
+        "vite-env.d.ts",
+        "config.ts",
+        "**/*.vue",
+        "**/*.md",
+        "**/*.ts",
+        "../components/**/*.vue",
+        "../components/**/*.ts"
+    ]
+}
