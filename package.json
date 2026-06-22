@@ -97,6 +97,7 @@
     "codemirror-lang-latex": "0.4.x",
     "vue-tsc": "3.3.x",
     "vue-codemirror6": "1.5.x",
+    "sass-embedded": "1.100.x",
     "vite": "8.3.x",
     "vite-plugin-node-polyfills": "0.28.x",
     "vite-plugin-checker": "1.0.x",
