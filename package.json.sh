@@ -191,7 +191,7 @@ devDependencies:
     'codemirror-lang-latex': '0.4.x'
     'vue-tsc': '3.3.x'
     'vue-codemirror6': '1.5.x'
-    # 'sass-embedded': '1.100.x'
+    'sass-embedded': '1.100.x'
 
     ### bundling
 

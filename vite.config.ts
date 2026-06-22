@@ -1,6 +1,6 @@
 import path, { resolve } from 'node:path'
 
-import { defineConfig, ConfigEnv } from 'vite';
+import { defineConfig } from 'vite';
 
 // import { checker } from 'vite-plugin-checker';
 import dts from 'unplugin-dts/vite'
@@ -12,7 +12,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import ignoreInfiniteLoop from "./lib/pegjs-no-infinite-loop.mjs";
 
 
-export default defineConfig((env: ConfigEnv) => {
+export default defineConfig(env => {
 
     const prod = env.mode !== 'development';
 

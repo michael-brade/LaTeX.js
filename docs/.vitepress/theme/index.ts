@@ -9,6 +9,8 @@ export default {
 
     enhanceApp({ app }: EnhanceAppContext) {
         app.component('LaTeX', LaTeX)
+        app.component('latex', LaTeX)
         app.component('TeX', TeX)
+        app.component('tex', TeX)
     }
 }
