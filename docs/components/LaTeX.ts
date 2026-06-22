@@ -77,15 +77,16 @@ function errorMessage(e: any): string
 
 let scrollY = 0
 
-
-// core compile function with SSR guard
+/**
+ * Compile latex source into the given iframe.
+ */
 export function compile(latex: string, iframe: HTMLIFrameElement)
 {
     if (typeof window === 'undefined' || typeof document === 'undefined')
         return // SSR
 
     const doc = iframe.contentDocument
-    if (!doc || doc.readyState !== 'complete')
+    if (!doc || doc.readyState !== 'complete' || !doc.body)
         return
 
     if (!generator) {
@@ -104,9 +105,10 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
 
         // we need to disable normal processing of same-page links in the iframe
         // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame
+        // put the script at the end of the body so that links have been processed already by the time it executes
         const linkScript = newDoc.createElement('script')
-        linkScript.text = 'document.addEventListener("DOMContentLoaded", ' + links.toString() + ')'
-        newDoc.head.appendChild(linkScript)
+        linkScript.text = `(${links.toString()})();`
+        newDoc.body.appendChild(linkScript)
 
         // don't reload all the styles and fonts if not needed!
         if (doc.head.innerHTML === newDoc.head.innerHTML) {
@@ -128,8 +130,8 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
         console.error(e)
 
         // save scrolling position and restore on next successful compile
-        if (iframe.contentWindow && !scrollY)
-            scrollY = iframe.contentWindow.pageYOffset
+        if (!scrollY)
+            scrollY = iframe.contentWindow?.pageYOffset ?? 0
 
 
         if (e instanceof SyntaxError) {
