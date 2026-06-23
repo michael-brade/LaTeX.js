@@ -1,4 +1,4 @@
-import { parse } from './latex-parser'
+import { parse } from './latex-parser.pegjs'
 import { HtmlGenerator } from './html-generator.ls'
 
 export let LaTeXJSComponent = null

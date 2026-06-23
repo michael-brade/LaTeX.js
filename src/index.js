@@ -1,5 +1,5 @@
 import he from 'he'
-import { parse, SyntaxError } from './latex-parser'
+import { parse, SyntaxError } from './latex-parser.pegjs'
 import { Generator } from './generator.ls'
 import { HtmlGenerator } from './html-generator.ls'
 import { LaTeXJSComponent } from './latex.component.mjs'
