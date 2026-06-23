@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 import type { Plugin } from 'vite';
 import type { LoadResult } from 'rolldown';
@@ -24,15 +25,16 @@ export default function peggyLoader(options: BuildOptionsBase): Plugin {
                 const codeAndMap = peggy.generate(grammar, {
                     format: "es",
                     output:"source-and-map",
-                    grammarSource: filename,
+                    grammarSource: path.relative(process.cwd(), filename),  // must be relative!
                     ...options
-                }).toStringWithSourceMap({
-                    file: filename
-                });
+                }).toStringWithSourceMap();
 
                 return {
                     code: codeAndMap.code,
-                    map: JSON.parse(codeAndMap.map.toString())
+                    map: {
+                        ...JSON.parse(codeAndMap.map.toString()),
+                        sourcesContent: [grammar]
+                    }
                 };
             }
         }
