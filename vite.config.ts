@@ -6,10 +6,10 @@ import { checker } from 'vite-plugin-checker';
 import dts from 'unplugin-dts/vite'
 
 import livescript from "./lib/rollup-plugin-livescript.js";
-import pegjs from "./lib/rollup-plugin-pegjs.mjs";
+import peggy from "./lib/vite-plugin-peggy.ts";
 
 import { visualizer } from 'rollup-plugin-visualizer';
-import ignoreInfiniteLoop from "./lib/pegjs-no-infinite-loop.mjs";
+import ignoreInfiniteLoop from "./lib/peggy-plugin-no-infinite-loop.ts";
 
 
 const mode = process.env.NODE_ENV || 'development';
@@ -27,11 +27,8 @@ export default defineConfig({
         //     typescript: true
         // }),
         livescript(),
-        pegjs({
+        peggy({
             plugins: [ignoreInfiniteLoop],
-            target: "commonjs",
-            exportVar: "parser",
-            format: "bare",
             trace: false
         }),
         dts({

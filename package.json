@@ -8,6 +8,7 @@
   },
   "keywords": [
     "pegjs",
+    "peggy",
     "latex",
     "parser",
     "html5"
@@ -77,7 +78,7 @@
     "livescript-transform-implicit-async": "^1.1.0",
     "livescript-transform-object-create": "^1.1.0",
     "@types/he": "^1.2.3",
-    "pegjs": "0.10.x",
+    "peggy": "5.1.x",
     "mkdirp": "3.x",
     "rimraf": "5.x",
     "typescript": "6.x",

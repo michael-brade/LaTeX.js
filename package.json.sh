@@ -12,6 +12,7 @@ author:
 
 keywords:
     'pegjs'
+    'peggy'
     'latex'
     'parser'
     'html5'
@@ -149,7 +150,7 @@ devDependencies:
 
     ### building
 
-    'pegjs': '0.10.x'
+    'peggy': '5.1.x'
     'mkdirp': '3.x'
     'rimraf': '5.x'
 
