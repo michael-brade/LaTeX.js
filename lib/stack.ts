@@ -1,4 +1,4 @@
-export class Stack<T> implements Iterable<T>
+export default class Stack<T> implements Iterable<T>
 {
     // Private array to hold elements of type T
     #items: T[] = [];

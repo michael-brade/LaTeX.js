@@ -6,72 +6,83 @@ export type MacroMode =
     | "V"   // vertical
     | "HV"
     | "P"   // only preamble
-    | "X"
 
 
 /**
  * All valid LaTeX macro argument types.
  */
 export type ArgType =
-    MandatoryArgType | OptionalArgType;
+    | MandatoryArgType
+    | OptionalArgType
+    | "s"    // Optional star syntax variant (e.g., \macro*)
 
 export type MandatoryArgType =
-    | "g"    /** <latex/> code group (possibly long, allows `\par`). */
-    | "hg"   /** Restricted horizontal mode material enclosed in `{}`. */
-    | "h"    /** Restricted horizontal mode material without explicit delimiters. */
-    | "i"    /** Strict identifier containing letters only, wrapped in `{}`. */
-    | "k"    /** Key entry containing anything except `=` or `,`. */
-    | "csv"  /** Comma-separated values list wrapped in `{}`. */
-    | "u"    /** Standard URL string conforming to RFC3986. */
-    | "c"    /** Color specification (name, float value, or float triplet). */
-    | "m"    /** A macro reference name (e.g., `\macro`). */
-    | "l"    /** Length dimension expression wrapped in `{}`. */
-    | "cl"   /** Coordinate system layout or TeX length specification. */
-    | "n"    /** Numerical value expression evaluating to an integer. */
-    | "f"    /** Float value expression computation. */
-    | "v"    /** Vector layout coordinate pair notation `(float, float)`. */
-    | "is"   /** Lexer directive to instruct the parser to ignore subsequent spaces. */
+    | "g"    // <latex/> code group (possibly long, allows \par)
+    | "hg"   // Restricted horizontal mode material enclosed in {}
+    | "h"    // Restricted horizontal mode material without explicit delimiters
+    | "i"    // Strict identifier containing letters only, wrapped in {}
+    | "k"    // Key entry containing anything except = or ,
+    | "csv"  // Comma-separated values list wrapped in {}
+    | "u"    // Standard URL string conforming to RFC3986
+    | "c"    // Color specification (name, float value, or float triplet)
+    | "m"    // A macro reference name (e.g., \macro)
+    | "l"    // Length dimension expression wrapped in {}
+    | "cl"   // Coordinate system layout or TeX length specification
+    | "n"    // Numerical value expression evaluating to an integer
+    | "f"    // Float value expression computation
+    | "v"    // Vector layout coordinate pair notation (float, float)
+    | "is"   // Lexer directive to instruct the parser to ignore subsequent spaces
+    | "X"
 ;
 
-export type OptionalArgType =
-    | "s"    /** Optional star syntax variant (e.g., `\macro*`). */
-    | "o?"   /** Optional argument wrapped in square brackets `[]`. */
-    | "i?"   /** Optional identifier wrapped in `[]`. */
-    | "k?"   /** Optional key entry wrapped in `[]`. */
-    | "csv?" /** Optional comma-separated values list wrapped in `[]`. */
-    | "kv?"  /** Optional key-value assignment list wrapped in `[]`. */
-    | "lg?"  /** Optional length grouping sequence wrapped in `{}`. */
-    | "l?"   /** Optional length dimension expression wrapped in `[]`. */
-    | "cl?"  /** Optional coordinate system layout or TeX length expression. */
-    | "n?"   /** Optional numerical expression evaluating to an integer. */
-    | "v?"   /** Optional vector layout coordinate pair notation. */
-;
+export let OPT_ARGS = [
+      "o?"   // Optional argument wrapped in square brackets []
+    , "i?"   // Optional identifier wrapped in []
+    , "k?"   // Optional key entry wrapped in []
+    , "csv?" // Optional comma-separated values list wrapped in []
+    , "kv?"  // Optional key-value assignment list wrapped in []
+    , "lg?"  // Optional length grouping sequence wrapped in {}
+    , "l?"   // Optional length dimension expression wrapped in []
+    , "cl?"  // Optional coordinate system layout or TeX length expression
+    , "n?"   // Optional numerical expression evaluating to an integer
+    , "v?"   // Optional vector layout coordinate pair notation
+] as const;
+
+export type OptionalArgType = typeof OPT_ARGS[number];
+
 
 export interface MacroMeta {
     mode: MacroMode;
-    args?: ArgType[];
+    args?: (ArgType | ArgType[])[];
 }
 
 
-export interface HasMacros {
-    constructor: {
-        macros: Record<string | symbol, MacroMeta>  // static macros in class implementing HasMacros
-    };
+
+
+interface HasStaticMacros {
+    new(...args: any[]): any;
+    macros: Record<string | symbol, MacroMeta>;
+}
+
+/** @HasMacros decorator */
+export function HasMacros<U extends HasStaticMacros>(constructor: U, context: ClassDecoratorContext<U>)
+{
 }
 
 
 /// decorators
 
-export function Macro<T extends HasMacros>(type: MacroMode)
-{
-    // Typing the second argument explicitly as ClassMethodDecoratorContext
-    // forces the TypeScript compiler to reject placement anywhere except on methods.
-    return function (targetMethod: Function, context: ClassMethodDecoratorContext<T>)
-    {
-        context.addInitializer(function (this: T) {
-            const constructor = this.constructor;
+export function Macro(type: MacroMode) {
+    // Keep 'This' clean so ClassMethodDecoratorContext does not trigger variance errors
+    return function <This, Args extends any[], Return>(
+        // Enforce the requirement on 'this' inside the method structure itself
+        targetMethod: (this: This & { constructor: HasStaticMacros }, ...args: Args) => Return,
+        context: ClassMethodDecoratorContext<This, (this: any, ...args: Args) => Return>
+    ) {
+        context.addInitializer(function (this: any) {
+            // 'this.constructor' is safely processed at runtime
+            const constructor = this.constructor as HasStaticMacros;
 
-            // Initialize the static 'macros' object if it doesn't exist yet
             constructor.macros ??= {};
             constructor.macros[context.name] ??= { mode: type };
             constructor.macros[context.name].mode = type;
@@ -84,14 +95,14 @@ export function Macro<T extends HasMacros>(type: MacroMode)
  * Argument decorator to assign expected arguments to a macro function.
  * @param argsList Array containing the argument signatures for the macro.
  */
-export function Args<T extends HasMacros>(...argsList: ArgType[])
+export function Args(...argsList: (ArgType | ArgType[])[])
 {
-    return function (targetMethod: Function, context: ClassMethodDecoratorContext<T>)
+    return function (targetMethod: Function, context: ClassMethodDecoratorContext)
     {
         // This runs during file import evaluation
-        context.addInitializer(function (this: T) {
+        context.addInitializer(function (this: any) {
             // 'this' inside addInitializer refers to the constructor of the class
-            const constructor = this.constructor;
+            const constructor = this.constructor as any;
 
             // Initialize the static 'macros' object if it doesn't exist yet
             constructor.macros ??= {};
