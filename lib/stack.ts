@@ -32,6 +32,16 @@ export default class Stack<T> implements Iterable<T>
     }
 
     /**
+     * Returns the top element without removing it.
+     * Time Complexity: O(1)
+     */
+    set top(v: T)
+    {
+        if (!this.isEmpty)
+            this.#items[this.#items.length - 1] = v;
+    }
+
+    /**
      * Alias for top(). Added for compatibility.
      */
     get peek(): T | undefined
