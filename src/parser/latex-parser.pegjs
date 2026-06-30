@@ -1,4 +1,5 @@
 {
+    // import * from '';
     var { Vector } = require('./types.ls');
     var g = options.generator;
     g.setErrorFn(error);

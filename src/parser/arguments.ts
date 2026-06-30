@@ -25,15 +25,11 @@ interface MacroArgs {
 
 
 
-
-// a utility type that extracts only the method names from a class
-type MethodNamesOf<T> = {
-    [K in keyof T]: T[K] extends Function ? K : never;
-}[keyof T] & string;
-
-
 /**
- * Macro and macro argument handling.
+ * Holds the state during macro argument parsing. Needs access to the LaTeX class with all the macros.
+ * LaTeX adds more macros to itself when expanding \documentclass and \usepackage, for instance.
+ *
+ * Only the static LaTeX, no instance needed?
  */
 export class Arguments
 {
@@ -82,7 +78,7 @@ export class Arguments
     private createText(text: string | String): any {}
     private addAttributes(attr: any): any {}
 
-    hasMacro(name: MethodNamesOf<LaTeX>): boolean
+    hasMacro(name: string): boolean
     {
         // block core JavaScript keywords from being treated as LaTeX macros
         const blocked = ["constructor", "toString", "valueOf", "hasOwnProperty"];
@@ -111,11 +107,10 @@ export class Arguments
         return result
             ?.filter((x: any) => x != undefined)
             .map((x: any) => {
-                if (typeof x === 'string' || x instanceof String) {
+                if (typeof x === 'string' || x instanceof String)
                     return this.createText(x);
-                } else {
-                    return this.addAttributes(x);
-                }
+
+                return this.addAttributes(x);
             });
     }
 
