@@ -1,9 +1,8 @@
 {
-    // import * from '';
-    var { Vector } = require('./types.ls');
-    var g = options.generator;
+    import { Vector } from './types.ts';
+    let g = options.generator;
     g.setErrorFn(error);
-    g.location = location;
+    g.setLocationFn(location);
 }
 
 

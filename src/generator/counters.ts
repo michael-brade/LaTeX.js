@@ -7,7 +7,6 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
     /**
      * This mixin is part of the Generator(s) and handles the global LaTeX counter state and manipulation.
      */
-    // TODO throws exceptions, handle them - or add error() to Generator base
     abstract class CountersMixin extends GeneratorBase
     {
         #counters: Map<string, number> = new Map();
@@ -26,7 +25,7 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
         newCounter(c: string, parent?: string): void
         {
             if (this.hasCounter(c))
-                throw new Error(`counter ${c} already defined!`);
+                this.error(`counter ${c} already defined!`);
 
             this.#counters.set(c, 0);
             this.#resets.set(c, []);
@@ -35,8 +34,9 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
                 this.addToReset(c, parent);
 
             if (this.hasMacro("the" + c))
-                throw new Error(`macro \\the${c} already defined!`);
+                this.error(`macro \\the${c} already defined!`);
 
+            // defines new macro \the+c
             this._macros["the" + c] = () => [this.g.arabic(this.counter(c))];
         }
 
@@ -50,7 +50,7 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
         counter(c: string): number
         {
             if (!this.hasCounter(c))
-                throw new Error(`no such counter: ${c}`);
+                this.error(`no such counter: ${c}`);
 
             return this.#counters.get(c)!;
         }
@@ -59,7 +59,7 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
         setCounter(c: string, v: number): void
         {
             if (!this.hasCounter(c))
-                throw new Error(`no such counter: ${c}`);
+                this.error(`no such counter: ${c}`);
 
             this.#counters.set(c, v);
         }
@@ -75,10 +75,10 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
         addToReset(c: string, parent: string): void
         {
             if (!this.hasCounter(parent))
-                throw new Error(`no such counter: ${parent}`);
+                this.error(`no such counter: ${parent}`);
 
             if (!this.hasCounter(c))
-                throw new Error(`no such counter: ${c}`);
+                this.error(`no such counter: ${c}`);
 
             this.#resets.get(parent)!.push(c);
         }

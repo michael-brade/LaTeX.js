@@ -76,7 +76,7 @@ export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase:
         exitGroup(): void
         {
             if (--this.#groups.top! < 0)
-                throw new Error("there is no group to end here");
+                this.error("there is no group to end here");
 
             this.#stack.pop();
         }
