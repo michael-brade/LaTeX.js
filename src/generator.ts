@@ -43,6 +43,12 @@ export abstract class Generator
 
 
 
+    /// macro access
+
+    hasMacro(name: string): boolean
+    {
+        return !!this.#manager.hasMacro(name)
+    }
 
     // "execute" (expand) a macro
     macro(name: string, ...args: any[]): any[] | undefined
@@ -66,5 +72,41 @@ export abstract class Generator
 
                 return this.addAttributes(x);
             });
+    }
+
+
+    //// error handling
+
+    #errorFn = (e: string): never =>
+    {
+        console.error(e);
+        throw new Error(e);
+    }
+
+    public setErrorFn(fn: (msg: string) => never): void
+    {
+        this.#errorFn = fn;
+    }
+
+    // report an error
+    public error(e: string): never
+    {
+        this.#errorFn(e);
+        throw new Error("illegal error function: it unexpectedly returned");
+    }
+
+
+    #locationFn = (): void => {
+        this.error("location function not set!");
+    }
+
+    public setLocationFn(fn: () => void): void
+    {
+        this.#locationFn = fn;
+    }
+
+    public location(): void
+    {
+        this.#locationFn();
     }
 }

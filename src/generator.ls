@@ -60,21 +60,6 @@ export class Generator
 
 
 
-    # private static for easy access - but it means no parallel generator usage!
-    error = (e) !->
-        console.error e
-        throw new Error e
-
-    error: (e) !-> error e
-
-    setErrorFn: (e) !->
-        error := e
-
-
-    location: !-> error "location function not set!"
-
-
-
 
     ### characters
 

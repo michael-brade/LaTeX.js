@@ -222,7 +222,7 @@ export class MacroManager
 
     argError(m: string): never
     {
-        throw new Error(`macro \\${this.#curArgs.top!.name}: ${m}`);
+        this.#generator.error(`macro \\${this.#curArgs.top!.name}: ${m}`);
     }
 
     // add the result of a parsed argument
@@ -250,10 +250,10 @@ export class MacroManager
         const last = this.#curArgs.pop();
 
         if (!last)
-            throw new Error("grammar error: endArgs called on empty arguments stack");
+            this.#generator.error("grammar error: endArgs called on empty arguments stack");
 
         if (last.args.length !== 0)
-            throw new Error(`grammar error: arguments for ${last.name} have not been parsed: ${last.args}`);
+            this.#generator.error(`grammar error: arguments for ${last.name} have not been parsed: ${last.args}`);
 
         return last.parsed;
     }
