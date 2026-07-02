@@ -61,7 +61,7 @@ export interface MacroMeta {
 
 interface HasStaticMacros {
     new(...args: any[]): any;
-    macros: Record<string | symbol, MacroMeta>;
+    macros: Map<string | symbol, MacroMeta>;
 }
 
 /** @HasMacros decorator */
@@ -73,9 +73,9 @@ export function HasMacros<U extends HasStaticMacros>(constructor: U, context: Cl
 /// decorators
 
 export function Macro(type: MacroMode) {
-    // Keep 'This' clean so ClassMethodDecoratorContext does not trigger variance errors
+    // keep 'This' clean so ClassMethodDecoratorContext does not trigger variance errors
     return function <This, Args extends any[], Return>(
-        // Enforce the requirement on 'this' inside the method structure itself
+        // enforce the requirement on 'this' inside the method structure itself
         targetMethod: (this: This & { constructor: HasStaticMacros }, ...args: Args) => Return,
         context: ClassMethodDecoratorContext<This, (this: any, ...args: Args) => Return>
     ) {
@@ -83,9 +83,12 @@ export function Macro(type: MacroMode) {
             // 'this.constructor' is safely processed at runtime
             const constructor = this.constructor as HasStaticMacros;
 
-            constructor.macros ??= {};
-            constructor.macros[context.name] ??= { mode: type };
-            constructor.macros[context.name].mode = type;
+            constructor.macros ??= new Map<string | symbol, MacroMeta>;
+
+            if (constructor.macros.has(context.name))
+                constructor.macros.get(context.name)!.mode = type;
+            else
+                constructor.macros.set(context.name, { mode: type });
         });
     }
 }
@@ -105,11 +108,13 @@ export function Args(...argsList: (ArgType | ArgType[])[])
             const constructor = this.constructor as any;
 
             // Initialize the static 'macros' object if it doesn't exist yet
-            constructor.macros ??= {};
+            constructor.macros ??= new Map<string | symbol, MacroMeta>;
+
+            if (!constructor.macros.has(context.name))
+                constructor.macros.set(context.name, { mode: 'H' });    // if it wasn't specified (yet): H is default
 
             // Map the method name to its signature
-            constructor.macros[context.name] ??= { mode: 'H' }; // if it wasn't specified (yet): H is default
-            constructor.macros[context.name].args = argsList;
+            constructor.macros.get(context.name).args = argsList;
         });
     }
 }
