@@ -2,9 +2,8 @@ import { createRequire } from 'node:module'
 
 import Stack from '../lib/stack.ts';
 
-import type { Generator } from "./generator.ts";
+import type { Generator } from "./generator/generator.ts";
 import { OPT_ARGS, type ArgType, type MacroMeta } from "./macros.ts";
-
 import builtinPackages from "./packages/index.ts";
 
 
@@ -16,7 +15,7 @@ interface MacroArgs {
      * array with ArgTypes; as they are parsed, they get removed here one by one
      * and the parsed result added to parsed below, one by one
      */
-    args: (ArgType | ArgType[])[]; // Can be string types or branches of string types (xcolor, for instance)
+    args: (ArgType | ArgType[][])[]; // Can be string types or branches of string types (xcolor, for instance)
 
     /** array with parsed content for the respective arg */
     parsed: (DocumentFragment | boolean | string | any)[];
@@ -197,7 +196,8 @@ export class MacroManager
             // check which alternative branch to choose, discard the others only if it was a match
             const branches = currentTop.args[0];
             for (const b of branches) {
-                if ((nextChar === '[' && OPT_ARGS.includes(b[0])) || (nextChar === '{' && !OPT_ARGS.includes(b[0]))) {
+                if ((nextChar === '[' && OPT_ARGS.includes(b[0] as any))
+                    || (nextChar === '{' && !OPT_ARGS.includes(b[0] as any))) {
                     currentTop.args.shift();             // remove all branches
                     currentTop.args.unshift(...b);       // prepend remaining args
 

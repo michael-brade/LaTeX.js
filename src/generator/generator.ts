@@ -1,4 +1,4 @@
-import type { MacroManager } from "./macro-manager.ts"
+import type { MacroManager } from "../macro-manager.ts"
 
 /**
  * Base class of a generator. A html generator would be a concrete generator.

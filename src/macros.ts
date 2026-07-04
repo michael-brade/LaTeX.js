@@ -53,7 +53,7 @@ export type OptionalArgType = typeof OPT_ARGS[number];
 
 export interface MacroMeta {
     mode: MacroMode;
-    args?: (ArgType | ArgType[])[];
+    args?: (ArgType | ArgType[][])[];
 }
 
 
@@ -98,7 +98,7 @@ export function Macro(type: MacroMode) {
  * Argument decorator to assign expected arguments to a macro function.
  * @param argsList Array containing the argument signatures for the macro.
  */
-export function Args(...argsList: (ArgType | ArgType[])[])
+export function Args(...argsList: (ArgType | ArgType[][])[])
 {
     return function (targetMethod: Function, context: ClassMethodDecoratorContext)
     {

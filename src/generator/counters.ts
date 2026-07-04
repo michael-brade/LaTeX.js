@@ -1,5 +1,6 @@
-import { Generator } from "../generator.ts"
 import { type Constructor } from "../../lib/mixin.ts"
+
+import { Generator } from "./generator.ts"
 
 
 export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBase: TGenerator)
