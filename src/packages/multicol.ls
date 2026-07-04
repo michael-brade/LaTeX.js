@@ -1,17 +1,20 @@
-'use strict'
+import type { Generator } from '../generator/generator.ts';
+import { Macro, Args } from '../macros.ts';
+
 
 export class Multicol
+{
+    public g: any;
 
-    args = @args = {}
+    constructor(generator: Generator, options?: any)
+    {
+        this.g = generator;
+    }
 
-    # CTOR
-    (generator, options) ->
-        @g = generator
-
-
-    # multicolumns
-
-    # \begin{multicols}{number}[pretext][premulticols size]
-    args.\multicols =   <[ V n o? o? ]>
-
-    \multicols          : (cols, pre) -> [ pre, @g.create @g.multicols cols ]
+    @Macro('V')
+    @Args('n', 'o?', 'o?')
+    public multicols(cols: number, pre?: any): any[]
+    {
+        return [pre, this.g.create(this.g.multicols(cols))];
+    }
+}

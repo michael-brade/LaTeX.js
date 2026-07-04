@@ -1,29 +1,44 @@
-'use strict'
+import type { Generator } from "../generator/generator.ts";
+import { Macro, Args } from '../macros.ts';
+
 
 export class Hyperref
+{
+    public g: any;
 
-    args = @args = {}
+    constructor(generator: Generator, options?: any)
+    {
+        this.g = generator;
+    }
 
-    # CTOR
-    (generator, options) ->
-        @g = generator
+    @Macro('H')
+    @Args('o?', 'u', 'g')
+    public href(opts: any, url: string, txt: string): any[]
+    {
+        return [this.g.create(this.g.link(url)), txt];
+    }
 
+    @Macro('H')
+    @Args('u')
+    public url(url: string): any[]
+    {
+        return [this.g.create(this.g.link(url)), this.g.createText(url)];
+    }
 
-    # package: hyperref
+    @Macro('H')
+    @Args('u')
+    public nolinkurl(url: string): any[]
+    {
+        return [this.g.create(this.g.link()), this.g.createText(url)];
+    }
 
-    args.\href =        <[ H o? u g ]>
-    \href               : (opts, url, txt) -> [ @g.create @g.link(url), txt ]
+    // TODO
+    // \hyperbaseurl  HV u
 
-    args.\url =         <[ H u ]>
-    \url                : (url) -> [ @g.create @g.link(url), @g.createText(url) ]
-
-    args.\nolinkurl =   <[ H u ]>
-    \nolinkurl          : (url) -> [ @g.create @g.link(), @g.createText(url) ]
-
-
-    # TODO
-    # \hyperbaseurl  HV u
-
-    # \hyperref[label]{link text} --- like \ref{label}, but use "link text" for display
-    # args.\hyperref =    <[ H o? g ]>
-    # \hyperref           : (label, txt) -> [ @g.ref label ]
+    // \hyperref[label]{link text} --- like \ref{label}, but use "link text" for display
+    // @Macro('H')
+    // @Args('o?', 'g')
+    // public hyperref(label: any, txt: string): any[] {
+    //     return [this.g.ref(label)];
+    // }
+}

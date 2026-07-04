@@ -1,40 +1,55 @@
-'use strict'
+import type { Generator } from "../generator/generator.ts";
+import { Macro, Args } from '../macros.ts';
 
-
-# macros just for testing
+// macros just for testing
 export class Echo
+{
+    constructor(generator: Generator, options?: any)
+    {}
 
-    args = @args = {}
+    @Macro('H')
+    @Args('o?')
+    public gobbleO(): any[]
+    {
+        return [];
+    }
 
-    # CTOR
-    (generator, options) ->
+    @Macro('H')
+    @Args('o?')
+    public echoO(o?: string): string[]
+    {
+        return ["-", o ?? "", "-"];     // TODO: why ??
+    }
 
+    @Macro('H')
+    @Args('o?', 'g', 'o?')
+    public echoOGO(o1?: string, g?: string, o2?: string): string[]
+    {
+        const result: string[] = [];
 
+        if (o1)
+            result.push("-", o1, "-");
 
-    args.gobbleO = <[ H o? ]>
+        // g is a mandatory group, so it always evaluates
+        result.push("+", g ?? "", "+");
 
-    \gobbleO : -> []
+        if (o2)
+            result.push("-", o2, "-");
 
+        return result;
+    }
 
+    @Macro('H')
+    @Args('g', 'o?', 'g')
+    public echoGOG(g1: string, o?: string, g2?: string): string[]
+    {
+        const result: string[] = ["+", g1, "+"];
 
-    args.echoO = <[ H o? ]>
+        if (o)
+            result.push("-", o, "-");
 
-    \echoO : (o) ->
-        [ "-", o, "-" ]
+        result.push("+", g2 ?? "", "+");
 
-
-    args.echoOGO = <[ H o? g o? ]>
-
-    \echoOGO : (o1, g, o2) ->
-        []
-            ..push "-", o1, "-" if o1
-            ..push "+", g,  "+"
-            ..push "-", o2, "-" if o2
-
-
-    args.echoGOG = <[ H g o? g ]>
-
-    \echoGOG : (g1, o, g2) ->
-        [ "+", g1, "+" ]
-            ..push "-", o,  "-" if o
-            ..push "+", g2, "+"
+        return result;
+    }
+}

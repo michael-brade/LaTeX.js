@@ -1,5 +1,5 @@
-# graphics just uses graphicx
+// graphics just uses graphicx
 
-import './graphicx.ls': { Graphicx }
+import { Graphicx } from './graphicx.ts'
 
-export Graphics = Graphicx
+export const Graphics = Graphicx
