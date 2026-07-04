@@ -1,20 +1,21 @@
-'use strict'
+import he from 'he';
 
-import 'he'
+import type { Generator } from '../generator/generator.ts';
+
 
 export class Gensymb
+{
+    constructor(generator: Generator, options?: any)
+    {
+    }
 
-    args = @args = {}
+    // TODO: implement package options
 
-    # CTOR
-    (generator, options) ->
-
-    # TODO: implement package options
-
-    symbols = @symbols = new Map([
-        * \degree               he.decode '&deg;'       # °   U+00B0
-        * \celsius              '\u2103'                # ℃
-        * \perthousand          he.decode '&permil;'    # ‰   U+2030
-        * \ohm                  '\u2126'                # Ω
-        * \micro                he.decode '&mu;'        # μ   U+03BC
-    ])
+    public symbols: Map<string, string> = new Map([
+        ["degree", he.decode('&deg;')],         // °   U+00B0
+        ["celsius", "\u2103"],                  // ℃   U+2103
+        ["perthousand", he.decode('&permil;')], // ‰   U+2030
+        ["ohm", "\u2126"],                      // Ω   U+2126
+        ["micro", he.decode('&mu;')]            // μ   U+03BC
+    ]);
+}

@@ -1,5 +1,5 @@
-# forward to xcolor
+// forward to xcolor
 
-import './xcolor.ls': { XColor }
+import { XColor } from './xcolor.ts';
 
-export Color = XColor
+export const Color = XColor;
