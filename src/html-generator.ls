@@ -1,5 +1,5 @@
 import
-    './generator.ls': { Generator }
+    './generator/generator.ts': { Generator }
     './symbols.ls': { ligatures, diacritics }
     '@svgdotjs/svg.js': { SVG }
     'katex': katex

@@ -1,10 +1,10 @@
-import type { Generator } from "./generator.ts";
+import type { Generator } from "./generator/generator.ts";
 import { Args, HasMacros, Macro, type ArgType, type MacroMeta } from "./macros.ts";
 
 
-
 @HasMacros
-export class LaTeX {
+export class LaTeX
+{
     static macros = new Map<string | symbol, MacroMeta>();
 
     #g: Generator;
@@ -15,7 +15,7 @@ export class LaTeX {
     }
 
     @Macro("V")
-    @Args("g", ["o?", "g"])
+    @Args("g", "o?", "g")
     myMacro()
     {
 

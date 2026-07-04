@@ -1,6 +1,7 @@
 import Stack from "../../lib/stack.ts";
-import { Generator } from "../generator.ts"
 import { type Constructor } from "../../lib/mixin.ts"
+
+import { Generator } from "./generator.ts"
 
 
 interface CurrentLabel {
