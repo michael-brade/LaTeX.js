@@ -1,6 +1,8 @@
 import he from 'he'
+// @ts-ignore
+import { __defineSymbol } from 'katex'
 
-import type { Generator } from "../generator/generator.ts";
+import type { Generator } from "../generator/generator.ts"
 
 
 export class Stix
@@ -8,10 +10,10 @@ export class Stix
     constructor(generator: Generator, options?: any)
     {
         // Inject custom symbols into KaTeX definitions
-        generator.KaTeX.__defineSymbol("math", "main", "textord", "\u2664", "\\varspadesuit", true);   // ♤
-        generator.KaTeX.__defineSymbol("math", "main", "textord", "\u2665", "\\varheartsuit", true);   // ♥
-        generator.KaTeX.__defineSymbol("math", "main", "textord", "\u2666", "\\vardiamondsuit", true); // ♦
-        generator.KaTeX.__defineSymbol("math", "main", "textord", "\u2667", "\\varclubsuit", true);    // ♧
+        __defineSymbol("math", "main", "textord", "\u2664", "\\varspadesuit", true);   // ♤
+        __defineSymbol("math", "main", "textord", "\u2665", "\\varheartsuit", true);   // ♥
+        __defineSymbol("math", "main", "textord", "\u2666", "\\vardiamondsuit", true); // ♦
+        __defineSymbol("math", "main", "textord", "\u2667", "\\varclubsuit", true);    // ♧
     }
 
 
