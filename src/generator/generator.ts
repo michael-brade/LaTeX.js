@@ -51,7 +51,7 @@ export abstract class Generator
     }
 
     // "execute" (expand) a macro
-    macro(name: string, ...args: any[]): any[] | undefined
+    macro(name: string, ...args: any[]): any[]
     {
         // TODO symbols static element
         if (symbols.has(name))
@@ -60,16 +60,17 @@ export abstract class Generator
 
         const macroFn = this.#manager.macroFn(name);
         if (!macroFn)
-            return undefined;
+            this.error(`no such macro: \\${name}`);
 
-        const result = macroFn(...args);
-
-        return result
-            ?.filter((x: any) => x != undefined)
+        return macroFn(...args)
+            // the macroFn returns an array -> filter undefined elements
+            .filter((x: any) => x != undefined)
             .map((x: any) => {
+                // if an element of the macro's result is a string, create text
                 if (typeof x === 'string' || x instanceof String)
                     return this.createText(x);
 
+                // otherwise, add the current attributes to the node
                 return this.addAttributes(x);
             });
     }
