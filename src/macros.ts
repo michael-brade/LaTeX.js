@@ -51,17 +51,22 @@ export let OPT_ARGS = [
 export type OptionalArgType = typeof OPT_ARGS[number];
 
 
+ // can be ArgType types or branches of ArgType types (xcolor, for instance)
+export type MacroArgs = (ArgType | ArgType[][])[];
+
 export interface MacroMeta {
     mode: MacroMode;
-    args?: (ArgType | ArgType[][])[];
+    args?: MacroArgs;
 }
 
 
+// added to macro classes (TODO: should be internal)
+export class Macros extends Map<string | symbol, MacroMeta> {}
 
 
 interface HasStaticMacros {
     new(...args: any[]): any;
-    macros: Map<string | symbol, MacroMeta>;
+    macros: Macros;
 }
 
 /** @HasMacros decorator */
@@ -83,7 +88,7 @@ export function Macro(type: MacroMode) {
             // 'this.constructor' is safely processed at runtime
             const constructor = this.constructor as HasStaticMacros;
 
-            constructor.macros ??= new Map<string | symbol, MacroMeta>;
+            constructor.macros ??= new Macros();
 
             if (constructor.macros.has(context.name))
                 constructor.macros.get(context.name)!.mode = type;
@@ -98,7 +103,7 @@ export function Macro(type: MacroMode) {
  * Argument decorator to assign expected arguments to a macro function.
  * @param argsList Array containing the argument signatures for the macro.
  */
-export function Args(...argsList: (ArgType | ArgType[][])[])
+export function Args(...argsList: MacroArgs)
 {
     return function (targetMethod: Function, context: ClassMethodDecoratorContext)
     {
@@ -108,7 +113,7 @@ export function Args(...argsList: (ArgType | ArgType[][])[])
             const constructor = this.constructor as any;
 
             // Initialize the static 'macros' object if it doesn't exist yet
-            constructor.macros ??= new Map<string | symbol, MacroMeta>;
+            constructor.macros ??= new Macros();
 
             if (!constructor.macros.has(context.name))
                 constructor.macros.set(context.name, { mode: 'H' });    // if it wasn't specified (yet): H is default
@@ -118,6 +123,8 @@ export function Args(...argsList: (ArgType | ArgType[][])[])
         });
     }
 }
+
+
 
 
 /*

@@ -3,11 +3,18 @@ import { createRequire } from 'node:module'
 import Stack from '../lib/stack.ts';
 
 import type { Generator } from "./generator/generator.ts";
-import { OPT_ARGS, type ArgType, type MacroMeta } from "./macros.ts";
+import { Macros, OPT_ARGS, type ArgType, type MacroArgs, type MacroMeta } from "./macros.ts";
 import builtinPackages from "./packages/index.ts";
 
+type MacroPackageConstructor = {
+    symbols?: Map<string, string>
+    new(...args: any[]): any
+};
+type MacroPackage = Record<string, any> & { macros: Macros };
 
-interface MacroArgs {
+
+
+interface ParsedArgs {
     // if macro has no args, the name is not recorded
     name?: string;
 
@@ -15,7 +22,7 @@ interface MacroArgs {
      * array with ArgTypes; as they are parsed, they get removed here one by one
      * and the parsed result added to parsed below, one by one
      */
-    args: (ArgType | ArgType[][])[]; // Can be string types or branches of string types (xcolor, for instance)
+    args: MacroArgs;
 
     /** array with parsed content for the respective arg */
     parsed: (DocumentFragment | boolean | string | any)[];
@@ -23,26 +30,27 @@ interface MacroArgs {
 
 
 /**
- * This class is used mainly by the parser, and then by the generator (interface).
- * MacroManager knows about the Generator to pass it on to instantiated macro packages.
+ * This class is used by the parser and the generator. The parser needs to know what arguments to parse for a
+ * macro it encountered, and the MacroManager keeps track with state in #curArgs. The parser then executes the
+ * macro with parsed arguments using the generator's macro(), which asks the MacroManager for the macro function.
  *
- * Macro packages are: latex.ltx, documentclasses, packages, custom macros class(es).
- *
+ * MacroManager knows about the Generator to pass it on to instantiated macro packages. Macros need the generator
+ * to create output.
  * TODO: what about symbols? those are also just macros, but no functions
  *
+ * Macro packages are: latex.ltx, documentclasses, packages, custom macros class(es).
  * All macro packages should ideally be frozen. State is held in the generator.
- * Holds the state during macro argument parsing.
  */
 export class MacroManager
 {
     // stores package instances, last package's macro overrides first package's macro
-    #packages = new Array<Record<string, any>>();
+    #packages = new Array<MacroPackage>();
 
     #generator!: Generator;
     #options = {CustomMacros: {}};  // TODO
 
-    // when parsing: stack of argument declarations
-    #curArgs = new Stack<MacroArgs>();
+    // when parsing: stack of argument declarations to handle macros as macro arguments
+    #curArgs = new Stack<ParsedArgs>();
 
 
     constructor(options: any)
@@ -65,31 +73,33 @@ export class MacroManager
 
     //// packages
 
-    // Called to load LaTeX.ltx, called by \documentclass and \usepackage.
-    public loadPackage(pkg: string)
+    // called to load format (i.e. LaTeX.ltx), documentclass, and packages
+    // loads symbols as macros first
+    public loadPackage(pkg: string, path?: string)
     {
         // create a dynamic synchronous loader using Node's native ESM API
         const requireSync = createRequire(import.meta.url)
 
-
         // load and instantiate the package
-        let PkgClass = (builtinPackages as any)[pkg]
+        let PkgClass: MacroPackageConstructor | undefined = (builtinPackages as {[key: string]: MacroPackageConstructor})[pkg]
 
         try {
             if (!PkgClass) {
-                //let Export = await globalThis.import("./packages/" + pkg)
-                let Export = requireSync(`./packages/${pkg}`)
-                PkgClass = Export.default || Export[Object.getOwnPropertyNames(Export)[0]]
+                const Export = requireSync(`${path ?? "./packages"}/${pkg}`)
+                PkgClass = Export.default || Object.values(Export).find(v => typeof v === 'function');
             }
 
-            // Instantiate the package with arguments
+            if (!PkgClass || typeof PkgClass !== 'function')
+                throw new Error(`No valid class constructor exported from package "${pkg}"`);
+
+            // instantiate the package with arguments
             this.#packages.push(new PkgClass(this.#generator, this.#options))
 
             // Object.assign(args, PkgClass.args)
             // PkgClass.symbols?.forEach (value, key) !-> symbols.set key, value
         } catch (e) {
             // log error but continue anyway
-            console.error(`error loading package \"${pkg}\": ${e}`);
+            console.error(`error loading package \"${pkg}\":`, e);
         }
     }
 
@@ -97,7 +107,7 @@ export class MacroManager
     //// macros
 
     // look up the package that has the given macro
-    #macroPkg(macro: string): any | undefined
+    #macroPkg(macro: string): MacroPackage | undefined
     {
         // search packages in reverse order (newest packages override older ones)
         for (const pkg of this.#packages.toReversed()) {
@@ -127,17 +137,20 @@ export class MacroManager
     }
 
 
-    macroFn(macro: string): Function | undefined
+    macroFn(macro: string): (...args: any[]) => any[]
     {
         const pkg = this.#macroPkg(macro)
 
-        if (!pkg) return
+        if (!pkg)
+            this.#generator.error(`no such macro: \\${macro}`)
 
         // if it's a function, bind it and return
-        if (typeof pkg[macro] === "function")
-            return pkg[macro].bind(pkg)
+        if (typeof pkg[macro] !== "function")
+            this.#generator.error(`macro is not a function: \\${macro}`)
 
-        // otherwise, return the raw value (TODO: why? aren't macros always functions?)
+        return pkg[macro].bind(pkg)
+
+        // otherwise, return the raw value -> nope, macros should now always be functions
         // return pkg[macro]
     }
 
