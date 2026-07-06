@@ -15,7 +15,7 @@ export class Stix
     }
 
 
-    public symbols: Map<string, string> = new Map([
+    public static symbols: Map<string, string> = new Map([
         ["checkmark", he.decode('&check;')] // ✓ U+2713
     ]);
 }

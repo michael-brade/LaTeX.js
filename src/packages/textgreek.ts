@@ -10,7 +10,7 @@ export class Textgreek
     }
 
 
-    public symbols: Map<string, string> = new Map([
+    public static symbols: Map<string, string> = new Map([
         // greek letters - lower case
         ["textalpha", he.decode('&alpha;')],       // α     U+03B1
         ["textbeta", he.decode('&beta;')],         // β     U+03B2

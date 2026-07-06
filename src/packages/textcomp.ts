@@ -9,7 +9,7 @@ export class Textcomp
     {
     }
 
-    public symbols: Map<string, string> = new Map([
+    public static symbols: Map<string, string> = new Map([
         // currencies
         ["textcentoldstyle", "\uF7A2"],        // 
         ["textdollaroldstyle", "\uF724"],      // 
