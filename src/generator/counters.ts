@@ -10,16 +10,16 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
      */
     abstract class CountersMixin extends GeneratorBase
     {
-        #counters: Map<string, number> = new Map();
-        #resets: Map<string, string[]> = new Map();
+        _counters: Map<string, number> = new Map();
+        _resets: Map<string, string[]> = new Map();
 
         // part of global generator reset
         reset()
         {
             super.reset()
 
-            this.#counters.clear()
-            this.#resets.clear()
+            this._counters.clear()
+            this._resets.clear()
         }
 
 
@@ -28,8 +28,8 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
             if (this.hasCounter(c))
                 this.error(`counter ${c} already defined!`);
 
-            this.#counters.set(c, 0);
-            this.#resets.set(c, []);
+            this._counters.set(c, 0);
+            this._resets.set(c, []);
 
             if (parent)
                 this.addToReset(c, parent);
@@ -44,7 +44,7 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
 
         hasCounter(c: string): boolean
         {
-            return this.#counters.has(c);
+            return this._counters.has(c);
         }
 
 
@@ -53,7 +53,7 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
             if (!this.hasCounter(c))
                 this.error(`no such counter: ${c}`);
 
-            return this.#counters.get(c)!;
+            return this._counters.get(c)!;
         }
 
 
@@ -62,14 +62,14 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
             if (!this.hasCounter(c))
                 this.error(`no such counter: ${c}`);
 
-            this.#counters.set(c, v);
+            this._counters.set(c, v);
         }
 
 
         stepCounter(c: string): void
         {
             this.setCounter(c, this.counter(c) + 1);
-            this.#clearCounter(c);
+            this._clearCounter(c);
         }
 
 
@@ -81,16 +81,16 @@ export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBas
             if (!this.hasCounter(c))
                 this.error(`no such counter: ${c}`);
 
-            this.#resets.get(parent)!.push(c);
+            this._resets.get(parent)!.push(c);
         }
 
 
         // reset all descendants of c to 0
-        #clearCounter(c: string): void
+        _clearCounter(c: string): void
         {
-            // clearCounter only called after setCounter, so #resets is never undefined for it
-            for (const r of this.#resets.get(c)!) {
-                this.#clearCounter(r);
+            // clearCounter only called after setCounter, so _resets is never undefined for it
+            for (const r of this._resets.get(c)!) {
+                this._clearCounter(r);
                 this.setCounter(r, 0);
             }
         }

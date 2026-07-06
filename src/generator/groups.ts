@@ -9,7 +9,7 @@ interface CurrentLabel {
     label: Node;
 }
 
-interface StackItem {
+export interface StackItem {
     attrs: Record<string, any>;
     align: string | null;
     currentlabel: CurrentLabel;
@@ -26,10 +26,10 @@ export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase:
     {
         // stack for local variables and attributes - entering a group adds another entry,
         // leaving a group removes the top entry
-        #stack = new Stack<StackItem>();
+        _stack = new Stack<StackItem>();
 
         // grouping stack, keeps track of difference between opening and closing brackets
-        #groups = new Stack<number>();
+        _groups = new Stack<number>();
 
 
         constructor(...args: any[])
@@ -43,8 +43,8 @@ export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase:
         {
             super.reset()
 
-            this.#stack.clear()
-            this.#stack.push({
+            this._stack.clear()
+            this._stack.push({
                 attrs: {},
                 align: null,
                 currentlabel: {
@@ -55,50 +55,50 @@ export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase:
                 lengths: new Map()
             })
 
-            this.#groups.clear()
-            this.#groups.push(0)
+            this._groups.clear()
+            this._groups.push(0)
         }
 
         // start a new group
         enterGroup(copyAttrs: boolean = false): void
         {
             // shallow copy of the contents of top is enough because we don't change the elements, only the array and the maps
-            this.#stack.push({
-                attrs: copyAttrs ? Object.assign({}, this.#stack.top!.attrs) : {},
+            this._stack.push({
+                attrs: copyAttrs ? Object.assign({}, this._stack.top!.attrs) : {},
                 align: null,                                                 // alignment is set only per level where it was changed
-                currentlabel: Object.assign({}, this.#stack.top!.currentlabel),
-                lengths: new Map(this.#stack.top!.lengths)
+                currentlabel: Object.assign({}, this._stack.top!.currentlabel),
+                lengths: new Map(this._stack.top!.lengths)
             });
 
-            ++this.#groups.top!;
+            ++this._groups.top!;
         }
 
         // end the last group - throws if there was no group to end
         exitGroup(): void
         {
-            if (--this.#groups.top! < 0)
+            if (--this._groups.top! < 0)
                 this.error("there is no group to end here");
 
-            this.#stack.pop();
+            this._stack.pop();
         }
 
         // start a new level of grouping
         startBalanced(): void
         {
-            this.#groups.push(0);
+            this._groups.push(0);
         }
 
         // exit a level of grouping and return the levels of balancing still left
         endBalanced(): number
         {
-            this.#groups.pop();
-            return this.#groups.size;
+            this._groups.pop();
+            return this._groups.size;
         }
 
         // check if the current level of grouping is balanced
         isBalanced(): boolean
         {
-            return this.#groups.top === 0;
+            return this._groups.top === 0;
         }
     }
 

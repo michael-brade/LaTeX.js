@@ -7,7 +7,7 @@ import type { MacroManager } from "../macro-manager.ts"
  */
 export abstract class Generator
 {
-    #manager: MacroManager
+    _manager: MacroManager
 
     title?: string
     author?: string
@@ -19,7 +19,7 @@ export abstract class Generator
 
     constructor(manager: MacroManager)
     {
-        this.#manager = manager
+        this._manager = manager
     }
 
     reset(): void
@@ -46,7 +46,7 @@ export abstract class Generator
 
     hasMacro(name: string): boolean
     {
-        return !!this.#manager.hasMacro(name)
+        return !!this._manager.hasMacro(name)
     }
 
     // "execute" (expand) a macro
@@ -72,36 +72,35 @@ export abstract class Generator
 
     //// error handling
 
-    #errorFn = (e: string): never =>
-    {
+    _errorFn = (e: string): never => {
         console.error(e);
         throw new Error(e);
     }
 
     public setErrorFn(fn: (msg: string) => never): void
     {
-        this.#errorFn = fn;
+        this._errorFn = fn;
     }
 
     // report an error
     public error(e: string): never
     {
-        this.#errorFn(e);
+        this._errorFn(e);
         throw new Error("illegal error function: it unexpectedly returned");
     }
 
 
-    #locationFn = (): void => {
+    _locationFn = (): void => {
         this.error("location function not set!");
     }
 
     public setLocationFn(fn: () => void): void
     {
-        this.#locationFn = fn;
+        this._locationFn = fn;
     }
 
     public location(): void
     {
-        this.#locationFn();
+        this._locationFn();
     }
 }
