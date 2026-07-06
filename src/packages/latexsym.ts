@@ -8,7 +8,7 @@ export class Latexsym
     {
     }
 
-    public symbols: Map<string, string> = new Map([
+    public static symbols: Map<string, string> = new Map([
         ["mho", "\u2127"],       // ℧
         ["Join", "\u2A1D"],      // ⨝
         ["Box", "\u25A1"],       // □

@@ -11,7 +11,9 @@ export class Gensymb
 
     // TODO: implement package options
 
-    public symbols: Map<string, string> = new Map([
+    // the symbols map is just a shortcut and technically equivalent to defining a function (macro)
+    // that returns generator.createText(symbol)
+    public static symbols: Map<string, string> = new Map([
         ["degree", he.decode('&deg;')],         // °   U+00B0
         ["celsius", "\u2103"],                  // ℃   U+2103
         ["perthousand", he.decode('&permil;')], // ‰   U+2030

@@ -37,7 +37,6 @@ export abstract class Generator
 
 
     // TODO implement here? used by mixins...
-    g = { arabic: (val: number) => {} };
     private createText(text: string | String): any {}
     private addAttributes(attr: any): any {}
 
@@ -53,12 +52,7 @@ export abstract class Generator
     // "execute" (expand) a macro
     macro(name: string, ...args: any[]): any[]
     {
-        // TODO symbols static element
-        if (symbols.has(name))
-            return [this.createText(symbols.get(name)!)];
-
-
-        const macroFn = this.#manager.macroFn(name);
+        const macroFn = this._manager.macroFn(name);
         if (!macroFn)
             this.error(`no such macro: \\${name}`);
 

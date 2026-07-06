@@ -4,7 +4,10 @@ import Stack from '../lib/stack.ts';
 
 import type { Generator } from "./generator/generator.ts";
 import { Macros, OPT_ARGS, type ArgType, type MacroArgs, type MacroMeta } from "./macros.ts";
+
 import builtinPackages from "./packages/index.ts";
+import { symbols } from './symbols.ts';
+
 
 type MacroPackageConstructor = {
     symbols?: Map<string, string>
@@ -36,7 +39,6 @@ interface ParsedArgs {
  *
  * MacroManager knows about the Generator to pass it on to instantiated macro packages. Macros need the generator
  * to create output.
- * TODO: what about symbols? those are also just macros, but no functions
  *
  * Macro packages are: latex.ltx, documentclasses, packages, custom macros class(es).
  * All macro packages should ideally be frozen. State is held in the generator.
@@ -56,6 +58,8 @@ export class MacroManager
     constructor(options: any)
     {
         this.#options = options
+
+        this.#registerSymbols(symbols)
     }
 
     setGenerator(generator: Generator)
@@ -63,19 +67,12 @@ export class MacroManager
         this.#generator = generator
     }
 
-    // TODO: set new options?
-    reset(): void
-    {
-        this.#packages = []
-        this.#curArgs.clear()
-    }
-
 
     //// packages
 
     // called to load format (i.e. LaTeX.ltx), documentclass, and packages
     // loads symbols as macros first
-    public loadPackage(pkg: string, path?: string)
+    loadPackage(pkg: string, path?: string)
     {
         // create a dynamic synchronous loader using Node's native ESM API
         const requireSync = createRequire(import.meta.url)
@@ -92,6 +89,10 @@ export class MacroManager
             if (!PkgClass || typeof PkgClass !== 'function')
                 throw new Error(`No valid class constructor exported from package "${pkg}"`);
 
+            // add symbols if the package is defining them
+            if (PkgClass.symbols instanceof Map)
+                this.#registerSymbols(PkgClass.symbols)
+
             // instantiate the package with arguments
             this.#packages.push(new PkgClass(this.#generator, this.#options))
 
@@ -102,6 +103,37 @@ export class MacroManager
             console.error(`error loading package \"${pkg}\":`, e);
         }
     }
+
+
+    // this creates a new "package" for the given symbols
+    #registerSymbols(symbols: Map<string, string>)
+    {
+        // create the new package...
+        this.#packages.push(
+            Object.assign(
+                // ...with NO prototype (toString, etc.)
+                Object.create(null),
+                // ...with symbols being macros
+                Object.fromEntries(
+                    Array.from(symbols.entries().map(([key, value]) => [
+                        key,
+                        this.#generator.createText(value)
+                    ]))
+                ),
+                // ...and add a macros map with symbol names and mode = "H", args = undefined
+                {
+                    macros: new Map(
+                        Array.from(symbols.keys()).map(key => [
+                            key,
+                            { mode: "H" }
+                        ])
+                    )
+                }
+
+            )
+        )
+    }
+
 
 
     //// macros
