@@ -1,5 +1,9 @@
+{{
+    import { Vector } from '../types.ts';
+}}
+
+// per-parse init
 {
-    import { Vector } from './types.ts';
     let g = options.generator;
     g.setErrorFn(error);
     g.setLocationFn(location);
