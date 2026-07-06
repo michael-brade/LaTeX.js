@@ -21,10 +21,14 @@ export type MandatoryArgType =
     | "hg"   // Restricted horizontal mode material enclosed in {}
     | "h"    // Restricted horizontal mode material without explicit delimiters
     | "i"    // Strict identifier containing letters only, wrapped in {}
+    | "ie"   // Strict identifier (s.o.) or empty group
     | "k"    // Key entry containing anything except = or ,
     | "csv"  // Comma-separated values list wrapped in {}
     | "u"    // Standard URL string conforming to RFC3986
     | "c"    // Color specification (name, float value, or float triplet)
+    | "c-ml" // Color_modellist_group
+    | "c-ssp"// Color_set spec_group
+    | "c-spl"// Color_spec list_group
     | "m"    // A macro reference name (e.g., \macro)
     | "l"    // Length dimension expression wrapped in {}
     | "cl"   // Coordinate system layout or TeX length specification
@@ -43,6 +47,7 @@ export let OPT_ARGS = [
     , "kv?"  // Optional key-value assignment list wrapped in []
     , "lg?"  // Optional length grouping sequence wrapped in {}
     , "l?"   // Optional length dimension expression wrapped in []
+    , "c-ml?"// Optional color_modellist_group
     , "cl?"  // Optional coordinate system layout or TeX length expression
     , "n?"   // Optional numerical expression evaluating to an integer
     , "v?"   // Optional vector layout coordinate pair notation
