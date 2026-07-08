@@ -58,13 +58,12 @@ export class MacroManager
     constructor(options: any)
     {
         this.#options = options
-
-        this.#registerSymbols(symbols)
     }
 
     setGenerator(generator: Generator)
     {
         this.#generator = generator
+        this.#registerSymbols(symbols)
     }
 
 
