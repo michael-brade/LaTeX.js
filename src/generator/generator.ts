@@ -29,6 +29,12 @@ export abstract class Generator
     }
 
 
+    get macromanager(): MacroManager
+    {
+        return this._manager
+    }
+
+
     // set the title of the document, usually called by the \maketitle macro
     setTitle(title: Node): void
     {
