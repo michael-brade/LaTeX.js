@@ -5,6 +5,7 @@
 // per-parse init
 {
     let g = options.generator;
+    let m = g.macromanager;
     g.setErrorFn(error);
     g.setLocationFn(location);
 }
@@ -187,32 +188,32 @@ vmode_macro =
 
 
 is_preamble =
-    id:identifier &{ return g.isPreamble(id); }
+    id:identifier &{ return m.isPreamble(id); }
 
 is_vmode =
-    id:identifier &{ return g.isVmode(id); }
+    id:identifier &{ return m.isVmode(id); }
 
 is_hmode =
-    id:identifier &{ return g.isHmode(id); }
+    id:identifier &{ return m.isHmode(id); }
 
 is_hvmode =
-    id:identifier &{ return g.isHVmode(id); }
+    id:identifier &{ return m.isHVmode(id); }
 
 
 is_vmode_env =
-    (begin/end) begin_group id:identifier   &{ return g.isVmode(id); }
+    (begin/end) begin_group id:identifier   &{ return m.isVmode(id); }
 
 is_hmode_env =
-    begin begin_group id:identifier         &{ return g.isHmode(id) || g.isHVmode(id); }
+    begin begin_group id:identifier         &{ return m.isHmode(id) || m.isHVmode(id); }
 
 
 
 macro =
-    name:identifier _ &{ if (g.hasMacro(name)) { g.beginArgs(name); return true; } }
+    name:identifier _ &{ if (m.hasMacro(name)) { m.beginArgs(name); return true; } }
     macro_args
     {
-        var args = g.parsedArgs();
-        g.endArgs();
+        var args = m.parsedArgs();
+        m.endArgs();
         return g.createFragment(g.macro(name, args));
     }
 
@@ -247,56 +248,56 @@ key_val "key=value" =
 
 macro_args =
     (
-        &{ return g.nextArg("X") }                                                                              { g.preExecMacro(); }
+        &{ return m.nextArg("X") }                                                                              { m.preExecMacro(); }
       / nextArgStar
 
-      / &{ return g.nextArg("g") }    a:(arg_group      / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
-      / &{ return g.nextArg("hg") }   a:(arg_hgroup     / &{ g.argError("group argument expected") })           { g.addParsedArg(a); }
-      / &{ return g.nextArg("h") }    h:(horizontal     / &{ g.argError("horizontal material expected") })      { g.addParsedArg(h); }
-      / &{ return g.nextArg("o?") }   o: opt_group?                                                             { g.addParsedArg(o); }
+      / &{ return m.nextArg("g") }    a:(arg_group      / &{ m.argError("group argument expected") })           { m.addParsedArg(a); }
+      / &{ return m.nextArg("hg") }   a:(arg_hgroup     / &{ m.argError("group argument expected") })           { m.addParsedArg(a); }
+      / &{ return m.nextArg("h") }    h:(horizontal     / &{ m.argError("horizontal material expected") })      { m.addParsedArg(h); }
+      / &{ return m.nextArg("o?") }   o: opt_group?                                                             { m.addParsedArg(o); }
 
-      / &{ return g.nextArg("i") }    i:(id_group       / &{ g.argError("id group argument expected") })        { g.addParsedArg(i); }
-      / &{ return g.nextArg("ie") }   i:(ide_group      / &{ g.argError("id or empty group arg expected") })    { g.addParsedArg(i); }
-      / &{ return g.nextArg("i?") }   i: id_optgroup?                                                           { g.addParsedArg(i); }
-      / &{ return g.nextArg("k") }    k:(key_group      / &{ g.argError("key group argument expected") })       { g.addParsedArg(k); }
-      / &{ return g.nextArg("k?") }   k: key_optgroup?                                                          { g.addParsedArg(k); }
-      / &{ return g.nextArg("kv?") }  k: keyval_optgroup?                                                       { g.addParsedArg(k); }
-      / &{ return g.nextArg("csv") }  v:(csv_group      / &{ g.argError("comma-sep. values group expected") })  { g.addParsedArg(v); }
+      / &{ return m.nextArg("i") }    i:(id_group       / &{ m.argError("id group argument expected") })        { m.addParsedArg(i); }
+      / &{ return m.nextArg("ie") }   i:(ide_group      / &{ m.argError("id or empty group arg expected") })    { m.addParsedArg(i); }
+      / &{ return m.nextArg("i?") }   i: id_optgroup?                                                           { m.addParsedArg(i); }
+      / &{ return m.nextArg("k") }    k:(key_group      / &{ m.argError("key group argument expected") })       { m.addParsedArg(k); }
+      / &{ return m.nextArg("k?") }   k: key_optgroup?                                                          { m.addParsedArg(k); }
+      / &{ return m.nextArg("kv?") }  k: keyval_optgroup?                                                       { m.addParsedArg(k); }
+      / &{ return m.nextArg("csv") }  v:(csv_group      / &{ m.argError("comma-sep. values group expected") })  { m.addParsedArg(v); }
 
-      / &{ return g.nextArg("n") }    n:(expr_group     / &{ g.argError("num group argument expected") })       { g.addParsedArg(n); }
-      / &{ return g.nextArg("n?") }   n: expr_optgroup?                                                         { g.addParsedArg(n); }
-      / &{ return g.nextArg("l") }    l:(length_group   / &{ g.argError("length group argument expected") })    { g.addParsedArg(l); }
-      / &{ return g.nextArg("lg?") }  l: length_group?                                                          { g.addParsedArg(l); }
-      / &{ return g.nextArg("l?") }   l: length_optgroup?                                                       { g.addParsedArg(l); }
-      / &{ return g.nextArg("m") }    m:(macro_group    / &{ g.argError("macro group argument expected") })     { g.addParsedArg(m); }
-      / &{ return g.nextArg("u") }    u:(url_group      / &{ g.argError("url group argument expected") })       { g.addParsedArg(u); }
+      / &{ return m.nextArg("n") }    n:(expr_group     / &{ m.argError("num group argument expected") })       { m.addParsedArg(n); }
+      / &{ return m.nextArg("n?") }   n: expr_optgroup?                                                         { m.addParsedArg(n); }
+      / &{ return m.nextArg("l") }    l:(length_group   / &{ m.argError("length group argument expected") })    { m.addParsedArg(l); }
+      / &{ return m.nextArg("lg?") }  l: length_group?                                                          { m.addParsedArg(l); }
+      / &{ return m.nextArg("l?") }   l: length_optgroup?                                                       { m.addParsedArg(l); }
+      / &{ return m.nextArg("m") }    m:(macro_group    / &{ m.argError("macro group argument expected") })     { m.addParsedArg(m); }
+      / &{ return m.nextArg("u") }    u:(url_group      / &{ m.argError("url group argument expected") })       { m.addParsedArg(u); }
 
-      / &{ return g.nextArg("c") }     c:(color_group          / &{ g.argError("color group expected") })       { g.addParsedArg(c); }
-      / &{ return g.nextArg("c-ml") }  c:(color_modellist_group/ &{ g.argError("color model list expected") })  { g.addParsedArg(c); }
-      / &{ return g.nextArg("c-ml?") } c: color_modellist_optgroup?                                             { g.addParsedArg(c); }
-      / &{ return g.nextArg("c-ssp") } c:(color_setspec_group  / &{ g.argError("color set spec expected") })    { g.addParsedArg(c); }
-      / &{ return g.nextArg("c-spl") } c:(color_speclist_group / &{ g.argError("color spec list expected") })   { g.addParsedArg(c); }
+      / &{ return m.nextArg("c") }     c:(color_group          / &{ m.argError("color group expected") })       { m.addParsedArg(c); }
+      / &{ return m.nextArg("c-ml") }  c:(color_modellist_group/ &{ m.argError("color model list expected") })  { m.addParsedArg(c); }
+      / &{ return m.nextArg("c-ml?") } c: color_modellist_optgroup?                                             { m.addParsedArg(c); }
+      / &{ return m.nextArg("c-ssp") } c:(color_setspec_group  / &{ m.argError("color set spec expected") })    { m.addParsedArg(c); }
+      / &{ return m.nextArg("c-spl") } c:(color_speclist_group / &{ m.argError("color spec list expected") })   { m.addParsedArg(c); }
 
-      / &{ return g.nextArg("cl") }   c:(coord_group    / &{ g.argError("coordinate/length group expected") })  { g.addParsedArg(c); }
-      / &{ return g.nextArg("cl?") }  c: coord_optgroup?                                                        { g.addParsedArg(c); }
-      / &{ return g.nextArg("v") }    v:(vector         / &{ g.argError("coordinate pair expected") })          { g.addParsedArg(v); }
-      / &{ return g.nextArg("v?") }   v: vector?                                                                { g.addParsedArg(v); }
-      / &{ return g.nextArg("cols") } c:(columns        / &{ g.argError("column specification missing") })      { g.addParsedArg(c); }
+      / &{ return m.nextArg("cl") }   c:(coord_group    / &{ m.argError("coordinate/length group expected") })  { m.addParsedArg(c); }
+      / &{ return m.nextArg("cl?") }  c: coord_optgroup?                                                        { m.addParsedArg(c); }
+      / &{ return m.nextArg("v") }    v:(vector         / &{ m.argError("coordinate pair expected") })          { m.addParsedArg(v); }
+      / &{ return m.nextArg("v?") }   v: vector?                                                                { m.addParsedArg(v); }
+      / &{ return m.nextArg("cols") } c:(columns        / &{ m.argError("column specification missing") })      { m.addParsedArg(c); }
 
         // ignore spaces
-      / &{ return g.nextArg("is") }   skip_space
+      / &{ return m.nextArg("is") }   skip_space
 
-      / &{ return g.nextArg("items") }      i:items                                                             { g.addParsedArg(i); }
-      / &{ return g.nextArg("enumitems") }  i:enumitems                                                         { g.addParsedArg(i); }
+      / &{ return m.nextArg("items") }      i:items                                                             { m.addParsedArg(i); }
+      / &{ return m.nextArg("enumitems") }  i:enumitems                                                         { m.addParsedArg(i); }
 
       // if the next char is one of optgroup or group but no branches available, continue with next rule or stop => fail the match
-      / &(_ begin_optgroup) &{ return g.selectArgsBranch("[") }
-      / &(_ begin_group)    &{ return g.selectArgsBranch("{") /* requirement in pegjs: balance } */ }
+      / &(_ begin_optgroup) &{ return m.selectArgsBranch("[") }
+      / &(_ begin_group)    &{ return m.selectArgsBranch("{") /* requirement in pegjs: balance } */ }
     )*
 
 // check if next possible argument is a star
 nextArgStar =
-      &{ return g.nextArg("s") }  _ s:"*"?   { g.addParsedArg(!!s); return !!s; }
+      &{ return m.nextArg("s") }  _ s:"*"?   { m.addParsedArg(!!s); return !!s; }
 
 
 // {identifier}
@@ -750,7 +751,7 @@ end_env "\\end" =
 h_environment =
     id:begin_env
         macro_args                                          // parse macro args (which now become environment args)
-        node:( &. { return g.macro(id.id, g.endArgs()); })  // then execute macro with args without consuming input
+        node:( &. { return g.macro(id.id, m.endArgs()); })  // then execute macro with args without consuming input
         sb:(s:space? {return g.createText(s); })
         p:paragraph_with_linebreak*                         // then parse environment contents (if macro left some)
     end_id:end_env se:(s:space? {return g.createText(s); })
@@ -776,7 +777,7 @@ h_environment =
 environment =
     id:begin_env  !{ g.break(); }
         macro_args                                          // parse macro args (which now become environment args)
-        node:( &. { return g.macro(id.id, g.endArgs()); })  // then execute macro with args without consuming input
+        node:( &. { return g.macro(id.id, m.endArgs()); })  // then execute macro with args without consuming input
         p:paragraph*                                        // then parse environment contents (if macro left some)
     end_id:end_env
     {
