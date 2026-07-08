@@ -184,6 +184,9 @@ devDependencies:
     'esbuild': '0.28.x'
     'terser': '5.48.x'
 
+    '@rolldown/plugin-babel': '0.2.x'
+    '@babel/plugin-proposal-decorators': '8.0.x'
+
     ### testing
 
     'mocha': '11.7.x'
@@ -209,7 +212,6 @@ devDependencies:
     "@types/tmp": "^0.2.6"
 
 mocha:
-    extension: ['ts']
     'node-option': [ "import=tsx" ]
     file:
         'test/lib/globals.ts'

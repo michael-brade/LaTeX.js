@@ -104,6 +104,8 @@
     "rollup-plugin-visualizer": "7.0.x",
     "esbuild": "0.28.x",
     "terser": "5.48.x",
+    "@rolldown/plugin-babel": "0.2.x",
+    "@babel/plugin-proposal-decorators": "8.0.x",
     "mocha": "11.7.x",
     "mocha-junit-reporter": "2.x",
     "chai": "6.x",
@@ -123,9 +125,6 @@
     "@types/tmp": "^0.2.6"
   },
   "mocha": {
-    "extension": [
-      "ts"
-    ],
     "node-option": [
       "import=tsx"
     ],
