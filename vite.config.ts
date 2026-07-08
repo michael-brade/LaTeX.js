@@ -5,6 +5,8 @@ import { defineConfig } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import dts from 'unplugin-dts/vite'
 
+import babel from "@rolldown/plugin-babel"
+
 import livescript from "./lib/rollup-plugin-livescript.js";
 import peggy from "./lib/vite-plugin-peggy.ts";
 
@@ -23,9 +25,21 @@ export default defineConfig({
     logLevel: "info",
 
     plugins: [
-        // checker({
-        //     typescript: true
-        // }),
+        checker({
+            typescript: true
+        }),
+
+        babel({
+            presets: [{
+                preset: () => ({
+                    plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]]
+                }),
+                rolldown: {
+                    filter: { code: "@" }
+                }
+            }]
+        }),
+
         livescript(),
         peggy({
             plugins: [ignoreInfiniteLoop],
