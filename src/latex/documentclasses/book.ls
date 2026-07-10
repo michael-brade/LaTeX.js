@@ -1,36 +1,45 @@
-import
-    './report.ls': { Report }
+import { Args, Macro } from '../../macros.ts'
+import { Report } from './report.ts'
 
-
-# book in LaTeX has no abstract
 
 export class Book extends Report
+{
+    // public static property
+    public static css = "css/book.css";
 
-    # public static
-    @css = "css/book.css"
+    // Internal instance flag mapping to @"@mainmatter"
+    private _mainmatter: boolean;
 
+    constructor(generator: any, options?: Map<string, any>) {
+        super(generator, options);
 
-    # CTOR
-    (generator, options) ->
-        super ...
+        this._mainmatter = true;
+    }
 
-        @[\@mainmatter] = true
+    @Macro("V")
+    @Args("s", "X", "o?", "g")
+    chapter(s: any, toc: any, ttl: any)
+    {
+        // s or not @"@mainmatter"
+        const condition = s || !this._mainmatter;
+        return [ this.g.startsection("chapter", 0, condition, toc, ttl) ];
+    }
 
+    @Macro("V")
+    frontmatter(): void
+    {
+        this._mainmatter = false;
+    }
 
-    args = @args = Report.args
+    @Macro("V")
+    mainmatter(): void
+    {
+        this._mainmatter = true;
+    }
 
-    args
-     ..\part =          \
-     ..\chapter =       <[ V s X o? g ]>
-
-    \chapter            : (s, toc, ttl) -> [ @g.startsection \chapter, 0, (s or not @"@mainmatter"), toc, ttl ]
-
-
-    args
-     ..\frontmatter =   \
-     ..\mainmatter =    \
-     ..\backmatter =    <[ V ]>
-
-    \frontmatter        :!-> @[\@mainmatter] = false
-    \mainmatter         :!-> @[\@mainmatter] = true
-    \backmatter         :!-> @[\@mainmatter] = false
+    @Macro("V")
+    backmatter(): void
+    {
+        this._mainmatter = false;
+    }
+}

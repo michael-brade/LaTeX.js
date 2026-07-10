@@ -1,52 +1,67 @@
-import
-    './base.ls': { Base }
+import { Macro } from '../../macros.ts'
+import { Base } from './base.ts'
 
 
 export class Article extends Base
+{
+    // public static property
+    public static css = "css/article.css";
 
-    # public static
-    @css = "css/article.css"
+    constructor(generator: any, options?: Map<string, any>)
+    {
+        super(generator, options);
 
+        this.g.setCounter("secnumdepth", 3);
+        this.g.setCounter("tocdepth", 3);
+    }
 
-    # CTOR
-    (generator, options) ->
-        super ...
-
-        @g.setCounter \secnumdepth  3
-        @g.setCounter \tocdepth     3
-
-
-    args = @args = Base.args
-
-    \refname            :-> [ "References" ]
-
-
-    # toc
-
-    args.\tableofcontents = <[ V ]>
-    \tableofcontents    : -> @section(true, undefined, @g.macro(\contentsname)) ++ [ @g._toc ]
+    refname()
+    {
+        return [ "References" ];
+    }
 
 
-    args.\abstract =    <[ V ]>
+    // toc
 
-    \abstract           :->
-        # onecolumn, no titlepage
-        @g.setFontSize "small"
-
-        # TODO use center env directly instead...
-        @g.enterGroup!
-        @g.setFontWeight("bf")
-        head = @g.create @g.list, @g.macro("abstractname"), "center"
-        @g.exitGroup!
-
-        [ head ] ++ @g.macro \quotation
-
-    \endabstract        :!-> @g.macro \endquotation
+    @Macro("V")
+    tableofcontents()
+    {
+        // In LiveScript '++' concatenates arrays.
+        return [ ...this.section(true, undefined, this.g.macro("contentsname")), this.g._toc ];
+    }
 
 
-    args.\appendix =    <[ V ]>
+    @Macro("V")
+    abstract()
+    {
+        // onecolumn, no titlepage
+        this.g.setFontSize("small");
 
-    \appendix           :!->
-        @g.setCounter \section 0
-        @g.setCounter \subsection 0
-        @[\thesection] = -> [ @g.Alph @g.counter \section ]
+        // TODO use center env directly instead...
+        this.g.enterGroup();
+        this.g.setFontWeight("bf");
+        const head = this.g.create(this.g.list, this.g.macro("abstractname"), "center");
+        this.g.exitGroup();
+
+        return [ head, ...this.g.macro("quotation") ];
+    }
+
+    // !-> signifies void return (no return)
+    endabstract(): void
+    {
+        this.g.macro("endquotation");
+    }
+
+
+    @Macro("V")
+    appendix(): void
+    {
+        this.g.setCounter("section", 0);
+        this.g.setCounter("subsection", 0);
+
+        // Dynamically overriding the 'thesection' method instance assignment
+        this.thesection = () => {
+            return [ this.g.Alph(this.g.counter("section")) ];
+        };
+    }
+}

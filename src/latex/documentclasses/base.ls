@@ -1,187 +1,236 @@
-'use strict'
+import { Args, Macro } from "../../macros.ts"
 
-# base class for all standard documentclasses
-#
+
+// Base class for all standard documentclasses
 export class Base
+{
+    public g: any;
+    public options: Map<string, any> = new Map();
+    public args: Record<string, any> = {};
 
-    args = @args = {}
+    // Internal state variables referenced in LiveScript (e.g., 'if @g._date then that')
+    private titleFn: (() => void) | null = null;
+    private authorFn: (() => void) | null = null;
+    private dateFn: (() => void) | null = null;
+    private maketitleFn: (() => void) | null = null;
 
-    # class options
-    options: new Map
+    constructor(generator: any, options?: Map<string, any>)
+    {
+        this.g = generator;
+        if (options)
+            this.options = options;
 
-    # CTOR
-    (generator, options) ->
+        this.g.newCounter("part");
+        this.g.newCounter("section");
+        this.g.newCounter("subsection", "section");
+        this.g.newCounter("subsubsection", "subsection");
+        this.g.newCounter("paragraph", "subsubsection");
+        this.g.newCounter("subparagraph", "paragraph");
 
-        @g = generator
-        @options = options if options
+        this.g.newCounter("figure");
+        this.g.newCounter("table");
 
-        @g.newCounter \part
-        @g.newCounter \section
-        @g.newCounter \subsection       \section
-        @g.newCounter \subsubsection    \subsection
-        @g.newCounter \paragraph        \subsubsection
-        @g.newCounter \subparagraph     \paragraph
+        // default: letterpaper, 10pt, onecolumn, oneside
+        this.g.setLength("paperheight", new this.g.Length(11, "in"));
+        this.g.setLength("paperwidth", new this.g.Length(8.5, "in"));
+        this.g.setLength("@@size", new this.g.Length(10, "pt"));
 
-        @g.newCounter \figure
-        @g.newCounter \table
+        this.options.forEach((v: any, k: string) => {
+            switch (k) {
+                case "oneside":
+                    break;
+                case "twoside": // twoside doesn't make sense in single-page HTML
+                    break;
+                case "onecolumn": // TODO
+                    break;
+                case "twocolumn":
+                    break;
+                case "titlepage": // TODO
+                    break;
+                case "notitlepage":
+                    break;
+                case "fleqn":
+                    break;
+                case "leqno":
+                    break;
 
+                case "a4paper":
+                    this.g.setLength("paperheight", new this.g.Length(297, "mm"));
+                    this.g.setLength("paperwidth", new this.g.Length(210, "mm"));
+                    break;
+                case "a5paper":
+                    this.g.setLength("paperheight", new this.g.Length(210, "mm"));
+                    this.g.setLength("paperwidth", new this.g.Length(148, "mm"));
+                    break;
+                case "b5paper":
+                    this.g.setLength("paperheight", new this.g.Length(250, "mm"));
+                    this.g.setLength("paperwidth", new this.g.Length(176, "mm"));
+                    break;
+                case "letterpaper":
+                    this.g.setLength("paperheight", new this.g.Length(11, "in"));
+                    this.g.setLength("paperwidth", new this.g.Length(8.5, "in"));
+                    break;
+                case "legalpaper":
+                    this.g.setLength("paperheight", new this.g.Length(14, "in"));
+                    this.g.setLength("paperwidth", new this.g.Length(8.5, "in"));
+                    break;
+                case "executivepaper":
+                    this.g.setLength("paperheight", new this.g.Length(10.5, "in"));
+                    this.g.setLength("paperwidth", new this.g.Length(7.25, "in"));
+                    break;
+                case "landscape": {
+                    const tmp = this.g.length("paperheight");
+                    this.g.setLength("paperheight", this.g.length("paperwidth"));
+                    this.g.setLength("paperwidth", tmp);
+                    break;
+                }
 
+                default: {
+                    // check if a point size was given -> set font size
+                    const value = parseFloat(k);
+                    if (!isNaN(value) && k.endsWith("pt") && String(value) === k.substring(0, k.length - 2)) {
+                        this.g.setLength("@@size", new this.g.Length(value, "pt"));
+                    }
+                    break;
+                }
+            }
+        });
 
-        # default: letterpaper, 10pt, onecolumn, oneside
+        //// textwidth
+        const pt345 = new this.g.Length(345, "pt");
+        const inch = new this.g.Length(1, "in");
 
-        @g.setLength \paperheight       new @g.Length 11, "in"
-        @g.setLength \paperwidth        new @g.Length 8.5, "in"
-        @g.setLength \@@size            new @g.Length 10, "pt"
+        let textwidth = this.g.length("paperwidth").sub(inch.mul(2));
+        if (textwidth.cmp(pt345) === 1) {
+            textwidth = pt345;
+        }
+        this.g.setLength("textwidth", textwidth);
 
-        @options.forEach (v, k) ~>
-            switch k
-            | "oneside" =>
-            | "twoside" =>      # twoside doesn't make sense in single-page HTML
+        //// margins
+        this.g.setLength("marginparsep", new this.g.Length(11, "pt"));
+        this.g.setLength("marginparpush", new this.g.Length(5, "pt"));
 
-            | "onecolumn" =>    # TODO
-            | "twocolumn" =>
+        // in px
+        const margins = this.g.length("paperwidth").sub(this.g.length("textwidth"));
+        const oddsidemargin = margins.mul(0.5).sub(inch);
+        let marginparwidth = margins.mul(0.5).sub(this.g.length("marginparsep")).sub(inch.mul(0.8));
+        if (marginparwidth.cmp(inch.mul(2)) === 1) {
+            marginparwidth = inch.mul(2);
+        }
 
-            | "titlepage" =>    # TODO
-            | "notitlepage" =>
+        this.g.setLength("oddsidemargin", oddsidemargin);
+        this.g.setLength("marginparwidth", marginparwidth);
 
-            | "fleqn" =>
-            | "leqno" =>
+        // \evensidemargin = \paperwidth - 2in - \textwidth - \oddsidemargin
+        // \@settopoint\evensidemargin
+    }
 
-            | "a4paper" =>
-                @g.setLength \paperheight   new @g.Length 297, "mm"
-                @g.setLength \paperwidth    new @g.Length 210, "mm"
-            | "a5paper" =>
-                @g.setLength \paperheight   new @g.Length 210, "mm"
-                @g.setLength \paperwidth    new @g.Length 148, "mm"
-            | "b5paper" =>
-                @g.setLength \paperheight   new @g.Length 250, "mm"
-                @g.setLength \paperwidth    new @g.Length 176, "mm"
-            | "letterpaper" =>
-                @g.setLength \paperheight   new @g.Length 11, "in"
-                @g.setLength \paperwidth    new @g.Length 8.5, "in"
-            | "legalpaper" =>
-                @g.setLength \paperheight   new @g.Length 14, "in"
-                @g.setLength \paperwidth    new @g.Length 8.5, "in"
-            | "executivepaper" =>
-                @g.setLength \paperheight   new @g.Length 10.5, "in"
-                @g.setLength \paperwidth    new @g.Length 7.25, "in"
-            | "landscape" =>
-                tmp = @g.length \paperheight
-                @g.setLength \paperheight   @g.length \paperwidth
-                @g.setLength \paperwidth    tmp
+    contentsname() { return [ "Contents" ]; }
+    listfigurename() { return [ "List of Figures" ]; }
+    listtablename() { return [ "List of Tables" ]; }
 
-            | otherwise =>
-                # check if a point size was given -> set font size
-                value = parseFloat k
-                if value != NaN and k.endsWith "pt" and String(value) == k.substring 0, k.length - 2
-                    @g.setLength \@@size new @g.Length value, "pt"
+    partname() { return [ "Part" ]; }
 
+    figurename() { return [ "Figure" ]; }
+    tablename() { return [ "Table" ]; }
 
-
-        ## textwidth
-
-        pt345 = new @g.Length 345, "pt"
-        inch = new @g.Length 1, "in"
-
-        textwidth = @g.length(\paperwidth).sub(inch.mul 2)
-        if textwidth.cmp(pt345) == 1
-            textwidth = pt345
-
-        @g.setLength \textwidth textwidth
-
-
-        ## margins
-
-        @g.setLength \marginparsep new @g.Length 11, "pt"
-        @g.setLength \marginparpush new @g.Length 5, "pt"
-
-        # in px
-        margins = @g.length(\paperwidth).sub @g.length(\textwidth)
-        oddsidemargin = margins.mul(0.5).sub(inch)
-        marginparwidth = margins.mul(0.5).sub(@g.length(\marginparsep)).sub(inch.mul 0.8)
-        if marginparwidth.cmp(inch.mul(2)) == 1
-            marginparwidth = inch.mul(2)
-
-        @g.setLength \oddsidemargin oddsidemargin
-        @g.setLength \marginparwidth marginparwidth
-
-        # \evensidemargin = \paperwidth - 2in - \textwidth - \oddsidemargin
-        # \@settopoint\evensidemargin
-
-
-
-    \contentsname       :-> [ "Contents" ]
-    \listfigurename     :-> [ "List of Figures" ]
-    \listtablename      :-> [ "List of Tables" ]
-
-    \partname           :-> [ "Part" ]
-
-    \figurename         :-> [ "Figure" ]
-    \tablename          :-> [ "Table" ]
-
-    \appendixname       :-> [ "Appendix" ]
-    \indexname          :-> [ "Index" ]
-
-
-    ##############
-    # sectioning #
-    ##############
-
-    args
-     ..\part =          \
-     ..\section =       \
-     ..\subsection =    \
-     ..\subsubsection = \
-     ..\paragraph =     \
-     ..\subparagraph =  <[ V s X o? g ]>
-
-
-    \part               : (s, toc, ttl) -> [ @g.startsection \part,           0, s, toc, ttl ]
-    \section            : (s, toc, ttl) -> [ @g.startsection \section,        1, s, toc, ttl ]
-    \subsection         : (s, toc, ttl) -> [ @g.startsection \subsection,     2, s, toc, ttl ]
-    \subsubsection      : (s, toc, ttl) -> [ @g.startsection \subsubsection,  3, s, toc, ttl ]
-    \paragraph          : (s, toc, ttl) -> [ @g.startsection \paragraph,      4, s, toc, ttl ]
-    \subparagraph       : (s, toc, ttl) -> [ @g.startsection \subparagraph,   5, s, toc, ttl ]
+    appendixname() { return [ "Appendix" ]; }
+    indexname() { return [ "Index" ]; }
 
 
-    \thepart            :-> [ @g.Roman @g.counter \part ]
-    \thesection         :-> [ @g.arabic @g.counter \section ]
-    \thesubsection      :-> @thesection!       ++ "." + @g.arabic @g.counter \subsection
-    \thesubsubsection   :-> @thesubsection!    ++ "." + @g.arabic @g.counter \subsubsection
-    \theparagraph       :-> @thesubsubsection! ++ "." + @g.arabic @g.counter \paragraph
-    \thesubparagraph    :-> @theparagraph!     ++ "." + @g.arabic @g.counter \subparagraph
+    ////////////////
+    // sectioning //
+    ////////////////
+
+    @Macro("V")
+    @Args("s", "X", "o?", "g")
+    part(s: any, toc: any, ttl: any)
+    {
+        return [ this.g.startsection("part", 0, s, toc, ttl) ];
+    }
+
+    @Macro("V")
+    @Args("s", "X", "o?", "g")
+    section(s: any, toc: any, ttl: any)
+    {
+        return [ this.g.startsection("section", 1, s, toc, ttl) ];
+    }
+
+    @Macro("V")
+    @Args("s", "X", "o?", "g")
+    subsection(s: any, toc: any, ttl: any)
+    {
+        return [ this.g.startsection("subsection", 2, s, toc, ttl) ];
+    }
+
+    @Macro("V")
+    @Args("s", "X", "o?", "g")
+    subsubsection(s: any, toc: any, ttl: any)
+    {
+        return [ this.g.startsection("subsubsection", 3, s, toc, ttl) ];
+    }
+
+    @Macro("V")
+    @Args("s", "X", "o?", "g")
+    paragraph(s: any, toc: any, ttl: any)
+    {
+        return [ this.g.startsection("paragraph", 4, s, toc, ttl) ];
+    }
+
+    @Macro("V")
+    @Args("s", "X", "o?", "g")
+    subparagraph(s: any, toc: any, ttl: any)
+    {
+        return [ this.g.startsection("subparagraph", 5, s, toc, ttl) ];
+    }
 
 
-    # title
-
-    args.\maketitle =   <[ V ]>
-
-    \maketitle          :->
-        @g.setTitle @g._title
-
-        title = @g.create @g.title, @g._title
-        author = @g.create @g.author, @g._author
-        date = @g.create @g.date, if @g._date then that else @g.macro \today
-
-        maketitle = @g.create @g.list, [
-            @g.createVSpace new @g.Length 2, "em"
-            title
-            @g.createVSpace new @g.Length 1.5, "em"
-            author
-            @g.createVSpace new @g.Length 1, "em"
-            date
-            @g.createVSpace new @g.Length 1.5, "em"
-        ], "center"
+    thepart()           { return [ this.g.Roman(this.g.counter("part")) ];      }
+    thesection()        { return [ this.g.arabic(this.g.counter("section")) ];  }
+    thesubsection()     { return this.thesection().join("") + "." + this.g.arabic(this.g.counter("subsection"));}
+    thesubsubsection()  { return this.thesubsection() + "." + this.g.arabic(this.g.counter("subsubsection"));   }
+    theparagraph()      { return this.thesubsubsection() + "." + this.g.arabic(this.g.counter("paragraph"));    }
+    thesubparagraph()   { return this.theparagraph() + "." + this.g.arabic(this.g.counter("subparagraph"));     }
 
 
-        # reset footnote back to 0
-        @g.setCounter \footnote 0
+    // title
 
-        # reset - maketitle can only be used once
-        @g._title = null
-        @g._author = null
-        @g._date = null
+    @Macro("V")
+    maketitle()
+    {
+        this.g.setTitle(this.g._title);
 
-        @\title = @\author = @\date = @\maketitle = !->
+        const title = this.g.create(this.g.title, this.g._title);
+        const author = this.g.create(this.g.author, this.g._author);
 
-        [ maketitle ]
+        // LiveScript 'if @g._date then that else ...' translation
+        const dateVal = this.g._date ? this.g._date : this.g.macro("today");
+        const date = this.g.create(this.g.date, dateVal);
+
+        const maketitle = this.g.create(this.g.list, [
+            this.g.createVSpace(new this.g.Length(2, "em")),
+            title,
+            this.g.createVSpace(new this.g.Length(1.5, "em")),
+            author,
+            this.g.createVSpace(new this.g.Length(1, "em")),
+            date,
+            this.g.createVSpace(new this.g.Length(1.5, "em"))
+        ], "center");
+
+        // reset footnote back to 0
+        this.g.setCounter("footnote", 0);
+
+        // reset - maketitle can only be used once
+        this.g._title = null;
+        this.g._author = null;
+        this.g._date = null;
+
+        // Killing references so they can only run once (!-> in LiveScript)
+        this.titleFn = null;
+        this.authorFn = null;
+        this.dateFn = null;
+        this.maketitleFn = null;
+
+        return [ maketitle ];
+    }
+}
