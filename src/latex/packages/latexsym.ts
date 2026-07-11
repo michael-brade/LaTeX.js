@@ -1,10 +1,11 @@
-import type { Generator } from "../generator/generator.ts";
+import type { Generator } from '../../generator/generator.ts';
+import type { PackageOpts } from "../../options.ts";
 
 
 // TODO: this is math mode only!!
 export class Latexsym
 {
-    constructor(generator: Generator, options?: any)
+    constructor(generator: Generator, options?: PackageOpts)
     {
     }
 

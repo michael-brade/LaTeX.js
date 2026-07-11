@@ -1,4 +1,7 @@
-import { Macro, Args } from '../macros.ts';
+import type { Generator } from '../../generator/generator.ts';
+import { Macro, Args } from '../../macros.ts';
+import type { PackageOpts } from "../../options.ts";
+
 
 // color data structure:
 
@@ -32,8 +35,8 @@ export interface ColorModels
 
 export class XColor
 {
-    public g: any;
-    public options: Record<string, any>[] = [];
+    public g: Generator;
+    private options?: PackageOpts
 
     // Instance color database
     public colors: Map<string, ColorData> = new Map([
@@ -59,11 +62,13 @@ export class XColor
     ]);
 
     // CTOR
-    constructor(generator: any, options?: Record<string, any>[])
+    constructor(generator: Generator, options?: PackageOpts)
     {
         this.g = generator;
-        if (options)
-            this.options = options;
+        this.options = options;
+
+        if (!this.options)
+            return
 
         for (const optObj of this.options) {
             const opt = Object.keys(optObj)[0];

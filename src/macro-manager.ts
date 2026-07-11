@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import Stack from '../lib/stack.ts';
 
 import type { Generator } from "./generator/generator.ts";
-import { Macros, OPT_ARGS, type ArgType, type MacroArgs, type MacroMeta } from "./macros.ts";
+import { Macros, OPT_ARGS, type ArgType, type MacroArgs, type MacroFn, type MacroMeta } from "./macros.ts";
 
 import builtin from "./latex/index.ts";
 
@@ -68,7 +68,7 @@ export class MacroManager
 
     // called to load format (i.e. LaTeX.ltx), documentclass, and packages
     // loads symbols as macros first
-    loadPackage(pkg: string, packageOptions, path?: string)
+    loadPackage(pkg: string, packageOptions, path?: string): void
     {
         // create a dynamic synchronous loader using Node's native ESM API
         const requireSync = createRequire(import.meta.url)
@@ -112,7 +112,7 @@ export class MacroManager
 
 
     // this creates a new "package" for the given symbols
-    #registerSymbols(symbols: Map<string, string>)
+    #registerSymbols(symbols: Map<string, string>): void
     {
         // create the new package...
         this.#packages.push(
@@ -175,7 +175,7 @@ export class MacroManager
     }
 
 
-    macroFn(macro: string): (...args: any[]) => any[]
+    macroFn(macro: string): MacroFn
     {
         const pkg = this.#macroPkg(macro)
 

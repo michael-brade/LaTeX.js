@@ -79,6 +79,9 @@ export function HasMacros<U extends HasStaticMacros>(constructor: U, context: Cl
 {
 }
 
+/** A macro takes any arguments (specified by @Args) and returns an array of Nodes or strings. */
+export type MacroFn = (...args: any[]) => (Node|string)[]
+
 
 /// decorators
 

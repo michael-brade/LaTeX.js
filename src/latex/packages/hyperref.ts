@@ -1,12 +1,13 @@
-import type { Generator } from "../generator/generator.ts";
-import { Macro, Args } from '../macros.ts';
+import type { Generator } from '../../generator/generator.ts';
+import { Macro, Args } from '../../macros.ts';
+import type { PackageOpts } from "../../options.ts";
 
 
 export class Hyperref
 {
     public g: any;
 
-    constructor(generator: Generator, options?: any)
+    constructor(generator: Generator, options?: PackageOpts)
     {
         this.g = generator;
     }

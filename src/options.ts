@@ -18,4 +18,4 @@ export interface HtmlOptions extends Options
 
 
 // Package/DocumentClass options
-export type PackageOpts = Record<string, any>[];
+export type PackageOpts = Map<string, string>;
