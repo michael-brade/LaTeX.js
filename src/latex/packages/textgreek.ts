@@ -1,11 +1,12 @@
 import he from 'he';
 
-import type { Generator } from '../generator/generator.ts';
+import type { Generator } from '../../generator/generator.ts';
+import type { PackageOpts } from "../../options.ts";
 
 
 export class Textgreek
 {
-    constructor(generator: Generator, options?: any)
+    constructor(generator: Generator, options?: PackageOpts)
     {
     }
 

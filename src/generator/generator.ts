@@ -1,5 +1,5 @@
 import { MacroManager } from "../macro-manager.js"
-import type { Options } from "../options.ts"
+import type { Options, PackageOpts } from "../options.ts"
 
 /**
  * Base class of a generator. A html generator would be a concrete generator.
@@ -10,6 +10,8 @@ export abstract class Generator
 {
     _manager: MacroManager
     _options: Options
+
+    documentClass: string | { options: PackageOpts } = "article"
 
     title?: string
     author?: string
@@ -28,6 +30,7 @@ export abstract class Generator
 
     reset(): void
     {
+        this.documentClass = "article"
         this.documentTitle = "untitled"
         this.title = this.author = this.date = undefined
     }

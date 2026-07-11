@@ -2,12 +2,13 @@ import he from 'he'
 // @ts-ignore
 import { __defineSymbol } from 'katex'
 
-import type { Generator } from "../generator/generator.ts"
+import type { Generator } from '../../generator/generator.ts';
+import type { PackageOpts } from "../../options.ts";
 
 
 export class Stix
 {
-    constructor(generator: Generator, options?: any)
+    constructor(generator: Generator, options?: PackageOpts)
     {
         // Inject custom symbols into KaTeX definitions
         __defineSymbol("math", "main", "textord", "\u2664", "\\varspadesuit", true);   // ♤

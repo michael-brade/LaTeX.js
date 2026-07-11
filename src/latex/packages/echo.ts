@@ -1,11 +1,14 @@
-import type { Generator } from "../generator/generator.ts";
-import { Macro, Args } from '../macros.ts';
+import type { Generator } from '../../generator/generator.ts';
+import { Macro, Args } from '../../macros.ts';
+import type { PackageOpts } from "../../options.ts";
+
 
 // macros just for testing
 export class Echo
 {
-    constructor(generator: Generator, options?: any)
-    {}
+    constructor(generator: Generator, options?: PackageOpts)
+    {
+    }
 
     @Macro('H')
     @Args('o?')
