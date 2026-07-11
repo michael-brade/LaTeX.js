@@ -1,5 +1,5 @@
 import
-    './symbols.ls': { symbols }
+    './symbols.ts': { symbols }
     './types.ls': { Vector }
 
     './documentclasses': builtin-documentclasses

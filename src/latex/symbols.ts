@@ -1,20 +1,20 @@
 import he from 'he';
 
 export const ligatures = new Map<string, string>([
-    ['ff',                  he.decode('&fflig;')],     //     U+FB00
-    ['ffi',                 he.decode('&ffilig;')],    //     U+FB03
-    ['ffl',                 he.decode('&ffllig;')],    //     U+FB04
-    ['fi',                  he.decode('&filig;')],     //     U+FB01
-    ['fl',                  he.decode('&fllig;')],     //     U+FB02
+    ['ff',                  he.decode('&fflig;')],     // ﬀ   U+FB00
+    ['ffi',                 he.decode('&ffilig;')],    // ﬃ   U+FB03
+    ['ffl',                 he.decode('&ffllig;')],    // ﬄ   U+FB04
+    ['fi',                  he.decode('&filig;')],     // ﬁ   U+FB01
+    ['fl',                  he.decode('&fllig;')],     // ﬂ   U+FB02
     ['``',                  he.decode('&ldquo;')],     // “   U+201C
     ["''",                  he.decode('&rdquo;')],     // ”   U+201D
-    ['!´',                  he.decode('&iexcl;')],     //     U+00A1
-    ['?´',                  he.decode('&iquest;')],    //     U+00BF
-    ['--',                  he.decode('&ndash;')],     //     U+2013
-    ['---',                 he.decode('&mdash;')],     //     U+2014
+    ['!´',                  he.decode('&iexcl;')],     // ¡   U+00A1
+    ['?´',                  he.decode('&iquest;')],    // ¿   U+00BF
+    ['--',                  he.decode('&ndash;')],     // –   U+2013
+    ['---',                 he.decode('&mdash;')],     // —   U+2014
 
-    ['<<',                  he.decode('&laquo;')],     //     U+00AB
-    ['>>',                  he.decode('&raquo;')],     //     U+00BB
+    ['<<',                  he.decode('&laquo;')],     // «   U+00AB
+    ['>>',                  he.decode('&raquo;')],     // »   U+00BB
 
     // defined by german
     ['"`',                  he.decode('&bdquo;')],     // „   U+201E  \quotedblbase
