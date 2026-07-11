@@ -8,6 +8,9 @@
         "lib": ["ESNext", "DOM"],
         "typeRoots": ["./node_modules/@types", "./src/types"],
 
+        "noEmit": true,     // we are using vite, so no need for TypeScript to emit transpiled files
+        "allowJs": true,    // TODO: remove once everything is ported to TypeScript
+
         "module": "NodeNext",
         "moduleResolution": "NodeNext"
     },

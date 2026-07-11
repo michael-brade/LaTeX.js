@@ -4,10 +4,7 @@
   "compilerOptions": {
     "types": ["mocha", "chai", "node"],
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-
-    // test has no need for transpiling
-    "noEmit": true
+    "resolveJsonModule": true
   },
 
   "include": [
