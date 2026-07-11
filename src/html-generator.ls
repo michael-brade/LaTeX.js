@@ -1,6 +1,7 @@
 import
     './generator/generator.ts': { Generator }
-    './symbols.ls': { ligatures, diacritics }
+    './latex/symbols.ts': { ligatures, diacritics }
+
     '@svgdotjs/svg.js': { SVG }
     'katex': katex
 
@@ -8,8 +9,7 @@ import
     'hyphenation.en-us': h-en
     'he'
 
-    'lodash/flattenDeep'
-    'lodash/compact'
+    'lodash': { flattenDeep, compact }
 
 
 he.decode.options.strict = true
