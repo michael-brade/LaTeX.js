@@ -32,14 +32,7 @@ export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase:
         _groups = new Stack<number>();
 
 
-        constructor(...args: any[])
-        {
-            super(...args);
-            this.reset();
-        }
-
-
-        reset(): void
+        override reset(): void
         {
             super.reset()
 
