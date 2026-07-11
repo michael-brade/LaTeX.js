@@ -1,5 +1,5 @@
-import type { Generator } from "./generator/generator.ts";
-import { Args, HasMacros, Macro, type ArgType, type MacroMeta } from "./macros.ts";
+import type { Generator } from "../generator/generator.ts";
+import { Args, HasMacros, Macro, type ArgType, type MacroMeta } from "../macros.ts";
 
 
 @HasMacros
