@@ -5,8 +5,7 @@ import Stack from '../lib/stack.ts';
 import type { Generator } from "./generator/generator.ts";
 import { Macros, OPT_ARGS, type ArgType, type MacroArgs, type MacroMeta } from "./macros.ts";
 
-import builtinPackages from "./packages/index.ts";
-import { symbols } from './symbols.ts';
+import builtin from "./latex/index.ts";
 
 
 type MacroPackageConstructor = {
@@ -49,15 +48,13 @@ export class MacroManager
     #packages = new Array<MacroPackage>();
 
     #generator!: Generator;
-    #options = {CustomMacros: {}};  // TODO
 
     // when parsing: stack of argument declarations to handle macros as macro arguments
     #curArgs = new Stack<ParsedArgs>();
 
 
-    constructor(options: any)
+    constructor()
     {
-        this.#options = options
     }
 
     setGenerator(generator: Generator)
@@ -71,15 +68,25 @@ export class MacroManager
 
     // called to load format (i.e. LaTeX.ltx), documentclass, and packages
     // loads symbols as macros first
-    loadPackage(pkg: string, path?: string)
+    loadPackage(pkg: string, packageOptions, path?: string)
     {
         // create a dynamic synchronous loader using Node's native ESM API
         const requireSync = createRequire(import.meta.url)
 
-        // load and instantiate the package
-        let PkgClass: MacroPackageConstructor | undefined = (builtinPackages as {[key: string]: MacroPackageConstructor})[pkg]
+        let PkgClass: MacroPackageConstructor | undefined;
+
+        // load and instantiate the documentclass/package
+
+        // first check if it is builtin
+        if (pkg = "latex.ltx")
+            PkgClass = builtin['latex.ltx']
+        if (path?.includes("/documentclasses/"))
+            PkgClass = (builtin.documentclasses as {[key: string]: MacroPackageConstructor})[pkg]
+        else
+            PkgClass = (builtin.packages as {[key: string]: MacroPackageConstructor})[pkg]
 
         try {
+            // if not, try to load it
             if (!PkgClass) {
                 const Export = requireSync(`${path ?? "./packages"}/${pkg}`)
                 PkgClass = Export.default || Object.values(Export).find(v => typeof v === 'function');
@@ -93,7 +100,7 @@ export class MacroManager
                 this.#registerSymbols(PkgClass.symbols)
 
             // instantiate the package with arguments
-            this.#packages.push(new PkgClass(this.#generator, this.#options))
+            this.#packages.push(new PkgClass(this.#generator, packageOptions))
 
             // Object.assign(args, PkgClass.args)
             // PkgClass.symbols?.forEach (value, key) !-> symbols.set key, value

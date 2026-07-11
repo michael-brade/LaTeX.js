@@ -19,7 +19,7 @@ import { Textgreek } from './packages/textgreek.ts'
 
 
 export default {
-    latex: LaTeX,
+    "latex.ltx": LaTeX,
 
     documentclasses: {
         article: Article,

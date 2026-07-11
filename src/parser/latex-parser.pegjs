@@ -5,7 +5,7 @@
 // per-parse init
 {
     let g = options.generator;
-    let m = g.macromanager;
+    let m = g.macroManager;
     g.setErrorFn(error);
     g.setLocationFn(location);
 }
