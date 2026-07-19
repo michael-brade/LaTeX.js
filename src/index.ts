@@ -2,7 +2,7 @@ import he from 'he'
 
 import { parse, SyntaxError } from './parser/latex-parser.pegjs'
 import { Generator } from './generator/generator.ts'
-import { HtmlGenerator } from './html-generator.ts'
+import { HtmlGenerator } from './generator/html/generator.ts'
 import { LaTeXJSComponent } from './latex.component.mjs'
 import type { HtmlOptions } from './options.ts'
 
