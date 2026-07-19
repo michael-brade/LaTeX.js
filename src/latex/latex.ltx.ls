@@ -2,10 +2,6 @@ import
     './symbols.ts': { symbols }
     './types.ls': { Vector }
 
-    './documentclasses': builtin-documentclasses
-    './packages': builtin-packages
-
-``import { createRequire } from 'node:module'``
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
@@ -24,7 +20,7 @@ export class LaTeX
 
 
     # CTOR
-    (generator, CustomMacros) ->
+    (generator) ->
         @g = generator
 
         @g.newCounter \secnumdepth
@@ -104,12 +100,6 @@ export class LaTeX
         @g.newLength \dblfloatsep
         @g.newLength \dbltextfloatsep
 
-        # central ordered list of all loaded package instances
-        @_packages = []
-
-        if CustomMacros
-            @_usepackage CustomMacros
-
         return new Proxy this, {
             get: (target, prop) ->
                 # if the property exists on this main LaTeX instance, use it
@@ -162,13 +152,6 @@ export class LaTeX
                         }
         }
 
-
-    _usepackage: (PkgClass, options) !->
-        # Instantiate the package with arguments
-        @_packages.push new PkgClass @g, options
-
-        Object.assign args, PkgClass.args
-        PkgClass.symbols?.forEach (value, key) !-> symbols.set key, value
 
 
     @symbols = symbols
@@ -1272,46 +1255,23 @@ export class LaTeX
 
     args.\documentclass =  <[ P kv? k k? ]>
     \documentclass      : (options, documentclass, version) !->
-        @\documentclass = !-> @g.error "Two \\documentclass commands. The document may only declare one class."
+        if typeof @g.documentClass == 'object'
+            @g.error "Two \\documentclass commands. The document may only declare one class."
 
-        # load and instantiate the documentclass
-        Class = builtin-documentclasses[documentclass]
+        @g.macroManager.loadPackage(documentclass, options, "./documentclasses/")
 
-        if not Class
-            try
-                Export = require "./documentclasses/#{documentclass}"
-                Class := Export.default || Export[Object.getOwnPropertyNames(Export).0]
-            catch e
-                console.error "error loading documentclass \"#{documentclass}\": #{e}"
-                throw new Error "error loading documentclass \"#{documentclass}\""
-
-        @_usepackage Class, options
-        @g.documentClass = @_packages.0     # new Class @g, options
+        @g.documentClass = {
+            options: options
+        }
 
 
     args.\usepackage    =  <[ P kv? csv k? ]>
     \usepackage         : (opts, packages, version) !->
         options = Object.assign {}, @g.documentClass.options, opts
 
-        # create a dynamic synchronous loader using Node's native ESM API
-        require-sync = ``createRequire(import.meta.url)``
-
         for pkg in packages
             continue if providedPackages.includes pkg
-
-            # load and instantiate the package
-            Package = builtin-packages[pkg]
-
-            try
-                if not Package
-                    # Export = ``await globalThis.import("./packages/" + pkg)``
-                    Export = require-sync "./packages/#{pkg}"
-                    Package := Export.default || Export[Object.getOwnPropertyNames(Export).0]
-
-                @_usepackage Package, options
-            catch e
-                # log error but continue anyway
-                console.error "error loading package \"#{pkg}\": #{e}"
+            @g.macroManager.loadPackage(pkg, options)
 
 
     args.\includeonly   = <[ P csv ]>
