@@ -99,14 +99,8 @@ scripts:
     # unit tests
 
     test:  'mocha test/*.ts;'
-    iron:  'iron-node node_modules/.bin/_mocha test/*.ls;'
 
-    testc: "
-        nyc --include=bin --include=src --include=dist -e ls --reporter=html --reporter=text --reporter=lcovonly --report-dir=test/coverage \
-            npx mocha -i -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/test-results.xml test/*.ls
-            &&
-            npx mocha -g screenshot --reporter mocha-junit-reporter --reporter-options mochaFile=./test/screenshots/test-results.xml test/*.ls;
-    "
+    testc: 'c8 mocha test/*.ts;'
     codecov: 'codecov;'
 
 dependencies:
@@ -139,7 +133,7 @@ devDependencies:
     '@svgdotjs/svg.js': 'https://github.com/michael-brade/svg.js'  # '3.x'
 
     'hypher': '0.x'
-    'lodash': '4.x'
+    'lodash': '4.18.x'
 
     'livescript': 'https://github.com/michael-brade/LiveScript'
     'livescript-transform-esm': '^3.1.0'
@@ -147,6 +141,7 @@ devDependencies:
     'livescript-transform-object-create': '^1.1.0'
 
     "@types/he": "^1.2.3"
+    "@types/lodash": "4.17.24"
 
     ### building
 
@@ -154,7 +149,8 @@ devDependencies:
     'mkdirp': '3.x'
     'rimraf': '5.x'
 
-    'typescript': '6.x'
+    'typescript': '7.0.x'
+    '@typescript/typescript6': '*'   # JS Compiler API
     'tsx': '^4.22.4'
     "@tsconfig/node-ts": "^23.6.4"
     "@tsconfig/node24": "^24.0.4"
@@ -176,7 +172,7 @@ devDependencies:
 
     ### bundling
 
-    'vite': '8.0.x'
+    'vite': '8.1.x'
     'vite-plugin-node-polyfills': '0.28.x'
     "vite-plugin-checker": '0.14.x'
     'unplugin-dts': '1.0.x'
@@ -191,6 +187,7 @@ devDependencies:
 
     'mocha': '11.7.x'
     'mocha-junit-reporter': '2.x'
+    'cypress-multi-reporters': '2.0.x'
     'chai': '6.x'
     'chai-as-promised': '8.0.x'
     'slugify': '1.6.x'
@@ -199,7 +196,7 @@ devDependencies:
     'puppeteer': '25.1.x'
     'pixelmatch': '7.2.x'
 
-    'nyc': '15.x'
+    'c8': '12.x'
     'codecov': '3.x'
 
     'serve-handler': '6.x'
@@ -216,13 +213,29 @@ mocha:
     file:
         'test/lib/globals.ts'
         'test/lib/setup.ts'
-    reporter: 'spec'
+    reporter: 'cypress-multi-reporters'
+    reporterOptions:
+        reporterEnabled: "spec, mocha-junit-reporter"
+        mochaJunitReporterReporterOptions:
+            mochaFile: "./test/test-results.xml"
     inlineDiffs: true
     timeout: 10000
     ui: 'bdd'
     checkLeaks: true
     sort: true
     reporter-option: 'maxDiffSize=0'
+
+c8:
+    all: true
+    src: ["src"]
+    extension: [".ts"]
+    exclude:
+        "**/*.d.ts"
+        "test/**/*"
+    reporter:
+        "text"
+        "html"
+
 
 
 
