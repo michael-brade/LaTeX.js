@@ -1,3 +1,5 @@
+import type { LocationRange } from "peggy"
+
 import { MacroManager } from "../macro-manager.js"
 import type { Options, PackageOpts } from "../options.ts"
 
@@ -108,17 +110,17 @@ export abstract class Generator
     }
 
 
-    _locationFn = (): void => {
+    _locationFn = (): LocationRange => {
         this.error("location function not set!");
     }
 
-    public setLocationFn(fn: () => void): void
+    public setLocationFn(fn: () => LocationRange): void
     {
         this._locationFn = fn;
     }
 
-    public location(): void
+    public location(): LocationRange
     {
-        this._locationFn();
+        return this._locationFn();
     }
 }
