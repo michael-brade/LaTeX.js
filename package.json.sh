@@ -63,9 +63,9 @@ scripts:
         touch dist/documentclasses/.keep;
         touch dist/packages/.keep;
         rsync -a src/css/ dist/css/;
-        rsync -a src/fonts/ dist/fonts/;
+        rsync -a public/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
-        rsync -a src/js/ dist/js/;
+        rsync -a public/js/ dist/js/;
         rsync -a src/types/latex.d.ts dist;
 
 	    vite build;
