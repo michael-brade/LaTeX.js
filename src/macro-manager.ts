@@ -243,7 +243,7 @@ export class MacroManager
     // return true if there was a matched branch, false otherwise
     selectArgsBranch(nextChar: string): boolean | undefined
     {
-        const currentTop = this.#curArgs.top!;
+        const currentTop = this.#curArgs.top
 
         if (Array.isArray(currentTop.args[0])) {
             // check which alternative branch to choose, discard the others only if it was a match
@@ -266,8 +266,8 @@ export class MacroManager
     // if the next expected argument is an array, it is treated as a list of alternative next arguments
     nextArg(arg: ArgType): boolean
     {
-        if (this.#curArgs.top?.args[0] === arg) {
-            this.#curArgs.top!.args.shift();
+        if (this.#curArgs.top.args[0] === arg) {
+            this.#curArgs.top.args.shift();
             return true;
         }
         return false;
@@ -275,26 +275,26 @@ export class MacroManager
 
     argError(m: string): never
     {
-        this.#generator.error(`macro \\${this.#curArgs.top!.name}: ${m}`);
+        this.#generator.error(`macro \\${this.#curArgs.top.name}: ${m}`);
     }
 
     // add the result of a parsed argument
     //  could be DocumentFragment | boolean | string | ...
     addParsedArg(a: any[]): void
     {
-        this.#curArgs.top!.parsed.push(a);
+        this.#curArgs.top.parsed.push(a);
     }
 
     // get the parsed arguments so far
     parsedArgs(): any[]
     {
-        return this.#curArgs.top!.parsed;
+        return this.#curArgs.top.parsed;
     }
 
     // execute macro with parsed arguments so far
     preExecMacro(): void
     {
-        this.#generator.macro(this.#curArgs.top!.name!, this.parsedArgs());
+        this.#generator.macro(this.#curArgs.top.name!, this.parsedArgs());
     }
 
     // remove arguments of a completely parsed macro from the stack

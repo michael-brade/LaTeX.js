@@ -43,7 +43,7 @@ export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase:
                 currentlabel: {
                     id: "",
                     label: document.createTextNode("") // TODO. why even initialize this?
-                    // TODO: move to HtmlGenerator! or use @createVerbatim - document/node must not be here
+                    // TODO: move to HtmlGenerator! or use this.createVerbatim - document/node must not be here
                 },
                 lengths: new Map()
             })
@@ -57,19 +57,20 @@ export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase:
         {
             // shallow copy of the contents of top is enough because we don't change the elements, only the array and the maps
             this._stack.push({
-                attrs: copyAttrs ? Object.assign({}, this._stack.top!.attrs) : {},
-                align: null,                                                 // alignment is set only per level where it was changed
-                currentlabel: Object.assign({}, this._stack.top!.currentlabel),
-                lengths: new Map(this._stack.top!.lengths)
-            });
+                attrs: copyAttrs ? Object.assign({}, this._stack.top.attrs) : {},
+                // alignment is set only per level where it was changed
+                align: null,
+                currentlabel: Object.assign({}, this._stack.top.currentlabel),
+                lengths: new Map(this._stack.top.lengths)
+            })
 
-            ++this._groups.top!;
+            ++this._groups.top
         }
 
         // end the last group - throws if there was no group to end
         exitGroup(): void
         {
-            if (--this._groups.top! < 0)
+            if (--this._groups.top < 0)
                 this.error("there is no group to end here");
 
             this._stack.pop();

@@ -26,19 +26,24 @@ export default class Stack<T> implements Iterable<T>
      * Returns the top element without removing it.
      * Time Complexity: O(1)
      */
-    get top(): T | undefined
+    get top(): T
     {
-        return this.#items.at(-1);
+        if (this.isEmpty)
+            throw new Error("top: stack is empty!")
+
+        return this.#items.at(-1)!;
     }
 
     /**
-     * Returns the top element without removing it.
+     * Overwrites the top element.
      * Time Complexity: O(1)
      */
     set top(v: T)
     {
-        if (!this.isEmpty)
-            this.#items[this.#items.length - 1] = v;
+        if (this.isEmpty)
+            throw new Error("top: stack is empty!")
+
+        this.#items[this.#items.length - 1] = v;
     }
 
     /**
@@ -76,6 +81,9 @@ export default class Stack<T> implements Iterable<T>
         this.#items = [];
     }
 
+    /**
+     * Iterator to iterate from top to bottom.
+     */
     *[Symbol.iterator](): Iterator<T>
     {
         for (let i = this.#items.length - 1; i >= 0; i--)
