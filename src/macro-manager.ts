@@ -3,7 +3,9 @@ import { createRequire } from 'node:module'
 import Stack from '../lib/stack.ts';
 
 import type { Generator } from "./generator/generator.ts";
-import { Macros, OPT_ARGS, type ArgType, type MacroArgs, type MacroFn, type MacroMeta } from "./macros.ts";
+import type { PackageOpts } from './options.ts';
+import type { ArgType, MacroArgs, MacroFn, MacroMeta } from "./macros.ts";
+import { Macros, OPT_ARGS } from "./macros.ts";
 
 import builtin from "./latex/index.ts";
 
@@ -68,7 +70,7 @@ export class MacroManager
 
     // called to load format (i.e. LaTeX.ltx), documentclass, and packages
     // loads symbols as macros first
-    loadPackage(pkg: string, packageOptions, path?: string): void
+    loadPackage(pkg: string, packageOptions: PackageOpts, path?: string): void
     {
         // create a dynamic synchronous loader using Node's native ESM API
         const requireSync = createRequire(import.meta.url)
