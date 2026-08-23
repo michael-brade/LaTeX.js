@@ -17,7 +17,7 @@ import { flattenDeep, compact } from 'lodash';
 import Hypher from 'hypher';
 import hEn from 'hyphenation.en-us';
 import he from 'he';
-import type { Length, Vector } from '../../types.ts';
+import { Length, type Vector } from '../../types.ts';
 
 // Configure he library options
 he.decode.options = { strict: true };
@@ -284,7 +284,7 @@ export class HtmlGenerator extends Groups(Counters(Generator))
         //el.style.setProperty('--paperwidth', this.length('paperwidth').value)
 
         const twp = 100 * this.length('textwidth').ratio(this.length('paperwidth'));
-        const mlwp = 100 * this.length('oddsidemargin').add(new (this as any).Length(1, "in")).ratio(this.length('paperwidth'));
+        const mlwp = 100 * this.length('oddsidemargin').add(new Length(this, 1, "in")).ratio(this.length('paperwidth'));
         const mrwp = Math.max(100 - twp - mlwp, 0);
 
         el.style.setProperty('--textwidth', this.round(twp) + "%");

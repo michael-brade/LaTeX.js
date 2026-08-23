@@ -1,5 +1,5 @@
 {{
-    import { Vector } from '../types.ts';
+    import { Length, Vector } from '../types.ts';
 }}
 
 // per-parse init
@@ -359,7 +359,7 @@ length_unit     =   _ u:("sp" / "pt" / "px" / "dd" / "mm" / "pc" / "cc" / "cm" /
 
   // TODO: should be able to use variables and maths: 2\parskip etc.
 length          =   l:float u:length_unit (plus float length_unit)? (minus float length_unit)?
-                    { return new g.Length(l, u); }
+                    { return new Length(g, l, u); }
 
 // {length}
 length_group    =   _ begin_group _

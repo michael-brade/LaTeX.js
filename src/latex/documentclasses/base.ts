@@ -1,10 +1,12 @@
+import type { Generator } from "../../generator/generator.ts";
 import { Args, Macro } from "../../macros.ts"
+import { Length } from "../../types.ts";
 
 
 // Base class for all standard documentclasses
 export class Base
 {
-    public g: any;
+    public g: Generator;
     public options: Map<string, any> = new Map();
     public args: Record<string, any> = {};
 
@@ -14,7 +16,7 @@ export class Base
     private dateFn: (() => void) | null = null;
     private maketitleFn: (() => void) | null = null;
 
-    constructor(generator: any, options?: Map<string, any>)
+    constructor(generator: Generator, options?: Map<string, any>)
     {
         this.g = generator;
         if (options)
@@ -31,9 +33,9 @@ export class Base
         this.g.newCounter("table");
 
         // default: letterpaper, 10pt, onecolumn, oneside
-        this.g.setLength("paperheight", new this.g.Length(11, "in"));
-        this.g.setLength("paperwidth", new this.g.Length(8.5, "in"));
-        this.g.setLength("@@size", new this.g.Length(10, "pt"));
+        this.g.setLength("paperheight", new Length(this.g, 11, "in"));
+        this.g.setLength("paperwidth", new Length(this.g, 8.5, "in"));
+        this.g.setLength("@@size", new Length(this.g, 10, "pt"));
 
         this.options.forEach((v: any, k: string) => {
             switch (k) {
@@ -55,28 +57,28 @@ export class Base
                     break;
 
                 case "a4paper":
-                    this.g.setLength("paperheight", new this.g.Length(297, "mm"));
-                    this.g.setLength("paperwidth", new this.g.Length(210, "mm"));
+                    this.g.setLength("paperheight", new Length(this.g, 297, "mm"));
+                    this.g.setLength("paperwidth", new Length(this.g, 210, "mm"));
                     break;
                 case "a5paper":
-                    this.g.setLength("paperheight", new this.g.Length(210, "mm"));
-                    this.g.setLength("paperwidth", new this.g.Length(148, "mm"));
+                    this.g.setLength("paperheight", new Length(this.g, 210, "mm"));
+                    this.g.setLength("paperwidth", new Length(this.g, 148, "mm"));
                     break;
                 case "b5paper":
-                    this.g.setLength("paperheight", new this.g.Length(250, "mm"));
-                    this.g.setLength("paperwidth", new this.g.Length(176, "mm"));
+                    this.g.setLength("paperheight", new Length(this.g, 250, "mm"));
+                    this.g.setLength("paperwidth", new Length(this.g, 176, "mm"));
                     break;
                 case "letterpaper":
-                    this.g.setLength("paperheight", new this.g.Length(11, "in"));
-                    this.g.setLength("paperwidth", new this.g.Length(8.5, "in"));
+                    this.g.setLength("paperheight", new Length(this.g, 11, "in"));
+                    this.g.setLength("paperwidth", new Length(this.g, 8.5, "in"));
                     break;
                 case "legalpaper":
-                    this.g.setLength("paperheight", new this.g.Length(14, "in"));
-                    this.g.setLength("paperwidth", new this.g.Length(8.5, "in"));
+                    this.g.setLength("paperheight", new Length(this.g, 14, "in"));
+                    this.g.setLength("paperwidth", new Length(this.g, 8.5, "in"));
                     break;
                 case "executivepaper":
-                    this.g.setLength("paperheight", new this.g.Length(10.5, "in"));
-                    this.g.setLength("paperwidth", new this.g.Length(7.25, "in"));
+                    this.g.setLength("paperheight", new Length(this.g, 10.5, "in"));
+                    this.g.setLength("paperwidth", new Length(this.g, 7.25, "in"));
                     break;
                 case "landscape": {
                     const tmp = this.g.length("paperheight");
@@ -89,7 +91,7 @@ export class Base
                     // check if a point size was given -> set font size
                     const value = parseFloat(k);
                     if (!isNaN(value) && k.endsWith("pt") && String(value) === k.substring(0, k.length - 2)) {
-                        this.g.setLength("@@size", new this.g.Length(value, "pt"));
+                        this.g.setLength("@@size", new Length(this.g, value, "pt"));
                     }
                     break;
                 }
@@ -97,8 +99,8 @@ export class Base
         });
 
         //// textwidth
-        const pt345 = new this.g.Length(345, "pt");
-        const inch = new this.g.Length(1, "in");
+        const pt345 = new Length(this.g, 345, "pt");
+        const inch = new Length(this.g, 1, "in");
 
         let textwidth = this.g.length("paperwidth").sub(inch.mul(2));
         if (textwidth.cmp(pt345) === 1) {
@@ -107,8 +109,8 @@ export class Base
         this.g.setLength("textwidth", textwidth);
 
         //// margins
-        this.g.setLength("marginparsep", new this.g.Length(11, "pt"));
-        this.g.setLength("marginparpush", new this.g.Length(5, "pt"));
+        this.g.setLength("marginparsep", new Length(this.g, 11, "pt"));
+        this.g.setLength("marginparpush", new Length(this.g, 5, "pt"));
 
         // in px
         const margins = this.g.length("paperwidth").sub(this.g.length("textwidth"));
@@ -208,13 +210,13 @@ export class Base
         const date = this.g.create(this.g.date, dateVal);
 
         const maketitle = this.g.create(this.g.list, [
-            this.g.createVSpace(new this.g.Length(2, "em")),
+            this.g.createVSpace(new Length(this.g, 2, "em")),
             title,
-            this.g.createVSpace(new this.g.Length(1.5, "em")),
+            this.g.createVSpace(new Length(this.g, 1.5, "em")),
             author,
-            this.g.createVSpace(new this.g.Length(1, "em")),
+            this.g.createVSpace(new Length(this.g, 1, "em")),
             date,
-            this.g.createVSpace(new this.g.Length(1.5, "em"))
+            this.g.createVSpace(new Length(this.g, 1.5, "em"))
         ], "center");
 
         // reset footnote back to 0
