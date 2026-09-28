@@ -1,0 +1,63 @@
+{
+    "name": "LaTeX.js Dev",
+
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "..",
+        "options": [
+            "--progress=plain"
+        ],
+        "args": {
+            // "baseImageVersion": "lts"
+        }
+    },
+    "features": {
+        "./features/bash-aliases": {},
+        "./features/opencode": {}
+    },
+
+    "runArgs": [
+        "--name", "LaTeX.js-${devcontainerId}",
+        // "--network=host",
+        // allow access to host via 'host.docker.internal' in the container
+        "--add-host=host.docker.internal:host-gateway"
+    ],
+
+    // "capAdd": ["SYS_PTRACE"],
+    // "securityOpt": ["seccomp=unconfined"],
+
+
+    "workspaceMount": "source=${localWorkspaceFolder},target=/source,type=bind",
+    "workspaceFolder": "/source",
+
+    "containerUser": "node",
+    "containerEnv": { },
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-containers",
+                "eamodio.gitlens",
+                "EditorConfig.EditorConfig"
+                // "opencode.opencode-vscode",
+            ]
+        }
+    },
+
+    "postCreateCommand": "echo 'LaTeX.js DevContainer ready'",
+
+    "mounts": [
+        {
+            "source": "/etc/localtime",
+            "target": "/etc/localtime",
+            "type": "bind"
+        },
+
+        // this is to protect the .git directory
+        {
+            "source": "${localWorkspaceFolder}/.git",
+            "target": "/source/.git",
+            "type": "bind,readonly"
+        }
+    ]
+}

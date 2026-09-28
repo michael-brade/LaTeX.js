@@ -1,0 +1,12 @@
+{
+  "id": "opencode-cli",
+  "version": "1.0.0",
+  "name": "OpenCode CLI Setup",
+  "description": "Installiert die OpenCode CLI global via npm und hinterlegt die lokale llama.cpp Konfiguration.",
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/node",
+    "./features/non-root-user"
+  ],
+  "containerEnv": {
+  }
+}

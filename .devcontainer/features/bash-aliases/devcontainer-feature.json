@@ -1,0 +1,12 @@
+{
+  "id": "bash-aliases",
+  "version": "1.0.0",
+  "name": "Bash Aliases and Less Config",
+  "description": "Fügt nützliche Bash-Aliase für ls, mv, cp hinzu und optimiert die less-Ausgabe inklusive Syntax-Highlighting.",
+
+  "containerEnv": {
+    "LESSCHARSET": "utf-8",
+    "LESS": "-QRMSi -c -y1",
+    "LESSOPEN": "| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"
+  }
+}
