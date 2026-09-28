@@ -1,0 +1,73 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // privacy
+  "share": "disabled",
+  "autoupdate": false,
+  "snapshot": false,
+  "experimental": {
+    "openTelemetry": false
+  },
+  "disabled_providers": ["exa"],
+
+
+  "shell": "bash",
+
+  "tools": {
+  },
+
+  "permission": {
+    "*": "ask",
+    "edit": "allow",
+    "websearch": "ask",
+    "webfetch": "ask"
+  },
+
+  // default model
+  "model": "llama.cpp/qwen3-coder",
+
+  "provider": {
+    "llama.cpp": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "llama.cpp (local)",
+      "options": {
+        "baseURL": "http://host.docker.internal:8080/v1",
+        "toolParser": [
+          { "type": "raw-function-call" },
+          { "type": "json" }
+        ]
+      },
+      "models": {
+        "qwen3-coder": {
+          "name": "Qwen3-Coder-Instruct",
+          "tool_call": true,
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 131072,
+            "output": 65536
+          }
+        }
+      }
+    }
+  },
+
+  // "default_agent": "plan",
+
+  "agent": {
+    "code-reviewer": {
+      "description": "Reviews code for best practices and potential issues",
+      //"model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a code reviewer. Focus on security, performance, and maintainability.",
+      "tools": {
+        // Disable file modification tools for review-only agent
+        "write": false,
+        "edit": false
+      }
+    }
+  },
+
+  "lsp": false    // true to use clangd for instance
+}
