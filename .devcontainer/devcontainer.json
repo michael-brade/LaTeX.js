@@ -12,7 +12,7 @@
         }
     },
     "features": {
-        "./features/bash-aliases": {},
+        "ghcr.io/michael-brade/devcontainer-features/bash-aliases:1": {},
         "./features/opencode": {}
     },
 
@@ -37,9 +37,8 @@
         "vscode": {
             "extensions": [
                 "ms-azuretools.vscode-containers",
-                "eamodio.gitlens",
-                "EditorConfig.EditorConfig"
-                // "opencode.opencode-vscode",
+                "EditorConfig.EditorConfig",
+                "maattdd.gitless"
             ]
         }
     },
