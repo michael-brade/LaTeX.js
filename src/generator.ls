@@ -15,8 +15,6 @@ export class Generator
     # initialize only in CTOR, otherwise the objects end up in the prototype
     _options: null
 
-    _continue: false
-
     _labels: null
     _refs: null
 
@@ -32,8 +30,6 @@ export class Generator
         @_refs = new Map()
 
         @_marginpars = []
-
-        @_continue = false
 
         @newCounter \enumi
         @newCounter \enumii
@@ -90,65 +86,6 @@ export class Generator
         @endBalanced!
 
         end
-
-
-
-    ### attributes - in HTML, those are CSS classes
-
-    continue: !->
-        @_continue = @location!.end.offset
-
-    break: !->
-        # only record the break if it came from a position AFTER the continue
-        if @location!.end.offset > @_continue
-            @_continue = false
-
-
-    # alignment
-
-    setAlignment: (align) !->
-        @_stack.top.align = align
-
-    alignment: ->
-        @_stack.top.align
-
-
-    # font attributes
-
-    setFontFamily: (family) !->
-        @_stack.top.attrs.fontFamily = family
-
-    setFontWeight: (weight) !->
-        @_stack.top.attrs.fontWeight = weight
-
-    setFontShape: (shape) !->
-        if shape == "em"
-            if @_activeAttributeValue("fontShape") == "it"
-                shape = "up"
-            else
-                shape = "it"
-
-        @_stack.top.attrs.fontShape = shape
-
-    setFontSize: (size) !->
-        @_stack.top.attrs.fontSize = size
-
-    setTextDecoration: (decoration) !->
-        @_stack.top.attrs.textDecoration = decoration
-
-
-    # get all inline attributes of the current group
-    _inlineAttributes: ->
-        cur = @_stack.top.attrs
-        [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.textDecoration].join(' ').replace(/\s+/g, ' ').trim!
-
-    # get the currently active value for a specific attribute, also taking into account inheritance from parent groups
-    # return the empty string if the attribute was never set
-    _activeAttributeValue: (attr) ->
-        # from top to bottom until the first value is found
-        for level from @_stack.length-1 to 0 by -1
-            if @_stack[level].attrs[attr]
-                return that
 
 
 

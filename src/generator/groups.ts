@@ -3,6 +3,7 @@ import { type Constructor } from "../../lib/mixin.ts"
 
 import { Generator } from "./generator.ts"
 import type { Length } from "../types.ts"
+import type { TextAttributes, Alignment } from "./attributes.ts"
 
 
 interface CurrentLabel {
@@ -10,9 +11,10 @@ interface CurrentLabel {
     label: Node;
 }
 
+// TODO: move StackItem type definition out of Groups mixin? Needed by Groups, Lengths, Attributes
 export interface StackItem {
-    attrs: Record<string, any>;
-    align: string | null;
+    attrs: TextAttributes;
+    align: Alignment;
     currentlabel: CurrentLabel;
     lengths: Map<string, Length>;
 }
