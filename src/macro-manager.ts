@@ -80,9 +80,9 @@ export class MacroManager
         // load and instantiate the documentclass/package
 
         // first check if it is builtin
-        if (pkg = "latex.ltx")
+        if (pkg === "latex.ltx")
             PkgClass = builtin['latex.ltx']
-        if (path?.includes("/documentclasses/"))
+        else if (path?.includes("/documentclasses/"))
             PkgClass = (builtin.documentclasses as {[key: string]: MacroPackageConstructor})[pkg]
         else
             PkgClass = (builtin.packages as {[key: string]: MacroPackageConstructor})[pkg]
@@ -125,7 +125,8 @@ export class MacroManager
                 Object.fromEntries(
                     Array.from(symbols.entries().map(([key, value]) => [
                         key,
-                        this.#generator.createText(value)
+                        // a macro function: macro() creates a new text node with the current attributes on each call
+                        () => [value]
                     ]))
                 ),
                 // ...and add a macros map with symbol names and mode = "H", args = undefined
