@@ -8,7 +8,6 @@ import { Length } from "../types.ts"
 
 /**
  * Type part that the Lengths mixin needs from its base: the Generator core plus the group stack (Groups mixin)
- * TODO: move StackItem type definition out of Groups mixin?
  */
 type GroupedGenerator = Generator & { _stack: Stack<StackItem> }
 
