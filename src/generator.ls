@@ -1,6 +1,5 @@
 import
     './latex.ltx.ls': { LaTeX }
-    './symbols.ls': { diacritics, symbols }
     './types.ls': { makeLengthClass }
 
 Macros = LaTeX
@@ -48,18 +47,6 @@ export class Generator
     round: (num) ->
         const factor = Math.pow 10, @_options.precision
         Math.round(num * factor) / factor
-
-
-
-
-    ### characters
-
-    hasSymbol: (name) ->
-        Macros.symbols.has name
-
-    symbol: (name) ->
-        @error "no such symbol: #{name}" if not @hasSymbol name
-        Macros.symbols.get name
 
 
 

@@ -7,7 +7,6 @@ import { HtmlElements } from './elements.ts';
 import { MacroManager } from '../../macro-manager.ts';
 
 import type { HtmlOptions } from '../../options.ts';
-import { ligatures, diacritics } from '../../latex/symbols.ts';
 
 // import { SVG } from '@svgdotjs/svg.js';
 import katex from 'katex';
@@ -16,13 +15,7 @@ import { flattenDeep, compact } from 'lodash';
 
 import Hypher from 'hypher';
 import hEn from 'hyphenation.en-us';
-import he from 'he';
 import { Length, type Vector } from '../../types.ts';
-
-// Configure he library options
-he.decode.options = { strict: true };
-
-
 
 
 function isBlockLevel(el: HTMLElement): boolean
@@ -89,74 +82,6 @@ export class HtmlGenerator extends Groups(Counters(Generator))
     override get options(): HtmlOptions
     {
         return this._options;
-    }
-
-    ///// character/text creation
-
-    character(c: string): string
-    {
-        return c;
-    }
-
-    textquote(q: string): any
-    {
-        switch (q) {
-            case '`':
-                return this.symbol('textquoteleft');
-            case '\'':
-                return this.symbol('textquoteright');
-            default:
-                return undefined;
-        }
-   }
-
-    hyphen(): string
-    {
-        if (this._activeAttributeValue('fontFamily') === 'tt') {
-            return '-'; // U+002D
-        } else {
-            return he.decode("&hyphen;"); // U+2010
-        }
-    }
-
-    ligature(l: string): any
-    {
-        // no ligatures in tt
-        if (this._activeAttributeValue('fontFamily') === 'tt') {
-            return l;
-        } else {
-            return ligatures.get(l);
-        }
-    }
-
-    hasDiacritic(d: string): boolean
-    {
-        return diacritics.has(d);
-    }
-
-    // diacritic d for char c
-    diacritic(d: string, c?: string): string
-    {
-        if (!c)
-            return diacritics.get(d)[1]; // if only d is given, use the standalone version
-
-        return c + diacritics.get(d)[0]; // otherwise add it to the character c
-    }
-
-    controlSymbol(c: string): string
-    {
-        switch (c) {
-            case '/':
-                return this.zwnj;
-            case ',':
-                return this.thinsp;
-            case '-':
-                return this.shy;
-            case '@':
-                return '\u200B'; // nothing, just prevent spaces from collapsing
-            default:
-                return this.character(c);
-        }
     }
 
    /// get the result
