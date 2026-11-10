@@ -2,7 +2,7 @@
     "name": "LaTeX.js Dev",
 
     "build": {
-        "dockerfile": "Dockerfile",
+        "dockerfile": "Containerfile",
         "context": "..",
         "options": [
             "--progress=plain"
@@ -13,6 +13,7 @@
     },
     "features": {
         "ghcr.io/michael-brade/devcontainer-features/bash-aliases:1": {},
+        "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
         "./features/opencode": {}
     },
 
@@ -38,7 +39,8 @@
             "extensions": [
                 "ms-azuretools.vscode-containers",
                 "EditorConfig.EditorConfig",
-                "maattdd.gitless"
+                "maattdd.gitless",
+                "PeggyJS.peggy-language"
             ]
         }
     },
@@ -57,6 +59,12 @@
             "source": "${localWorkspaceFolder}/.git",
             "target": "/source/.git",
             "type": "bind,readonly"
+        },
+
+        {
+            "source": "claude-code-config",
+            "target": "/home/node/.claude",
+            "type": "volume"
         }
     ]
 }

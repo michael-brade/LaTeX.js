@@ -1,6 +1,11 @@
 {
   "features": {
-    "ghcr.io/michael-brade/devcontainer-features/bash-aliases:1.1.3": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {
+      "version": "1.0.5",
+      "resolved": "ghcr.io/anthropics/devcontainer-features/claude-code@sha256:cfc2e7d3e9fd3b9b01f8d5cb158508a884c8c0ede2e23ed10f32dea5d4ffe69a",
+      "integrity": "sha256:cfc2e7d3e9fd3b9b01f8d5cb158508a884c8c0ede2e23ed10f32dea5d4ffe69a"
+    },
+    "ghcr.io/michael-brade/devcontainer-features/bash-aliases:1": {
       "version": "1.1.3",
       "resolved": "ghcr.io/michael-brade/devcontainer-features/bash-aliases@sha256:c833f5b43c837b3ace3a2676982d5665e6bd2ca7cf86fee629b0b95518c53930",
       "integrity": "sha256:c833f5b43c837b3ace3a2676982d5665e6bd2ca7cf86fee629b0b95518c53930"
