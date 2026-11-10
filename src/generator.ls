@@ -1,6 +1,5 @@
 import
     './latex.ltx.ls': { LaTeX }
-    './symbols.ls': { diacritics, symbols }
     './types.ls': { makeLengthClass }
 
 Macros = LaTeX
@@ -91,9 +90,6 @@ export class Generator
     round: (num) ->
         const factor = Math.pow 10, @_options.precision
         Math.round(num * factor) / factor
-
-
-
     # private static for easy access - but it means no parallel generator usage!
     error = (e) !->
         console.error e
@@ -113,16 +109,6 @@ export class Generator
     setTitle: (title) ->
         @documentTitle = title.textContent
 
-
-
-    ### characters
-
-    hasSymbol: (name) ->
-        Macros.symbols.has name
-
-    symbol: (name) ->
-        @error "no such symbol: #{name}" if not @hasSymbol name
-        Macros.symbols.get name
 
 
 
