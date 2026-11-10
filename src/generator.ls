@@ -22,13 +22,8 @@ export class Generator
 
     _marginpars: null
 
-    Length: null
-
-
 
     reset: !->
-        @Length = makeLengthClass @
-
         @documentClass = @_options.documentClass
 
         @_uid = 1
@@ -203,25 +198,6 @@ export class Generator
 
 
 
-    ### lengths
-
-
-    newLength: (l) !->
-        error "length #{l} already defined!" if @hasLength l
-        @_stack.top.lengths.set l, @Length.zero
-
-    hasLength: (l) ->
-        @_stack.top.lengths.has l
-
-    setLength: (id, length) !->
-        error "no such length: #{id}" if not @hasLength id
-        # console.log "set length:", id, length
-        @_stack.top.lengths.set id, length
-
-    length: (l) ->
-        error "no such length: #{l}" if not @hasLength l
-        # console.log "get length: #{l} -> #{}"
-        @_stack.top.lengths.get l
 
     theLength: (id) ->
         l = @create @inline, undefined, "the"

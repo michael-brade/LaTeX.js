@@ -2,6 +2,7 @@ import Stack from "../../lib/stack.ts";
 import { type Constructor } from "../../lib/mixin.ts"
 
 import { Generator } from "./generator.ts"
+import type { Length } from "../types.ts"
 
 
 interface CurrentLabel {
@@ -13,7 +14,7 @@ export interface StackItem {
     attrs: Record<string, any>;
     align: string | null;
     currentlabel: CurrentLabel;
-    lengths: Map<any, any>;
+    lengths: Map<string, Length>;
 }
 
 
