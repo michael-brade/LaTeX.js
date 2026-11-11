@@ -1,6 +1,4 @@
 import { Generator } from '../generator.ts';
-import { Counters } from "../counters.ts";
-import { Groups } from "../groups.ts";
 
 import { HtmlElements } from './elements.ts';
 
@@ -44,7 +42,7 @@ function appendChildren(parent: Node, children: Node | Node[] | undefined | null
 
 
 
-export class HtmlGenerator extends Groups(Counters(Generator))
+export class HtmlGenerator extends Generator<Node>
 {
     #dom = document.createDocumentFragment();
     #h;

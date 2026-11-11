@@ -1,3 +1,5 @@
+import type { Generator } from "../../generator/generator.ts";
+
 import { Args, Macro } from '../../macros.ts'
 import { Base } from './base.ts'
 
@@ -7,7 +9,7 @@ export class Report extends Base
     // public static property
     public static css = "css/book.css";
 
-    constructor(generator: any, options?: Map<string, any>)
+    constructor(generator: Generator, options?: Map<string, any>)
     {
         super(generator, options);
 

@@ -1,3 +1,5 @@
+import type { Generator } from "../../generator/generator.ts";
+
 import { Args, Macro } from '../../macros.ts'
 import { Report } from './report.ts'
 
@@ -10,7 +12,7 @@ export class Book extends Report
     // Internal instance flag mapping to @"@mainmatter"
     private _mainmatter: boolean;
 
-    constructor(generator: any, options?: Map<string, any>) {
+    constructor(generator: Generator, options?: Map<string, any>) {
         super(generator, options);
 
         this._mainmatter = true;
