@@ -23,8 +23,6 @@ export class Generator
     reset: !->
         @documentClass = @_options.documentClass
 
-        @_uid = 1
-
         @_labels = new Map()
         @_refs = new Map()
 
@@ -37,16 +35,6 @@ export class Generator
 
         # do this after creating the sectioning counters because \thepart etc. are already predefined
         @_macros = new Macros @, @_options.CustomMacros
-
-
-    # helpers
-
-    nextId: ->
-        @_uid++
-
-    round: (num) ->
-        const factor = Math.pow 10, @_options.precision
-        Math.round(num * factor) / factor
 
 
     ### environments
