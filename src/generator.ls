@@ -7,10 +7,6 @@ Macros = LaTeX
 
 export class Generator
 
-    ### public instance vars (vars beginning with "_" are meant to be private!)
-
-    documentClass: null     # name of the default document class until \documentclass{}, then the actual class instance
-
     # initialize only in CTOR, otherwise the objects end up in the prototype
     _options: null
 
@@ -21,8 +17,6 @@ export class Generator
 
 
     reset: !->
-        @documentClass = @_options.documentClass
-
         @_labels = new Map()
         @_refs = new Map()
 
