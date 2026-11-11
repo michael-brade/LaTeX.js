@@ -10,7 +10,6 @@ export class Generator
     ### public instance vars (vars beginning with "_" are meant to be private!)
 
     documentClass: null     # name of the default document class until \documentclass{}, then the actual class instance
-    documentTitle: null
 
     # initialize only in CTOR, otherwise the objects end up in the prototype
     _options: null
@@ -20,14 +19,9 @@ export class Generator
 
     _marginpars: null
 
-    _title: null
-    _author: null
-    _date: null
-
 
     reset: !->
         @documentClass = @_options.documentClass
-        @documentTitle = "untitled"
 
         @_uid = 1
 
@@ -35,10 +29,6 @@ export class Generator
         @_refs = new Map()
 
         @_marginpars = []
-
-        @_title = null
-        @_author = null
-        @_date = null
 
         @newCounter \enumi
         @newCounter \enumii
@@ -70,11 +60,6 @@ export class Generator
 
     location: !-> error "location function not set!"
 
-
-
-    # set the title of the document, usually called by the \maketitle macro
-    setTitle: (title) ->
-        @documentTitle = title.textContent
 
 
 
