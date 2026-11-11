@@ -503,7 +503,7 @@ export class LaTeX
     \picture            : (size, offset, content) ->
         # TODO: rule for picture content??? LaTeX allows anything, Lamport says: HV macros and picture commands
         # content:text*
-        [ @g.createPicture(size, offset, content) ]
+        [ @g.createPicture(size, content, offset) ]
 
 
 

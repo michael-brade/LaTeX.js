@@ -9,7 +9,7 @@ import { References } from "./references.ts"
 import { DocumentInfo } from "./document-info.ts"
 
 import type { Options } from "../options.ts"
-import type { Length } from "../types.ts"
+import type { Length, Vector } from "../types.ts"
 
 
 /**
@@ -17,8 +17,10 @@ import type { Length } from "../types.ts"
  * like HtmlGenerator, or a future TextGenerator or MarkdownGenerator.
  *
  * It is composed of the Core and the format-independent mixins, each handling one part of the
- * document state; a mixin may depend on the ones before it (e.g. Lengths needs Groups). Everything
- * that depends on the output format is declared abstract here.
+ * document state; a mixin may depend on the ones before it (e.g. Lengths needs Groups).
+ *
+ * Everything that depends on the output format is declared abstract here and has
+ * to be implemented by a concrete generator.
  *
  * @typeParam TNode the type of the output nodes, e.g. DOM `Node` for HTML
  */
@@ -54,9 +56,17 @@ export abstract class Generator<TNode = unknown> extends
 
     //// node creation
 
+    // create a text node that has font attributes set and allows for hyphenation
     abstract override createText(t: string | String): TNode | undefined
+
+    // create a pure text node without font attributes and no hyphenation
     abstract createVerbatim(t: string, ...rest: unknown[]): TNode | undefined
+    // create a fragment; arguments may be Node(s) and/or arrays of Node(s)
     abstract createFragment(...args: (TNode | TNode[])[]): TNode | undefined
+
+    abstract createImage(width: number, height: number, url: string): TNode
+    abstract createPicture(size: Vector, content: any, offset?: Vector): TNode
+
     abstract create(type: unknown, children?: TNode | TNode[] | null, classes?: string): TNode
     abstract createDocument(fs: unknown): void
 

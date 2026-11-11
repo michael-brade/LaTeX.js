@@ -2,8 +2,6 @@ import { Generator } from '../generator.ts';
 
 import { HtmlElements } from './elements.ts';
 
-import { MacroManager } from '../../macro-manager.ts';
-
 import type { HtmlOptions } from '../../options.ts';
 
 // import { SVG } from '@svgdotjs/svg.js';
@@ -81,6 +79,13 @@ export class HtmlGenerator extends Generator<Node>
     {
         return this._options;
     }
+
+    // plain text content of a node, e.g. for the document title
+    override plainText(node: Node): string
+    {
+        return node?.textContent ?? "";
+    }
+
 
    /// get the result
 
@@ -231,7 +236,7 @@ export class HtmlGenerator extends Generator<Node>
     ////// document creation
 
     // TODO fs is paragraphs array
-    createDocument(fs: any): void
+    override createDocument(fs: any): void
     {
         if (this.#dom)
             appendChildren(this.#dom, fs);
@@ -241,7 +246,7 @@ export class HtmlGenerator extends Generator<Node>
 
     // type: string or function/element factory
     // children: an Element or an array of Element
-    create(type: string|(() => HTMLElement),
+    override create(type: string|(() => HTMLElement),
            children?: Node | Node[] | null,
            classes: string = ""): HTMLElement
     {
@@ -272,21 +277,21 @@ export class HtmlGenerator extends Generator<Node>
 
 
     // create a text node that has font attributes set and allows for hyphenation
-    createText(t: string): any
+    override createText(t: string): any
     {
         if (!t) return;
         return this.addAttributes(document.createTextNode(this.#h ? this.#h.hyphenateText(t) : t));
     }
 
     // create a pure text node without font attributes and no hyphenation
-    createVerbatim(t: string): Text | undefined
+    override createVerbatim(t: string): Text | undefined
     {
         if (!t) return;
         return document.createTextNode(t);
     }
 
     // create a fragment; arguments may be Node(s) and/or arrays of Node(s)
-    createFragment(...args: (Node|Node[])[]): DocumentFragment | Node | undefined
+    override createFragment(...args: (Node|Node[])[]): DocumentFragment | Node | undefined
     {
         const children = compact(flattenDeep(args));
 
@@ -303,13 +308,13 @@ export class HtmlGenerator extends Generator<Node>
         return f;
     }
 
-    createImage(width: number, height: number, url: string): HTMLElement
+    override createImage(width: number, height: number, url: string): HTMLElement
     {
         return this.create(HtmlElements.image(width, height, url));
     }
 
 
-    createPicture(size: Vector, content: any, offset?: Vector): HTMLElement
+    override createPicture(size: Vector, content: any, offset?: Vector): HTMLElement
     {
         // canvas
         const canvas = this.create(HtmlElements.pictureCanvas); // TODO: this might add CSS classes... ok?
@@ -327,21 +332,21 @@ export class HtmlGenerator extends Generator<Node>
         return pic;
     }
 
-    createVSpaceSkip(skip: "smallskip"|"medskip"|"bigskip"): HTMLElement
+    override createVSpaceSkip(skip: "smallskip"|"medskip"|"bigskip"): HTMLElement
     {
         const span = document.createElement("span");
         span.setAttribute("class", "vspace " + skip);
         return span;
     }
 
-    createVSpaceSkipInline(skip: "smallskip"|"medskip"|"bigskip"): HTMLElement
+    override createVSpaceSkipInline(skip: "smallskip"|"medskip"|"bigskip"): HTMLElement
     {
         const span = document.createElement("span");
         span.setAttribute("class", "vspace-inline " + skip);
         return span;
     }
 
-    createVSpace(length: Length): HTMLElement
+    override createVSpace(length: Length): HTMLElement
     {
         const span = document.createElement("span");
         span.setAttribute("class", "vspace");
@@ -349,7 +354,7 @@ export class HtmlGenerator extends Generator<Node>
         return span;
     }
 
-    createVSpaceInline(length: Length): HTMLElement
+    override createVSpaceInline(length: Length): HTMLElement
     {
         const span = document.createElement("span");
         span.setAttribute("class", "vspace-inline");
@@ -359,7 +364,7 @@ export class HtmlGenerator extends Generator<Node>
 
 
     // create a linebreak with a given vspace between the lines
-    createBreakSpace(length: Length): Node
+    override createBreakSpace(length: Length): Node
     {
         const span = document.createElement("span");
         span.setAttribute("class", "breakspace");
@@ -376,7 +381,7 @@ export class HtmlGenerator extends Generator<Node>
     }
 
     // return HTMLElement instead?
-    parseMath(math: string, display: boolean): DocumentFragment
+    override parseMath(math: string, display: boolean): DocumentFragment
     {
         const f = document.createDocumentFragment();
         const el = document.createElement("div");
@@ -388,11 +393,17 @@ export class HtmlGenerator extends Generator<Node>
         return f;
     }
 
-
+    override theLength(id: string): HTMLElement
+    {
+        let l = this.create(HtmlElements.inline, undefined, "the");
+        l.setAttribute("display-var", id);
+        return l
+    }
 
     //// attributes and nodes/elements
 
     // add the given attribute(s) to a single element
+    // TODO: unused
     addAttribute(el: HTMLElement, attrs: string): void
     {
         if (el.hasAttribute("class"))
@@ -401,6 +412,7 @@ export class HtmlGenerator extends Generator<Node>
         el.setAttribute("class", attrs);
     }
 
+    // TODO: unused
     hasAttribute(el: HTMLElement, attr: string): boolean
     {
         const classAttr = el.getAttribute("class");
@@ -413,9 +425,9 @@ export class HtmlGenerator extends Generator<Node>
 
 
     // This wraps the current attribute values around the given element or array of elements
-    addAttributes(node: Node): Node
-    addAttributes(nodes: Node[]): Node[]
-    addAttributes(nodes: Node|Node[]): Node|Node[]
+    override addAttributes(node: Node): Node
+    override addAttributes(nodes: Node[]): Node[]
+    override addAttributes(nodes: Node|Node[]): Node|Node[]
     {
         const attrs = this._inlineAttributes();
         if (!attrs)
