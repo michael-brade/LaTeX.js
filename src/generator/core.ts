@@ -16,15 +16,6 @@ export abstract class Core
     _manager: MacroManager
     _options: Options
 
-    documentClass: string | { options: PackageOpts } = "article"
-
-    title?: string
-    author?: string
-    date?: string
-
-    /** once \maketitle is called, title is set as documentTitle */
-    documentTitle: string = "untitled"
-
 
     constructor(options: Options)
     {
@@ -35,9 +26,6 @@ export abstract class Core
 
     reset(): void
     {
-        this.documentClass = "article"
-        this.documentTitle = "untitled"
-        this.title = this.author = this.date = undefined
     }
 
 
@@ -49,13 +37,6 @@ export abstract class Core
     get macroManager(): MacroManager
     {
         return this._manager
-    }
-
-
-    // set the title of the document, usually called by the \maketitle macro
-    setTitle(title: Node): void
-    {
-        this.documentTitle = title.textContent ? title.textContent : "untitled"
     }
 
 
