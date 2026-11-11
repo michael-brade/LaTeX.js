@@ -9,6 +9,12 @@ export interface CurrentLabel {
     label?: unknown         // output node
 }
 
+declare module "./groups.ts" {
+    interface StackItem {
+        currentlabel: CurrentLabel
+    }
+}
+
 
 export function References<TBase extends Constructor<GroupsAPI>>(Base: TBase)
 {
@@ -19,6 +25,13 @@ export function References<TBase extends Constructor<GroupsAPI>>(Base: TBase)
      */
     abstract class ReferencesMixin extends Base
     {
+        // \@currentlabel is local to a group
+        override _newGroup(parent: StackItem | undefined, copyAttrs: boolean): StackItem
+        {
+            const item = super._newGroup(parent, copyAttrs)
+            item.currentlabel = parent ? { ...parent.currentlabel } : { id: "" }
+            return item
+        }
     }
 
     return ReferencesMixin
