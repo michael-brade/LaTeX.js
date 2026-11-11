@@ -21,6 +21,14 @@ export interface TextAttributes
 export type Alignment = string | null
 
 
+declare module "./groups.ts" {
+    interface StackItem {
+        attrs: TextAttributes
+        align: Alignment
+    }
+}
+
+
 export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
 {
     /**
@@ -38,6 +46,17 @@ export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
         {
             super.reset()
             this._continue = false
+        }
+
+
+        // attributes are only copied to a new group if requested; alignment is set only
+        // per level where it was changed
+        override _newGroup(parent: StackItem | undefined, copyAttrs: boolean): StackItem
+        {
+            const item = super._newGroup(parent, copyAttrs)
+            item.attrs = copyAttrs && parent ? { ...parent.attrs } : {}
+            item.align = null
+            return item
         }
 
 
