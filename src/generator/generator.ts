@@ -62,7 +62,7 @@ export abstract class Generator<TNode = unknown> extends
     // create a pure text node without font attributes and no hyphenation
     abstract createVerbatim(t: string, ...rest: unknown[]): TNode | undefined
     // create a fragment; arguments may be Node(s) and/or arrays of Node(s)
-    abstract createFragment(...args: (TNode | TNode[])[]): TNode | undefined
+    abstract override createFragment(...args: (TNode | TNode[])[]): TNode | undefined
 
     abstract createImage(width: number, height: number, url: string): TNode
     abstract createPicture(size: Vector, content: any, offset?: Vector): TNode

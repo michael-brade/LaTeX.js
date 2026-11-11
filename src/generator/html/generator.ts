@@ -3,6 +3,7 @@ import { Generator } from '../generator.ts';
 import { HtmlElements } from './elements.ts';
 
 import type { HtmlOptions } from '../../options.ts';
+import type { CurrentLabel } from '../references.ts';
 
 // import { SVG } from '@svgdotjs/svg.js';
 import katex from 'katex';
@@ -399,6 +400,28 @@ export class HtmlGenerator extends Generator<Node>
         l.setAttribute("display-var", id);
         return l
     }
+
+    //// references
+
+    override createAnchor(id: string): HTMLElement
+    {
+        return this.create(HtmlElements.anchor(id));
+    }
+
+    override createReference(label?: CurrentLabel): HTMLElement
+    {
+        if (label)
+            return this.create(HtmlElements.link("#" + label.id), (label.label as Node).cloneNode(true));
+
+        return this.create(HtmlElements.link("#"), this.createText("??"));
+    }
+
+    override fillReference(ref: HTMLElement, label: CurrentLabel): void
+    {
+        ref.replaceChildren((label.label as Node).cloneNode(true));
+        ref.setAttribute("href", "#" + label.id);
+    }
+
 
     //// attributes and nodes/elements
 
