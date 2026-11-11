@@ -1,20 +1,10 @@
 import { type Constructor } from "../../lib/mixin.ts"
 
-import { Generator } from "./generator.ts"
-import type { TextAttributes } from "./attributes.ts"
+import type { AttributesAPI } from "./attributes.ts"
 import { ligatures, diacritics, symbols } from "../latex/symbols.ts"
 
 
-/**
- * Type part that the Primitives mixin needs from its base: the Generator core plus the
- * active text attributes (Attributes mixin)
- */
-type AttributedGenerator = Generator & {
-    _activeAttributeValue(attr: keyof TextAttributes): string | undefined
-}
-
-
-export function Primitives<TGenerator extends Constructor<AttributedGenerator>>(GeneratorBase: TGenerator)
+export function Primitives<TBase extends Constructor<AttributesAPI>>(Base: TBase)
 {
     /**
      * This mixin is part of the generator and translates the LaTeX primitives (characters, spaces,
@@ -23,7 +13,7 @@ export function Primitives<TGenerator extends Constructor<AttributedGenerator>>(
      * This is format-independent: the strings are turned into output nodes only by createText().
      * A generator needing a different mapping (e.g. ASCII only) can just override the respective method.
      */
-    abstract class PrimitivesMixin extends GeneratorBase
+    abstract class PrimitivesMixin extends Base
     {
         //// spaces and invisible characters
 
@@ -70,6 +60,7 @@ export function Primitives<TGenerator extends Constructor<AttributedGenerator>>(
             if (this._activeAttributeValue('fontFamily') === 'tt')
                 return l;
 
+            // TODO: if the ligature doesn't exist, it's a programming error -> throw?
             return ligatures.get(l) ?? l;
         }
 
