@@ -3,12 +3,15 @@ import type { LocationRange } from "peggy"
 import { MacroManager } from "../macro-manager.js"
 import type { Options, PackageOpts } from "../options.ts"
 
+
 /**
- * Base class of a generator. A html generator would be a concrete generator.
+ * Root of the generator class hierarchy: the infrastructure every mixin relies on,
+ * namely options, error reporting, source location, unique ids, and the root of the
+ * reset() chain.
  *
- * The generator class hierarchy holds the document state.
+ * The Generator itself is composed of this core plus the mixins, see generator.ts.
  */
-export abstract class Generator
+export abstract class Core
 {
     _manager: MacroManager
     _options: Options
