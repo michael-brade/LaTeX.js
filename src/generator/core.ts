@@ -9,10 +9,14 @@ import type { Options } from "../options.ts"
  * reset() chain.
  *
  * The Generator itself is composed of this core plus the mixins, see generator.ts.
+ *
+ * Core options:
+ *  - precision, used for rounding numbers to that many decimal places
  */
 export abstract class Core
 {
     _options: Options
+    _uid: number = 1
 
 
     constructor(options: Options)
@@ -20,8 +24,11 @@ export abstract class Core
         this._options = options
     }
 
+    // root of the reset chain: every mixin overrides reset() and calls super.reset();
+    // reset keeps the options
     reset(): void
     {
+        this._uid = 1
     }
 
 
@@ -30,6 +37,19 @@ export abstract class Core
         return this._options
     }
 
+
+    /// helpers
+
+    nextId(): number
+    {
+        return this._uid++
+    }
+
+    round(num: number): number
+    {
+        const factor = Math.pow(10, this._options.precision)
+        return Math.round(num * factor) / factor
+    }
 
 
     //// error handling
