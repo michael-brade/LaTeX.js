@@ -129,3 +129,5 @@ export function Attributes<TGenerator extends Constructor<GroupedGenerator>>(Gen
 
     return AttributesMixin
 }
+
+export type AttributesAPI = InstanceType<ReturnType<typeof Attributes>>
