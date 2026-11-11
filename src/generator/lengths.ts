@@ -1,24 +1,16 @@
-import type Stack from "../../lib/stack.ts"
 import { type Constructor } from "../../lib/mixin.ts"
 
-import { Generator } from "./generator.ts"
-import type { StackItem } from "./groups.ts"
+import type { GroupsAPI, StackItem } from "./groups.ts"
 import { Length } from "../types.ts"
 
 
-/**
- * Type part that the Lengths mixin needs from its base: the Generator core plus the group stack (Groups mixin)
- */
-type GroupedGenerator = Generator & { _stack: Stack<StackItem> }
-
-
-export function Lengths<TGenerator extends Constructor<GroupedGenerator>>(GeneratorBase: TGenerator)
+export function Lengths<TBase extends Constructor<GroupsAPI>>(Base: TBase)
 {
     /**
      * This mixin is part of the generator and handles LaTeX lengths. Lengths are local to a group,
      * so they depend on the Groups mixin and are stored in the group stack.
      */
-    abstract class LengthsMixin extends GeneratorBase
+    abstract class LengthsMixin extends Base
     {
         newLength(l: string): void
         {

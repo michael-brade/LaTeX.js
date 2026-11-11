@@ -1,8 +1,6 @@
-import type Stack from "../../lib/stack.ts"
 import { type Constructor } from "../../lib/mixin.ts"
 
-import { Generator } from "./generator.ts"
-import type { StackItem } from "./groups.ts"
+import type { GroupsAPI, StackItem } from "./groups.ts"
 
 
 /**
@@ -23,16 +21,13 @@ export interface TextAttributes
 export type Alignment = string | null
 
 
-type GroupedGenerator = Generator & { _stack: Stack<StackItem> }
-
-
-export function Attributes<TGenerator extends Constructor<GroupedGenerator>>(GeneratorBase: TGenerator)
+export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
 {
     /**
      * This mixin is part of the generator and handles the text attributes (font, alignment) of the
      * current group, as well as the paragraph continuation state.
      */
-    abstract class AttributesMixin extends GeneratorBase
+    abstract class AttributesMixin extends Base
     {
         // source offset after which no new paragraph should be started (no parindent/parskip),
         // or false if not continuing

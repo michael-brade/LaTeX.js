@@ -23,7 +23,7 @@ export interface StackItem {
 export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase: TGenerator)
 {
     /**
-     * This mixin is part of the generator and handles the global LaTeX group state.
+     * This mixin is part of the generator and handles the LaTeX group state.
      */
     abstract class GroupsMixin extends GeneratorBase
     {
@@ -101,3 +101,5 @@ export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase:
 
     return GroupsMixin
 }
+
+export type GroupsAPI = InstanceType<ReturnType<typeof Groups>>
