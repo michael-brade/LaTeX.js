@@ -12,6 +12,9 @@ export function DocumentInfo<TBase extends Constructor<Core>>(Base: TBase)
      */
     abstract class DocumentInfoMixin extends Base
     {
+        // first the name of the document class to load;
+        // then, after the document class has been loaded, latex.ltx stores the options here
+        // for later use when loading other packages
         documentClass: string | { options: PackageOpts } = "article"
 
         // set by \title, \author, \date; these are output nodes, used by \maketitle
