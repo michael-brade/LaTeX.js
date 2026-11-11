@@ -4,12 +4,6 @@ import
 
 Macros = LaTeX
 
-Object.defineProperty Array.prototype, 'top',
-    enumerable: false
-    configurable: true
-    get: -> @[* - 1]
-    set: (v) !-> @[* - 1] = v
-
 
 export class Generator
 
@@ -22,14 +16,8 @@ export class Generator
     _options: null
     _macros: null
 
-    _stack: null
-    _groups: null
-
     _labels: null
     _refs: null
-
-    _counters: null
-    _resets: null
 
     _marginpars: null
 
@@ -47,27 +35,10 @@ export class Generator
         @_macros = {}
         @_curArgs = []  # stack of argument declarations
 
-        # stack for local variables and attributes - entering a group adds another entry,
-        # leaving a group removes the top entry
-        @_stack = [
-            attrs: {}
-            align: null
-            currentlabel:
-                id: ""
-                label: document.createTextNode ""
-            lengths: new Map()
-        ]
-
-        # grouping stack, keeps track of difference between opening and closing brackets
-        @_groups = [ 0 ]
-
         @_labels = new Map()
         @_refs = new Map()
 
         @_marginpars = []
-
-        @_counters = new Map()
-        @_resets = new Map()
 
         @_title = null
         @_author = null
@@ -217,38 +188,6 @@ export class Generator
         @endBalanced!
 
         end
-    ### groups
-
-    # start a new group
-    enterGroup: (copyAttrs = false) !->
-        # shallow copy of the contents of top is enough because we don't change the elements, only the array and the maps
-        @_stack.push {
-            attrs: if copyAttrs then Object.assign {}, @_stack.top.attrs else {}
-            align: null                                                 # alignment is set only per level where it was changed
-            currentlabel: Object.assign {}, @_stack.top.currentlabel
-            lengths: new Map(@_stack.top.lengths)
-        }
-        ++@_groups.top
-
-    # end the last group - throws if there was no group to end
-    exitGroup: !->
-        --@_groups.top >= 0 || error "there is no group to end here"
-        @_stack.pop!
-
-    # start a new level of grouping
-    startBalanced: !->
-        @_groups.push 0
-
-    # exit a level of grouping and return the levels of balancing still left
-    endBalanced: ->
-        @_groups.pop!
-        @_groups.length
-
-    # check if the current level of grouping is balanced
-    isBalanced: ->
-        @_groups.top == 0
-
-
 
 
 
@@ -310,34 +249,6 @@ export class Generator
 
     ### LaTeX counters (global)
 
-    newCounter: (c, parent) !->
-        error "counter #{c} already defined!" if @hasCounter c
-
-        @_counters.set c, 0
-        @_resets.set c, []
-
-        if parent
-            @addToReset c, parent
-
-        error "macro \\the#{c} already defined!" if @hasMacro(\the + c)
-        @_macros[\the + c] = -> [ @g.arabic @g.counter c ]
-
-
-    hasCounter: (c) ->
-        @_counters.has c
-
-    setCounter: (c, v) !->
-        error "no such counter: #{c}" if not @hasCounter c
-        @_counters.set c, v
-
-    stepCounter: (c) !->
-        @setCounter c, @counter(c) + 1
-        @clearCounter c
-
-    counter: (c) ->
-        error "no such counter: #{c}" if not @hasCounter c
-        @_counters.get c
-
     refCounter: (c, id) ->
         # currentlabel is local, the counter is global
         # we need to store the id of the element as well as the counter (\@currentlabel)
@@ -356,17 +267,6 @@ export class Generator
 
         return el
 
-
-    addToReset: (c, parent) !->
-        error "no such counter: #{parent}" if not @hasCounter parent
-        error "no such counter: #{c}" if not @hasCounter c
-        @_resets.get parent .push c
-
-    # reset all descendants of c to 0
-    clearCounter: (c) !->
-        for r in @_resets.get c
-            @clearCounter r
-            @setCounter r, 0
 
 
     # formatting counters
