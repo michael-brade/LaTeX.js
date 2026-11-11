@@ -1,14 +1,14 @@
 import { type Constructor } from "../../lib/mixin.ts"
 
-import { Generator } from "./generator.ts"
+import type { MacroManagementAPI } from "./macro-management.ts"
 
 
-export function Counters<TGenerator extends Constructor<Generator>>(GeneratorBase: TGenerator)
+export function Counters<TBase extends Constructor<MacroManagementAPI>>(Base: TBase)
 {
     /**
      * This mixin is part of the Generator(s) and handles the global LaTeX counter state and manipulation.
      */
-    abstract class CountersMixin extends GeneratorBase
+    abstract class CountersMixin extends Base
     {
         _counters: Map<string, number> = new Map();
         _resets: Map<string, string[]> = new Map();
