@@ -10,16 +10,10 @@ export class Generator
     # initialize only in CTOR, otherwise the objects end up in the prototype
     _options: null
 
-    _labels: null
-    _refs: null
-
     _marginpars: null
 
 
     reset: !->
-        @_labels = new Map()
-        @_refs = new Map()
-
         @_marginpars = []
 
         @newCounter \enumi
@@ -101,76 +95,6 @@ export class Generator
         @setCounter \@listdepth, @counter(\@listdepth) - 1
         @continue!
 
-
-
-    ### LaTeX counters (global)
-
-    refCounter: (c, id) ->
-        # currentlabel is local, the counter is global
-        # we need to store the id of the element as well as the counter (\@currentlabel)
-        # if no id is given, create a new element to link to
-        if not id
-            id = c + "-" + @nextId!
-            el = @create @anchor id
-
-        # currentlabel stores the id of the anchor to link to, as well as the label to display in a \ref{}
-        @_stack.top.currentlabel =
-            id: id
-            label: @createFragment [
-                ...if @hasMacro(\p@ + c) then @macro(\p@ + c) else []
-                ...@macro(\the + c)
-            ]
-
-        return el
-
-
-
-    ### label, ref
-
-    # labels are possible for: parts, chapters, all sections, \items, footnotes, minipage-footnotes, tables, figures
-    setLabel: (label) !->
-        error "label #{label} already defined!" if @_labels.has label
-
-        if not @_stack.top.currentlabel.id
-            console.warn "warning: no \\@currentlabel available for label #{label}!"
-
-        @_labels.set label, @_stack.top.currentlabel
-
-        # fill forward references
-        if @_refs.has label
-            for r in @_refs.get label
-                while r.firstChild
-                    r.removeChild r.firstChild
-
-                r.appendChild @_stack.top.currentlabel.label.cloneNode true
-                r.setAttribute "href", "#" + @_stack.top.currentlabel.id
-
-            @_refs.delete label
-
-    # keep a reference to each ref element if no label is known yet, then as we go along, fill it with labels
-    ref: (label) ->
-        # href is the element id, content is \the<counter>
-        if @_labels.get label
-            return @create @link("#" + that.id), that.label.cloneNode true
-
-        el = @create (@link "#"), @createText "??"
-
-        if not @_refs.has label
-            @_refs.set label, [el]
-        else
-            @_refs.get label .push el
-
-        el
-
-
-    logUndefinedRefs: !->
-        return if @_refs.size == 0
-
-        keys = @_refs.keys!
-        while not (ref = keys.next!).done
-            console.warn "warning: reference '#{ref.value}' undefined"
-
-        console.warn "There were undefined references."
 
 
     ### marginpar
