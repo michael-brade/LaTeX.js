@@ -14,7 +14,6 @@ export class Generator
 
     # initialize only in CTOR, otherwise the objects end up in the prototype
     _options: null
-    _macros: null
 
     _labels: null
     _refs: null
@@ -31,9 +30,6 @@ export class Generator
         @documentTitle = "untitled"
 
         @_uid = 1
-
-        @_macros = {}
-        @_curArgs = []  # stack of argument declarations
 
         @_labels = new Map()
         @_refs = new Map()
@@ -81,88 +77,6 @@ export class Generator
         @documentTitle = title.textContent
 
 
-
-
-    ### macros
-
-    hasMacro: (name) ->
-        # block core JavaScript keywords from being treated as LaTeX macros
-        return false if name in <[ constructor toString valueOf hasOwnProperty ]>
-
-        return typeof @_macros[name] == "function"
-
-
-    isHmode:    (marco) -> Macros.args[marco]?.0 == \H  or not Macros.args[marco]
-    isVmode:    (marco) -> Macros.args[marco]?.0 == \V
-    isHVmode:   (marco) -> Macros.args[marco]?.0 == \HV
-    isPreamble: (marco) -> Macros.args[marco]?.0 == \P
-
-    macro: (name, args) ->
-        if symbols.has name
-            return [ @createText symbols.get name ]
-
-        @_macros[name]
-            .apply @_macros, args
-            ?.filter (x) -> x !~= undefined
-            .map (x) ~> if typeof x == 'string' or x instanceof String then @createText x else @addAttributes x
-
-
-    # macro arguments
-
-    beginArgs: (macro) !->
-        @_curArgs.push if Macros.args[macro]
-            then {
-                name: macro
-                args: that.slice(1)
-                parsed: []
-            } else {
-                args: []
-                parsed: []
-            }
-
-    # if next char matches the next arg of a branch, choose that branch
-    # return true if there was a matched branch, false otherwise
-    selectArgsBranch: (nextChar) ->
-        optArgs = <[ o? i? k? kv? n? l? c-ml? cl? ]>
-
-        if Array.isArray @_curArgs.top.args.0
-            # check which alternative branch to choose, discard the others only if it was a match
-            branches = @_curArgs.top.args.0
-            for b in branches
-                if (nextChar == '[' and b.0 in optArgs) or (nextChar == '{' and b.0 not in optArgs)
-                    @_curArgs.top.args.shift!           # remove all branches
-                    @_curArgs.top.args.unshift ...b     # prepend remaining args
-
-                    return true
-
-
-    # check the next argument type to parse, returns true if arg is the next expected argument
-    # if the next expected argument is an array, it is treated as a list of alternative next arguments
-    nextArg: (arg) ->
-        if @_curArgs.top.args.0 == arg
-            @_curArgs.top.args.shift!
-            true
-
-    argError: (m) ->
-        error "macro \\#{@_curArgs.top.name}: #{m}"
-
-    # add the result of a parsed argument
-    addParsedArg: (a) !->
-        @_curArgs.top.parsed.push a
-
-    # get the parsed arguments so far
-    parsedArgs: ->
-        @_curArgs.top.parsed
-
-    # execute macro with parsed arguments so far
-    preExecMacro: !->
-        @macro @_curArgs.top.name, @parsedArgs!
-
-    # remove arguments of a completely parsed macro from the stack
-    endArgs: !->
-        @_curArgs.pop!
-            ..args.length == 0 || error "grammar error: arguments for #{..name} have not been parsed: #{..args}"
-            return ..parsed
 
 
     ### environments
