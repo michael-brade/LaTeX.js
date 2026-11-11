@@ -1,7 +1,7 @@
 import Stack from "../../lib/stack.ts";
 import { type Constructor } from "../../lib/mixin.ts"
 
-import { Generator } from "./generator.ts"
+import { Core } from "./core.ts"
 import type { Length } from "../types.ts"
 import type { TextAttributes, Alignment } from "./attributes.ts"
 
@@ -20,12 +20,12 @@ export interface StackItem {
 }
 
 
-export function Groups<TGenerator extends Constructor<Generator>>(GeneratorBase: TGenerator)
+export function Groups<TBase extends Constructor<Core>>(Base: TBase)
 {
     /**
      * This mixin is part of the generator and handles the LaTeX group state.
      */
-    abstract class GroupsMixin extends GeneratorBase
+    abstract class GroupsMixin extends Base
     {
         // stack for local variables and attributes - entering a group adds another entry,
         // leaving a group removes the top entry
