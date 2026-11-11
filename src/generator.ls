@@ -109,16 +109,6 @@ export class Generator
 
 
 
-
-    theLength: (id) ->
-        l = @create @inline, undefined, "the"
-        l.setAttribute "display-var", id
-        l
-
-
-
-
-
     ### LaTeX counters (global)
 
     refCounter: (c, id) ->

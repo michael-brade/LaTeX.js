@@ -396,7 +396,7 @@ export class HtmlGenerator extends Generator
     createImage: (width, height, url) ->
         @create @image(width, height, url)
 
-    createPicture: (size, offset, content) ->
+    createPicture: (size, content, offset) ->
         # canvas
         canvas = @create @picture-canvas            # TODO: this might add CSS classes... ok?
         appendChildren canvas, content
