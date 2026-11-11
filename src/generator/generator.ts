@@ -13,6 +13,29 @@ import type { Length, Vector } from "../types.ts"
 
 
 /**
+ * The generic kinds of elements that can be created with Generator.create(). Each concrete generator
+ * maps every kind to its output format (e.g. HtmlElements).
+ *
+ * Elements that need arguments get a dedicated create*() method instead (createLink, createImage, ...).
+ */
+export type ElementKind =
+    // generic elements
+    | "inline" | "block"
+    // sectioning
+    | "part" | "chapter" | "section" | "subsection" | "subsubsection" | "paragraph" | "subparagraph"
+    // paragraphs
+    | "par" | "linebreak"
+    // lists
+    | "list" | "unorderedList" | "orderedList" | "descriptionList"
+    | "listitem" | "itemlabel" | "term" | "description"
+    | "quote" | "quotation" | "verse"
+    // title, abstract
+    | "titlepage" | "title" | "author" | "date" | "abstract"
+    // verbatim
+    | "verb" | "verbatim"
+
+
+/**
  * The generator: the contract between the parser (and the macros) and any concrete generator,
  * like HtmlGenerator, or a future TextGenerator or MarkdownGenerator.
  *
@@ -43,32 +66,33 @@ export abstract class Generator<TNode = unknown> extends
     }
 
 
-    //// output-specific element kinds (passed to create())
-
-    abstract readonly linebreak: unknown
-    abstract readonly par: unknown
-    abstract readonly verb: unknown
-    abstract readonly list: unknown
-    abstract readonly title: unknown
-    abstract readonly author: unknown
-    abstract readonly date: unknown
-
-
     //// node creation
+
+    /**
+     * Create an element of the given kind.
+     *
+     * @param kind the generic kind of element
+     * @param children the content of the element
+     * @param classes additional (space separated) classes of the element;
+     *                TODO: right now kind of HTML specific
+     */
+    abstract create(kind: ElementKind, children?: TNode | TNode[] | null, classes?: string): TNode
+
 
     // create a text node that has font attributes set and allows for hyphenation
     abstract override createText(t: string | String): TNode | undefined
 
     // create a pure text node without font attributes and no hyphenation
     abstract createVerbatim(t: string, ...rest: unknown[]): TNode | undefined
+
     // create a fragment; arguments may be Node(s) and/or arrays of Node(s)
     abstract override createFragment(...args: (TNode | TNode[])[]): TNode | undefined
 
     abstract createImage(width: number, height: number, url: string): TNode
     abstract createPicture(size: Vector, content: any, offset?: Vector): TNode
 
-    abstract create(type: unknown, children?: TNode | TNode[] | null, classes?: string): TNode
     abstract createDocument(fs: unknown): void
+
 
     abstract createVSpaceSkip(skip: "smallskip" | "medskip" | "bigskip"): TNode
     abstract createVSpaceSkipInline(skip: "smallskip" | "medskip" | "bigskip"): TNode
