@@ -1,7 +1,6 @@
 import type { LocationRange } from "peggy"
 
-import { MacroManager } from "../macro-manager.js"
-import type { Options, PackageOpts } from "../options.ts"
+import type { Options } from "../options.ts"
 
 
 /**
@@ -13,15 +12,12 @@ import type { Options, PackageOpts } from "../options.ts"
  */
 export abstract class Core
 {
-    _manager: MacroManager
     _options: Options
 
 
     constructor(options: Options)
     {
-        this._manager = new MacroManager()
         this._options = options
-        this._manager.setGenerator(this)
     }
 
     reset(): void
@@ -34,44 +30,6 @@ export abstract class Core
         return this._options
     }
 
-    get macroManager(): MacroManager
-    {
-        return this._manager
-    }
-
-
-    // TODO implement here? used by mixins...
-    private createText(text: string | String): any {}
-    private addAttributes(attr: any): any {}
-
-
-
-    /// macro access
-
-    hasMacro(name: string): boolean
-    {
-        return !!this._manager.hasMacro(name)
-    }
-
-    // "execute" (expand) a macro
-    macro(name: string, ...args: any[]): any[]
-    {
-        const macroFn = this._manager.macroFn(name);
-        if (!macroFn)
-            this.error(`no such macro: \\${name}`);
-
-        return macroFn(...args)
-            // the macroFn returns an array -> filter undefined elements
-            .filter((x: any) => x != undefined)
-            .map((x: any) => {
-                // if an element of the macro's result is a string, create text
-                if (typeof x === 'string' || x instanceof String)
-                    return this.createText(x);
-
-                // otherwise, add the current attributes to the node
-                return this.addAttributes(x);
-            });
-    }
 
 
     //// error handling
