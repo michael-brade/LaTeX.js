@@ -1,6 +1,7 @@
 import
     './symbols.ts': { symbols }
     './types.ls': { Vector }
+    '../generator/generator.ts': { Elements }
 
 
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
@@ -172,11 +173,11 @@ export class LaTeX
         # document.createRange().createContextualFragment('<span class="tex">T<span>e</span>X</span>')
         @g.enterGroup! # prevent createText to add attributes, they will be added by @g.macro
 
-        tex = @g.create @g.inline
+        tex = @g.create Elements.inline
         tex.setAttribute('class', 'tex')
 
         tex.appendChild @g.createText 'T'
-        e = @g.create @g.inline, (@g.createText 'e'), 'e'
+        e = @g.create Elements.inline, (@g.createText 'e'), 'e'
         tex.appendChild e
         tex.appendChild @g.createText 'X'
 
@@ -188,14 +189,14 @@ export class LaTeX
         # <span class="latex">L<span>a</span>T<span>e</span>X</span>
         @g.enterGroup!
 
-        latex = @g.create @g.inline
+        latex = @g.create Elements.inline
         latex.setAttribute('class', 'latex')
 
         latex.appendChild @g.createText 'L'
-        a = @g.create @g.inline, (@g.createText 'a'), 'a'
+        a = @g.create Elements.inline, (@g.createText 'a'), 'a'
         latex.appendChild a
         latex.appendChild @g.createText 'T'
-        e = @g.create @g.inline, (@g.createText 'e'), 'e'
+        e = @g.create Elements.inline, (@g.createText 'e'), 'e'
         latex.appendChild e
         latex.appendChild @g.createText 'X'
 
@@ -206,9 +207,9 @@ export class LaTeX
 
     \today              :-> [ new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) ]
 
-    \newline            :-> [ @g.create @g.linebreak ]
+    \newline            :-> [ @g.create Elements.linebreak ]
 
-    \negthinspace       :-> [ @g.create @g.inline, undefined, 'negthinspace' ]
+    \negthinspace       :-> [ @g.create Elements.inline, undefined, 'negthinspace' ]
 
 
 
@@ -386,13 +387,13 @@ export class LaTeX
      ..\flushleft =     \
      ..\flushright =    <[ V ]>
 
-    \center             :->  @g.startlist!; [ @g.create @g.list, null, "center" ]
+    \center             :->  @g.startlist!; [ @g.create Elements.list, null, "center" ]
     \endcenter          :!-> @g.endlist!
 
-    \flushleft          :->  @g.startlist!; [ @g.create @g.list, null, "flushleft" ]
+    \flushleft          :->  @g.startlist!; [ @g.create Elements.list, null, "flushleft" ]
     \endflushleft       :!-> @g.endlist!
 
-    \flushright         :->  @g.startlist!; [ @g.create @g.list, null, "flushright" ]
+    \flushright         :->  @g.startlist!; [ @g.create Elements.list, null, "flushright" ]
     \endflushright      :!-> @g.endlist!
 
 
@@ -402,7 +403,7 @@ export class LaTeX
     args
      ..\titlepage =     <[ V ]>
 
-    \titlepage          :-> [ @g.create @g.titlepage ]
+    \titlepage          :-> [ @g.create Elements.titlepage ]
 
 
     # quote, quotation, verse
@@ -412,13 +413,13 @@ export class LaTeX
      ..\quotation =     \
      ..\verse =         <[ V ]>
 
-    \quote              :->  @g.startlist!; [ @g.create @g.quote ]
+    \quote              :->  @g.startlist!; [ @g.create Elements.quote ]
     \endquote           :!-> @g.endlist!
 
-    \quotation          :->  @g.startlist!; [ @g.create @g.quotation ]
+    \quotation          :->  @g.startlist!; [ @g.create Elements.quotation ]
     \endquotation       :!-> @g.endlist!
 
-    \verse              :->  @g.startlist!; [ @g.create @g.verse ]
+    \verse              :->  @g.startlist!; [ @g.create Elements.verse ]
     \endverse           :!-> @g.endlist!
 
 
@@ -435,13 +436,13 @@ export class LaTeX
         label = "labelitem" + @g.roman @g.counter \@itemdepth
 
         [
-        @g.create @g.unorderedList, items.map (item) ~>
+        @g.create Elements.unorderedList, items.map (item) ~>
             @g.enterGroup!
             # label: null means no opt_group was given (\item ...), undefined is an empty one (\item[] ...)
-            makelabel = @g.create @g.itemlabel, @\llap (if item.label != null then item.label else @g.macro label)
+            makelabel = @g.create Elements.itemlabel, @\llap (if item.label != null then item.label else @g.macro label)
             @g.exitGroup!
 
-            @g.create @g.listitem, [ makelabel, item.text ]
+            @g.create Elements.listitem, [ makelabel, item.text ]
         ]
 
 
@@ -463,13 +464,13 @@ export class LaTeX
         @g.setCounter itemCounter, 0
 
         [
-        @g.create @g.orderedList, items.map (item) ~>
-            label = @g.create @g.inline, item.label.node
+        @g.create Elements.orderedList, items.map (item) ~>
+            label = @g.create Elements.inline, item.label.node
             if item.label.id
                 label.id = item.label.id
 
-            makelabel = @g.create @g.itemlabel, @\llap label
-            @g.create @g.listitem, [ makelabel, item.text ]
+            makelabel = @g.create Elements.itemlabel, @\llap label
+            @g.create Elements.listitem, [ makelabel, item.text ]
         ]
 
 
@@ -485,9 +486,9 @@ export class LaTeX
             return
 
         [
-        @g.create @g.descriptionList, items.map (item) ~>
-            dt = @g.create @g.term, item.label
-            dd = @g.create @g.description, item.text
+        @g.create Elements.descriptionList, items.map (item) ~>
+            dt = @g.create Elements.term, item.label
+            dd = @g.create Elements.description, item.text
             @g.createFragment [dt, dd]
         ]
 
@@ -548,20 +549,20 @@ export class LaTeX
      ..\vphantom =      \
      ..\phantom =       <[ H hg ]>   # TODO: not true, these should be usable in V-mode as well, they don't \leavevmode :(
 
-    \llap               : (txt) -> [ @g.create @g.inline, txt, "hbox llap" ]
-    \rlap               : (txt) -> [ @g.create @g.inline, txt, "hbox rlap" ]
-    \clap               : (txt) -> [ @g.create @g.inline, txt, "hbox clap" ]
-    \smash              : (txt) -> [ @g.create @g.inline, txt, "hbox smash" ]
+    \llap               : (txt) -> [ @g.create Elements.inline, txt, "hbox llap" ]
+    \rlap               : (txt) -> [ @g.create Elements.inline, txt, "hbox rlap" ]
+    \clap               : (txt) -> [ @g.create Elements.inline, txt, "hbox clap" ]
+    \smash              : (txt) -> [ @g.create Elements.inline, txt, "hbox smash" ]
 
-    \hphantom           : (txt) -> [ @g.create @g.inline, txt, "phantom hbox smash" ]
-    \vphantom           : (txt) -> [ @g.create @g.inline, txt, "phantom hbox rlap" ]
-    \phantom            : (txt) -> [ @g.create @g.inline, txt, "phantom hbox" ]
+    \hphantom           : (txt) -> [ @g.create Elements.inline, txt, "phantom hbox smash" ]
+    \vphantom           : (txt) -> [ @g.create Elements.inline, txt, "phantom hbox rlap" ]
+    \phantom            : (txt) -> [ @g.create Elements.inline, txt, "phantom hbox" ]
 
 
     # LaTeX
 
     args.\underline     = <[ H hg ]>
-    \underline          : (txt) -> [ @g.create @g.inline, txt, "hbox underline" ]
+    \underline          : (txt) -> [ @g.create Elements.inline, txt, "hbox underline" ]
 
 
     # \mbox{text} - not broken into lines
@@ -632,8 +633,8 @@ export class LaTeX
             | "r" => classes += " llap"
             |  _  => @g.error "unknown position: #{pos}"
 
-        content = @g.create @g.inline, txt
-        box = @g.create @g.inline, content, classes
+        content = @g.create Elements.inline, txt
+        box = @g.create Elements.inline, content, classes
 
         if width
             box.setAttribute "style", "width:#{width.value}"
@@ -687,8 +688,8 @@ export class LaTeX
         | "b" => classes += " p-cb"
         |  _  => @g.error "unknown inner-pos: #{inner-pos}"
 
-        content = @g.create @g.inline, txt
-        box = @g.create @g.inline, content, classes
+        content = @g.create Elements.inline, txt
+        box = @g.create Elements.inline, content, classes
 
         box.setAttribute "style", style
 
@@ -742,7 +743,7 @@ export class LaTeX
     # \frame{text} - frame without padding, linewidth given by picture linethickness
     args.\frame =       <[ H hg ]>
     \frame              : (txt) ->
-        el = @g.create @g.inline, txt, "hbox pframe"
+        el = @g.create Elements.inline, txt, "hbox pframe"
         w = @g.length \@wholewidth
         el.setAttribute "style" "border-width:#{w.value}"
         [ el ]
@@ -755,7 +756,7 @@ export class LaTeX
     # \put(x,y){obj}
     args.\put =         <[ H v g is ]>
     \put                : (v, obj) ->
-        wrapper = @g.create @g.inline, obj, "put-obj"
+        wrapper = @g.create Elements.inline, obj, "put-obj"
 
         if v.y.cmp(@g.Length.zero) >= 0
             # TODO: CSS: this case should align the text (put-obj) on baseline... otherwise, strut is too high
@@ -763,12 +764,12 @@ export class LaTeX
             wrapper.setAttribute "style", "left:#{v.x.value}"
             # only add the strut if y > 0
             if v.y.cmp(@g.Length.zero) > 0
-                strut = @g.create @g.inline, undefined, "strut"
+                strut = @g.create Elements.inline, undefined, "strut"
                 strut.setAttribute "style", "height:#{v.y.value}"
         else
             wrapper.setAttribute "style", "left:#{v.x.value};bottom:#{v.y.value}"
 
-        @rlap @g.create @g.inline, [wrapper, strut], "picture"
+        @rlap @g.create Elements.inline, [wrapper, strut], "picture"
 
 
     # \multiput(x,y)(delta_x,delta_y){n}{obj}
@@ -800,7 +801,7 @@ export class LaTeX
     _path: (p, N) ->
         linethickness = @g.length \@wholewidth
 
-        svg = @g.create @g.inline, undefined, "picture-object"
+        svg = @g.create Elements.inline, undefined, "picture-object"
         draw = @g.SVG!.addTo svg
 
         path = draw.path p
@@ -834,7 +835,7 @@ export class LaTeX
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        @g.create @g.inline, svg, "picture"
+        @g.create Elements.inline, svg, "picture"
 
 
 
@@ -848,7 +849,7 @@ export class LaTeX
         # no negative diameters
         d = d.abs!
 
-        svg = @g.create @g.inline, undefined, "picture-object"
+        svg = @g.create Elements.inline, undefined, "picture-object"
 
         linethickness = @g.length \@wholewidth
 
@@ -886,7 +887,7 @@ export class LaTeX
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        [ @g.create @g.inline, svg, "picture" ]
+        [ @g.create Elements.inline, svg, "picture" ]
 
 
     # \line(xslope,yslope){length}
@@ -947,7 +948,7 @@ export class LaTeX
         @g.error "relative units not allowed for line" if vs.x.unit != vs.y.unit or vs.x.unit != "sp"
         @g.error "relative units not allowed for line" if ve.x.unit != ve.y.unit or ve.x.unit != "sp"
 
-        svg = @g.create @g.inline, undefined, "picture-object"
+        svg = @g.create Elements.inline, undefined, "picture-object"
         draw = @g.SVG!.addTo svg
 
         linethickness = @g.length \@wholewidth
@@ -975,7 +976,7 @@ export class LaTeX
         # last, put the origin into the lower left
         draw.flip 'y', 0
 
-        @g.create @g.inline, svg, "picture"
+        @g.create Elements.inline, svg, "picture"
 
 
     # helper: draw arrow from vs to ve
@@ -987,7 +988,7 @@ export class LaTeX
 
         linethickness = @g.length \@wholewidth
 
-        svg = @g.create @g.inline, undefined, "picture-object"
+        svg = @g.create Elements.inline, undefined, "picture-object"
         draw = @g.SVG!
 
         # arrow head length and width
@@ -1044,7 +1045,7 @@ export class LaTeX
         draw.flip 'y', 0
 
         draw.addTo svg
-        @g.create @g.inline, svg, "picture"
+        @g.create Elements.inline, svg, "picture"
 
 
 
@@ -1138,7 +1139,7 @@ export class LaTeX
         oval.clipWith clip
 
         # size and position
-        svg = @g.create @g.inline, undefined, "picture-object"
+        svg = @g.create Elements.inline, undefined, "picture-object"
         svg.setAttribute "style", "left:#{@g.round bbox.x}px;bottom:#{@g.round bbox.y}px"
 
         draw.size "#{@g.round bbox.width}px", "#{@g.round bbox.height}px"
@@ -1149,7 +1150,7 @@ export class LaTeX
 
         draw.addTo svg
 
-        [ @g.create @g.inline, svg, "picture" ]
+        [ @g.create Elements.inline, svg, "picture" ]
 
 
     # return a new rectangle that is the result of intersecting the given two rectangles
