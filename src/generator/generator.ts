@@ -6,6 +6,8 @@ import { Lengths } from "./lengths.ts"
 import { Attributes } from "./attributes.ts"
 import { Primitives } from "./primitives.ts"
 import { References } from "./references.ts"
+import { Environments } from "./environments.ts"
+import { Floats } from "./floats.ts"
 import { DocumentInfo } from "./document-info.ts"
 
 import type { Options } from "../options.ts"
@@ -30,6 +32,8 @@ export { Elements, isElementKind, type ElementKind } from "./elements.ts"
  */
 export abstract class Generator<TNode = unknown> extends
     DocumentInfo(
+    Floats(
+    Environments(
     References(
     Primitives(
     Attributes(
@@ -38,7 +42,7 @@ export abstract class Generator<TNode = unknown> extends
     Groups(
     MacroManagement(
         Core
-    ))))))))
+    ))))))))))
 {
     constructor(options: Options)
     {
