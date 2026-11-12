@@ -9,12 +9,12 @@ To work on <latex/>.js itself and to extend it, first clone this repository.
 ## Architecture
 
 The generated PEG parser parses the <latex/> code. While doing so, it calls appropriate generator functions.
-The generator then uses the Macros class to execute the macros that the parser encounters.
+The generator then uses the Macros classes (under `src/latex/`) to execute the macros that the parser encounters.
 
 Both, the parser and the macros create the resulting HTML DOM tree by calling the HtmlGenerator functions.
 
 The generator also holds the stack, the lengths, counters, fonts, references, etc. It provides some of
-TeX's primitives and basic functionality, so to speak.
+TeX's primitives and basic functionality, the API, so to speak, that the implementation of the macros uses.
 
 ## Directory Structure
 
@@ -29,14 +29,16 @@ General structure:
 
 Files and classes needed to translate <latex/> documents to HTML documents:
 
-- the parser: `src/latex-parser.pegjs`
-- the generator: `src/generator.ls` and `src/html-generator.ls`
-- macros and documentclasses: `src/latex.ltx.ls`, `src/symbols.ls`, `src/documentclasses/*.ls`
-- packages: `src/packages/*.ls`
+- the parser: `src/parser/latex-parser.pegjs`
+- the generic generator: `src/generator/generator.ts` (composed of the mixins in `src/generator/`) and the
+  concrete HtmlGenerator in `src/generator/html/`
+- the macro management: `src/macro-manager.ts` and `src/macros.ts`
+- macros and documentclasses: `src/latex/latex.ltx.ls`, `src/latex/symbols.ts`, `src/latex/documentclasses/*.ts`
+- packages: `src/latex/packages/*.ts`
 
-- the CLI: `src/latex.js.ls`
+- the CLI: `src/cli.ts`
 - the webcomponent: `src/latex.component.mjs`
-- the library API: `src/index.mjs`
+- the library API: `src/index.ts`
 
 Files needed to display the generated HTML document:
 
