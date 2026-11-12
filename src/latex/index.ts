@@ -1,4 +1,5 @@
-import { LaTeX } from './latex.ltx.ts'
+// TODO: use latex.ltx.ts once latex.ltx.ls is ported
+import { LaTeX } from './latex.ltx.ls'
 
 import { Article } from './documentclasses/article.ts'
 import { Book } from './documentclasses/book.ts'
