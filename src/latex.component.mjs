@@ -1,5 +1,5 @@
 import { parse } from './parser/latex-parser.pegjs'
-import { HtmlGenerator } from './html-generator.ls'
+import { HtmlGenerator } from './generator/html/generator.ts'
 
 export let LaTeXJSComponent = null
 
