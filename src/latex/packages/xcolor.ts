@@ -70,8 +70,7 @@ export class XColor
         if (!this.options)
             return
 
-        for (const optObj of this.options) {
-            const opt = Object.keys(optObj)[0];
+        for (const opt of this.options.keys()) {
 
             // xcolor, 2.1.2
             switch (opt) {

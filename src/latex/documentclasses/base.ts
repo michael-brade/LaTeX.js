@@ -237,10 +237,10 @@ export class Base
 
     thepart()           { return [ this.g.Roman(this.g.counter("part")) ];      }
     thesection()        { return [ this.g.arabic(this.g.counter("section")) ];  }
-    thesubsection()     { return this.thesection().join("") + "." + this.g.arabic(this.g.counter("subsection"));}
-    thesubsubsection()  { return this.thesubsection() + "." + this.g.arabic(this.g.counter("subsubsection"));   }
-    theparagraph()      { return this.thesubsubsection() + "." + this.g.arabic(this.g.counter("paragraph"));    }
-    thesubparagraph()   { return this.theparagraph() + "." + this.g.arabic(this.g.counter("subparagraph"));     }
+    thesubsection()     { return [ ...this.thesection(),        ".", this.g.arabic(this.g.counter("subsection")) ];    }
+    thesubsubsection()  { return [ ...this.thesubsection(),     ".", this.g.arabic(this.g.counter("subsubsection")) ]; }
+    theparagraph()      { return [ ...this.thesubsubsection(),  ".", this.g.arabic(this.g.counter("paragraph")) ];     }
+    thesubparagraph()   { return [ ...this.theparagraph(),      ".", this.g.arabic(this.g.counter("subparagraph")) ];  }
 
 
     // title
