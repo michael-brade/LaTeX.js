@@ -270,7 +270,7 @@ macro_args =
       / &{ return m.nextArg("l") }    l:(length_group   / &{ m.argError("length group argument expected") })    { m.addParsedArg(l); }
       / &{ return m.nextArg("lg?") }  l: length_group?                                                          { m.addParsedArg(l); }
       / &{ return m.nextArg("l?") }   l: length_optgroup?                                                       { m.addParsedArg(l); }
-      / &{ return m.nextArg("m") }    m:(macro_group    / &{ m.argError("macro group argument expected") })     { m.addParsedArg(m); }
+      / &{ return m.nextArg("m") }    mg:(macro_group   / &{ m.argError("macro group argument expected") })     { m.addParsedArg(mg); }
       / &{ return m.nextArg("u") }    u:(url_group      / &{ m.argError("url group argument expected") })       { m.addParsedArg(u); }
 
       / &{ return m.nextArg("c") }     c:(color_group          / &{ m.argError("color group expected") })       { m.addParsedArg(c); }
