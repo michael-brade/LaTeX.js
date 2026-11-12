@@ -9,9 +9,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --fix-missing \
+    apt-get install -y --fix-missing --no-install-recommends \
     git git-lfs \
     less \
     rsync \
     neovim \
-    htop
+    htop \
+    # for chrome in puppeteer
+    libnspr4 libnss3 libatk1.0-0t64 libatk-bridge2.0-0t64 libcups2t64 \
+    libxkbcommon0 libasound2t64 libgbm1 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+    # for firefox in puppeteer
+    libgtk-3-0t64
