@@ -5,7 +5,7 @@ import type { PackageOpts } from "../../options.ts";
 
 export class Multicol
 {
-    public g: any;
+    public g: Generator;
 
     constructor(generator: Generator, options?: PackageOpts)
     {
@@ -16,6 +16,6 @@ export class Multicol
     @Args('n', 'o?', 'o?')
     public multicols(cols: number, pre?: any): any[]
     {
-        return [pre, this.g.create(this.g.multicols(cols))];
+        return [pre, this.g.createMulticols(cols)];
     }
 }
