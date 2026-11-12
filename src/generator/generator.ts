@@ -28,6 +28,9 @@ export { Elements, isElementKind, type ElementKind } from "./elements.ts"
  * Everything that depends on the output format is declared abstract here and has
  * to be implemented by a concrete generator.
  *
+ * Generator options:
+ *  - CustomMacros
+ *
  * @typeParam TNode the type of the output nodes, e.g. DOM `Node` for HTML
  */
 export abstract class Generator<TNode = unknown> extends
@@ -48,6 +51,18 @@ export abstract class Generator<TNode = unknown> extends
     {
         super(options)
         this._manager.setGenerator(this)
+    }
+
+    // after all mixins have reset their state: reload the macros, which initialize their counters, lengths, etc.
+    override reset(): void
+    {
+        super.reset()
+
+        this._manager.reset()
+        this._manager.loadPackage("latex.ltx")
+
+        if (this.options.CustomMacros)
+            this._manager.setCustomMacros(this.options.CustomMacros)
     }
 
 

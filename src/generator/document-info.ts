@@ -9,6 +9,9 @@ export function DocumentInfo<TBase extends Constructor<Core>>(Base: TBase)
     /**
      * This mixin is part of the generator and holds the document metadata: document class,
      * title, author, date.
+     *
+     * DocumentInfo options:
+     *  - documentClass to use (default is article)
      */
     abstract class DocumentInfoMixin extends Base
     {
@@ -30,7 +33,7 @@ export function DocumentInfo<TBase extends Constructor<Core>>(Base: TBase)
         {
             super.reset()
 
-            this.documentClass = "article"
+            this.documentClass = this.options.documentClass ?? "article"
             this.documentTitle = "untitled"
             this._title = this._author = this._date = undefined
         }
