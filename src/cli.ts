@@ -11,7 +11,8 @@ import fs from 'fs-extra';
 import stdin from 'stdin';
 import { program } from 'commander';
 import beautify from 'js-beautify';
-import { he, parse, HtmlGenerator } from 'latex.js';
+import { parse, HtmlGenerator } from 'latex.js';
+import { encode } from 'he';
 import en from 'hyphenation.en-us';
 import de from 'hyphenation.de';
 import info from '../package.json' with { type: 'json' };
@@ -19,8 +20,8 @@ import info from '../package.json' with { type: 'json' };
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 
-he.encode.options.strict = true;
-he.encode.options.useNamedReferences = true;
+encode.options.strict = true;
+encode.options.useNamedReferences = true;
 
 const binPath = fileURLToPath(new URL('.', import.meta.url));
 
@@ -128,7 +129,7 @@ input.then((text: string | Buffer[]) => {
         html = generator.htmlDocument(options.url).documentElement.outerHTML;
     }
     if (options.entities)
-        html = he.encode(html, { 'allowUnsafeSymbols': true });
+        html = encode(html, { 'allowUnsafeSymbols': true });
 
     if (options.pretty) {
         html = beautify.html(html, {

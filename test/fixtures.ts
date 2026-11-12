@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import { spawn } from 'node:child_process';
 
-import he from 'he'; // TODO: switch to html-entities (?)
+import { decode } from 'he'; // TODO: switch to html-entities (?)
 import slugify from 'slugify';
 import { parse, HtmlGenerator } from 'latex.js';
 // import beautify from 'js-beautify';
@@ -100,8 +100,8 @@ function runFixture(fixture: Fixture, name: string): void {
             throw e;
         }
 
-        htmlIs = he.decode(htmlIs.replace(/\r\n|\n|\r/g, ""));
-        htmlShould = he.decode(htmlShould.replace(/\r\n|\n|\r/g, ""));
+        htmlIs = decode(htmlIs.replace(/\r\n|\n|\r/g, ""));
+        htmlShould = decode(htmlShould.replace(/\r\n|\n|\r/g, ""));
 
         if (htmlIs !== htmlShould) {
             const filename = path.join(dirname, 'html', slugify(name + ' ' + fixture.header, {
