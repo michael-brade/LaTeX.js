@@ -24,7 +24,7 @@ export class Book extends Report
     {
         // s or not @"@mainmatter"
         const condition = s || !this._mainmatter;
-        return [ this.g.startsection("chapter", 0, condition, toc, ttl) ];
+        return [ this.startsection("chapter", 0, condition, toc, ttl) ];
     }
 
     @Macro("V")

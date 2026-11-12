@@ -259,6 +259,11 @@ export class HtmlGenerator extends Generator<Node>
         return this.createElement(HtmlElements[kind], children, classes);
     }
 
+    override setId(node: HTMLElement, id: string): void
+    {
+        node.id = id;
+    }
+
     // create an element using a tag name or an element factory
     // adds the current alignment and continuation classes
     // children: a Node or an array of Nodes

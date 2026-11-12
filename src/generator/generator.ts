@@ -63,6 +63,9 @@ export abstract class Generator<TNode = unknown> extends
      */
     abstract create(kind: ElementKind, children?: TNode | TNode[] | null, classes?: string): TNode
 
+    // give the node an id that can be linked to
+    abstract setId(node: TNode, id: string): void
+
 
     // create a text node that has font attributes set and allows for hyphenation
     abstract override createText(t: string | String): TNode | undefined
