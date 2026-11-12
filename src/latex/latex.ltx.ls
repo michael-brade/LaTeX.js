@@ -483,7 +483,7 @@ export class LaTeX
         @g.create Elements.orderedList, items.map (item) ~>
             label = @g.create Elements.inline, item.label.node
             if item.label.id
-                label.id = item.label.id
+                @g.setId label, item.label.id
 
             makelabel = @g.create Elements.itemlabel, @\llap label
             @g.create Elements.listitem, [ makelabel, item.text ]
