@@ -72,6 +72,12 @@ export abstract class Generator<TNode = unknown> extends
     abstract createImage(width: number, height: number, url: string): TNode
     abstract createPicture(size: Vector, content: any, offset?: Vector): TNode
 
+    // create a link to the given URL; without URL, create a link that doesn't lead anywhere
+    abstract createLink(url?: string, children?: TNode | TNode[] | null): TNode
+
+    // create a container that typesets its content in the given number of columns
+    abstract createMulticols(cols: number): TNode
+
     abstract createDocument(fs: unknown): void
 
 

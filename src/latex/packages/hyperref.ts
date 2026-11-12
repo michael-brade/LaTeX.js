@@ -5,7 +5,7 @@ import type { PackageOpts } from "../../options.ts";
 
 export class Hyperref
 {
-    public g: any;
+    public g: Generator;
 
     constructor(generator: Generator, options?: PackageOpts)
     {
@@ -16,21 +16,21 @@ export class Hyperref
     @Args('o?', 'u', 'g')
     public href(opts: any, url: string, txt: string): any[]
     {
-        return [this.g.create(this.g.link(url)), txt];
+        return [this.g.createLink(url, txt)];
     }
 
     @Macro('H')
     @Args('u')
     public url(url: string): any[]
     {
-        return [this.g.create(this.g.link(url)), this.g.createText(url)];
+        return [this.g.createLink(url, this.g.createText(url))];
     }
 
     @Macro('H')
     @Args('u')
     public nolinkurl(url: string): any[]
     {
-        return [this.g.create(this.g.link()), this.g.createText(url)];
+        return [this.g.createLink(undefined, this.g.createText(url))];
     }
 
     // TODO

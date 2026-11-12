@@ -1,6 +1,6 @@
-import { Generator } from '../generator.ts';
+import { Generator, Elements, isElementKind, type ElementKind } from '../generator.ts';
 
-import { HtmlElements } from './elements.ts';
+import { HtmlElements, HtmlFactories, type HtmlElementFactory } from './elements.ts';
 
 import type { HtmlOptions } from '../../options.ts';
 import type { CurrentLabel } from '../references.ts';
@@ -168,13 +168,13 @@ export class HtmlGenerator extends Generator<Node>
         const f = document.createDocumentFragment();
 
         // text body
-        f.append(this.create(HtmlElements.block, this.#dom, "body"));
+        f.append(this.create(Elements.block, this.#dom, "body"));
 
 
         if (this.marginPars && this.marginPars.length) {
             const marginPars = this.marginPars.map(mp => {
-                const el = this.create(HtmlElements.block, [
-                    this.create(HtmlElements.inline, null, "mpbaseline"),
+                const el = this.create(Elements.block, [
+                    this.create(Elements.inline, null, "mpbaseline"),
                     mp.content
                 ])
                 el.id = mp.id.toString()
@@ -182,9 +182,9 @@ export class HtmlGenerator extends Generator<Node>
             });
 
             // marginpar on the right - TODO: is there any configuration possible to select which margin?
-            // HtmlElements.marginPar("margin-left")
-            f.append(this.create(HtmlElements.marginPar("margin-right"),
-                                 this.create(HtmlElements.block, marginPars, "marginpar")));
+            // HtmlFactories.marginPar("margin-left")
+            f.append(this.createElement(HtmlFactories.marginPar("margin-right"),
+                                        this.create(Elements.block, marginPars, "marginpar")));
         }
 
         return f;
@@ -245,11 +245,22 @@ export class HtmlGenerator extends Generator<Node>
 
     ////// element creation
 
-    // type: string or function/element factory
-    // children: an Element or an array of Element
-    override create(type: string|(() => HTMLElement),
-           children?: Node | Node[] | null,
-           classes: string = ""): HTMLElement
+    // create an element of the given generic kind
+    override create(kind: ElementKind, children?: Node | Node[] | null, classes: string = ""): HTMLElement
+    {
+        // callers in untyped code (grammar, LiveScript macros) are not checked at compile time
+        if (!isElementKind(kind))
+            this.error(`unknown element kind: ${String(kind)}`);
+
+        return this.createElement(HtmlElements[kind], children, classes);
+    }
+
+    // create an element using a tag name or an element factory
+    // adds the current alignment and continuation classes
+    // children: a Node or an array of Nodes
+    protected createElement(type: HtmlElementFactory,
+                            children?: Node | Node[] | null,
+                            classes: string = ""): HTMLElement
     {
         let el: HTMLElement;
         if (typeof type === "function") {
@@ -311,14 +322,24 @@ export class HtmlGenerator extends Generator<Node>
 
     override createImage(width: number, height: number, url: string): HTMLElement
     {
-        return this.create(HtmlElements.image(width, height, url));
+        return this.createElement(HtmlFactories.image(width, height, url));
+    }
+
+    override createLink(url?: string, children?: Node | Node[] | null): HTMLElement
+    {
+        return this.createElement(HtmlFactories.link(url), children);
+    }
+
+    override createMulticols(cols: number): HTMLElement
+    {
+        return this.createElement(HtmlFactories.multicols(cols));
     }
 
 
     override createPicture(size: Vector, content: any, offset?: Vector): HTMLElement
     {
         // canvas
-        const canvas = this.create(HtmlElements.pictureCanvas); // TODO: this might add CSS classes... ok?
+        const canvas = this.createElement(HtmlFactories.pictureCanvas); // TODO: this might add CSS classes... ok?
         appendChildren(canvas, content);
 
         // offset sets the coordinates of the lower left corner, so shift negatively
@@ -326,7 +347,7 @@ export class HtmlGenerator extends Generator<Node>
             canvas.setAttribute("style", `left:${offset.x.mul(-1).value};bottom:${offset.y.mul(-1).value}`);
 
         // picture
-        const pic = this.create(HtmlElements.picture);
+        const pic = this.createElement(HtmlFactories.picture);
         pic.appendChild(canvas);
         pic.setAttribute("style", `width:${size.x.value};height:${size.y.value}`);
 
@@ -396,7 +417,7 @@ export class HtmlGenerator extends Generator<Node>
 
     override theLength(id: string): HTMLElement
     {
-        let l = this.create(HtmlElements.inline, undefined, "the");
+        let l = this.create(Elements.inline, undefined, "the");
         l.setAttribute("display-var", id);
         return l
     }
@@ -405,15 +426,15 @@ export class HtmlGenerator extends Generator<Node>
 
     override createAnchor(id: string): HTMLElement
     {
-        return this.create(HtmlElements.anchor(id));
+        return this.createElement(HtmlFactories.anchor(id));
     }
 
     override createReference(label?: CurrentLabel): HTMLElement
     {
         if (label)
-            return this.create(HtmlElements.link("#" + label.id), (label.label as Node).cloneNode(true));
+            return this.createLink("#" + label.id, (label.label as Node).cloneNode(true));
 
-        return this.create(HtmlElements.link("#"), this.createText("??"));
+        return this.createLink("#", this.createText("??"));
     }
 
     override fillReference(ref: HTMLElement, label: CurrentLabel): void
@@ -459,14 +480,14 @@ export class HtmlGenerator extends Generator<Node>
         if (nodes instanceof window.Element) {
             // Must reference the static method through the Class name
             if (isBlockLevel(nodes as HTMLElement))
-                return this.create(HtmlElements.block, nodes, attrs);
+                return this.create(Elements.block, nodes, attrs);
 
-            return this.create(HtmlElements.inline, nodes, attrs);
+            return this.create(Elements.inline, nodes, attrs);
         } else if (nodes instanceof window.Text || nodes instanceof window.DocumentFragment) {
-            return this.create(HtmlElements.inline, nodes, attrs);
+            return this.create(Elements.inline, nodes, attrs);
         } else if (Array.isArray(nodes)) {
             // Using an arrow function here safely binds 'this' context lexically
-            return nodes.map((node) => this.create(HtmlElements.inline, node, attrs));
+            return nodes.map((node) => this.create(Elements.inline, node, attrs));
         } else {
             console.warn("addAttributes got an unknown/unsupported argument:", nodes);
         }
