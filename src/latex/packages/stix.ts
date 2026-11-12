@@ -1,4 +1,5 @@
-import he from 'he'
+import { decode } from 'he'
+
 // @ts-ignore
 import { __defineSymbol } from 'katex'
 
@@ -19,6 +20,6 @@ export class Stix
 
 
     public static symbols: Map<string, string> = new Map([
-        ["checkmark", he.decode('&check;')] // ✓ U+2713
+        ["checkmark", decode('&check;')]    // ✓ U+2713
     ]);
 }

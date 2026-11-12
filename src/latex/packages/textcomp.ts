@@ -1,4 +1,4 @@
-import he from 'he';
+import { decode } from 'he';
 
 import type { Generator } from '../../generator/generator.ts';
 import type { PackageOpts } from "../../options.ts";
@@ -33,11 +33,11 @@ export class Textcomp
 
         // genealogical
         ["textborn", "\u2B51"],                // ⭑             (alternatives: U+002A, U+2605, U+2736)
-        ["textdied", he.decode('&dagger;')],   // †     U+2020  (alternative: U+271D)
+        ["textdied", decode('&dagger;')],      // †     U+2020  (alternative: U+271D)
         // ["textleaf", ""],                   // TODO
 
         // misc
-        ["textpilcrow", he.decode('&para;')],  // ¶ U+00B6
+        ["textpilcrow", decode('&para;')],     // ¶ U+00B6
         ["textdblhyphen", "\u2E40"]            // ⹀
 
         // TODO

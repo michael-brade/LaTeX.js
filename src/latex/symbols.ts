@@ -1,24 +1,25 @@
-import he from 'he';
+import { decode } from 'he';  // TODO: remove he completely, use unicode directly
+
 
 export const ligatures = new Map<string, string>([
-    ['ff',                  he.decode('&fflig;')],     // ﬀ   U+FB00
-    ['ffi',                 he.decode('&ffilig;')],    // ﬃ   U+FB03
-    ['ffl',                 he.decode('&ffllig;')],    // ﬄ   U+FB04
-    ['fi',                  he.decode('&filig;')],     // ﬁ   U+FB01
-    ['fl',                  he.decode('&fllig;')],     // ﬂ   U+FB02
-    ['``',                  he.decode('&ldquo;')],     // “   U+201C
-    ["''",                  he.decode('&rdquo;')],     // ”   U+201D
-    ['!´',                  he.decode('&iexcl;')],     // ¡   U+00A1
-    ['?´',                  he.decode('&iquest;')],    // ¿   U+00BF
-    ['--',                  he.decode('&ndash;')],     // –   U+2013
-    ['---',                 he.decode('&mdash;')],     // —   U+2014
+    ['ff',                  decode('&fflig;')],         // ﬀ   U+FB00
+    ['ffi',                 decode('&ffilig;')],        // ﬃ   U+FB03
+    ['ffl',                 decode('&ffllig;')],        // ﬄ   U+FB04
+    ['fi',                  decode('&filig;')],         // ﬁ   U+FB01
+    ['fl',                  decode('&fllig;')],         // ﬂ   U+FB02
+    ['``',                  decode('&ldquo;')],         // “   U+201C
+    ["''",                  decode('&rdquo;')],         // ”   U+201D
+    ['!´',                  decode('&iexcl;')],         // ¡   U+00A1
+    ['?´',                  decode('&iquest;')],        // ¿   U+00BF
+    ['--',                  decode('&ndash;')],         // –   U+2013
+    ['---',                 decode('&mdash;')],         // —   U+2014
 
-    ['<<',                  he.decode('&laquo;')],     // «   U+00AB
-    ['>>',                  he.decode('&raquo;')],     // »   U+00BB
+    ['<<',                  decode('&laquo;')],         // «   U+00AB
+    ['>>',                  decode('&raquo;')],         // »   U+00BB
 
     // defined by german
-    ['"`',                  he.decode('&bdquo;')],     // „   U+201E  \quotedblbase
-    ['"\'',                 he.decode('&ldquo;')]      // “   U+201C  \textquotedblleft
+    ['"`',                  decode('&bdquo;')],         // „   U+201E  \quotedblbase
+    ['"\'',                 decode('&ldquo;')]          // “   U+201C  \textquotedblleft
 ]);
 
 export const diacritics = new Map<string, string[]>([
@@ -44,109 +45,109 @@ export const diacritics = new Map<string, string[]>([
 export const symbols = new Map<string, string>([
     // spaces
     ['space',                ' '],
-    ['nobreakspace',         he.decode('&nbsp;')],      //     U+00A0   ~
-    ['thinspace',            he.decode('&thinsp;')],    //     U+2009
-    ['enspace',              he.decode('&ensp;')],      //     U+2002   (en quad: U+2000)
-    ['enskip',               he.decode('&ensp;')],
-    ['quad',                 he.decode('&emsp;')],      //     U+2003   (em quad: U+2001)
-    ['qquad',                he.decode('&emsp;').repeat(2)],
+    ['nobreakspace',         decode('&nbsp;')],             //     U+00A0   ~
+    ['thinspace',            decode('&thinsp;')],           //     U+2009
+    ['enspace',              decode('&ensp;')],             //     U+2002   (en quad: U+2000)
+    ['enskip',               decode('&ensp;')],
+    ['quad',                 decode('&emsp;')],             //     U+2003   (em quad: U+2001)
+    ['qquad',                decode('&emsp;').repeat(2)],
 
-    ['textvisiblespace',     he.decode('&blank;')],     // ␣   U+2423
-    ['textcompwordmark',     he.decode('&zwnj;')],      //     U+200C
+    ['textvisiblespace',     decode('&blank;')],            // ␣   U+2423
+    ['textcompwordmark',     decode('&zwnj;')],             //     U+200C
 
     // basic latin
-    ['textdollar',           '$'],                      //     U+0024    \$
+    ['textdollar',           '$'],                          //     U+0024    \$
     ['$',                    '$'],
-    ['slash',                he.decode('&sol;')],       //     U+002F
-    ['textless',             '<'],                      //     U+003C
-    ['textgreater',          '>'],                      //     U+003E
-    ['textbackslash',        '\u005C'],                 //     U+005C
-    ['textasciicircum',      '^'],                      //     U+005E    \^{}
-    ['textunderscore',       '_'],                      //     U+005F    \_
+    ['slash',                decode('&sol;')],              //     U+002F
+    ['textless',             '<'],                          //     U+003C
+    ['textgreater',          '>'],                          //     U+003E
+    ['textbackslash',        '\u005C'],                     //     U+005C
+    ['textasciicircum',      '^'],                          //     U+005E    \^{}
+    ['textunderscore',       '_'],                          //     U+005F    \_
     ['_',                    '_'],
-    ['lbrack',               '['],                      //     U+005B
-    ['rbrack',               ']'],                      //     U+005D
-    ['textbraceleft',        '{'],                      //     U+007B    \{
+    ['lbrack',               '['],                          //     U+005B
+    ['rbrack',               ']'],                          //     U+005D
+    ['textbraceleft',        '{'],                          //     U+007B    \{
     ['{',                    '{'],
-    ['textbraceright',       '}'],                      //     U+007D    \}
+    ['textbraceright',       '}'],                          //     U+007D    \}
     ['}',                    '}'],
-    ['textasciitilde',       '˜'],                      //     U+007E    \~{}
+    ['textasciitilde',       '˜'],                          //     U+007E    \~{}
 
     // non-ASCII letters
     ['AA',                   '\u00C5'],                 // Å
     ['aa',                   '\u00E5'],                 // å
-    ['AE',                   he.decode('&AElig;')],     // Æ   U+00C6
-    ['ae',                   he.decode('&aelig;')],     // æ   U+00E6
-    ['OE',                   he.decode('&OElig;')],     // Œ   U+0152
-    ['oe',                   he.decode('&oelig;')],     // œ   U+0153
-    ['DH',                   he.decode('&ETH;')],       // Ð   U+00D0
-    ['dh',                   he.decode('&eth;')],       // ð   U+00F0
-    ['DJ',                   he.decode('&Dstrok;')],    // Đ   U+0110
-    ['dj',                   he.decode('&dstrok;')],    // đ   U+0111
-    ['NG',                   he.decode('&ENG;')],       // Ŋ   U+014A
-    ['ng',                   he.decode('&eng;')],       // ŋ   U+014B
-    ['TH',                   he.decode('&THORN;')],     // Þ   U+00DE
-    ['th',                   he.decode('&thorn;')],     // þ   U+00FE
-    ['O',                    he.decode('&Oslash;')],    // Ø   U+00D8
-    ['o',                    he.decode('&oslash;')],    // ø   U+00F8
-    ['i',                    he.decode('&imath;')],     // ı   U+0131
-    ['j',                    he.decode('&jmath;')],     // ȷ   U+0237
-    ['L',                    he.decode('&Lstrok;')],    // Ł   U+0141
-    ['l',                    he.decode('&lstrok;')],    // ł   U+0142
-    ['IJ',                   he.decode('&IJlig;')],     // Ĳ   U+0132
-    ['ij',                   he.decode('&ijlig;')],     // ĳ   U+0133
+    ['AE',                   decode('&AElig;')],        // Æ   U+00C6
+    ['ae',                   decode('&aelig;')],        // æ   U+00E6
+    ['OE',                   decode('&OElig;')],        // Œ   U+0152
+    ['oe',                   decode('&oelig;')],        // œ   U+0153
+    ['DH',                   decode('&ETH;')],          // Ð   U+00D0
+    ['dh',                   decode('&eth;')],          // ð   U+00F0
+    ['DJ',                   decode('&Dstrok;')],       // Đ   U+0110
+    ['dj',                   decode('&dstrok;')],       // đ   U+0111
+    ['NG',                   decode('&ENG;')],          // Ŋ   U+014A
+    ['ng',                   decode('&eng;')],          // ŋ   U+014B
+    ['TH',                   decode('&THORN;')],        // Þ   U+00DE
+    ['th',                   decode('&thorn;')],        // þ   U+00FE
+    ['O',                    decode('&Oslash;')],       // Ø   U+00D8
+    ['o',                    decode('&oslash;')],       // ø   U+00F8
+    ['i',                    decode('&imath;')],        // ı   U+0131
+    ['j',                    decode('&jmath;')],        // ȷ   U+0237
+    ['L',                    decode('&Lstrok;')],       // Ł   U+0141
+    ['l',                    decode('&lstrok;')],       // ł   U+0142
+    ['IJ',                   decode('&IJlig;')],        // Ĳ   U+0132
+    ['ij',                   decode('&ijlig;')],        // ĳ   U+0133
     ['SS',                   '\u1E9E'],                 // ẞ
-    ['ss',                   he.decode('&szlig;')],     // ß   U+00DF
+    ['ss',                   decode('&szlig;')],        // ß   U+00DF
 
     // quotes
     ['textquotesingle',      '\''],                     // '   U+0027
-    ['textquoteleft',        he.decode('&lsquo;')],     // ‘   U+2018    \lq
-    ['lq',                   he.decode('&lsquo;')],
-    ['textquoteright',       he.decode('&rsquo;')],     // ’   U+2019    \rq
-    ['rq',                   he.decode('&rsquo;')],
-    ['textquotedbl',         he.decode('&quot;')],      // "   U+0022
-    ['textquotedblleft',     he.decode('&ldquo;')],     // “   U+201C
-    ['textquotedblright',    he.decode('&rdquo;')],     // ”   U+201D
-    ['quotesinglbase',       he.decode('&sbquo;')],     // ‚   U+201A
-    ['quotedblbase',         he.decode('&bdquo;')],     // „   U+201E
-    ['guillemotleft',        he.decode('&laquo;')],     // «   U+00AB
-    ['guillemotright',       he.decode('&raquo;')],     // »   U+00BB
-    ['guilsinglleft',        he.decode('&lsaquo;')],    // ‹   U+2039
-    ['guilsinglright',       he.decode('&rsaquo;')],    // ›   U+203A
+    ['textquoteleft',        decode('&lsquo;')],        // ‘   U+2018    \lq
+    ['lq',                   decode('&lsquo;')],
+    ['textquoteright',       decode('&rsquo;')],        // ’   U+2019    \rq
+    ['rq',                   decode('&rsquo;')],
+    ['textquotedbl',         decode('&quot;')],         // "   U+0022
+    ['textquotedblleft',     decode('&ldquo;')],        // “   U+201C
+    ['textquotedblright',    decode('&rdquo;')],        // ”   U+201D
+    ['quotesinglbase',       decode('&sbquo;')],        // ‚   U+201A
+    ['quotedblbase',         decode('&bdquo;')],        // „   U+201E
+    ['guillemotleft',        decode('&laquo;')],        // «   U+00AB
+    ['guillemotright',       decode('&raquo;')],        // »   U+00BB
+    ['guilsinglleft',        decode('&lsaquo;')],       // ‹   U+2039
+    ['guilsinglright',       decode('&rsaquo;')],       // ›   U+203A
 
     // diacritics
     ['textasciigrave',       '\u0060'],                 // `
     ['textgravedbl',         '\u02F5'],                 // ˵
-    ['textasciidieresis',    he.decode('&die;')],       // ¨   U+00A8
-    ['textasciiacute',       he.decode('&acute;')],     // ´   U+00B4
-    ['textacutedbl',         he.decode('&dblac;')],     // ˝   U+02DD
-    ['textasciimacron',      he.decode('&macr;')],      // ¯   U+00AF
-    ['textasciicaron',       he.decode('&caron;')],     // ˇ   U+02C7
-    ['textasciibreve',       he.decode('&breve;')],     // ˘   U+02D8
+    ['textasciidieresis',    decode('&die;')],          // ¨   U+00A8
+    ['textasciiacute',       decode('&acute;')],        // ´   U+00B4
+    ['textacutedbl',         decode('&dblac;')],        // ˝   U+02DD
+    ['textasciimacron',      decode('&macr;')],         // ¯   U+00AF
+    ['textasciicaron',       decode('&caron;')],        // ˇ   U+02C7
+    ['textasciibreve',       decode('&breve;')],        // ˘   U+02D8
     ['texttildelow',         '\u02F7'],                 // ˷
 
     // punctuation
-    ['textendash',           he.decode('&ndash;')],     // –   U+2013
-    ['textemdash',           he.decode('&mdash;')],     // —   U+2014
-    ['textellipsis',         he.decode('&hellip;')],    // …   U+2026    \dots, \ldots
-    ['dots',                 he.decode('&hellip;')],
-    ['ldots',                he.decode('&hellip;')],
-    ['textbullet',           he.decode('&bull;')],      // •   U+2022
+    ['textendash',           decode('&ndash;')],        // –   U+2013
+    ['textemdash',           decode('&mdash;')],        // —   U+2014
+    ['textellipsis',         decode('&hellip;')],       // …   U+2026    \dots, \ldots
+    ['dots',                 decode('&hellip;')],
+    ['ldots',                decode('&hellip;')],
+    ['textbullet',           decode('&bull;')],         // •   U+2022
     ['textopenbullet',       '\u25E6'],                 // ◦
-    ['textperiodcentered',   he.decode('&middot;')],    // ·   U+00B7
-    ['textdagger',           he.decode('&dagger;')],    // †   U+2020    \dag
-    ['dag',                  he.decode('&dagger;')],
-    ['textdaggerdbl',        he.decode('&Dagger;')],    // ‡   U+2021    \ddag
-    ['ddag',                 he.decode('&Dagger;')],
-    ['textexclamdown',       he.decode('&iexcl;')],     // ¡   U+00A1
-    ['textquestiondown',     he.decode('&iquest;')],    // ¿   U+00BF
+    ['textperiodcentered',   decode('&middot;')],       // ·   U+00B7
+    ['textdagger',           decode('&dagger;')],       // †   U+2020    \dag
+    ['dag',                  decode('&dagger;')],
+    ['textdaggerdbl',        decode('&Dagger;')],       // ‡   U+2021    \ddag
+    ['ddag',                 decode('&Dagger;')],
+    ['textexclamdown',       decode('&iexcl;')],        // ¡   U+00A1
+    ['textquestiondown',     decode('&iquest;')],       // ¿   U+00BF
     ['textinterrobang',      '\u203D'],                 // ‽
     ['textinterrobangdown',  '\u2E18'],                 // ⸘
 
-    ['textsection',          he.decode('&sect;')],      // §   U+00A7    \S
-    ['S',                    he.decode('&sect;')],
-    ['textparagraph',        he.decode('&para;')],      // ¶   U+00B6    \P
-    ['P',                    he.decode('&para;')],
+    ['textsection',          decode('&sect;')],         // §   U+00A7    \S
+    ['S',                    decode('&sect;')],
+    ['textparagraph',        decode('&para;')],         // ¶   U+00B6    \P
+    ['P',                    decode('&para;')],
     ['textblank',            '\u2422'],                 // ␢
 
     // delimiters
@@ -158,70 +159,70 @@ export const symbols = new Map<string, string>([
     ['textrbrackdbl',        '\u301B'],                 // 〛
 
     // legal symbols
-    ['textcopyright',        he.decode('&copy;')],      // ©   U+00A9    \copyright
-    ['copyright',            he.decode('&copy;')],
-    ['textregistered',       he.decode('&reg;')],       // ®   U+00AE
-    ['textcircledP',         he.decode('&copysr;')],    // ℗   U+2117
+    ['textcopyright',        decode('&copy;')],         // ©   U+00A9    \copyright
+    ['copyright',            decode('&copy;')],
+    ['textregistered',       decode('&reg;')],          // ®   U+00AE
+    ['textcircledP',         decode('&copysr;')],       // ℗   U+2117
     ['textservicemark',      '\u2120'],                 // ℠
-    ['texttrademark',        he.decode('&trade;')],     // ™   U+2122
+    ['texttrademark',        decode('&trade;')],        // ™   U+2122
 
     // genealogical
     ['textmarried',          '\u26AD'],                 // ⚭
     ['textdivorced',         '\u26AE'],                 // ⚮
 
     // misc
-    ['textordfeminine',      he.decode('&ordf;')],      // ª   U+00AA
-    ['textordmasculine',     he.decode('&ordm;')],      // º   U+00BA
+    ['textordfeminine',      decode('&ordf;')],         // ª   U+00AA
+    ['textordmasculine',     decode('&ordm;')],         // º   U+00BA
 
-    ['textdegree',           he.decode('&deg;')],       // °   U+00B0
-    ['textmu',               he.decode('&micro;')],     // µ   U+00B5
+    ['textdegree',           decode('&deg;')],          // °   U+00B0
+    ['textmu',               decode('&micro;')],        // µ   U+00B5
 
     ['textbar',              '\u007C'],                 // |
-    ['textbardbl',           he.decode('&Vert;')],      // ‖   U+2016
-    ['textbrokenbar',        he.decode('&brvbar;')],    // ¦   U+00A6
+    ['textbardbl',           decode('&Vert;')],         // ‖   U+2016
+    ['textbrokenbar',        decode('&brvbar;')],       // ¦   U+00A6
 
     ['textreferencemark',    '\u203B'],                 // ※
     ['textdiscount',         '\u2052'],                 // ⁒
     ['textcelsius',          '\u2103'],                 // ℃   U+2103
-    ['textnumero',           he.decode('&numero;')],    // №   U+2116
-    ['textrecipe',           he.decode('&rx;')],        // ℞   U+211E
+    ['textnumero',           decode('&numero;')],       // №   U+2116
+    ['textrecipe',           decode('&rx;')],           // ℞   U+211E
     ['textestimated',        '\u212E'],                 // ℮
-    ['textbigcircle',        he.decode('&xcirc;')],     // ◯   U+25EF
-    ['textmusicalnote',      he.decode('&sung;')],      // ♪   U+266A
+    ['textbigcircle',        decode('&xcirc;')],        // ◯   U+25EF
+    ['textmusicalnote',      decode('&sung;')],         // ♪   U+266A
 
     ['textohm',              '\u2126'],                 // Ω
     ['textmho',              '\u2127'],                 // ℧
 
 
     // arrows
-    ['textleftarrow',        he.decode('&larr;')],      // ←   U+2190
-    ['textuparrow',          he.decode('&uarr;')],      // ↑   U+2191
-    ['textrightarrow',       he.decode('&rarr;')],      // →   U+2192
-    ['textdownarrow',        he.decode('&darr;')],      // ↓   U+2193
+    ['textleftarrow',        decode('&larr;')],         // ←   U+2190
+    ['textuparrow',          decode('&uarr;')],         // ↑   U+2191
+    ['textrightarrow',       decode('&rarr;')],         // →   U+2192
+    ['textdownarrow',        decode('&darr;')],         // ↓   U+2193
 
     // math symbols
-    ['textperthousand',      he.decode('&permil;')],    // ‰   U+2030
+    ['textperthousand',      decode('&permil;')],       // ‰   U+2030
     ['textpertenthousand',   '\u2031'],                 // ‱
-    ['textonehalf',          he.decode('&frac12;')],    // ½   U+00BD
-    ['textthreequarters',    he.decode('&frac34;')],    // ¾   U+00BE
-    ['textonequarter',       he.decode('&frac14;')],    // ¼   U+00BC
-    ['textfractionsolidus',  he.decode('&frasl;')],     // ⁄   U+2044
-    ['textdiv',              he.decode('&divide;')],    // ÷   U+00F7
-    ['texttimes',            he.decode('&times;')],     // ×   U+00D7
-    ['textminus',            he.decode('&minus;')],     // −   U+2212
-    ['textasteriskcentered', he.decode('&lowast;')],    // ∗   U+2217
-    ['textpm',               he.decode('&plusmn;')],    // ±   U+00B1
-    ['textsurd',             he.decode('&radic;')],     // √   U+221A
-    ['textlnot',             he.decode('&not;')],       // ¬   U+00AC
-    ['textonesuperior',      he.decode('&sup1;')],      // ¹   U+00B9
-    ['texttwosuperior',      he.decode('&sup2;')],      // ²   U+00B2
-    ['textthreesuperior',    he.decode('&sup3;')],      // ³   U+00B3
+    ['textonehalf',          decode('&frac12;')],       // ½   U+00BD
+    ['textthreequarters',    decode('&frac34;')],       // ¾   U+00BE
+    ['textonequarter',       decode('&frac14;')],       // ¼   U+00BC
+    ['textfractionsolidus',  decode('&frasl;')],        // ⁄   U+2044
+    ['textdiv',              decode('&divide;')],       // ÷   U+00F7
+    ['texttimes',            decode('&times;')],        // ×   U+00D7
+    ['textminus',            decode('&minus;')],        // −   U+2212
+    ['textasteriskcentered', decode('&lowast;')],       // ∗   U+2217
+    ['textpm',               decode('&plusmn;')],       // ±   U+00B1
+    ['textsurd',             decode('&radic;')],        // √   U+221A
+    ['textlnot',             decode('&not;')],          // ¬   U+00AC
+    ['textonesuperior',      decode('&sup1;')],         // ¹   U+00B9
+    ['texttwosuperior',      decode('&sup2;')],         // ²   U+00B2
+    ['textthreesuperior',    decode('&sup3;')],         // ³   U+00B3
 
     // currencies
-    ['texteuro',             he.decode('&euro;')],      // €   U+20AC
-    ['textcent',             he.decode('&cent;')],      // ¢   U+00A2
-    ['textsterling',         he.decode('&pound;')],     // £   U+00A3    \pounds
-    ['pounds',               he.decode('&pound;')],
+    ['texteuro',             decode('&euro;')],         // €   U+20AC
+    ['textcent',             decode('&cent;')],         // ¢   U+00A2
+    ['textsterling',         decode('&pound;')],        // £   U+00A3    \pounds
+    ['pounds',               decode('&pound;')],
     ['textbaht',             '\u0E3F'],                 // ฿
     ['textcolonmonetary',    '\u20A1'],                 // ₡
     ['textcurrency',         '\u00A4'],                 // ¤

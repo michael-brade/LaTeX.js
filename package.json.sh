@@ -128,7 +128,7 @@ dependencies:
 devDependencies:
     ### actual runtime dependencies, but bundled by vite
 
-    'he': '1.2.x'
+    'he': '2.x'
     'katex': '^0.16.10'
     '@svgdotjs/svg.js': 'https://github.com/michael-brade/svg.js'  # '3.x'
 

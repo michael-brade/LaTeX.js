@@ -1,4 +1,4 @@
-import he from 'he'
+import * as he from 'he'
 
 import { parse, SyntaxError } from './parser/latex-parser.pegjs'
 import { Generator } from './generator/generator.ts'
