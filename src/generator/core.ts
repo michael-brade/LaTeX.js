@@ -11,7 +11,7 @@ import type { Options } from "../options.ts"
  * The Generator itself is composed of this core plus the mixins, see generator.ts.
  *
  * Core options:
- *  - precision, used for rounding numbers to that many decimal places
+ *  - precision, used for rounding numbers to that many decimal places (default is 2)
  */
 export abstract class Core
 {
@@ -47,7 +47,7 @@ export abstract class Core
 
     round(num: number): number
     {
-        const factor = Math.pow(10, this._options.precision)
+        const factor = Math.pow(10, this.options.precision ?? 2)
         return Math.round(num * factor) / factor
     }
 

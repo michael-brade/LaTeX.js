@@ -17,8 +17,6 @@ function parseLaTeXtoHTML(latex: string, options?: HtmlOptions)
 {
     const generator = new HtmlGenerator(options)
 
-    generator.macroManager.loadPackage("latex.ltx", undefined)
-
     // parse
     const result = parse(latex, {
         generator: generator

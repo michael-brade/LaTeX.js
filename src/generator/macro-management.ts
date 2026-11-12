@@ -20,7 +20,7 @@ export function MacroManagement<TBase extends Constructor<Core>>(Base: TBase)
         override reset(): void
         {
             super.reset()
-            // this._manager.reset()           // TODO
+            // the MacroManager is reset by the Generator, after all other mixins have reset their state
         }
 
 
