@@ -32,7 +32,7 @@ export function Lengths<TBase extends Constructor<GroupsAPI>>(Base: TBase)
             if (this.hasLength(l))
                 this.error(`length ${l} already defined!`);
 
-            this._stack.top.lengths.set(l, Length.zero);
+            this._stack.top.lengths.set(l, new Length(this, 0, "sp"));
         }
 
         hasLength(l: string): boolean

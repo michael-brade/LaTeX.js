@@ -1,4 +1,5 @@
-import type { Generator } from "./generator/generator.ts";
+import { Core } from "./generator/core.ts"
+
 
 // all units in TeX sp
 const unitsSp = new Map<string, number>([
@@ -19,10 +20,7 @@ const unitsSp = new Map<string, number>([
 // Internally, maximum precision is used by storing absolute lengths in sp.
 export class Length
 {
-    // zero class constant
-    static readonly zero = new Length({} as Generator, 0, "sp")
-
-    #g: Generator
+    #g: Core
 
     #value: number = 0
     #unit: string = ""
@@ -31,7 +29,7 @@ export class Length
     // CTOR
     // TODO: if this class could throw exceptions instead of using g.error,
     // it wouldn't need the Generator, only precision for rounding
-    constructor(g: Generator, value: number, unit: string)
+    constructor(g: Core, value: number, unit: string)
     {
         this.#g = g
 
@@ -202,6 +200,12 @@ export class Vector
         return new Vector(this.#x.mul(s), this.#y.mul(s));
     }
 
+    // calculate length of vector; returns an instance of Length
+    norm(): Length
+    {
+        return this.#x.norm(this.#y);
+    }
+
     // shift the start point of the vector along its direction to shorten (l < 0) or lengthen (l > 0) the vector
     // and return another position vector that will point to the new start of the vector
     shift_start(l: Length): Vector
@@ -209,41 +213,19 @@ export class Vector
         if (this.#x.unit !== this.#y.unit)
             throw new Error(`Vector.shift_start: incompatible lengths! (${this.#x.unit} and ${this.#y.unit})`);
 
-        // l^2 = x^2 + y^2
-        //
-        // y = m*x
-        // x = y/m
-        // m = y/x
-        //
-        //  => l^2 = x^2 + x^2 * m^2   =   x^2 * (1 + m^2)
-        //  => l^2 = y^2/m^2 + y^2     =   y^2 * (1 + 1/m^2)
-        //
-        //  => x = l/sqrt(1 + m^2)
-        //  => y = l/sqrt(1 + 1/m^2)
+        const totalLength = this.norm()._value;
 
-        const x = this.#x._value;
-        const y = this.#y._value;
+        // if the vector is a dot at the origin (0,0), it has no direction to shift along
+        if (totalLength === 0)
+            return new Vector(this.#x.mul(0), this.#y.mul(0));
 
-        const msq = Math.sqrt(1 + (y * y) / (x * x));
-        const imsq = Math.sqrt(1 + (x * x) / (y * y));
+        // find the unit step ratios (the direction components of a length-1 vector)
+        const unitX = this.#x._value / totalLength;
+        const unitY = this.#y._value / totalLength;
 
-        const dir_x = x < 0 ? -1 : 1;
-        const dir_y = y < 0 ? -1 : 1;
-
-        let sx: Length;
-        let sy: Length;
-
-        // new start point of arrow is at l distance in direction m from origin
-        if (x !== 0 && y !== 0) {
-            sx = l.div(msq).mul(-dir_x);
-            sy = l.div(imsq).mul(-dir_y);
-        } else if (y === 0) {
-            sx = l.mul(-dir_x);
-            sy = this.y.mul(0);
-        } else {
-            sx = this.x.mul(0);
-            sy = l.mul(-dir_y);
-        }
+        // scale the target shifting length 'l' by these ratios
+        const sx = l.mul(-unitX);
+        const sy = l.mul(-unitY);
 
         return new Vector(sx, sy);
     }
@@ -253,36 +235,19 @@ export class Vector
         if (this.#x.unit !== this.#y.unit)
             throw new Error(`Vector.shift_end: incompatible lengths! (${this.#x.unit} and ${this.#y.unit})`);
 
-        const x = this.x._value;
-        const y = this.y._value;
+        const totalLength = this.norm()._value;
 
-        // shorten vector by half the arrow head length
-        const msq = Math.sqrt(1 + (y * y) / (x * x));
-        const imsq = Math.sqrt(1 + (x * x) / (y * y));
+        if (totalLength === 0)
+            return this;
 
-        const dir_x = x < 0 ? -1 : 1;
-        const dir_y = y < 0 ? -1 : 1;
+        // find the unit step ratios
+        const unitX = this.#x._value / totalLength;
+        const unitY = this.#y._value / totalLength;
 
-        let ex: Length;
-        let ey: Length;
-
-        if (x !== 0 && y !== 0) {
-            ex = this.#x.add(l.div(msq).mul(dir_x));
-            ey = this.#y.add(l.div(imsq).mul(dir_y));
-        } else if (y === 0) {
-            ex = this.#x.add(l.mul(dir_x));
-            ey = this.#y;
-        } else {
-            ex = this.#x;
-            ey = this.#y.add(l.mul(dir_y));
-        }
+        // add the scaled shift directly onto the existing endpoint coordinates
+        const ex = this.#x.add(l.mul(unitX));
+        const ey = this.#y.add(l.mul(unitY));
 
         return new Vector(ex, ey);
-    }
-
-    // calculate length of vector; returns an instance of Length
-    norm(): Length
-    {
-        return this.#x.norm(this.#y);
     }
 }

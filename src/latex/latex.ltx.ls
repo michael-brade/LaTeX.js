@@ -1,6 +1,6 @@
 import
     './symbols.ts': { symbols }
-    './types.ls': { Vector }
+    '../types.ts': { Length, Vector }
     '../generator/generator.ts': { Elements }
 
 
@@ -44,10 +44,10 @@ export class LaTeX
 
         # picture lengths
         @g.newLength \unitlength
-        @g.setLength \unitlength    new @g.Length 1, "pt"
+        @g.setLength \unitlength    new Length @g, 1, "pt"
 
         @g.newLength \@wholewidth
-        @g.setLength \@wholewidth   new @g.Length 0.4, "pt"
+        @g.setLength \@wholewidth   new Length @g, 0.4, "pt"
 
         @g.newLength \paperheight
         @g.newLength \paperwidth
@@ -738,8 +738,8 @@ export class LaTeX
      ..\linethickness = <[ HV l ]>
      ..\arrowlength =   <[ HV l ]>
 
-    \thinlines          :!->        @g.setLength \@wholewidth new @g.Length 0.4, "pt"
-    \thicklines         :!->        @g.setLength \@wholewidth new @g.Length 0.8, "pt"
+    \thinlines          :!->        @g.setLength \@wholewidth new Length @g, 0.4, "pt"
+    \thicklines         :!->        @g.setLength \@wholewidth new Length @g, 0.8, "pt"
     \linethickness      : (l) !->
         @g.error "relative units for \\linethickness not supported!" if l.unit != "sp"
         @g.setLength \@wholewidth l
@@ -774,12 +774,12 @@ export class LaTeX
     \put                : (v, obj) ->
         wrapper = @g.create Elements.inline, obj, "put-obj"
 
-        if v.y.cmp(@g.Length.zero) >= 0
+        if v.y.cmp((new Length @g, 0, "sp")) >= 0
             # TODO: CSS: this case should align the text (put-obj) on baseline... otherwise, strut is too high
             #       (see mixing math, text and lines unit test)
             wrapper.setAttribute "style", "left:#{v.x.value}"
             # only add the strut if y > 0
-            if v.y.cmp(@g.Length.zero) > 0
+            if v.y.cmp((new Length @g, 0, "sp")) > 0
                 strut = @g.create Elements.inline, undefined, "strut"
                 strut.setAttribute "style", "height:#{v.y.value}"
         else
@@ -940,7 +940,7 @@ export class LaTeX
 
         linethickness = @g.length \@wholewidth
 
-        zero = new @g.Length 0, l.unit
+        zero = new Length @g, 0, l.unit
 
         if v.x.px == 0
             x = zero
@@ -1012,7 +1012,7 @@ export class LaTeX
         hw = 3.9
 
         # if the linethickness is less than 0.6pt, don't shrink the arrow head any further
-        max = new @g.Length 0.6, "pt"
+        max = new Length @g, 0.6, "pt"
 
         if linethickness.cmp(max) < 0
             hl = @g.round(hl * max.ratio linethickness)
@@ -1025,7 +1025,7 @@ export class LaTeX
         if al.cmp(hhl) < 0
             s = ve.shift_start hhl
         else
-            s = new Vector @g.Length.zero, @g.Length.zero
+            s = new Vector (new Length @g, 0, "sp"), (new Length @g, 0, "sp")
 
         # shorten vector by half the arrow head length
         ve = ve.shift_end hhl.mul -1
@@ -1072,7 +1072,7 @@ export class LaTeX
         linethickness = @g.length \@wholewidth
 
         if not maxrad
-            maxrad = new @g.Length 20, "px" # TODO: use \maxovalrad, parse the length (if unitless, multiply with \unitlength)
+            maxrad = new Length @g, 20, "px" # TODO: use \maxovalrad, parse the length (if unitless, multiply with \unitlength)
 
         if not part
             part = ""
@@ -1123,7 +1123,7 @@ export class LaTeX
 
         if part.includes 'r'
             rect = @_intersect rect,
-                x: @g.Length.zero
+                x: (new Length @g, 0, "sp")
                 y: size.y.div(-2).sub linethickness
                 w: size.x.div(2).add linethickness
                 h: size.y.add linethickness.mul 2
@@ -1132,7 +1132,7 @@ export class LaTeX
         if part.includes 'b'
             rect = @_intersect rect,
                 x: size.x.div(-2).sub linethickness
-                y: @g.Length.zero
+                y: (new Length @g, 0, "sp")
                 w: size.x.add linethickness.mul 2
                 h: size.y.div(2).add linethickness
 
@@ -1171,10 +1171,10 @@ export class LaTeX
 
     # return a new rectangle that is the result of intersecting the given two rectangles
     _intersect: (r1, r2) ->
-        x: @g.Length.max(r1.x, r2.x)
-        y: @g.Length.max(r1.y, r2.y)
-        w: @g.Length.max(@g.Length.zero, @g.Length.min(r1.x.add(r1.w), r2.x.add(r2.w)).sub @g.Length.max(r1.x, r2.x))
-        h: @g.Length.max(@g.Length.zero, @g.Length.min(r1.y.add(r1.h), r2.y.add(r2.h)).sub @g.Length.max(r1.y, r2.y))
+        x: Length.max(r1.x, r2.x)
+        y: Length.max(r1.y, r2.y)
+        w: Length.max((new Length @g, 0, "sp"), Length.min(r1.x.add(r1.w), r2.x.add(r2.w)).sub Length.max(r1.x, r2.x))
+        h: Length.max((new Length @g, 0, "sp"), Length.min(r1.y.add(r1.h), r2.y.add(r2.h)).sub Length.max(r1.y, r2.y))
 
 
     ####################
