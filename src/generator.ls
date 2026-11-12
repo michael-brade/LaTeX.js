@@ -1,6 +1,5 @@
 import
     './latex.ltx.ls': { LaTeX }
-    './types.ls': { makeLengthClass }
 
 Macros = LaTeX
 
@@ -10,12 +9,7 @@ export class Generator
     # initialize only in CTOR, otherwise the objects end up in the prototype
     _options: null
 
-    _marginpars: null
-
-
     reset: !->
-        @_marginpars = []
-
         @newCounter \enumi
         @newCounter \enumii
         @newCounter \enumiii
@@ -68,20 +62,3 @@ export class Generator
     endlist: !->
         @setCounter \@listdepth, @counter(\@listdepth) - 1
         @continue!
-
-
-
-    ### marginpar
-
-    marginpar: (txt) ->
-        id = @nextId!
-
-        marginPar = @create @block, [@create(@inline, null, "mpbaseline"), txt]
-        marginPar.id = id
-
-        @_marginpars.push marginPar
-
-        marginRef = @create @inline, null, "mpbaseline"
-        marginRef.id = "marginref-" + id
-
-        marginRef
