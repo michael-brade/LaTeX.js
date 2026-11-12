@@ -1,4 +1,4 @@
-import type { Generator } from "../../generator/generator.ts";
+import { Elements, type Generator } from "../../generator/generator.ts";
 
 import { Macro } from '../../macros.ts'
 import { Base } from './base.ts'
@@ -42,7 +42,7 @@ export class Article extends Base
         // TODO use center env directly instead...
         this.g.enterGroup();
         this.g.setFontWeight("bf");
-        const head = this.g.create(this.g.list, this.g.macro("abstractname"), "center");
+        const head = this.g.create(Elements.list, this.g.macro("abstractname"), "center");
         this.g.exitGroup();
 
         return [ head, ...this.g.macro("quotation") ];

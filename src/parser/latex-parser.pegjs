@@ -1,5 +1,6 @@
 {{
     import { Length, Vector } from '../types.ts';
+    import { Elements } from '../generator/generator.ts';
 }}
 
 // per-parse init
@@ -71,7 +72,7 @@ paragraph =
     be:break?
     {
         bb.length > 0 && g.break();
-        var p = g.create(g.par, txt, n ? "noindent" : "");
+        var p = g.create(Elements.par, txt, n ? "noindent" : "");
         be && g.break();
         return p;
     }
@@ -82,7 +83,7 @@ paragraph =
 paragraph_with_linebreak =
     text
     / vmode_macro
-    / break                                     { return g.create(g.linebreak); }
+    / break                                     { return g.create(Elements.linebreak); }
 
 
 // a line in restricted horizontal mode
@@ -710,7 +711,7 @@ verb            =   "verb" s:"*"? _ !char
                         if (s)
                             v = v.replace(/ /g, g.visp);
 
-                        return g.create(g.verb, g.createVerbatim(v, true));
+                        return g.create(Elements.verb, g.createVerbatim(v, true));
                     }
 
 
@@ -963,7 +964,7 @@ linebreak       "linebreak" = _ escape "\\" _ '*'? _
                                 end_optgroup _ {return l;})?
                               {
                                   if (l) return g.createBreakSpace(l);
-                                  else   return g.create(g.linebreak);
+                                  else   return g.create(Elements.linebreak);
                               }
 
 // this should hold all macros that unskip (\\ is already in linebreak) [or add a new macro type?]
