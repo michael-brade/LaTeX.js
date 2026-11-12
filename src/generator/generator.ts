@@ -11,28 +11,9 @@ import { DocumentInfo } from "./document-info.ts"
 import type { Options } from "../options.ts"
 import type { Length, Vector } from "../types.ts"
 
+import type { ElementKind } from "./elements.ts"
 
-/**
- * The generic kinds of elements that can be created with Generator.create(). Each concrete generator
- * maps every kind to its output format (e.g. HtmlElements).
- *
- * Elements that need arguments get a dedicated create*() method instead (createLink, createImage, ...).
- */
-export type ElementKind =
-    // generic elements
-    | "inline" | "block"
-    // sectioning
-    | "part" | "chapter" | "section" | "subsection" | "subsubsection" | "paragraph" | "subparagraph"
-    // paragraphs
-    | "par" | "linebreak"
-    // lists
-    | "list" | "unorderedList" | "orderedList" | "descriptionList"
-    | "listitem" | "itemlabel" | "term" | "description"
-    | "quote" | "quotation" | "verse"
-    // title, abstract
-    | "titlepage" | "title" | "author" | "date" | "abstract"
-    // verbatim
-    | "verb" | "verbatim"
+export { Elements, isElementKind, type ElementKind } from "./elements.ts"
 
 
 /**
