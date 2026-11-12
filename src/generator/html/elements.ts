@@ -1,5 +1,11 @@
+import { Elements, type ElementKind } from "../elements.ts"
+
+
 // create an HTML element with given classes
-function createTag(tagName: string, classes?: string): HTMLElement
+function createTag<Tag extends keyof HTMLElementTagNameMap>(
+    tagName: Tag,
+    classes?: string
+): HTMLElementTagNameMap[Tag]
 {
     const el = document.createElement(tagName);
     if (classes)
@@ -9,103 +15,112 @@ function createTag(tagName: string, classes?: string): HTMLElement
 }
 
 
+/**
+ * The HtmlElementFactory type is needed for typing `HtmlElements`.
+ * a tag name, or a factory creating the (empty) element */
+export type HtmlElementFactory = string | (() => HTMLElement)
 
-export const HtmlElements =
-{
+
+/**
+ * The mapping of the generic element kinds to HTML: a tag name or an element factory.
+ * Every ElementKind has to be mapped, checked by `satisfies`.
+ */
+export const HtmlElements = {
     // generic elements
 
-    inline          : "span",
-    block           : "div",
+    [Elements.inline]           : "span",
+    [Elements.block]            : "div",
 
 
     // sectioning
 
-    part            : "part",
-    chapter         : "h1",
-    section         : "h2",
-    subsection      : "h3",
-    subsubsection   : "h4",
-    paragraph       : "h5",
-    subparagraph    : "h6",
+    [Elements.part]             : "part",
+    [Elements.chapter]          : "h1",
+    [Elements.section]          : "h2",
+    [Elements.subsection]       : "h3",
+    [Elements.subsubsection]    : "h4",
+    [Elements.paragraph]        : "h5",
+    [Elements.subparagraph]     : "h6",
 
 
     // paragraphs
 
-    linebreak       : "br",
-    par             : "p",
+    [Elements.linebreak]        : "br",
+    [Elements.par]  : "p",
 
 
     // lists
 
-    listitem        : "li",
-    term            : "dt",
-    description     : "dd",
+    [Elements.listitem]         : "li",
+    [Elements.term]             : "dt",
+    [Elements.description]      : "dd",
 
 
     // misc
 
-    verbatim        : "pre",
-
-    img             : "img",
-
+    [Elements.verbatim]         : "pre",
+    [Elements.verb]             : () => createTag("code", "tt"),
 
 
     // typographic elements
-    titlepage           : () => createTag(HtmlElements.block, "titlepage"),
-    title               : () => createTag(HtmlElements.block, "title"),
-    author              : () => createTag(HtmlElements.block, "author"),
-    date                : () => createTag(HtmlElements.block, "date"),
 
-    abstract            : () => createTag(HtmlElements.block, "abstract"),
+    [Elements.titlepage]        : () => createTag("div", "titlepage"),
+    [Elements.title]            : () => createTag("div", "title"),
+    [Elements.author]           : () => createTag("div", "author"),
+    [Elements.date]             : () => createTag("div", "date"),
 
-
-    list                : () => createTag(HtmlElements.block, "list"),
-
-    unorderedList       : () => createTag("ul", "list"),
-    orderedList         : () => createTag("ol", "list"),
-    descriptionList     : () => createTag("dl", "list"),
+    [Elements.abstract]         : () => createTag("div", "abstract"),
 
 
-    itemlabel           : () => createTag(HtmlElements.inline, "itemlabel"),
+    [Elements.list]             : () => createTag("div", "list"),
 
-    quote               : () => createTag(HtmlElements.block, "list quote"),
-    quotation           : () => createTag(HtmlElements.block, "list quotation"),
-    verse               : () => createTag(HtmlElements.block, "list verse"),
+    [Elements.unorderedList]    : () => createTag("ul", "list"),
+    [Elements.orderedList]      : () => createTag("ol", "list"),
+    [Elements.descriptionList]  : () => createTag("dl", "list"),
 
-    multicols           : (c: any) => () => {
-                            const el = createTag(HtmlElements.block, "multicols");
-                            el.setAttribute("style", "column-count:" + c);
-                            return el;
-                        },
+    [Elements.itemlabel]        : () => createTag("span", "itemlabel"),
 
-    anchor              : (id: string) => () => {
-                            const el = document.createElement("a");
-                            if (id !== undefined && id !== null)
-                                el.id = id;
+    [Elements.quote]            : () => createTag("div", "list quote"),
+    [Elements.quotation]        : () => createTag("div", "list quotation"),
+    [Elements.verse]            : () => createTag("div", "list verse"),
+} satisfies Record<ElementKind, HtmlElementFactory>
 
-                            return el;
-                        },
 
-    link                : (url: string) => () => {
-                            const el = document.createElement("a");
-                            if (url)
-                                el.setAttribute("href", url);
+/**
+ * HTML element factories that need arguments or are only used internally by the HtmlGenerator;
+ * these are not part of the generic ElementKinds, the Generator offers dedicated create*() methods.
+ */
+export const HtmlFactories = {
+    multicols       : (c: number) => () => {
+                        const el = createTag("div", "multicols");
+                        el.setAttribute("style", "column-count:" + c);
+                        return el;
+                    },
 
-                            return el;
-                        },
+    anchor          : (id: string) => () => {
+                        const el = createTag("a");
+                        el.id = id;
+                        return el;
+                    },
 
-    verb                : () => createTag("code", "tt"),
+    link            : (url?: string) => () => {
+                        const el = createTag("a");
+                        if (url)
+                            el.setAttribute("href", url);
 
-    image               : (width: number, height: number, url: string) => () => {
-                            const el = createTag(HtmlElements.img) as HTMLImageElement;
-                            el.src = url;
-                            el.height = height;
-                            el.width = width;
-                            return el;
-                        },
+                        return el;
+                    },
 
-    marginPar           : (margin: string) => () => createTag(HtmlElements.block, margin),
+    image           : (width: number, height: number, url: string) => () => {
+                        const el = createTag("img");
+                        el.src = url;
+                        el.height = height;
+                        el.width = width;
+                        return el;
+                    },
 
-    picture             : () => createTag(HtmlElements.inline, "picture"),
-    pictureCanvas       : () => createTag(HtmlElements.inline, "picture-canvas")
-}
+    marginPar       : (margin: string) => () => createTag("div", margin),
+
+    picture         : () => createTag("span", "picture"),
+    pictureCanvas   : () => createTag("span", "picture-canvas"),
+} satisfies Record<string, HtmlElementFactory | ((...args: any[]) => HtmlElementFactory)>
