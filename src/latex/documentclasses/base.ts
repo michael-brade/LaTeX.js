@@ -1,4 +1,4 @@
-import type { Generator } from "../../generator/generator.ts";
+import { Elements, type Generator } from "../../generator/generator.ts";
 import { Args, Macro } from "../../macros.ts"
 import { Length } from "../../types.ts";
 
@@ -202,14 +202,14 @@ export class Base
     {
         this.g.setTitle(this.g._title);
 
-        const title = this.g.create(this.g.title, this.g._title);
-        const author = this.g.create(this.g.author, this.g._author);
+        const title = this.g.create(Elements.title, this.g._title);
+        const author = this.g.create(Elements.author, this.g._author);
 
         // LiveScript 'if @g._date then that else ...' translation
         const dateVal = this.g._date ? this.g._date : this.g.macro("today");
-        const date = this.g.create(this.g.date, dateVal);
+        const date = this.g.create(Elements.date, dateVal);
 
-        const maketitle = this.g.create(this.g.list, [
+        const maketitle = this.g.create(Elements.list, [
             this.g.createVSpace(new Length(this.g, 2, "em")),
             title,
             this.g.createVSpace(new Length(this.g, 1.5, "em")),
