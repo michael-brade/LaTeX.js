@@ -34,6 +34,11 @@ export class LaTeX
         @g.newCounter \@itemdepth
         @g.newCounter \@enumdepth
 
+        @g.newCounter \enumi
+        @g.newCounter \enumii
+        @g.newCounter \enumiii
+        @g.newCounter \enumiv
+
 
         @g.newLength \@@size         # root font size
 
@@ -380,6 +385,17 @@ export class LaTeX
     \raggedleft         :!-> @g.setAlignment "raggedleft"
 
 
+    # list helpers (not macros): every list environment starts and ends with these
+
+    _startlist: !->
+        @g.stepCounter \@listdepth
+        @g.error "too deeply nested" if @g.counter(\@listdepth) > 6
+
+    _endlist: !->
+        @g.setCounter \@listdepth, @g.counter(\@listdepth) - 1
+        @g.continue!
+
+
     # alignment environments using a list:  flushleft, flushright, center
 
     args
@@ -387,14 +403,14 @@ export class LaTeX
      ..\flushleft =     \
      ..\flushright =    <[ V ]>
 
-    \center             :->  @g.startlist!; [ @g.create Elements.list, null, "center" ]
-    \endcenter          :!-> @g.endlist!
+    \center             :->  @_startlist!; [ @g.create Elements.list, null, "center" ]
+    \endcenter          :!-> @_endlist!
 
-    \flushleft          :->  @g.startlist!; [ @g.create Elements.list, null, "flushleft" ]
-    \endflushleft       :!-> @g.endlist!
+    \flushleft          :->  @_startlist!; [ @g.create Elements.list, null, "flushleft" ]
+    \endflushleft       :!-> @_endlist!
 
-    \flushright         :->  @g.startlist!; [ @g.create Elements.list, null, "flushright" ]
-    \endflushright      :!-> @g.endlist!
+    \flushright         :->  @_startlist!; [ @g.create Elements.list, null, "flushright" ]
+    \endflushright      :!-> @_endlist!
 
 
 
@@ -413,14 +429,14 @@ export class LaTeX
      ..\quotation =     \
      ..\verse =         <[ V ]>
 
-    \quote              :->  @g.startlist!; [ @g.create Elements.quote ]
-    \endquote           :!-> @g.endlist!
+    \quote              :->  @_startlist!; [ @g.create Elements.quote ]
+    \endquote           :!-> @_endlist!
 
-    \quotation          :->  @g.startlist!; [ @g.create Elements.quotation ]
-    \endquotation       :!-> @g.endlist!
+    \quotation          :->  @_startlist!; [ @g.create Elements.quotation ]
+    \endquotation       :!-> @_endlist!
 
-    \verse              :->  @g.startlist!; [ @g.create Elements.verse ]
-    \endverse           :!-> @g.endlist!
+    \verse              :->  @_startlist!; [ @g.create Elements.verse ]
+    \endverse           :!-> @_endlist!
 
 
     # lists: itemize, enumerate, description
@@ -428,7 +444,7 @@ export class LaTeX
     args.\itemize =     <[ V X items ]>
     \itemize            : (items) ->
         if &length == 0
-            @g.startlist!
+            @_startlist!
             @g.stepCounter \@itemdepth
             @g.error "too deeply nested" if @g.counter(\@itemdepth) > 4
             return
@@ -447,7 +463,7 @@ export class LaTeX
 
 
     \enditemize         :!->
-        @g.endlist!
+        @_endlist!
         @g.setCounter \@itemdepth, @g.counter(\@itemdepth) - 1
 
 
@@ -455,7 +471,7 @@ export class LaTeX
     args.\enumerate =   <[ V X enumitems ]>
     \enumerate          : (items) ->
         if &length == 0
-            @g.startlist!
+            @_startlist!
             @g.stepCounter \@enumdepth
             @g.error "too deeply nested" if @g.counter(\@enumdepth) > 4
             return
@@ -475,14 +491,14 @@ export class LaTeX
 
 
     \endenumerate       :!->
-        @g.endlist!
+        @_endlist!
         @g.setCounter \@enumdepth, @g.counter(\@enumdepth) - 1
 
 
     args.\description = <[ V X items ]>
     \description        : (items) ->
         if &length == 0
-            @g.startlist!
+            @_startlist!
             return
 
         [
@@ -492,7 +508,7 @@ export class LaTeX
             @g.createFragment [dt, dd]
         ]
 
-    \enddescription     :!-> @g.endlist!
+    \enddescription     :!-> @_endlist!
 
 
 
