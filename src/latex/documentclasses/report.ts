@@ -63,7 +63,7 @@ export class Report extends Base
 
     thesection()
     {
-        return this.thechapter().join("") + "." + this.g.arabic(this.g.counter("section"));
+        return [ ...this.thechapter(), ".", this.g.arabic(this.g.counter("section")) ];
     }
 
     thefigure()
