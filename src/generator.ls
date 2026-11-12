@@ -25,32 +25,6 @@ export class Generator
         @_macros = new Macros @, @_options.CustomMacros
 
 
-    ### environments
-
-    begin: (env_id) !->
-        if not @hasMacro env_id
-            error "unknown environment: #{env_id}"
-
-        @startBalanced!
-        @enterGroup!
-        @beginArgs env_id
-
-
-    end: (id, end_id) ->
-        if id != end_id
-            error "environment '#{id}' is missing its end, found '#{end_id}' instead"
-
-        if @hasMacro "end" + id
-            end = @macro "end" + id
-
-        @exitGroup!
-        @isBalanced! or error "#{id}: groups need to be balanced in environments!"
-        @endBalanced!
-
-        end
-
-
-
 
     ### sectioning
 
