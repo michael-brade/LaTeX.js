@@ -114,8 +114,8 @@
     "chai-as-promised": "8.0.x",
     "slugify": "1.6.x",
     "tmp": "0.2.x",
-    "puppeteer": "25.1.x",
-    "pixelmatch": "7.2.x",
+    "puppeteer": "25.17.x",
+    "pixelmatch": "8.x",
     "c8": "12.x",
     "codecov": "3.x",
     "serve-handler": "6.x",
@@ -147,6 +147,14 @@
     "checkLeaks": true,
     "sort": true,
     "reporterOption": "maxDiffSize=0"
+  },
+  "puppeteer": {
+    "chrome": {
+      "skipDownload": false
+    },
+    "firefox": {
+      "skipDownload": false
+    }
   },
   "c8": {
     "all": true,

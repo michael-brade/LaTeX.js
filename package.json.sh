@@ -193,8 +193,8 @@ devDependencies:
     'slugify': '1.6.x'
     'tmp': '0.2.x'
 
-    'puppeteer': '25.1.x'
-    'pixelmatch': '7.2.x'
+    'puppeteer': '25.17.x'
+    'pixelmatch': '8.x'
 
     'c8': '12.x'
     'codecov': '3.x'
@@ -224,6 +224,13 @@ mocha:
     checkLeaks: true
     sort: true
     reporter-option: 'maxDiffSize=0'
+
+# first time: install browsers with "npx puppeteer browsers install" after "npm i"
+puppeteer:
+    chrome:
+        skipDownload: false
+    firefox:
+        skipDownload: false
 
 c8:
     all: true

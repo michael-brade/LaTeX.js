@@ -32,7 +32,6 @@ before(async () => {
 
     firefox = await puppeteer.launch({
         browser: 'firefox',
-        executablePath: '/opt/firefox/firefox',
         headless: DEBUG != 'firefox',
         devtools: DEBUG === 'firefox',
         dumpio: false
