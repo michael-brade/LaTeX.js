@@ -1,7 +1,7 @@
 import { Elements, type Generator } from "../../generator/generator.ts";
 
 import { Args, Macro } from '../../macros.ts'
-import { Base } from './base.ts'
+import { Base, type SectionKind } from './base.ts'
 
 
 export class Report extends Base
@@ -31,14 +31,29 @@ export class Report extends Base
     @Args("s", "X", "o?", "g")
     part(s: any, toc: any, ttl: any)
     {
-        return [ this.g.startsection("part", -1, s, toc, ttl) ];
+        return [ this.startsection("part", -1, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     chapter(s: any, toc: any, ttl: any)
     {
-        return [ this.g.startsection("chapter", 0, s, toc, ttl) ];
+        return [ this.startsection("chapter", 0, s, toc, ttl) ];
+    }
+
+    // a numbered chapter heading starts with "Chapter n" on its own line (in LaTeX: \@makechapterhead)
+    protected override numberedHeading(sec: SectionKind, ttl: unknown): unknown[]
+    {
+        if (sec !== "chapter")
+            return super.numberedHeading(sec, ttl);
+
+        const chaphead = this.g.create(Elements.block, [
+            ...this.g.macro("chaptername"),
+            this.g.createText(this.g.symbol("space")),
+            ...this.g.macro("thechapter")
+        ]);
+
+        return [ chaphead, ttl ];
     }
 
     thechapter()

@@ -3,6 +3,9 @@ import { Args, Macro } from "../../macros.ts"
 import { Length } from "../../types.ts";
 
 
+export type SectionKind = "part" | "chapter" | "section" | "subsection" | "subsubsection" | "paragraph" | "subparagraph";
+
+
 // Base class for all standard documentclasses
 export class Base
 {
@@ -144,46 +147,91 @@ export class Base
     // sectioning //
     ////////////////
 
+    /**
+     * \@startsection: called twice by each sectioning macro. First before its arguments are parsed
+     * (toc and ttl are undefined), to step the counter and set \@currentlabel, so that a \label in the
+     * title already refers to the new section; then with the arguments, to create the heading.
+     *
+     * @param sec the sectioning level/counter
+     * @param level the numeric level, compared to secnumdepth
+     * @param star true if the section should not be numbered
+     * @param toc the title for the table of contents
+     * @param ttl the title
+     */
+    protected startsection(sec: SectionKind, level: number, star: boolean, toc?: unknown, ttl?: unknown): unknown
+    {
+        const numbered = !star && this.g.counter("secnumdepth") >= level;
+
+        // call before the arguments are parsed to refstep the counter if numbered
+        if (toc == null && ttl == null) {
+            if (numbered) {
+                this.g.stepCounter(sec);
+                this.g.refCounter(sec, "sec-" + this.g.nextId());
+            }
+            return undefined;
+        }
+
+        if (!numbered)
+            return this.g.create(Elements[sec], ttl);
+
+        const el = this.g.create(Elements[sec], this.numberedHeading(sec, ttl));
+
+        // the heading is the target of a \ref to this section
+        this.g.setId(el, this.g.currentLabel().id);
+
+        // entry in the TOC required?
+        // if (!star && this.g.counter("tocdepth"))
+        //     TODO
+
+        return el;
+    }
+
+    // the content of a numbered heading (in LaTeX: \@seccntformat)
+    protected numberedHeading(sec: SectionKind, ttl: unknown): unknown[]
+    {
+        return [ ...this.g.macro("the" + sec), this.g.createText(this.g.symbol("quad")), ttl ];
+    }
+
     @Macro("V")
     @Args("s", "X", "o?", "g")
     part(s: any, toc: any, ttl: any)
     {
-        return [ this.g.startsection("part", 0, s, toc, ttl) ];
+        return [ this.startsection("part", 0, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     section(s: any, toc: any, ttl: any)
     {
-        return [ this.g.startsection("section", 1, s, toc, ttl) ];
+        return [ this.startsection("section", 1, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     subsection(s: any, toc: any, ttl: any)
     {
-        return [ this.g.startsection("subsection", 2, s, toc, ttl) ];
+        return [ this.startsection("subsection", 2, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     subsubsection(s: any, toc: any, ttl: any)
     {
-        return [ this.g.startsection("subsubsection", 3, s, toc, ttl) ];
+        return [ this.startsection("subsubsection", 3, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     paragraph(s: any, toc: any, ttl: any)
     {
-        return [ this.g.startsection("paragraph", 4, s, toc, ttl) ];
+        return [ this.startsection("paragraph", 4, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     subparagraph(s: any, toc: any, ttl: any)
     {
-        return [ this.g.startsection("subparagraph", 5, s, toc, ttl) ];
+        return [ this.startsection("subparagraph", 5, s, toc, ttl) ];
     }
 
 

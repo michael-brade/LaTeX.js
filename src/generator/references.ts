@@ -77,6 +77,13 @@ export function References<TBase extends Constructor<GroupsAPI & MacroManagement
         abstract fillReference(ref: unknown, label: CurrentLabel): void
 
 
+        // \@currentlabel: what the next \label refers to
+        currentLabel(): CurrentLabel
+        {
+            return this._stack.top.currentlabel
+        }
+
+
         /**
          * Make counter c the one referred to by the next \label, i.e. set `\@currentlabel`.
          *
