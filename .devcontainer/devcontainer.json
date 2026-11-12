@@ -12,6 +12,7 @@
         }
     },
     "features": {
+        "ghcr.io/michael-brade/devcontainer-features/essential-tools:1.0": {},
         "ghcr.io/michael-brade/devcontainer-features/bash-aliases:1": {},
         "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
         "./features/opencode": {}
