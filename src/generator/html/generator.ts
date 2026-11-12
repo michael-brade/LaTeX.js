@@ -4,6 +4,7 @@ import { HtmlElements, HtmlFactories, type HtmlElementFactory } from './elements
 
 import type { HtmlOptions } from '../../options.ts';
 import type { CurrentLabel } from '../references.ts';
+import type { MarginPar } from '../floats.ts';
 
 // import { SVG } from '@svgdotjs/svg.js';
 import katex from 'katex';
@@ -48,6 +49,9 @@ export class HtmlGenerator extends Generator<Node>
 
     // in this class _options is extended
     declare _options: HtmlOptions;
+
+    // narrow marginPars to Node
+    declare marginPars: MarginPar<Node>[];
 
 
     // CTOR
@@ -441,6 +445,16 @@ export class HtmlGenerator extends Generator<Node>
     {
         ref.replaceChildren((label.label as Node).cloneNode(true));
         ref.setAttribute("href", "#" + label.id);
+    }
+
+
+    //// floats
+
+    override createMarginParRef(id: number): HTMLElement
+    {
+        const el = this.create(Elements.inline, null, "mpbaseline");
+        el.id = "marginref-" + id;
+        return el;
     }
 
 
