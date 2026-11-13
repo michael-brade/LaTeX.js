@@ -6,6 +6,10 @@ import { HtmlGenerator } from './generator/html/generator.ts'
 import { LaTeXJSComponent } from './latex.component.mjs'
 import type { HtmlOptions } from './options.ts'
 
+// svg.js is bundled into latex.js, so its element-id counter is private to this bundle;
+// re-export the reset so that consumers (e.g. tests) can get reproducible SVG ids.
+import { resetDid as resetSvgIds } from '@svgdotjs/svg.js'
+
 
 /**
  * Translate LaTeX to HTML using the default configuration.
@@ -31,5 +35,6 @@ export {
     SyntaxError,
     Generator,
     HtmlGenerator,
-    LaTeXJSComponent
+    LaTeXJSComponent,
+    resetSvgIds
 }

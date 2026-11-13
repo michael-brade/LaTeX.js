@@ -13,7 +13,7 @@ import { spawn } from 'node:child_process';
 
 import { decode } from 'he'; // TODO: switch to html-entities (?)
 import slugify from 'slugify';
-import { parse, HtmlGenerator } from 'latex.js';
+import { parse, HtmlGenerator, resetSvgIds } from 'latex.js';
 // import beautify from 'js-beautify';
 import { load as loadFixture, type Fixture } from './lib/load-fixtures.ts';
 import { takeScreenshot } from './lib/setup.ts';
@@ -77,7 +77,7 @@ function runFixture(fixture: Fixture, name: string): void {
 
     // create syntax test
     _test(fixture.header || 'fixture number ' + fixture.id, () => {
-        resetDid();
+        resetSvgIds();
 
         let htmlIs: string;
         let htmlShould: string;
@@ -121,8 +121,6 @@ function runFixture(fixture: Fixture, name: string): void {
     // create screenshot test
     if (screenshot) {
         _test('   - screenshot', async () => {
-            resetDid();
-
             const htmlDoc = parse(fixture.source, {
                 generator: new HtmlGenerator({ hyphenate: false })
             }).htmlDocument();

@@ -26,6 +26,8 @@ declare module 'latex.js' {
     [key: string]: any;
   }
   export function parse(text: string, options?: ParseOptions): ParseResult;
+  // for tests: reset the counter used for generated SVG element ids (SvgjsMarker1000, ...)
+  export function resetSvgIds(): void;
   export namespace he {
     interface EncodeOptions {
       strict?: boolean;
