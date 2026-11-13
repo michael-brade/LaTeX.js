@@ -1,4 +1,4 @@
-import { Elements, type Generator } from "../../generator/generator.ts";
+import { Elements } from "../../generator/generator.ts";
 
 import { Macro } from '../../macros.ts'
 import { Base } from './base.ts'
@@ -9,9 +9,9 @@ export class Article extends Base
     // public static property
     public static css = "css/article.css";
 
-    constructor(generator: Generator, options?: Map<string, any>)
+    constructor(...args: ConstructorParameters<typeof Base>)
     {
-        super(generator, options);
+        super(...args);
 
         this.g.setCounter("secnumdepth", 3);
         this.g.setCounter("tocdepth", 3);

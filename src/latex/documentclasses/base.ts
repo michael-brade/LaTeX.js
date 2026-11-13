@@ -1,16 +1,24 @@
-import { Elements, type Generator } from "../../generator/generator.ts";
+import { Elements, type Generator } from "../../generator/generator.ts"
 import { Args, Macro } from "../../macros.ts"
-import { Length } from "../../types.ts";
+import type { PackageOpts } from "../../options.ts";
+import { Length } from "../../types.ts"
 
 
-export type SectionKind = "part" | "chapter" | "section" | "subsection" | "subsubsection" | "paragraph" | "subparagraph";
+export type SectionKind =
+  | "part"
+  | "chapter"
+  | "section"
+  | "subsection"
+  | "subsubsection"
+  | "paragraph"
+  | "subparagraph";
 
 
 // Base class for all standard documentclasses
 export class Base
 {
     public g: Generator;
-    public options: Map<string, any> = new Map();
+    public options: PackageOpts;
     public args: Record<string, any> = {};
 
     // Internal state variables referenced in LiveScript (e.g., 'if @g._date then that')
@@ -19,11 +27,10 @@ export class Base
     private dateFn: (() => void) | null = null;
     private maketitleFn: (() => void) | null = null;
 
-    constructor(generator: Generator, options?: Map<string, any>)
+    constructor(generator: Generator, options?: PackageOpts | null)
     {
         this.g = generator;
-        if (options)
-            this.options = options;
+        this.options = options ?? new Map();
 
         this.g.newCounter("part");
         this.g.newCounter("section");

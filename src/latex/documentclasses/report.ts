@@ -1,6 +1,6 @@
-import { Elements, type Generator } from "../../generator/generator.ts";
-
 import { Args, Macro } from '../../macros.ts'
+import { Elements } from "../../generator/generator.ts";
+
 import { Base, type SectionKind } from './base.ts'
 
 
@@ -9,9 +9,9 @@ export class Report extends Base
     // public static property
     public static css = "css/book.css";
 
-    constructor(generator: Generator, options?: Map<string, any>)
+    constructor(...args: ConstructorParameters<typeof Base>)
     {
-        super(generator, options);
+        super(...args);
 
         this.g.newCounter("chapter");
         this.g.addToReset("section", "chapter");
