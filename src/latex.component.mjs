@@ -3,8 +3,8 @@ import { HtmlGenerator } from './generator/html/generator.ts'
 
 export let LaTeXJSComponent = null
 
-// fallback for environments without import.meta.url
-const DEFAULT_BASE_PATH = typeof import.meta?.url !== 'undefined' ? import.meta.url : window.location.href
+// fallback for environments without import.meta.url (CJS/UMD builds); there is no location in Node
+const DEFAULT_BASE_PATH = import.meta?.url ?? globalThis.location?.href
 
 // only define LaTeXJSComponent in browser context, i.e., if HTMLElement exists
 if (typeof HTMLElement !== 'undefined') {
