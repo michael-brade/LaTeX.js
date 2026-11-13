@@ -56,9 +56,10 @@ export class HtmlGenerator extends Generator<Node>
     SVG = SVG
 
     // CTOR
-    constructor(options?: HtmlOptions)
+    // all options are optional here: missing ones get their defaults
+    constructor(options?: Partial<HtmlOptions>)
     {
-        const finalizedOptions = Object.assign({
+        const finalizedOptions: HtmlOptions = Object.assign({
             documentClass: "article",
             styles: [],
             hyphenate: true,
