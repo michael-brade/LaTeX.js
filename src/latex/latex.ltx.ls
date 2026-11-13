@@ -13,7 +13,8 @@ import
 #
 # This class should be independent of HtmlGenerator and just work with the generator interface.
 #
-# State is held that is relevant to the particular macros and/or documentclass.
+# State is held in the Generator class(es), this class is immutable. When macros are defined/changed,
+# those are added in the Generator.
 export class LaTeX
 
     # this LaTeX implementation already covers these packages
@@ -106,58 +107,7 @@ export class LaTeX
         @g.newLength \dblfloatsep
         @g.newLength \dbltextfloatsep
 
-        return new Proxy this, {
-            get: (target, prop) ->
-                # if the property exists on this main LaTeX instance, use it
-                if typeof target[prop] == "function"
-                    return target[prop].bind(target)
-
-                if Reflect.has target, prop
-                    return target[prop]
-
-                # search packages in reverse order (newest packages override older ones)
-                for pkg in target._packages by -1
-                    if typeof pkg[prop] == "function"
-                        return pkg[prop].bind(pkg)
-
-                    if Reflect.has pkg, prop
-                        return pkg[prop]
-
-
-            # --- HAS: Handles the native JS `in` operator ---
-            has: (target, prop) ->
-                console.error("Proxy.has", prop)
-                return true if Reflect.has target, prop
-
-                # if it's a structural JS property not on this, don't check packages
-                if prop in <[ constructor toString valueOf hasOwnProperty ]>
-                    return false
-
-                for pkg in target._packages by -1
-                    if Reflect.has pkg, prop and typeof pkg[prop] == "function"
-                        return true
-
-                return false
-
-            getOwnPropertyDescriptor: (target, prop) ->
-                console.error("Proxy.getOwnPropertyDescriptor", prop)
-
-                # if it's physically defined on this instance, return its true descriptor
-                desc = Reflect.getOwnPropertyDescriptor target, prop
-                return desc if desc
-
-                # check packages: if a package owns it as a macro, fake a valid descriptor
-                for pkg in target._packages by -1
-                    # check the package instance OR its prototype chain for the method
-                    if Reflect.has pkg, prop and typeof pkg[prop] == "function"
-                        return {
-                            value: pkg[prop]
-                            enumerable: true
-                            configurable: true
-                            writable: true
-                        }
-        }
-
+        Object.freeze this
 
 
     @symbols = symbols
@@ -1354,3 +1304,7 @@ export class LaTeX
     \cleardoublepage    :!->
     \vfill              :!->
     \thispagestyle      : (s) !->
+
+
+Object.freeze LaTeX.prototype
+Object.freeze LaTeX
