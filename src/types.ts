@@ -206,48 +206,35 @@ export class Vector
         return this.#x.norm(this.#y);
     }
 
-    // shift the start point of the vector along its direction to shorten (l < 0) or lengthen (l > 0) the vector
-    // and return another position vector that will point to the new start of the vector
-    shift_start(l: Length): Vector
+    // unit direction of dir as plain ratios (the components of a length-1 vector along dir);
+    // a zero vector has no direction, so there is nothing sensible to return
+    #direction(dir: Vector, method: string): [number, number]
     {
-        if (this.#x.unit !== this.#y.unit)
-            throw new Error(`Vector.shift_start: incompatible lengths! (${this.#x.unit} and ${this.#y.unit})`);
+        if (this.#x.unit !== this.#y.unit || dir.#x.unit !== dir.#y.unit)
+            throw new Error(`Vector.${method}: incompatible lengths! (${this.#x.unit}/${this.#y.unit} and ${dir.#x.unit}/${dir.#y.unit})`);
 
-        const totalLength = this.norm()._value;
+        const n = dir.norm()._value;
 
-        // if the vector is a dot at the origin (0,0), it has no direction to shift along
-        if (totalLength === 0)
-            return new Vector(this.#x.mul(0), this.#y.mul(0));
+        if (n === 0)
+            throw new Error(`Vector.${method}: zero vector has no direction; pass a direction explicitly`);
 
-        // find the unit step ratios (the direction components of a length-1 vector)
-        const unitX = this.#x._value / totalLength;
-        const unitY = this.#y._value / totalLength;
-
-        // scale the target shifting length 'l' by these ratios
-        const sx = l.mul(-unitX);
-        const sy = l.mul(-unitY);
-
-        return new Vector(sx, sy);
+        return [dir.#x._value / n, dir.#y._value / n];
     }
 
-    shift_end(l: Length): Vector
+    // shift the start point of the vector along its direction to shorten (l < 0) or lengthen (l > 0) the vector
+    // and return another position vector that will point to the new start of the vector;
+    // dir is the direction to shift along, needed if this is a zero vector
+    shift_start(l: Length, dir: Vector = this): Vector
     {
-        if (this.#x.unit !== this.#y.unit)
-            throw new Error(`Vector.shift_end: incompatible lengths! (${this.#x.unit} and ${this.#y.unit})`);
+        const [ux, uy] = this.#direction(dir, "shift_start");
+        return new Vector(l.mul(-ux), l.mul(-uy));
+    }
 
-        const totalLength = this.norm()._value;
-
-        if (totalLength === 0)
-            return this;
-
-        // find the unit step ratios
-        const unitX = this.#x._value / totalLength;
-        const unitY = this.#y._value / totalLength;
-
-        // add the scaled shift directly onto the existing endpoint coordinates
-        const ex = this.#x.add(l.mul(unitX));
-        const ey = this.#y.add(l.mul(unitY));
-
-        return new Vector(ex, ey);
+    // shift the end point of the vector along its direction to shorten (l < 0) or lengthen (l > 0) the vector;
+    // dir is the direction to shift along, needed if this is a zero vector
+    shift_end(l: Length, dir: Vector = this): Vector
+    {
+        const [ux, uy] = this.#direction(dir, "shift_end");
+        return new Vector(this.#x.add(l.mul(ux)), this.#y.add(l.mul(uy)));
     }
 }

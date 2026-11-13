@@ -917,7 +917,9 @@ export class LaTeX
     # \vector(xslope,yslope){length}
     args.\vector =      <[ H v cl ]>
     \vector             : (v, l) ->
-        [ @_vector ...@_slopeLengthToCoords v, l ]
+        [ vs, ve ] = @_slopeLengthToCoords v, l
+        # the slope gives the direction even if the length is zero (then only the arrow head is drawn)
+        [ @_vector vs, ve, v ]
 
 
     # \Line(x1,y1)(x2,y2)
@@ -995,12 +997,13 @@ export class LaTeX
         @g.create Elements.inline, svg, "picture"
 
 
-    # helper: draw arrow from vs to ve
-    _vector: (vs, ve) ->
+    # helper: draw arrow from vs to ve, pointing in direction dir (default: from vs to ve)
+    _vector: (vs, ve, dir = ve.sub(vs)) ->
         # TODO: vs not implemented! always 0
         # TODO: em/ex should be supported!
         @g.error "relative units not allowed for vector" if vs.x.unit != vs.y.unit or vs.x.unit != "sp"
         @g.error "relative units not allowed for vector" if ve.x.unit != ve.y.unit or ve.x.unit != "sp"
+        @g.error "vector has no direction: start and end point are the same" if dir.norm!._value == 0
 
         linethickness = @g.length \@wholewidth
 
@@ -1021,14 +1024,15 @@ export class LaTeX
         hhl = linethickness.mul(hl/2)       # half the head length (the marker scales with stroke width)
         al = ve.sub(vs).norm!               # arrow length
 
-        # if arrow head is longer than the arrow, shift start of the arrow
+        # if the arrow head is longer than the arrow, the line is just the back half of the head (hidden under it):
+        # it starts a whole head length before the tip; this also gives a zero-length arrow a direction for the marker
         if al.cmp(hhl) < 0
-            s = ve.shift_start hhl
+            s = ve.shift_end hhl.mul(-2), dir
         else
             s = new Vector (new Length @g, 0, "sp"), (new Length @g, 0, "sp")
 
-        # shorten vector by half the arrow head length
-        ve = ve.shift_end hhl.mul -1
+        # shorten vector by half the arrow head length (the marker is centered on the end of the line)
+        ve = ve.shift_end hhl.mul(-1), dir
 
         bbox = draw.line(s.x.px, s.y.px, ve.x.px, ve.y.px)
                    .stroke {
