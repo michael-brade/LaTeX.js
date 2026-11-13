@@ -4,9 +4,15 @@
         "@tsconfig/node-ts/tsconfig.json"
     ],
     "compilerOptions": {
-        "alwaysStrict": true,          /* Ensures 'use strict' is emitted in all JS files */
+        "alwaysStrict": true,          // Ensures 'use strict' is emitted in all JS files
         "lib": ["ESNext", "DOM"],
-        "typeRoots": ["./node_modules/@types", "./src/types"],
+
+        // required to make "latex.js" self-reference import in cli.ts and the tests work,
+        // this is type-checked against the source so that no build is needed for its types;
+        // at runtime, it still resolves to dist/ via package.json "exports"
+        "paths": {
+            "latex.js": ["./src/index.ts"]
+        },
 
         "noEmit": true,     // we are using vite, so no need for TypeScript to emit transpiled files
         "allowJs": true,    // TODO: remove once everything is ported to TypeScript
