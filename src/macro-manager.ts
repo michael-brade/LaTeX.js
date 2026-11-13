@@ -1,5 +1,3 @@
-import { createRequire } from 'node:module'
-
 import Stack from '../lib/stack.ts';
 
 import type { Generator } from "./generator/generator.ts";
@@ -8,6 +6,22 @@ import type { ArgType, MacroArgs, MacroFn, MacroMeta } from "./macros.ts";
 import { Macros, OPT_ARGS } from "./macros.ts";
 
 import builtin from "./latex/index.ts";
+
+
+/**
+ * A synchronous loader for external packages, resolving paths relative to the bundle (i.e., dist/packages/
+ * and dist/documentclasses/); undefined outside of Node.
+ *
+ * node:module is not imported statically: the bundle also has to run in the browser, and aliasing it to a
+ * mock would replace it in the Node builds as well. In the CJS build, import.meta.url is undefined.
+ */
+function nodeRequire(): NodeJS.Require | undefined
+{
+    const nodeModule = globalThis.process?.getBuiltinModule?.("node:module")
+    const base = import.meta.url ?? (typeof __filename === "string" ? __filename : undefined)
+
+    return nodeModule && base ? nodeModule.createRequire(base) : undefined
+}
 
 
 type MacroPackageConstructor = {
@@ -72,9 +86,6 @@ export class MacroManager
     // loads symbols as macros first
     loadPackage(pkg: string, packageOptions: PackageOpts, path?: string): void
     {
-        // create a dynamic synchronous loader using Node's native ESM API
-        const requireSync = createRequire(import.meta.url)
-
         let PkgClass: MacroPackageConstructor | undefined;
 
         // load and instantiate the documentclass/package
@@ -90,6 +101,12 @@ export class MacroManager
         try {
             // if not, try to load it
             if (!PkgClass) {
+                const requireSync = nodeRequire()
+                if (!requireSync) {
+                    console.error(`error loading package "${pkg}": not found (external packages can only be loaded in Node)`)
+                    return
+                }
+
                 const Export = requireSync(`${path ?? "./packages"}/${pkg}`)
                 PkgClass = Export.default || Object.values(Export).find(v => typeof v === 'function');
             }
