@@ -84,7 +84,8 @@ export class Report extends Base
     @Macro("V")
     tableofcontents()
     {
-        return [ ...this.chapter(true, undefined, this.g.macro("contentsname")), this.g._toc ];
+        // TODO: the table of contents itself is not implemented yet
+        return [ ...this.chapter(true, undefined, this.g.macro("contentsname")) ];
     }
 
 
