@@ -153,15 +153,25 @@ export class HtmlGenerator extends Generator<Node>
             script.src = url;
             return script;
         };
-        if (baseURL) {
-            el.appendChild(createStyleSheet(new URL("css/katex.css", baseURL).toString()));
-            // Access constructor static property via JavaScript prototype lookup structure
-            const cssProp = (this.constructor as any).documentClass?.css || "";
-            el.appendChild(createStyleSheet(new URL(cssProp, baseURL).toString()));
 
-            for (const style of this.options.styles)
-                el.appendChild(createStyleSheet(new URL(style, baseURL).toString()));
-        }
+        // all URLs are absolute if a base URL is given, otherwise relative
+        const url = (u: string) => baseURL ? new URL(u, baseURL).toString() : u;
+
+        el.appendChild(createStyleSheet(url("css/katex.css")));
+
+        // the stylesheet of the documentclass (a static property of its class)
+        const documentClassCss = typeof this.documentClass === "object"
+            ? (this.documentClass.constructor as { css?: string }).css
+            : undefined;
+
+        if (documentClassCss)
+            el.appendChild(createStyleSheet(url(documentClassCss)));
+
+        for (const style of this.options.styles)
+            el.appendChild(createStyleSheet(url(style)));
+
+        el.appendChild(createScript(url("js/base.js")));
+
         return el;
     }
 
