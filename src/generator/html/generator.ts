@@ -6,7 +6,7 @@ import type { HtmlOptions } from '../../options.ts';
 import type { CurrentLabel } from '../references.ts';
 import type { MarginPar } from '../floats.ts';
 
-// import { SVG } from '@svgdotjs/svg.js';
+import { SVG } from '@svgdotjs/svg.js';
 import katex from 'katex';
 
 import { flattenDeep, compact } from 'lodash';
@@ -34,7 +34,7 @@ function appendChildren(parent: Node, children: Node | Node[] | undefined | null
     const normalizedChildren = [children ?? []].flat(Infinity) as Node[];
 
     for (const child of normalizedChildren)
-        if (child instanceof Node)
+        if (child instanceof window.Node)
             parent.appendChild(child);
 
     return parent;
@@ -53,6 +53,7 @@ export class HtmlGenerator extends Generator<Node>
     // narrow marginPars to Node
     declare marginPars: MarginPar<Node>[];
 
+    SVG = SVG
 
     // CTOR
     constructor(options?: HtmlOptions)
