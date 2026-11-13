@@ -28,8 +28,8 @@ export class Article extends Base
     @Macro("V")
     tableofcontents()
     {
-        // In LiveScript '++' concatenates arrays.
-        return [ ...this.section(true, undefined, this.g.macro("contentsname")), this.g._toc ];
+        // TODO: the table of contents itself is not implemented yet
+        return [ ...this.section(true, undefined, this.g.macro("contentsname")) ];
     }
 
 
