@@ -41,15 +41,20 @@ export function MacroManagement<TBase extends Constructor<Core>>(Base: TBase)
             return !!this._manager.hasMacro(name)
         }
 
-        // "execute" (expand) a macro
-        macro(name: string, ...args: any[]): any[]
+        /**
+         * "execute" (expand) a macro with the given (parsed) arguments
+         * @param name the macro's name to expand
+         * @param [args=[]] macro's parsed arguments as array
+         */
+        macro(name: string, args: unknown[] = []): any[]
         {
             const macroFn = this._manager.macroFn(name);
             if (!macroFn)
                 this.error(`no such macro: \\${name}`);
 
-            return macroFn(...args)
-                // the macroFn returns an array -> filter undefined elements
+            // a macro returns an array, or nothing if it only changes state
+            return (macroFn(...args) ?? [])
+                // filter undefined/null elements
                 .filter((x: any) => x != undefined)
                 .map((x: any) => {
                     // if an element of the macro's result is a string, create text
