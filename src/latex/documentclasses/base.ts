@@ -26,7 +26,7 @@ export class Base
     private dateFn: (() => void) | null = null;
     private maketitleFn: (() => void) | null = null;
 
-    constructor(generator: Generator, options?: PackageOpts | null)
+    constructor(generator: Generator, options?: PackageOpts)
     {
         this.g = generator;
         this.options = options ?? new Map();

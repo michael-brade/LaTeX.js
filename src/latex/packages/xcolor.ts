@@ -108,9 +108,9 @@ export class XColor
     // \definecolorset[type]{model-list}{head}{tail}{set spec}
     @Macro('P')
     @Args('i?', 'c-ml', 'ie', 'ie', 'c-ssp')
-    public definecolorset(type: string | null, models: ColorModels, hd: string | null, tl: string | null, setspec: SpecItem[]): void
+    public definecolorset(type: string | undefined, models: ColorModels, hd: string | undefined, tl: string | undefined, setspec: SpecItem[]): void
     {
-        if (type !== null && type !== "named" && type !== "ps")
+        if (type !== undefined && type !== "named" && type !== "ps")
             this.g.error("unknown color type");
 
         const head = hd ?? "";
@@ -123,9 +123,9 @@ export class XColor
     // \definecolor[type]{name}{model-list}{color spec list}
     @Macro('P')
     @Args('i?', 'i', 'c-ml', 'c-spl')
-    public definecolor(type: string | null, name: string, models: ColorModels, colorspec: any[]): void
+    public definecolor(type: string | undefined, name: string, models: ColorModels, colorspec: any[]): void
     {
-        if (type !== null && type !== "named" && type !== "ps")
+        if (type !== undefined && type !== "named" && type !== "ps")
             this.g.error("unknown color type");
 
         if (models.models.length !== colorspec.length)
