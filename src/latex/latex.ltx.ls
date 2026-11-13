@@ -1289,7 +1289,8 @@ export class LaTeX
     args.\usepackage    =  <[ P kv? csv k? ]>
     \usepackage         : (opts, packages, version) !->
         # PackageOpts are Maps: the package options override the documentclass options
-        options = new Map [...(@g.documentClass.options ? []), ...(opts ? [])]
+        # (opts is undefined if no [] was given, the documentclass options are never undefined)
+        options = new Map [...@g.documentClass.options, ...(opts ? [])]
 
         for pkg in packages
             continue if providedPackages.includes pkg

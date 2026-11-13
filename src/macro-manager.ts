@@ -281,9 +281,11 @@ export class MacroManager
 
     // add the result of a parsed argument
     //  could be DocumentFragment | boolean | string | ...
-    addParsedArg(a: any[]): void
+    //  a missing value (optional argument not given, empty "ie" group) is passed as undefined, not null
+    //  (peggy yields null), so that default parameters work
+    addParsedArg(a: any): void
     {
-        this.#curArgs.top.parsed.push(a);
+        this.#curArgs.top.parsed.push(a ?? undefined);
     }
 
     // get the parsed arguments so far
