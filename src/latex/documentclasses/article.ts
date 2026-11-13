@@ -48,7 +48,6 @@ export class Article extends Base
         return [ head, ...this.g.macro("quotation") ];
     }
 
-    // !-> signifies void return (no return)
     endabstract(): void
     {
         this.g.macro("endquotation");
@@ -61,7 +60,7 @@ export class Article extends Base
         this.g.setCounter("section", 0);
         this.g.setCounter("subsection", 0);
 
-        // Dynamically overriding the 'thesection' method instance assignment
+        // dynamically overriding the 'thesection' macro (method)
         this.thesection = () => {
             return [ this.g.Alph(this.g.counter("section")) ];
         };
