@@ -6,7 +6,6 @@ import { Base, type SectionKind } from './base.ts'
 
 export class Report extends Base
 {
-    // public static property
     public static css = "css/book.css";
 
     constructor(...args: ConstructorParameters<typeof Base>)
@@ -31,21 +30,21 @@ export class Report extends Base
     @Args("s", "X", "o?", "g")
     part(s: any, toc: any, ttl: any)
     {
-        return [ this.startsection("part", -1, s, toc, ttl) ];
+        return [ this._startsection("part", -1, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     chapter(s: any, toc: any, ttl: any)
     {
-        return [ this.startsection("chapter", 0, s, toc, ttl) ];
+        return [ this._startsection("chapter", 0, s, toc, ttl) ];
     }
 
     // a numbered chapter heading starts with "Chapter n" on its own line (in LaTeX: \@makechapterhead)
-    protected override numberedHeading(sec: SectionKind, ttl: unknown): unknown[]
+    protected override _numberedHeading(sec: SectionKind, ttl: unknown): unknown[]
     {
         if (sec !== "chapter")
-            return super.numberedHeading(sec, ttl);
+            return super._numberedHeading(sec, ttl);
 
         const chaphead = this.g.create(Elements.block, [
             ...this.g.macro("chaptername"),
@@ -116,7 +115,7 @@ export class Report extends Base
         this.g.setCounter("chapter", 0);
         this.g.setCounter("section", 0);
 
-        // Dynamic string lookup / functional assignment from LiveScript @[\chaptername]
+        // chaptername macro is now appendixname
         this.chaptername = this.appendixname;
 
         this.thechapter = () => {

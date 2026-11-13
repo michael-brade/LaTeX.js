@@ -21,7 +21,6 @@ export class Base
     public options: PackageOpts;
     public args: Record<string, any> = {};
 
-    // Internal state variables referenced in LiveScript (e.g., 'if @g._date then that')
     private titleFn: (() => void) | null = null;
     private authorFn: (() => void) | null = null;
     private dateFn: (() => void) | null = null;
@@ -165,7 +164,7 @@ export class Base
      * @param toc the title for the table of contents
      * @param ttl the title
      */
-    protected startsection(sec: SectionKind, level: number, star: boolean, toc?: unknown, ttl?: unknown): unknown
+    protected _startsection(sec: SectionKind, level: number, star: boolean, toc?: unknown, ttl?: unknown): unknown
     {
         const numbered = !star && this.g.counter("secnumdepth") >= level;
 
@@ -181,7 +180,7 @@ export class Base
         if (!numbered)
             return this.g.create(Elements[sec], ttl);
 
-        const el = this.g.create(Elements[sec], this.numberedHeading(sec, ttl));
+        const el = this.g.create(Elements[sec], this._numberedHeading(sec, ttl));
 
         // the heading is the target of a \ref to this section
         this.g.setId(el, this.g.currentLabel().id);
@@ -194,7 +193,7 @@ export class Base
     }
 
     // the content of a numbered heading (in LaTeX: \@seccntformat)
-    protected numberedHeading(sec: SectionKind, ttl: unknown): unknown[]
+    protected _numberedHeading(sec: SectionKind, ttl: unknown): unknown[]
     {
         return [ ...this.g.macro("the" + sec), this.g.createText(this.g.symbol("quad")), ttl ];
     }
@@ -203,42 +202,42 @@ export class Base
     @Args("s", "X", "o?", "g")
     part(s: any, toc: any, ttl: any)
     {
-        return [ this.startsection("part", 0, s, toc, ttl) ];
+        return [ this._startsection("part", 0, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     section(s: any, toc: any, ttl: any)
     {
-        return [ this.startsection("section", 1, s, toc, ttl) ];
+        return [ this._startsection("section", 1, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     subsection(s: any, toc: any, ttl: any)
     {
-        return [ this.startsection("subsection", 2, s, toc, ttl) ];
+        return [ this._startsection("subsection", 2, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     subsubsection(s: any, toc: any, ttl: any)
     {
-        return [ this.startsection("subsubsection", 3, s, toc, ttl) ];
+        return [ this._startsection("subsubsection", 3, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     paragraph(s: any, toc: any, ttl: any)
     {
-        return [ this.startsection("paragraph", 4, s, toc, ttl) ];
+        return [ this._startsection("paragraph", 4, s, toc, ttl) ];
     }
 
     @Macro("V")
     @Args("s", "X", "o?", "g")
     subparagraph(s: any, toc: any, ttl: any)
     {
-        return [ this.startsection("subparagraph", 5, s, toc, ttl) ];
+        return [ this._startsection("subparagraph", 5, s, toc, ttl) ];
     }
 
 
@@ -260,7 +259,6 @@ export class Base
         const title = this.g.create(Elements.title, this.g._title);
         const author = this.g.create(Elements.author, this.g._author);
 
-        // LiveScript 'if @g._date then that else ...' translation
         const dateVal = this.g._date ? this.g._date : this.g.macro("today");
         const date = this.g.create(Elements.date, dateVal);
 
@@ -282,7 +280,7 @@ export class Base
         this.g._author = null;
         this.g._date = null;
 
-        // Killing references so they can only run once (!-> in LiveScript)
+        // killing references so they can only run once
         this.titleFn = null;
         this.authorFn = null;
         this.dateFn = null;

@@ -3,12 +3,13 @@ import { Args, Macro } from '../../macros.ts'
 import { Report } from './report.ts'
 
 
+// book in LaTeX has no abstract
+
 export class Book extends Report
 {
-    // public static property
     public static css = "css/book.css";
 
-    // Internal instance flag mapping to @"@mainmatter"
+    // \@mainmatter in book.cls
     private _mainmatter: boolean;
 
     constructor(...args: ConstructorParameters<typeof Report>)
@@ -22,9 +23,8 @@ export class Book extends Report
     @Args("s", "X", "o?", "g")
     chapter(s: any, toc: any, ttl: any)
     {
-        // s or not @"@mainmatter"
-        const condition = s || !this._mainmatter;
-        return [ this.startsection("chapter", 0, condition, toc, ttl) ];
+        const unnumbered = s || !this._mainmatter;
+        return [ this._startsection("chapter", 0, unnumbered, toc, ttl) ];
     }
 
     @Macro("V")
