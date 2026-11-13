@@ -1,4 +1,4 @@
-import path, { resolve } from 'node:path'
+import { resolve } from 'node:path'
 
 import { defineConfig } from 'vite';
 
@@ -51,12 +51,6 @@ export default defineConfig({
         })
     ],
 
-    resolve: {
-        alias: {
-            'node:module': path.resolve(__dirname, 'src/mocks/node-module-mock.js'),
-            'module': path.resolve(__dirname, 'src/mocks/node-module-mock.js'),
-        }
-    },
     oxc: false, // then requires esbuild
 
     build: {
