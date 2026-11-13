@@ -1,11 +1,3 @@
-import { createHTMLWindow } from 'svgdom';
-
-global.window = createHTMLWindow() as any;
-global.document = (global.window as any).document;
-
-import { registerWindow, resetDid } from '@svgdotjs/svg.js';
-registerWindow(global.window, global.document);
-
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
