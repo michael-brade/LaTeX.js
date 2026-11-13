@@ -199,9 +199,7 @@ export class HtmlGenerator extends Generator<Node>
     applyLengthsAndGeometryToDom(el: HTMLElement): void
     {
         // root font size
-        // Note: constructor access might require casting or fallback depending on base class setup
-        const sizeKey = (this.constructor as any).size;
-        el.style.setProperty('--size', this.length(sizeKey).value);
+        el.style.setProperty('--size', this.length("@@size").value);
 
         ///// calculate page geometry
         //
