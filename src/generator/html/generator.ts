@@ -423,12 +423,11 @@ export class HtmlGenerator extends Generator<Node>
     override parseMath(math: string, display: boolean): DocumentFragment
     {
         const f = document.createDocumentFragment();
-        const el = document.createElement("div");
-        katex.render(math, el, {
+        // KaTeX only needs appendChild() and textContent, a fragment is fine
+        katex.render(math, f as unknown as HTMLElement, {
             displayMode: display,
             throwOnError: false
         });
-        f.append(el);
         return f;
     }
 
