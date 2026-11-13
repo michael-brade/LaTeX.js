@@ -38,6 +38,7 @@ browser:
 files:
     'bin/latex.js'
     'dist/latex.d.ts'
+    'dist/src/'         # generated .d.ts files by unplugin-dts
     'dist/latex.cjs'
     'dist/latex.cjs.map'
     'dist/latex.js'
@@ -55,6 +56,7 @@ scripts:
 
     devbuild: "
         rimraf 'dist/**/*.map';
+        rimraf dist/src;
         mkdirp dist/css;
         mkdirp dist/js;
         mkdirp dist/fonts;
@@ -66,7 +68,6 @@ scripts:
         rsync -a public/fonts/ dist/fonts/;
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
         rsync -a public/js/ dist/js/;
-        rsync -a src/types/latex.d.ts dist;
 
 	    vite build;
         chmod a+x bin/latex.js;
@@ -172,10 +173,10 @@ devDependencies:
 
     ### bundling
 
-    'vite': '8.1.x'
+    'vite': '8.3.x'
     'vite-plugin-node-polyfills': '0.28.x'
-    "vite-plugin-checker": '0.14.x'
-    'unplugin-dts': '1.0.x'
+    "vite-plugin-checker": '1.0.x'
+    'unplugin-dts': '1.1.x'
     'rollup-plugin-visualizer': '7.0.x'
     'esbuild': '0.28.x'
     'terser': '5.48.x'

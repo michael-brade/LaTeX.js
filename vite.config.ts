@@ -46,8 +46,8 @@ export default defineConfig({
             trace: false
         }),
         dts({
-            // outDirs: './dist',
-            // insertTypesEntry: true
+            insertTypesEntry: true,
+            bundleTypes: false          // TODO: try true on prod builds
         })
     ],
 
@@ -69,7 +69,7 @@ export default defineConfig({
         copyPublicDir: false,
 
         lib: {
-            entry: resolve(import.meta.dirname, "src/index.js"),
+            entry: resolve(import.meta.dirname, "src/index.ts"),
             name: "latexjs",
             fileName: "latex",
             formats: ["es", "cjs", "umd"]

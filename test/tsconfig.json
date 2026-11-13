@@ -8,6 +8,9 @@
   },
 
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    // ambient declarations (*.pegjs, *.ls, hypher, ...) for the source pulled in by "latex.js";
+    // typeRoots only picks up packages (folders), not loose .d.ts files
+    "../src/types/*.d.ts"
   ]
 }

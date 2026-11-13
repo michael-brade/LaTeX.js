@@ -17,7 +17,7 @@ import { resetDid as resetSvgIds } from '@svgdotjs/svg.js'
  * @param latex The LaTeX source
  * @param options
  */
-function parseLaTeXtoHTML(latex: string, options?: HtmlOptions)
+function parseLaTeXtoHTML(latex: string, options?: Partial<HtmlOptions>)
 {
     const generator = new HtmlGenerator(options)
 
