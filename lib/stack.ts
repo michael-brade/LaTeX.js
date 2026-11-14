@@ -78,7 +78,7 @@ export default class Stack<T> implements Iterable<T>
      */
     clear(): void
     {
-        this.#items = [];
+        this.#items.length = 0;
     }
 
     /**
