@@ -9,8 +9,6 @@ import type { MarginPar } from '../floats.ts';
 import { SVG } from '@svgdotjs/svg.js';
 import katex from 'katex';
 
-import { flattenDeep, compact } from 'lodash';
-
 import Hypher from 'hypher';
 import hEn from 'hyphenation.en-us';
 import { Length, type Vector } from '../../types.ts';
@@ -335,7 +333,8 @@ export class HtmlGenerator extends Generator<Node>
     // create a fragment; arguments may be Node(s) and/or arrays of Node(s)
     override createFragment(...args: (Node|Node[])[]): DocumentFragment | Node | undefined
     {
-        const children = compact(flattenDeep(args));
+        // flatten the arguments and drop the missing (falsy) nodes
+        const children = args.flat(Infinity).filter(Boolean) as Node[];
 
         // only create an empty fragment if explicitely requested: no arguments given
         if (args.length > 0 && (!children || !children.length))

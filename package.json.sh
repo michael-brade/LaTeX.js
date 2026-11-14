@@ -137,7 +137,6 @@ devDependencies:
     '@svgdotjs/svg.js': 'https://github.com/michael-brade/svg.js'  # '3.x'
 
     'hypher': '0.x'
-    'lodash': '4.18.x'
 
     'livescript': 'https://github.com/michael-brade/LiveScript'
     'livescript-transform-esm': '^3.1.0'
@@ -145,7 +144,6 @@ devDependencies:
     'livescript-transform-object-create': '^1.1.0'
 
     "@types/he": "^1.2.3"
-    "@types/lodash": "4.17.24"
 
     ### building
 
