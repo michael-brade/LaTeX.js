@@ -24,6 +24,9 @@ type:
     'module'
 
 exports:
+    # custom condition only used by tsconfig "customConditions": type-check against the source, no build needed;
+    # Node, tsx and bundlers don't know it, so at runtime "latex.js" resolves to dist/
+    'latex.js-source': './src/index.ts'
     import:
         types: './dist/latex.d.ts'
         default: './dist/latex.js'
