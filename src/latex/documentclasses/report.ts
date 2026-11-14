@@ -60,20 +60,22 @@ export class Report extends Base
         return [ this.g.arabic(this.g.counter("chapter")) ];
     }
 
+    // \thechapter is expanded as a macro, so that \appendix can redefine it
+
     thesection()
     {
-        return [ ...this.thechapter(), ".", this.g.arabic(this.g.counter("section")) ];
+        return [ ...this.g.macro("thechapter"), ".", this.g.arabic(this.g.counter("section")) ];
     }
 
     thefigure()
     {
-        const prefix = this.g.counter("chapter") > 0 ? [...this.thechapter(), "."] : [];
+        const prefix = this.g.counter("chapter") > 0 ? [...this.g.macro("thechapter"), "."] : [];
         return [ ...prefix, this.g.arabic(this.g.counter("figure")) ];
     }
 
     thetable()
     {
-        const prefix = this.g.counter("chapter") > 0 ? [...this.thechapter(), "."] : [];
+        const prefix = this.g.counter("chapter") > 0 ? [...this.g.macro("thechapter"), "."] : [];
         return [ ...prefix, this.g.arabic(this.g.counter("table")) ];
     }
 
@@ -115,11 +117,8 @@ export class Report extends Base
         this.g.setCounter("chapter", 0);
         this.g.setCounter("section", 0);
 
-        // chaptername macro is now appendixname
-        this.chaptername = this.appendixname;
-
-        this.thechapter = () => {
-            return [ this.g.Alph(this.g.counter("chapter")) ];
-        };
+        // in LaTeX: \renewcommand\@chapapp{\appendixname} and \renewcommand\thechapter{\@Alph\c@chapter}
+        this.g.newcommand("chaptername", () => this.appendixname());
+        this.g.newcommand("thechapter", () => [ this.g.Alph(this.g.counter("chapter")) ]);
     }
 }

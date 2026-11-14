@@ -60,9 +60,7 @@ export class Article extends Base
         this.g.setCounter("section", 0);
         this.g.setCounter("subsection", 0);
 
-        // dynamically overriding the 'thesection' macro (method)
-        this.thesection = () => {
-            return [ this.g.Alph(this.g.counter("section")) ];
-        };
+        // in LaTeX: \renewcommand\thesection{\@Alph\c@section}
+        this.g.newcommand("thesection", () => [ this.g.Alph(this.g.counter("section")) ]);
     }
 }

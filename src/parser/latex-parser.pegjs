@@ -210,7 +210,7 @@ is_hmode_env =
 
 
 macro =
-    name:identifier _ &{ if (m.hasMacro(name)) { m.beginArgs(name); return true; } }
+    name:identifier _ &{ if (g.hasMacro(name)) { m.beginArgs(name); return true; } }
     macro_args
     {
         var args = m.parsedArgs();

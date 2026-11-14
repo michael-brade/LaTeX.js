@@ -33,12 +33,29 @@ export function Counters<TBase extends Constructor<MacroManagementAPI>>(Base: TB
 
             if (parent)
                 this.addToReset(c, parent);
+        }
 
-            if (this.hasMacro("the" + c))
-                this.error(`macro \\the${c} already defined!`);
 
-            // defines new macro \the+c to print the current value of counter "c", formatted
-            this.newcommand("the" + c, () => [this.arabic(this.counter(c))]);
+        // \the<counter>: unless defined by a package or the document, it is the arabic value of the counter
+        // (like \newcounter in LaTeX, which defines \the<counter> as \arabic{<counter>})
+        _theCounter(name: string): string | undefined
+        {
+            const c = name.startsWith("the") ? name.slice(3) : undefined;
+            return c && this.hasCounter(c) ? c : undefined;
+        }
+
+        override hasMacro(name: string): boolean
+        {
+            return super.hasMacro(name) || this._theCounter(name) !== undefined;
+        }
+
+        override macro(name: string, args: unknown[] = []): any[]
+        {
+            const c = super.hasMacro(name) ? undefined : this._theCounter(name);
+            if (c)
+                return [this.createText(this.arabic(this.counter(c)))];
+
+            return super.macro(name, args);
         }
 
 
