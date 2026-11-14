@@ -65,6 +65,12 @@ export function MacroManagement<TBase extends Constructor<Core>>(Base: TBase)
                     return this.addAttributes(x);
                 });
         }
+
+        // define a macro in the document (currently only without arguments); it overrides all packages
+        newcommand(name: string, func: MacroFn): void
+        {
+            this._manager.define(name, func);
+        }
     }
 
     return MacroManagementMixin

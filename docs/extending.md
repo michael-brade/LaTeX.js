@@ -97,6 +97,13 @@ to define the <latex/>2.09 macro `\bf`.
 If you are going to define custom macros in an external file and you want to use that with the CLI, you will have to
 name the file just like the class, or you will have to default export it.
 
+Every method of the class is a macro, except the constructor and methods whose name starts with `_` (helpers).
+Custom macros override the macros of <latex/>.js, the documentclass, and all packages; only definitions made in the
+document itself (e.g. with `\newcommand`) take precedence over them.
+
+A class may also declare `static symbols`, a <[Map]<[string], [string]>> from macro name to a string, each of which
+becomes a macro without arguments that produces that string.
+
 ### Macro Arguments
 
 `CustomMacros.args` above is a <[Map]<[string], [Array]<[string]>>>, mapping the macro name to the type and arguments of

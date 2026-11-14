@@ -27,7 +27,7 @@ latex =
     /
     !with_preamble
     // if no preamble was given, start default documentclass
-    &{ g.macro("documentclass", [undefined, g.documentClass, undefined]); return true; }
+    &{ g.macro("documentclass", [undefined, g.options.documentClass, undefined]); return true; }
     document
     EOF
     { return g; }

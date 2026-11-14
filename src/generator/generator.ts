@@ -59,7 +59,7 @@ export abstract class Generator<TNode = unknown> extends
         super.reset()
 
         this._manager.reset()
-        this._manager.loadPackage("latex.ltx")
+        this._manager.loadFormat()
 
         if (this.options.CustomMacros)
             this._manager.setCustomMacros(this.options.CustomMacros)
