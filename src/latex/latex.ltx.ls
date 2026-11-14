@@ -4,6 +4,10 @@ import
     '../generator/generator.ts': { Elements }
 
 
+# the formatter for \today, created once: creating an Intl formatter is slow (about a millisecond)
+todayFormat = new Intl.DateTimeFormat 'en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+
+
 # This is where most macros are defined. This file is like base/latex.ltx in LaTeX.
 #
 # By default, a macro takes no arguments and is a horizontal-mode macro.
@@ -160,7 +164,7 @@ export class LaTeX
         return [latex]
 
 
-    \today              :-> [ new Date().toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) ]
+    \today              :-> [ todayFormat.format(new Date()) ]
 
     \newline            :-> [ @g.create Elements.linebreak ]
 
