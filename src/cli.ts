@@ -8,7 +8,6 @@ import util from 'node:util';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'fs-extra';
-import stdin from 'stdin';
 import { program } from 'commander';
 import beautify from 'js-beautify';
 import { parse, HtmlGenerator } from 'latex.js';
@@ -103,14 +102,21 @@ const htmlOptions = {
     styles: options.stylesheet || []
 };
 const readFile = util.promisify(fs.readFile);
+// read all of STDIN
+const readStdin = async (): Promise<string> => {
+    process.stdin.setEncoding('utf8');
+    let text = '';
+    for await (const chunk of process.stdin)
+        text += chunk;
+    return text;
+};
+
 // number of args not consumed by the program options
 let input: Promise<string | Buffer[]>;
 if (program.args.length) {
     input = Promise.all(program.args.map((file: string) => readFile(file)));
 } else {
-    input = new Promise<string>((resolve, reject) => {
-        stdin((str: string) => resolve(str));
-    });
+    input = readStdin();
 }
 input.then((text: string | Buffer[]) => {
     let textStr: string;
