@@ -11,12 +11,18 @@
     g.setLocationFn(location);
 }
 
+// Note: this grammar is stateful. Predicates and actions change the state of the generator (groups,
+// attributes) and of the macro manager (the arguments being parsed), so
+//  - peggy's result cache (option "cache") has to stay off: it would replay results without their side effects,
+//  - the check for "possible infinite loops" is disabled (lib/peggy-plugin-no-infinite-loop.ts): some
+//    repetitions terminate through state changed in predicates, not through consumed input.
+
 
 // main rule, entry into the parser
 // parses a full LaTeX document, or just the contents of the document environment; returns the generator
 latex =
     &with_preamble
-    (skip_all_space escape (&is_hvmode / &is_preamble) macro)*
+    (skip_all_space escape name:identifier &{ return g.hasMacro(name) && m.beginMacro(name, "HV", "P"); } macro_call)*
     skip_all_space
     (begin_doc / &{ error("expected \\begin{document}") })
         document
@@ -138,23 +144,27 @@ primitive "primitive" =
 /**********/
 
 
+// A macro \name is dispatched on its mode: each of the following rules accepts the modes allowed in its
+// context. The identifier is parsed once, and m.beginMacro() consults the macro table once: if name is a
+// macro of one of the given modes, it starts the parsing of its arguments (see macro_call).
+
+
 // macros that work in horizontal and vertical mode (those that basically don't produce text)
 hv_macro =
     escape
     (
-      &is_hvmode macro
-      / logging
+      name:identifier &{ return g.hasMacro(name) && m.beginMacro(name, "HV"); } macro_call
+    / logging
     )
     { return undefined; }
 
 
 // macros that only work in horizontal mode (include \leavevmode)
 hmode_macro =
-    hv_macro
-  /
     escape
     m:(
-      &is_hmode     m:macro         { return m; }
+      name:identifier &{ return g.hasMacro(name) && m.beginMacro(name, "HV", "H"); } @macro_call
+    / logging
     / &is_hmode_env e:h_environment { return e; }
 
     / noindent
@@ -173,16 +183,13 @@ hmode_macro =
 // macros that only work in vertical mode (include \par or check for \ifvmode)
 vmode_macro =
     skip_all_space
-    hv_macro
-    { return undefined; }
-  /
-    skip_all_space
     escape
     m:(
-        &is_vmode     m:macro       { g.break(); return m; }
-      / &is_vmode_env e:environment { return e; }
-      / vspace_vmode
-      / smbskip_vmode
+      name:identifier &{ return g.hasMacro(name) && m.beginMacro(name, "HV", "V"); } @macro_call
+    / logging
+    / &is_vmode_env e:environment { return e; }
+    / vspace_vmode
+    / smbskip_vmode
     )
     { return m; }
 
@@ -194,12 +201,6 @@ is_preamble =
 is_vmode =
     id:identifier &{ return m.isVmode(id); }
 
-is_hmode =
-    id:identifier &{ return m.isHmode(id); }
-
-is_hvmode =
-    id:identifier &{ return m.isHVmode(id); }
-
 
 is_vmode_env =
     (begin/end) begin_group id:identifier   &{ return m.isVmode(id); }
@@ -209,13 +210,18 @@ is_hmode_env =
 
 
 
-macro =
-    name:identifier _ &{ if (g.hasMacro(name)) { m.beginArgs(name); return true; } }
-    macro_args
+// the arguments of the macro begun with m.beginMacro(), then its expansion
+macro_call =
+    _ macro_args
     {
-        var args = m.parsedArgs();
-        m.endArgs();
-        return g.createFragment(g.macro(name, args));
+        var macro = m.endArgs();
+        var result = g.createFragment(g.macro(macro.name, macro.parsed));
+
+        // a vertical mode macro ends the paragraph
+        if (macro.mode === "V")
+            g.break();
+
+        return result;
     }
 
 
@@ -752,7 +758,7 @@ end_env "\\end" =
 h_environment =
     id:begin_env
         macro_args                                          // parse macro args (which now become environment args)
-        node:( &. { return g.macro(id.id, m.endArgs()); })  // then execute macro with args without consuming input
+        node:( &. { return g.macro(id.id, m.endArgs().parsed); })  // then execute macro with args without consuming input
         sb:(s:space? {return g.createText(s); })
         p:paragraph_with_linebreak*                         // then parse environment contents (if macro left some)
     end_id:end_env se:(s:space? {return g.createText(s); })
@@ -778,7 +784,7 @@ h_environment =
 environment =
     id:begin_env  !{ g.break(); }
         macro_args                                          // parse macro args (which now become environment args)
-        node:( &. { return g.macro(id.id, m.endArgs()); })  // then execute macro with args without consuming input
+        node:( &. { return g.macro(id.id, m.endArgs().parsed); })  // then execute macro with args without consuming input
         p:paragraph*                                        // then parse environment contents (if macro left some)
     end_id:end_env
     {
@@ -855,13 +861,15 @@ enumitems =
 
 // comment
 
+// the comment environment is skipped like a comment (see the comment rule); it starts with the escape
+// rule rather than the literal "\\begin" so that failing it is cheap: it is tried at every whitespace
 comment_env "comment environment" =
-    "\\begin" _ "{comment}"
+    escape "begin" _ "{comment}"
         (!end_comment .)*
     end_comment _
     { g.break(); return undefined; }
 
-end_comment = "\\end" _ "{comment}"
+end_comment = escape "end" _ "{comment}"
 
 
 
@@ -931,14 +939,16 @@ EOF             "EOF"       = !. / escape endinput
 
 /* space handling */
 
-nl              "newline"   = "\n" / "\r\n" / "\r"
-                            / "\u2028" / "\u2029"               { return undefined; }       // catcode 5 (linux, os x, windows, unicode)
+// (single characters only, a multi-character literal would be tried at every whitespace)
+nl              "newline"   = "\r" "\n"? / [\n\u2028\u2029]     { return undefined; }       // catcode 5 (windows, os x, linux, unicode)
 sp              "whitespace"= [ \t]                             { return undefined; }       // catcode 10
 
 comment         "comment"   = "%"  (!nl .)* (nl sp* / EOF)                                  // catcode 14, including the newline
                             / comment_env                       { return undefined; }       //             and the comment environment
 
-skip_space      "spaces"    = (!break (nl / sp / comment))*     { return undefined; }
+// skip spaces and comments, but never a paragraph break: if one starts here, nothing is skipped
+// (a break cannot start in the middle of a run of spaces and comments without starting at its beginning)
+skip_space      "spaces"    = (!break (nl / sp / comment)*)?    { return undefined; }
 skip_all_space  "spaces"    = (nl / sp / comment)*              { return undefined; }
 
 space           "spaces"    = !break
@@ -950,7 +960,10 @@ ctrl_space  "control space" = escape (&nl &break / nl / sp)     { return g.brsp;
 
 nbsp        "non-brk space" = "~"                               { return g.nbsp; }          // catcode 13 (active)
 
-break     "paragraph break" = ((skip_all_space escape par skip_all_space)+                  // a paragraph break is either \par embedded in spaces,
+// a break can only start with a space, a newline, a comment, or an escape (\par, comment environment);
+// the lookahead rejects everything else at once - this rule is tried at every space in the document
+break     "paragraph break" = &[ \t\n\r\u2028\u2029%\\]
+                              ((skip_all_space escape par skip_all_space)+                  // a paragraph break is either \par embedded in spaces,
                                /                                                            // or
                                sp*
                                (nl comment* / comment+)                                     // a paragraph break is a newline...

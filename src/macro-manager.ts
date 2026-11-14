@@ -2,7 +2,7 @@ import Stack from '../lib/stack.ts';
 
 import type { Generator } from "./generator/generator.ts";
 import type { PackageOpts } from './options.ts';
-import type { ArgType, MacroArgs, MacroFn, MacroMeta, MacroPackageClass } from "./macros.ts";
+import type { ArgType, MacroArgs, MacroFn, MacroMeta, MacroMode, MacroPackageClass } from "./macros.ts";
 import { OPT_ARGS, macroMeta } from "./macros.ts";
 
 import builtin from "./latex/index.ts";
@@ -16,9 +16,12 @@ interface MacroDef {
 }
 
 
-interface ParsedArgs {
-    // if macro has no args, the name is not recorded
-    name?: string;
+/** the arguments of a macro (or environment) while and after they are parsed */
+export interface ParsedArgs {
+    name: string;
+
+    /** the mode of the macro; undefined for an environment */
+    mode?: MacroMode;
 
     /**
      * array with ArgTypes; as they are parsed, they get removed here one by one
@@ -248,21 +251,27 @@ export class MacroManager
 
     // macro arguments
 
-    beginArgs(macro: string): void
+    /**
+     * Begin parsing the arguments of the macro `name` if it is a macro of one of the given modes (a macro
+     * without a declaration is an H-mode macro). Returns false otherwise; the caller has already made sure
+     * that the macro exists. Ends with endArgs().
+     */
+    beginMacro(name: string, ...modes: MacroMode[]): boolean
     {
-        const macroArgs = this.#macroMeta(macro)?.args;
+        const meta = this.#macroMeta(name)
+        const mode = meta?.mode ?? "H"
 
-        if (macroArgs)
-            this.#curArgs.push({
-                name: macro,
-                args: macroArgs.slice(),
-                parsed: []
-            });
-        else
-            this.#curArgs.push({
-                args: [],
-                parsed: []
-            });
+        if (!modes.includes(mode))
+            return false
+
+        this.#curArgs.push({ name, mode, args: meta?.args?.slice() ?? [], parsed: [] })
+        return true
+    }
+
+    // begin parsing the arguments of the environment `name`; ends with endArgs()
+    beginArgs(name: string): void
+    {
+        this.#curArgs.push({ name, args: this.#macroMeta(name)?.args?.slice() ?? [], parsed: [] })
     }
 
 
@@ -326,8 +335,8 @@ export class MacroManager
         this.#generator.macro(this.#curArgs.top.name!, this.parsedArgs());
     }
 
-    // remove arguments of a completely parsed macro from the stack
-    endArgs(): any[]
+    // remove the completely parsed macro (or environment) from the stack and return it, with its parsed arguments
+    endArgs(): ParsedArgs
     {
         const last = this.#curArgs.pop();
 
@@ -337,7 +346,7 @@ export class MacroManager
         if (last.args.length !== 0)
             this.#generator.error(`grammar error: arguments for ${last.name} have not been parsed: ${last.args}`);
 
-        return last.parsed;
+        return last;
     }
 
 
