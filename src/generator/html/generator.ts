@@ -271,7 +271,7 @@ export class HtmlGenerator extends Generator<Node>
     // create an element of the given generic kind
     override create(kind: ElementKind, children?: Node | Node[] | null, classes: string = ""): HTMLElement
     {
-        // callers in untyped code (grammar, LiveScript macros) are not checked at compile time
+        // callers in untyped code (grammar, JavaScript macro classes) are not checked at compile time
         if (!isElementKind(kind))
             this.error(`unknown element kind: ${String(kind)}`);
 
@@ -424,7 +424,7 @@ export class HtmlGenerator extends Generator<Node>
         return this.addAttributes(span);
     }
 
-    createHSpace(length: Length): HTMLElement
+    override createHSpace(length: Length): HTMLElement
     {
         const span = document.createElement("span");
         span.setAttribute("style", "margin-right:" + length.value);

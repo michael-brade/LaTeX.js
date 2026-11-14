@@ -7,7 +7,6 @@ import dts from 'unplugin-dts/vite'
 
 import babel from "@rolldown/plugin-babel"
 
-import livescript from "./lib/rollup-plugin-livescript.js";
 import peggy from "./lib/vite-plugin-peggy.ts";
 
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -40,7 +39,6 @@ export default defineConfig({
             }]
         }),
 
-        livescript(),
         peggy({
             plugins: [ignoreInfiniteLoop],
             trace: false

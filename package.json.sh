@@ -133,10 +133,8 @@ devDependencies:
 
     'hypher': '0.x'
 
+    # only used by this script for its syntax (lsc generates package.json)
     'livescript': 'https://github.com/michael-brade/LiveScript'
-    'livescript-transform-esm': '^3.1.0'
-    'livescript-transform-implicit-async': '^1.1.0'
-    'livescript-transform-object-create': '^1.1.0'
 
     "@types/svgdom": "^0.1.2"
     "@types/fs-extra": "^11.0.4"

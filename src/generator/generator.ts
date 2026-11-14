@@ -108,6 +108,7 @@ export abstract class Generator<TNode = unknown> extends
     abstract createVSpace(length: Length): TNode
     abstract createVSpaceInline(length: Length): TNode
     abstract createBreakSpace(length: Length): TNode
+    abstract createHSpace(length: Length): TNode
 
     abstract parseMath(math: string, display: boolean): TNode
     abstract theLength(id: string): TNode
