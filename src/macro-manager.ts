@@ -2,18 +2,18 @@ import Stack from '../lib/stack.ts';
 
 import type { Generator } from "./generator/generator.ts";
 import type { PackageOpts } from './options.ts';
-import type { ArgType, MacroArgs, MacroFn, MacroMeta } from "./macros.ts";
-import { Macros, OPT_ARGS } from "./macros.ts";
+import type { ArgType, MacroArgs, MacroFn, MacroMeta, MacroPackageClass } from "./macros.ts";
+import { OPT_ARGS, macroMeta } from "./macros.ts";
 
 import builtin from "./latex/index.ts";
 
 
-type MacroPackageConstructor = {
-    symbols?: Map<string, string>
-    new(...args: any[]): any
-};
-type MacroPackage = Record<string, any> & { macros: Macros };
 
+/** a macro definition: the function, bound to its package instance, and the macro's metadata */
+interface MacroDef {
+    fn: MacroFn
+    meta: MacroMeta
+}
 
 
 interface ParsedArgs {
@@ -41,11 +41,20 @@ interface ParsedArgs {
  *
  * Macro packages are: latex.ltx, documentclasses, packages, custom macros class(es).
  * All macro packages should ideally be frozen. State is held in the generator.
+ *
+ * Macro definitions live in three layers; within a layer, a later definition replaces an earlier one:
+ *  - format: latex.ltx, then the documentclass, then the packages, in load order
+ *  - custom: the CustomMacros given in the options; they override the format
+ *  - document: definitions made in the document (\newcommand etc.); they override everything
  */
 export class MacroManager
 {
-    // stores package instances, last package's macro overrides first package's macro
-    #packages = new Array<MacroPackage>();
+    #format = new Map<string, MacroDef>();
+    #custom = new Map<string, MacroDef>();
+    #document = new Map<string, MacroDef>();
+
+    // the classes loaded into the format layer, for their stylesheets
+    #loaded = new Array<MacroPackageClass>();
 
     #generator!: Generator;
 
@@ -55,132 +64,121 @@ export class MacroManager
 
     constructor()
     {
+        this.reset()
     }
 
     setGenerator(generator: Generator)
     {
         this.#generator = generator
-        this.#registerSymbols(symbols)
+    }
+
+    // forget all packages and definitions
+    reset(): void
+    {
+        this.#format.clear()
+        this.#custom.clear()
+        this.#document.clear()
+        this.#loaded.length = 0
+        this.#curArgs.clear()
     }
 
 
     //// packages
 
-    // called to load format (i.e. LaTeX.ltx), documentclass, and packages
-    // loads symbols as macros first
-    loadPackage(pkg: string, packageOptions: PackageOpts, path?: string): void
+    // documentclasses and packages are looked up among the builtins first,
+    // then (only in Node) loaded as external modules
+    //
+    // returns false if the package could not be loaded
+    #load(name: string, options: PackageOpts | undefined, builtins: Record<string, MacroPackageClass>, dir: string): boolean
     {
-        let PkgClass: MacroPackageConstructor | undefined;
+        const PkgClass = builtins[name] ?? this.#require(name, dir)
+        if (!PkgClass)
+            return false
 
-        // load and instantiate the documentclass/package
-
-        // first check if it is builtin
-        if (pkg === "latex.ltx")
-            PkgClass = builtin['latex.ltx']
-        else if (path?.includes("/documentclasses/"))
-            PkgClass = (builtin.documentclasses as {[key: string]: MacroPackageConstructor})[pkg]
-        else
-            PkgClass = (builtin.packages as {[key: string]: MacroPackageConstructor})[pkg]
-
-        // if not, try to load it
-        if (!PkgClass) {
-            PkgClass = this.#require(pkg, path ?? "./packages/")
-            if (!PkgClass)
-                return
-        }
-
-        // add symbols if the package is defining them
-        if (PkgClass.symbols instanceof Map)
-            this.#registerSymbols(PkgClass.symbols)
-
-        // instantiate the package with arguments
-        this.#packages.push(new PkgClass(this.#generator, packageOptions))
-
-        // Object.assign(args, PkgClass.args)
-        // PkgClass.symbols?.forEach (value, key) !-> symbols.set key, value
+        return this.#instantiate(this.#format, PkgClass, options, name)
     }
 
 
-    // this creates a new "package" for the given symbols
-    #registerSymbols(symbols: Map<string, string>): void
+    // instantiate the package class and define all its macros in the given layer: first the symbols, then
+    // the methods of the instance (walking up its prototype chain), so that methods override symbols and
+    // a subclass' method overrides its parent's
+    #instantiate(layer: Map<string, MacroDef>, PkgClass: MacroPackageClass, options: PackageOpts | undefined, name: string): boolean
     {
-        // create the new package...
-        this.#packages.push(
-            Object.assign(
-                // ...with NO prototype (toString, etc.)
-                Object.create(null),
-                // ...with symbols being macros
-                Object.fromEntries(
-                    Array.from(symbols.entries().map(([key, value]) => [
-                        key,
-                        // a macro function: macro() creates a new text node with the current attributes on each call
-                        () => [value]
-                    ]))
-                ),
-                // ...and add a macros map with symbol names and mode = "H", args = undefined
-                {
-                    macros: new Map(
-                        Array.from(symbols.keys()).map(key => [
-                            key,
-                            { mode: "H" }
-                        ])
-                    )
-                }
+        let instance: object
+        try {
+            instance = new PkgClass(this.#generator, options)
+        } catch (e) {
+            // log error but continue anyway
+            console.error(`error loading package "${name}": error instantiating it:`, e)
+            return false
+        }
 
-            )
-        )
+        // a symbol is an H-mode macro without arguments: macro() creates a new text node with the current
+        // attributes on each call
+        for (const [symbol, value] of PkgClass.symbols ?? [])
+            layer.set(symbol, { fn: () => [value], meta: { mode: "H" } })
+
+        const defined = new Set<string>()
+
+        for (let proto = Object.getPrototypeOf(instance); proto && proto !== Object.prototype; proto = Object.getPrototypeOf(proto)) {
+            for (const macro of Object.getOwnPropertyNames(proto)) {
+                if (macro === "constructor" || macro.startsWith("_") || defined.has(macro))
+                    continue
+
+                const fn = Object.getOwnPropertyDescriptor(proto, macro)?.value
+                if (typeof fn !== "function")
+                    continue
+
+                defined.add(macro)
+                layer.set(macro, { fn: (fn as MacroFn).bind(instance), meta: macroMeta(PkgClass, macro) })
+            }
+        }
+
+        // macros declared in the args table without a method are handled by the parser (\par, \item)
+        for (const macro of Object.keys(PkgClass.args ?? {})) {
+            if (!defined.has(macro))
+                layer.set(macro, {
+                    fn: () => this.#generator.error(`macro \\${macro} is handled by the parser`),
+                    meta: macroMeta(PkgClass, macro)
+                })
+        }
+
+        if (layer === this.#format)
+            this.#loaded.push(PkgClass)
+
+        return true
     }
 
 
 
     //// macros
 
-    // look up the package that has the given macro
-    #macroPkg(macro: string): MacroPackage | undefined
+    // look up a macro: document-local definitions first, then the custom macros, then the format
+    #lookup(macro: string): MacroDef | undefined
     {
-        // search packages in reverse order (newest packages override older ones)
-        for (const pkg of this.#packages.toReversed()) {
-            if (pkg.macros.has(macro))
-                return pkg
-        }
+        return this.#document.get(macro) ?? this.#custom.get(macro) ?? this.#format.get(macro)
     }
 
     #macroMeta(name: string): MacroMeta | undefined
     {
-        const pkg = this.#macroPkg(name)
-        if (!pkg) return
-
-        // TODO
-        // // read the macro metadata attached by decorators on the prototype
-        // const proto = Object.getPrototypeOf(pkg)
-        // const macros = proto._macros
-
-        // the static Map<> "macros" has been attached by decorators
-        return pkg.macros.get(name)
+        return this.#lookup(name)?.meta
     }
 
 
     hasMacro(name: string): boolean
     {
-        return !!this.#macroPkg(name)
+        return !!this.#lookup(name)
     }
 
 
-    macroFn(macro: string): MacroFn
+    macroFn(name: string): MacroFn
     {
-        const pkg = this.#macroPkg(macro)
+        const macro = this.#lookup(name)
 
-        if (!pkg)
-            this.#generator.error(`no such macro: \\${macro}`)
+        if (!macro)
+            this.#generator.error(`no such macro: \\${name}`)
 
-        // if it's a function, bind it and return
-        if (typeof pkg[macro] !== "function")
-            this.#generator.error(`macro is not a function: \\${macro}`)
-
-        return pkg[macro].bind(pkg)
-
-        // otherwise, return the raw value -> nope, macros should now always be functions
-        // return pkg[macro]
+        return macro.fn
     }
 
 
