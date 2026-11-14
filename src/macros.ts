@@ -81,7 +81,7 @@ export type MacroFn = (...args: any[]) => (Node|string)[]
  * starting with "_" (helpers). Mode and arguments are declared either
  *  - with the @Macro and @Args decorators, or
  *  - with a static `args` table, mapping the macro name to [mode, ...argTypes]; this is the original
- *    way, used by LiveScript and plain JavaScript classes (e.g. CustomMacros).
+ *    way, used by plain JavaScript classes (e.g. CustomMacros).
  *
  * A class may also define `symbols`, which become macros as well, and `css`, a stylesheet the
  * generated document needs.
@@ -89,7 +89,7 @@ export type MacroFn = (...args: any[]) => (Node|string)[]
 export interface MacroPackageClass
 {
     new(generator: any, options?: PackageOpts): object
-    args?: Record<string, MacroArgs>
+    args?: Record<string, [MacroMode, ...MacroArgs]>
     symbols?: Map<string, string>
     css?: string
 }

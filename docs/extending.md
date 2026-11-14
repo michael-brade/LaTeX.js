@@ -33,7 +33,7 @@ Files and classes needed to translate <latex/> documents to HTML documents:
 - the generic generator: `src/generator/generator.ts` (composed of the mixins in `src/generator/`) and the
   concrete HtmlGenerator in `src/generator/html/`
 - the macro management: `src/macro-manager.ts` and `src/macros.ts`
-- macros and documentclasses: `src/latex/latex.ltx.ls`, `src/latex/symbols.ts`, `src/latex/documentclasses/*.ts`
+- macros and documentclasses: `src/latex/latex.ltx.ts`, `src/latex/symbols.ts`, `src/latex/documentclasses/*.ts`
 - packages: `src/latex/packages/*.ts`
 
 - the CLI: `src/cli.ts`
