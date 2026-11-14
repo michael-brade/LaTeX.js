@@ -570,11 +570,11 @@ export class LaTeX
 
     @Macro("HV")
     @Args("g")
-    label(label: unknown)   { this.g.setLabel(this.g.plainText(label)); }
+    label(label: unknown)   { this.g.setLabel(this.g.plainText(label as Node)); }
 
     @Macro("H")
     @Args("g")
-    ref(label: unknown)     { return [ this.g.ref(this.g.plainText(label)) ]; }
+    ref(label: unknown)     { return [ this.g.ref(this.g.plainText(label as Node)) ]; }
 
 
 
@@ -822,6 +822,14 @@ export class LaTeX
     }
 
 
+    // the stroke of a picture object: black, with the given width (default: none); svg.js writes the
+    // length with its unit as given, only its typings insist on a number
+    private _stroke(width?: Length)
+    {
+        return { color: "#000", width: (width ? width.value : "0") as unknown as number };
+    }
+
+
     //// picture commands
 
     // these commands create a box with width 0 and height abs(y) + height of {obj} if y positive
@@ -896,10 +904,7 @@ export class LaTeX
         const draw = this.g.SVG().addTo(svg);
 
         const path = draw.path(p)
-                         .stroke({
-                             color: "#000",
-                             width: linethickness.value
-                         })
+                         .stroke(this._stroke(linethickness))
                          .fill("none");
 
         if (N && N > 0) {
@@ -957,10 +962,7 @@ export class LaTeX
             offset = d.div(2).mul(-1).value;
 
             draw.size(d.value, d.value)
-                .stroke({
-                    color: "#000",
-                    width: "0"
-                })
+                .stroke(this._stroke())
                 .circle(d.value)
                 .cx(d.div(2).value)
                 .cy(d.div(2).value)
@@ -970,10 +972,7 @@ export class LaTeX
             offset = d.div(2).add(linethickness).mul(-1).value;
 
             draw.size(d.add(linethickness.mul(2)).value, d.add(linethickness.mul(2)).value)
-                .stroke({
-                    color: "#000",
-                    width: linethickness.value
-                })
+                .stroke(this._stroke(linethickness))
                 .circle(d.value)
                 .cx(d.div(2).add(linethickness).value)
                 .cy(d.div(2).add(linethickness).value)
@@ -1075,10 +1074,7 @@ export class LaTeX
 
         const linethickness = this.g.length("@wholewidth");
         const bbox = draw.line(vs.x.px, vs.y.px, ve.x.px, ve.y.px)
-                         .stroke({
-                             color: "#000",
-                             width: linethickness.value
-                         })
+                         .stroke(this._stroke(linethickness))
                          .bbox();
 
         bbox.x -= linethickness.px;
@@ -1146,10 +1142,7 @@ export class LaTeX
         ve = ve.shift_end(hhl.mul(-1), dir);
 
         const bbox = draw.line(s.x.px, s.y.px, ve.x.px, ve.y.px)
-                         .stroke({
-                             color: "#000",
-                             width: linethickness.value
-                         })
+                         .stroke(this._stroke(linethickness))
                          // marker width and height
                          .marker("end", hl, hw, marker => {
                              marker.path(`M0,0 ` +
@@ -1204,10 +1197,7 @@ export class LaTeX
         const oval = draw.rect(size.x.value, size.y.value)
                          .radius(rad.value)
                          .move(size.x.div(-2).value, size.y.div(-2).value)
-                         .stroke({
-                             color: "#000",
-                             width: linethickness.value
-                         })
+                         .stroke(this._stroke(linethickness))
                          .fill("none");
 
 
