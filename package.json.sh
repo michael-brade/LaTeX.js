@@ -46,8 +46,8 @@ files:
     'dist/latex.cjs.map'
     'dist/latex.js'
     'dist/latex.js.map'
-    'dist/latex.und.cjs'
-    'dist/latex.und.cjs.map'
+    'dist/latex.umd.cjs'
+    'dist/latex.umd.cjs.map'
     'dist/css/'
     'dist/fonts/'
     'dist/js/'
@@ -114,7 +114,6 @@ dependencies:
     'he': '2.x'
     'fs-extra': '11.3.x'
     'js-beautify': '1.15.x'
-    'stdin': '*'
 
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
@@ -125,10 +124,6 @@ dependencies:
     #'jsdom': '16.x'
     #'cheerio': '1.0.x'
 
-    "@types/svgdom": "^0.1.2"
-    "@types/fs-extra": "^11.0.4"
-    "@types/stdin": "^0.0.2"
-    "@types/js-beautify": "^1.14.3"
 
 devDependencies:
     ### actual runtime dependencies, but bundled by vite
@@ -142,6 +137,10 @@ devDependencies:
     'livescript-transform-esm': '^3.1.0'
     'livescript-transform-implicit-async': '^1.1.0'
     'livescript-transform-object-create': '^1.1.0'
+
+    "@types/svgdom": "^0.1.2"
+    "@types/fs-extra": "^11.0.4"
+    "@types/js-beautify": "^1.14.3"
 
     ### building
 
