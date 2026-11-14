@@ -1,5 +1,3 @@
-import { decode } from 'he'
-
 // @ts-ignore
 import { __defineSymbol } from 'katex'
 
@@ -12,14 +10,14 @@ export class Stix
     constructor(generator: Generator, options?: PackageOpts)
     {
         // Inject custom symbols into KaTeX definitions
-        __defineSymbol("math", "main", "textord", "\u2664", "\\varspadesuit", true);   // ♤
-        __defineSymbol("math", "main", "textord", "\u2665", "\\varheartsuit", true);   // ♥
-        __defineSymbol("math", "main", "textord", "\u2666", "\\vardiamondsuit", true); // ♦
-        __defineSymbol("math", "main", "textord", "\u2667", "\\varclubsuit", true);    // ♧
+        __defineSymbol("math", "main", "textord", "\u2664", "\\varspadesuit", true);    // ♤
+        __defineSymbol("math", "main", "textord", "\u2665", "\\varheartsuit", true);    // ♥
+        __defineSymbol("math", "main", "textord", "\u2666", "\\vardiamondsuit", true);  // ♦
+        __defineSymbol("math", "main", "textord", "\u2667", "\\varclubsuit", true);     // ♧
     }
 
 
     public static symbols: Map<string, string> = new Map([
-        ["checkmark", decode('&check;')]    // ✓ U+2713
+        ["checkmark",            "\u2713"]                                              // ✓
     ]);
 }

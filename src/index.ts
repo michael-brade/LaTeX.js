@@ -1,5 +1,3 @@
-import * as he from 'he'
-
 import { parse, SyntaxError } from './parser/latex-parser.pegjs'
 import { Generator } from './generator/generator.ts'
 import { HtmlGenerator } from './generator/html/generator.ts'
@@ -30,7 +28,6 @@ function parseLaTeXtoHTML(latex: string, options?: Partial<HtmlOptions>)
 
 export {
     parseLaTeXtoHTML,
-    he,
     parse,
     SyntaxError,
     Generator,

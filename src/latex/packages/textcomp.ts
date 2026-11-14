@@ -1,4 +1,3 @@
-import { decode } from 'he';
 
 import type { Generator } from '../../generator/generator.ts';
 import type { PackageOpts } from "../../options.ts";
@@ -12,33 +11,35 @@ export class Textcomp
 
     public static symbols: Map<string, string> = new Map([
         // currencies
-        ["textcentoldstyle", "\uF7A2"],        // 
-        ["textdollaroldstyle", "\uF724"],      // 
-        ["textguarani", "\u20B2"],             // ₲
+        ["textguarani",                 "\u20B2"],      // ₲
 
         // legal symbols
-        ["textcopyleft", "\u{1F12F}"],         // 🄯 (note the curly braces for 5-digit hex)
+        ["textcopyleft",                "\u{1F12F}"],   // 🄯  (note the curly braces for 5-digit hex)
 
-        // old style numerals
-        ["textzerooldstyle", "\uF730"],        // 
-        ["textoneoldstyle", "\uF731"],         // 
-        ["texttwooldstyle", "\uF732"],         // 
-        ["textthreeoldstyle", "\uF733"],       // 
-        ["textfouroldstyle", "\uF734"],        // 
-        ["textfiveoldstyle", "\uF735"],        // 
-        ["textsixoldstyle", "\uF736"],         // 
-        ["textsevenoldstyle", "\uF737"],       // 
-        ["texteightoldstyle", "\uF738"],       // 
-        ["textnineoldstyle", "\uF739"],        // 
+        // old-style numerals   TODO: use font-variant-numeric: oldstyle-nums; instead! this is private area
+        ["textzerooldstyle",            "\uF730"],
+        ["textoneoldstyle",             "\uF731"],
+        ["texttwooldstyle",             "\uF732"],
+        ["textthreeoldstyle",           "\uF733"],
+        ["textfouroldstyle",            "\uF734"],
+        ["textfiveoldstyle",            "\uF735"],
+        ["textsixoldstyle",             "\uF736"],
+        ["textsevenoldstyle",           "\uF737"],
+        ["texteightoldstyle",           "\uF738"],
+        ["textnineoldstyle",            "\uF739"],
+
+        // old-style currencies
+        ["textcentoldstyle",            "\uF7A2"],
+        ["textdollaroldstyle",          "\uF724"],
 
         // genealogical
-        ["textborn", "\u2B51"],                // ⭑             (alternatives: U+002A, U+2605, U+2736)
-        ["textdied", decode('&dagger;')],      // †     U+2020  (alternative: U+271D)
-        // ["textleaf", ""],                   // TODO
+        ["textborn",                    "\u2B51"],      // ⭑  (alternatives: U+002A, U+2605, U+2736)
+        ["textdied",                    "\u2020"],      // †  (alternative: U+271D)
+        // ["textleaf", ""],                            // TODO
 
         // misc
-        ["textpilcrow", decode('&para;')],     // ¶ U+00B6
-        ["textdblhyphen", "\u2E40"]            // ⹀
+        ["textpilcrow",                 "\u00B6"],      // ¶
+        ["textdblhyphen",               "\u2E40"]       // ⹀
 
         // TODO
         // ["textdblhyphenchar", ""],

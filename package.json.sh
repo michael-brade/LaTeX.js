@@ -111,6 +111,7 @@ dependencies:
     ### CLI dependencies
 
     'commander': '8.x'
+    'he': '2.x'
     'fs-extra': '11.3.x'
     'js-beautify': '1.15.x'
     'stdin': '*'
@@ -132,7 +133,6 @@ dependencies:
 devDependencies:
     ### actual runtime dependencies, but bundled by vite
 
-    'he': '2.x'
     'katex': '^0.16.10'
     '@svgdotjs/svg.js': 'https://github.com/michael-brade/svg.js'  # '3.x'
 
@@ -142,8 +142,6 @@ devDependencies:
     'livescript-transform-esm': '^3.1.0'
     'livescript-transform-implicit-async': '^1.1.0'
     'livescript-transform-object-create': '^1.1.0'
-
-    "@types/he": "^1.2.3"
 
     ### building
 
@@ -203,6 +201,9 @@ devDependencies:
 
     'serve-handler': '6.x'
 
+    ### types
+
+    "@types/he": "^1.2.3"
     "@types/mocha": "^10.0.10"
     "@types/chai": "^5.2.3"
     "@types/chai-as-promised": "^8.0.2"
