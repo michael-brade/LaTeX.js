@@ -8,22 +8,6 @@ import { Macros, OPT_ARGS } from "./macros.ts";
 import builtin from "./latex/index.ts";
 
 
-/**
- * A synchronous loader for external packages, resolving paths relative to the bundle (i.e., dist/packages/
- * and dist/documentclasses/); undefined outside of Node.
- *
- * node:module is not imported statically: the bundle also has to run in the browser, and aliasing it to a
- * mock would replace it in the Node builds as well. In the CJS build, import.meta.url is undefined.
- */
-function nodeRequire(): NodeJS.Require | undefined
-{
-    const nodeModule = globalThis.process?.getBuiltinModule?.("node:module")
-    const base = import.meta.url ?? (typeof __filename === "string" ? __filename : undefined)
-
-    return nodeModule && base ? nodeModule.createRequire(base) : undefined
-}
-
-
 type MacroPackageConstructor = {
     symbols?: Map<string, string>
     new(...args: any[]): any
@@ -98,35 +82,22 @@ export class MacroManager
         else
             PkgClass = (builtin.packages as {[key: string]: MacroPackageConstructor})[pkg]
 
-        try {
-            // if not, try to load it
-            if (!PkgClass) {
-                const requireSync = nodeRequire()
-                if (!requireSync) {
-                    console.error(`error loading package "${pkg}": not found (external packages can only be loaded in Node)`)
-                    return
-                }
-
-                const Export = requireSync(`${path ?? "./packages"}/${pkg}`)
-                PkgClass = Export.default || Object.values(Export).find(v => typeof v === 'function');
-            }
-
-            if (!PkgClass || typeof PkgClass !== 'function')
-                throw new Error(`No valid class constructor exported from package "${pkg}"`);
-
-            // add symbols if the package is defining them
-            if (PkgClass.symbols instanceof Map)
-                this.#registerSymbols(PkgClass.symbols)
-
-            // instantiate the package with arguments
-            this.#packages.push(new PkgClass(this.#generator, packageOptions))
-
-            // Object.assign(args, PkgClass.args)
-            // PkgClass.symbols?.forEach (value, key) !-> symbols.set key, value
-        } catch (e) {
-            // log error but continue anyway
-            console.error(`error loading package \"${pkg}\":`, e);
+        // if not, try to load it
+        if (!PkgClass) {
+            PkgClass = this.#require(pkg, path ?? "./packages/")
+            if (!PkgClass)
+                return
         }
+
+        // add symbols if the package is defining them
+        if (PkgClass.symbols instanceof Map)
+            this.#registerSymbols(PkgClass.symbols)
+
+        // instantiate the package with arguments
+        this.#packages.push(new PkgClass(this.#generator, packageOptions))
+
+        // Object.assign(args, PkgClass.args)
+        // PkgClass.symbols?.forEach (value, key) !-> symbols.set key, value
     }
 
 
@@ -329,5 +300,66 @@ export class MacroManager
             this.#generator.error(`grammar error: arguments for ${last.name} have not been parsed: ${last.args}`);
 
         return last.parsed;
+    }
+
+
+    //// for NodeJS only: load external packages ////
+
+    /**
+     * A synchronous loader for external packages, resolving paths relative to the bundle (i.e., dist/packages/
+     * and dist/documentclasses/); undefined outside of Node.
+     *
+     * node:module is not imported statically: the bundle also has to run in the browser, and aliasing it to a
+     * mock would replace it in the Node builds as well. In the CJS build, import.meta.url is undefined.
+     */
+    #nodeRequire(): NodeJS.Require | undefined
+    {
+        const nodeModule = globalThis.process?.getBuiltinModule?.("node:module")
+        const base = import.meta.url ?? (typeof __filename === "string" ? __filename : undefined)
+
+        return nodeModule && base ? nodeModule.createRequire(base) : undefined
+    }
+
+
+    /**
+     * #require looks for the macro package/class in the directory `dir`.
+     * If it can't be found, it just logs an error and returns undefined.
+     */
+    #require(name: string, dir: string): MacroPackageClass | undefined
+    {
+        const requireSync = this.#nodeRequire()
+        if (!requireSync) {
+            console.error(`error loading package "${name}": not found (external packages can only be loaded in Node)`)
+            return
+        }
+
+        // resolve first: only then can "not found" be told apart from errors inside the package
+        // (requiring a package that itself imports a missing module throws MODULE_NOT_FOUND, too)
+        let resolved: string
+        try {
+            resolved = requireSync.resolve(`${dir}/${name}`)
+        } catch (e) {
+            if ((e as NodeJS.ErrnoException).code !== "MODULE_NOT_FOUND")
+                throw e
+
+            console.error(`error loading package "${name}": not found`)
+            return
+        }
+
+        let Export: Record<string, unknown>
+        try {
+            Export = requireSync(resolved)
+        } catch (e) {
+            console.error(`error loading package "${name}": error in ${resolved}:`, e)
+            return
+        }
+
+        const Candidate = Export.default ?? Object.values(Export).find(v => typeof v === "function")
+        if (typeof Candidate !== "function") {
+            console.error(`error loading package "${name}": ${resolved} exports no valid class constructor`)
+            return
+        }
+
+        return Candidate as MacroPackageClass
     }
 }
