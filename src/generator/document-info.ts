@@ -9,16 +9,13 @@ export function DocumentInfo<TBase extends Constructor<Core>>(Base: TBase)
     /**
      * This mixin is part of the generator and holds the document metadata: document class,
      * title, author, date.
-     *
-     * DocumentInfo options:
-     *  - documentClass to use (default is article)
      */
     abstract class DocumentInfoMixin extends Base
     {
-        // first the name of the document class to load;
-        // then, after the document class has been loaded, latex.ltx stores the options here
-        // for later use when loading other packages
-        documentClass: string | { options: PackageOpts } = "article"
+        // initially undefined - the default class to load is in the generator options
+        // then set by \documentclass: the name of the documentclass and its options,
+        // which are used later again when loading packages
+        documentClass?: { name: string, options: PackageOpts }
 
         // set by \title, \author, \date; these are output nodes, used by \maketitle
         _title?: unknown
@@ -33,7 +30,7 @@ export function DocumentInfo<TBase extends Constructor<Core>>(Base: TBase)
         {
             super.reset()
 
-            this.documentClass = this.options.documentClass ?? "article"
+            this.documentClass = undefined
             this.documentTitle = "untitled"
             this._title = this._author = this._date = undefined
         }

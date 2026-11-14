@@ -85,6 +85,39 @@ export class MacroManager
 
     //// packages
 
+    // load the format (latex.ltx), the first package
+    loadFormat(): void
+    {
+        this.#instantiate(this.#format, builtin["latex.ltx"], undefined, "latex.ltx")
+    }
+
+    // returns false if the documentclass could not be loaded
+    loadDocumentClass(name: string, options?: PackageOpts): boolean
+    {
+        return this.#load(name, options, builtin.documentclasses, "./documentclasses")
+    }
+
+    // returns false if the package could not be loaded
+    loadPackage(name: string, options?: PackageOpts): boolean
+    {
+        return this.#load(name, options, builtin.packages, "./packages")
+    }
+
+    // sets custom macros; only one CustomMacros package can be used, it overwrites
+    // a previously set one if there was one
+    setCustomMacros(CustomMacros: MacroPackageClass): void
+    {
+        this.#custom = new Map()
+        this.#instantiate(this.#custom, CustomMacros, undefined, CustomMacros.name || "CustomMacros")
+    }
+
+    // the stylesheets needed by the loaded documentclass and packages
+    stylesheets(): string[]
+    {
+        return this.#loaded.flatMap(PkgClass => PkgClass.css ?? [])
+    }
+
+
     // documentclasses and packages are looked up among the builtins first,
     // then (only in Node) loaded as external modules
     //
@@ -179,6 +212,13 @@ export class MacroManager
             this.#generator.error(`no such macro: \\${name}`)
 
         return macro.fn
+    }
+
+
+    // define a macro in the document (\newcommand etc.): it overrides the packages and the custom macros
+    define(name: string, fn: MacroFn, meta: MacroMeta = { mode: "H" }): void
+    {
+        this.#document.set(name, { fn, meta })
     }
 
 

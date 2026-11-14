@@ -161,13 +161,9 @@ export class HtmlGenerator extends Generator<Node>
 
         el.appendChild(createStyleSheet(url("css/katex.css")));
 
-        // the stylesheet of the documentclass (a static property of its class)
-        const documentClassCss = typeof this.documentClass === "object"
-            ? (this.documentClass.constructor as { css?: string }).css
-            : undefined;
-
-        if (documentClassCss)
-            el.appendChild(createStyleSheet(url(documentClassCss)));
+        // the stylesheets of the documentclass and the packages
+        for (const style of this.macroManager.stylesheets())
+            el.appendChild(createStyleSheet(url(style)));
 
         for (const style of this.options.styles)
             el.appendChild(createStyleSheet(url(style)));

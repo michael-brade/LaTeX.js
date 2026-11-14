@@ -1226,20 +1226,21 @@ export class LaTeX
 
     args.\documentclass =  <[ P kv? k k? ]>
     \documentclass      : (options, documentclass, version) !->
-        if typeof @g.documentClass == 'object'
+        if @g.documentClass
             @g.error "Two \\documentclass commands. The document may only declare one class."
 
-        @g.macroManager.loadPackage(documentclass, options, "./documentclasses/")
-
-        @g.documentClass = {
-            options: options
-        }
+        # keep the name and the options of the documentclass: the options are used for all packages
+        @g.documentClass = { name: documentclass, options: options ? new Map }
+        @g.macroManager.loadDocumentClass(documentclass, @g.documentClass.options)
 
 
     args.\usepackage    =  <[ P kv? csv k? ]>
     \usepackage         : (opts, packages, version) !->
+        if not @g.documentClass
+            @g.error "\\usepackage before \\documentclass."
+
         # PackageOpts are Maps: the package options override the documentclass options
-        # (opts is undefined if no [] was given, the documentclass options are never undefined)
+        # (opts is undefined if no [] was given)
         options = new Map [...@g.documentClass.options, ...(opts ? [])]
 
         for pkg in packages
