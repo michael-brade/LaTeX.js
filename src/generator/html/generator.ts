@@ -446,15 +446,21 @@ export class HtmlGenerator extends Generator<Node>
     override createReference(label?: CurrentLabel): HTMLElement
     {
         if (label)
-            return this.createLink("#" + label.id, (label.label as Node).cloneNode(true));
+            return this.createLink("#" + label.id, this.#cloneLabel(label));
 
         return this.createLink("#", this.createText("??"));
     }
 
     override fillReference(ref: HTMLElement, label: CurrentLabel): void
     {
-        ref.replaceChildren((label.label as Node).cloneNode(true));
+        ref.replaceChildren(...[this.#cloneLabel(label) ?? []].flat());
         ref.setAttribute("href", "#" + label.id);
+    }
+
+    // a copy of the label's content to display; there is none if \label was used without \@currentlabel
+    #cloneLabel(label: CurrentLabel): Node | undefined
+    {
+        return (label.label as Node | undefined)?.cloneNode(true);
     }
 
 
