@@ -1,4 +1,5 @@
 import type { MacroPackageClass } from "./macros.ts"
+import type Hypher from "hypher"
 
 
 // Generator options
@@ -10,7 +11,7 @@ export interface Options
     precision: number
 
     hyphenate: boolean
-    languagePatterns?: any
+    languagePatterns?: Hypher.LanguageDefinition
 
     // a class with additional macros; those override all other macros (except document-local definitions)
     CustomMacros?: MacroPackageClass

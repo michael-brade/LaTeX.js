@@ -16,6 +16,21 @@ import hEn from 'hyphenation.en-us';
 import { Length, type Vector } from '../../types.ts';
 
 
+// one hyphenator per pattern set: building its trie takes several milliseconds, more than parsing a
+// typical document, and the patterns are usually the same module-level object for every generator
+const hyphenators = new WeakMap<Hypher.LanguageDefinition, Hypher>();
+
+function hyphenator(patterns: Hypher.LanguageDefinition): Hypher
+{
+    let h = hyphenators.get(patterns);
+    if (!h) {
+        h = new Hypher(patterns);
+        hyphenators.set(patterns, h);
+    }
+    return h;
+}
+
+
 function isBlockLevel(el: HTMLElement): boolean
 {
     const blockRegex = /^(address|blockquote|body|center|dir|div|dl|fieldset|form|h[1-6]|hr|isindex|menu|noframes|noscript|ol|p|pre|table|ul|dd|dt|frameset|li|tbody|td|tfoot|th|thead|tr|html)$/i;
@@ -71,7 +86,7 @@ export class HtmlGenerator extends Generator<Node>
         super(finalizedOptions);
 
         if (finalizedOptions.hyphenate)
-            this.#h = new Hypher(finalizedOptions.languagePatterns);
+            this.#h = hyphenator(finalizedOptions.languagePatterns ?? hEn);
 
         this.reset();
     }
