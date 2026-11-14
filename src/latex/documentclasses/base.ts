@@ -18,8 +18,9 @@ export type SectionKind =
 export class Base
 {
     public g: Generator;
-    public options: PackageOpts;
-    public args: Record<string, any> = {};
+
+    // TODO: do we even need the options property outside of the CTOR? DocumentInfo stores them as well
+    protected readonly options: PackageOpts;
 
     private titleFn: (() => void) | null = null;
     private authorFn: (() => void) | null = null;
