@@ -55,6 +55,8 @@ files:
     'dist/documentclasses/'
 
 scripts:
+    postinstall: 'patch-package'
+
     clean: 'rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;'
 
     devbuild: "
@@ -118,7 +120,7 @@ dependencies:
     'hyphenation.en-us': '*'
     'hyphenation.de': '*'
 
-    'svgdom': '0.1.x'
+    'svgdom': '^0.1.29'
 
     #'xmldom': '0.3.x'
     #'jsdom': '16.x'
@@ -129,9 +131,11 @@ devDependencies:
     ### actual runtime dependencies, but bundled by vite
 
     'katex': '^0.16.10'
-    '@svgdotjs/svg.js': 'https://github.com/michael-brade/svg.js'  # '3.x'
+    '@svgdotjs/svg.js': '3.2.x'
 
     'hypher': '0.x'
+
+    "patch-package": "8.0.x"
 
     # only used by this script for its syntax (lsc generates package.json)
     'livescript': 'https://github.com/michael-brade/LiveScript'

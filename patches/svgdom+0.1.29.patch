@@ -1,0 +1,16 @@
+diff --git a/node_modules/svgdom/src/utils/tagUtils.js b/node_modules/svgdom/src/utils/tagUtils.js
+index 5c93119..ab5dbdd 100644
+--- a/node_modules/svgdom/src/utils/tagUtils.js
++++ b/node_modules/svgdom/src/utils/tagUtils.js
+@@ -221,7 +221,10 @@ const cloneShallow = (node, document) => {
+         ? document.createElementNS(node.namespaceURI, node.localName, true)
+         : document.createElementNS(node.namespaceURI, qualifiedName(node))
+     case node.ATTRIBUTE_NODE:
+-      return node.prefix === null && node.localName.includes(':')
++      // Attributes created by setAttribute() (no namespace, no prefix) must be
++      // cloned through the namespace-unaware path, e.g. a plain `xmlns`.
++      return node.prefix === null &&
++        (node.namespaceURI === null || node.localName.includes(':'))
+         ? document.createAttributeNS(node.namespaceURI, node.localName, true)
+         : document.createAttributeNS(node.namespaceURI, qualifiedName(node))
+     case node.TEXT_NODE:

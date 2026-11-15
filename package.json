@@ -46,6 +46,7 @@
     "dist/documentclasses/"
   ],
   "scripts": {
+    "postinstall": "patch-package",
     "clean": "rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;",
     "devbuild": "rimraf 'dist/**/*.map';rimraf dist/src;mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;mkdirp dist/documentclasses;mkdirp dist/packages;touch dist/documentclasses/.keep;touch dist/packages/.keep;rsync -a src/css/ dist/css/;rsync -a public/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;rsync -a public/js/ dist/js/;vite build;chmod a+x bin/latex.js;",
     "build": "NODE_ENV=production npm run devbuild;",
@@ -62,12 +63,13 @@
     "js-beautify": "1.15.x",
     "hyphenation.en-us": "*",
     "hyphenation.de": "*",
-    "svgdom": "0.1.x"
+    "svgdom": "^0.1.29"
   },
   "devDependencies": {
     "katex": "^0.16.10",
-    "@svgdotjs/svg.js": "https://github.com/michael-brade/svg.js",
+    "@svgdotjs/svg.js": "3.2.x",
     "hypher": "0.x",
+    "patch-package": "8.0.x",
     "livescript": "https://github.com/michael-brade/LiveScript",
     "@types/svgdom": "^0.1.2",
     "@types/fs-extra": "^11.0.4",
