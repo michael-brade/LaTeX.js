@@ -127,8 +127,8 @@ dependencies:
 
     commander: 8.x
     he: 2.x
-    fs-extra: 11.3.x
-    js-beautify: 1.15.x
+    fs-extra: 11.4.x
+    js-beautify: 2.0.x
 
     hyphenation.en-us: "*"
     hyphenation.de: "*"
@@ -151,7 +151,7 @@ devDependencies:
     patch-package: 8.0.x
 
     # generates package.json from package.yaml.sh
-    js-yaml: 4.x
+    js-yaml: 5.x
 
     "@types/svgdom": ^0.1.2
     "@types/fs-extra": ^11.0.4
@@ -161,7 +161,7 @@ devDependencies:
 
     peggy: 5.1.x
     mkdirp: 3.x
-    rimraf: 5.x
+    rimraf: 6.x
 
     typescript: 7.0.x
     "@typescript/typescript6": "*"   # JS Compiler API
@@ -182,10 +182,10 @@ devDependencies:
     "@codemirror/state": 6.x
     "@codemirror/view": 6.x
     "@codemirror/theme-one-dark": 6.x
-    codemirror-lang-latex: 0.4.x
+    codemirror-lang-latex: 0.6.x
     vue-tsc: 3.3.x
     vue-codemirror6: 1.5.x
-    sass-embedded: 1.100.x
+    sass-embedded: 1.108.x
 
     ### bundling
 
@@ -195,14 +195,14 @@ devDependencies:
     unplugin-dts: 1.1.x
     rollup-plugin-visualizer: 7.0.x
     esbuild: 0.28.x
-    terser: 5.48.x
+    terser: 5.51.x
 
-    "@rolldown/plugin-babel": 0.2.x
+    "@rolldown/plugin-babel": 0.3.x
     "@babel/plugin-proposal-decorators": 8.0.x
 
     ### testing
 
-    mocha: 11.7.x
+    mocha: 12.0.x
     mocha-junit-reporter: 2.x
     cypress-multi-reporters: 2.0.x
     chai: 6.x
