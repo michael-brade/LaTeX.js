@@ -38,6 +38,8 @@ export type MandatoryArgType =
     | "f"    // Float value expression computation
     | "v"    // Vector layout coordinate pair notation (float, float)
     | "is"   // Lexer directive to instruct the parser to ignore subsequent spaces
+    | "items"
+    | "enumitems"
     | "X"
 ;
 

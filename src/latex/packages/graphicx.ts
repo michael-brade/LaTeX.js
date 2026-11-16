@@ -62,14 +62,14 @@ export class Graphicx
 
     // 4.4 Including Graphics Files
 
-    // TODO: restrict to just one path?
+    // TODO: restrict to just one path? (gl could be group-list)
     // { {path1/} {path2/} }
-    @Macro('HV')
-    @Args('gl')
-    public graphicspath(paths: string[]): void
-    {
-        // Implementation
-    }
+    // @Macro('HV')
+    // @Args('gl')
+    // public graphicspath(paths: string[]): void
+    // {
+    //     // Implementation
+    // }
 
 
     // graphics: \includegraphics*[<llx,lly>][<urx,ury>]{<file>}     TODO
