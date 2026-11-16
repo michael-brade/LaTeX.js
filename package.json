@@ -48,10 +48,10 @@
   "scripts": {
     "postinstall": "patch-package",
     "clean": "rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;",
-    "devbuild": "rimraf 'dist/**/*.map';rimraf dist/src;mkdirp dist/css;mkdirp dist/js;mkdirp dist/fonts;mkdirp dist/documentclasses;mkdirp dist/packages;touch dist/documentclasses/.keep;touch dist/packages/.keep;rsync -a src/css/ dist/css/;rsync -a public/fonts/ dist/fonts/;rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;rsync -a public/js/ dist/js/;vite build;chmod a+x bin/latex.js;",
+    "devbuild": "rimraf 'dist/**/*.map'; rimraf dist/src; mkdirp dist/css; mkdirp dist/js; mkdirp dist/fonts; mkdirp dist/documentclasses; mkdirp dist/packages; touch dist/documentclasses/.keep; touch dist/packages/.keep; rsync -a src/css/ dist/css/; rsync -a public/fonts/ dist/fonts/; rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/; rsync -a public/js/ dist/js/; vite build; chmod a+x bin/latex.js;",
     "build": "NODE_ENV=production npm run devbuild;",
-    "devdocs": "npm run devbuild;vuepress dev docs --no-clear-screen --debug;",
-    "docs": "npm run build;[ ! -d website ] && git worktree add website gh-pages;mv website/.git .website.git;vuepress build docs;mv .website.git website/.git;cd website;git add .;git commit -m 'regenerated website';",
+    "devdocs": "npm run devbuild; vuepress dev docs --no-clear-screen --debug;",
+    "docs": "npm run build; [ ! -d website ] && git worktree add website gh-pages; mv website/.git .website.git; vuepress build docs; mv .website.git website/.git; cd website; git add .; git commit -m 'regenerated website';",
     "test": "mocha test/*.ts;",
     "testc": "c8 mocha test/*.ts;",
     "codecov": "codecov;"
@@ -70,7 +70,7 @@
     "@svgdotjs/svg.js": "3.2.x",
     "hypher": "0.x",
     "patch-package": "8.0.x",
-    "livescript": "https://github.com/michael-brade/LiveScript",
+    "js-yaml": "4.x",
     "@types/svgdom": "^0.1.2",
     "@types/fs-extra": "^11.0.4",
     "@types/js-beautify": "^1.14.3",

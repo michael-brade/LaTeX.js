@@ -1,0 +1,263 @@
+#!/bin/bash
+
+# Source of package.json -- edit this file, then run ./package.yaml.sh to regenerate package.json
+npx js-yaml > package.json <<EOF
+
+---
+name: latex.js
+description: JavaScript LaTeX to HTML5 translator
+version: 0.12.6
+
+author:
+    name: Michael Brade
+    email: brade@kde.org
+
+keywords:
+    - pegjs
+    - peggy
+    - latex
+    - parser
+    - html5
+
+bin:
+    latex.js: ./bin/latex.js
+
+type: module
+
+exports:
+    # custom condition only used by tsconfig "customConditions": type-check against the source, no build needed;
+    # Node, tsx and bundlers don't know it, so at runtime "latex.js" resolves to dist/
+    latex.js-source: ./src/index.ts
+    import:
+        types: ./dist/latex.d.ts
+        default: ./dist/latex.js
+    require:
+        types: ./dist/latex.d.ts
+        default: ./dist/latex.cjs
+
+browser: ./dist/latex.umd.cjs
+
+
+files:
+    - bin/latex.js
+    - dist/latex.d.ts
+    - dist/src/         # generated .d.ts files by unplugin-dts
+    - dist/latex.cjs
+    - dist/latex.cjs.map
+    - dist/latex.js
+    - dist/latex.js.map
+    - dist/latex.umd.cjs
+    - dist/latex.umd.cjs.map
+    - dist/css/
+    - dist/fonts/
+    - dist/js/
+    - dist/packages/
+    - dist/documentclasses/
+
+scripts:
+    postinstall: patch-package
+
+    clean: rimraf dist bin test/coverage test/test-results.xml docs/.vuepress/public/js;
+
+    # folded block scalars (>-): the lines are joined with spaces
+    devbuild: >-
+        rimraf 'dist/**/*.map';
+        rimraf dist/src;
+        mkdirp dist/css;
+        mkdirp dist/js;
+        mkdirp dist/fonts;
+        mkdirp dist/documentclasses;
+        mkdirp dist/packages;
+        touch dist/documentclasses/.keep;
+        touch dist/packages/.keep;
+        rsync -a src/css/ dist/css/;
+        rsync -a public/fonts/ dist/fonts/;
+        rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
+        rsync -a public/js/ dist/js/;
+        vite build;
+        chmod a+x bin/latex.js;
+
+    build: NODE_ENV=production npm run devbuild;
+
+
+    # docs/website and playground
+
+    devdocs: >-
+        npm run devbuild;
+        vuepress dev docs --no-clear-screen --debug;
+
+    docs: >-
+        npm run build;
+        [ ! -d website ] && git worktree add website gh-pages;
+        mv website/.git .website.git;
+        vuepress build docs;
+        mv .website.git website/.git;
+        cd website;
+        git add .;
+        git commit -m 'regenerated website';
+
+
+    # unit tests
+
+    test: mocha test/*.ts;
+
+    testc: c8 mocha test/*.ts;
+    codecov: codecov;
+
+dependencies:
+    ### CLI dependencies
+
+    commander: 8.x
+    he: 2.x
+    fs-extra: 11.3.x
+    js-beautify: 1.15.x
+
+    hyphenation.en-us: "*"
+    hyphenation.de: "*"
+
+    svgdom: ^0.1.29
+
+    #xmldom: 0.3.x
+    #jsdom: 16.x
+    #cheerio: 1.0.x
+
+
+devDependencies:
+    ### actual runtime dependencies, but bundled by vite
+
+    katex: ^0.16.10
+    "@svgdotjs/svg.js": 3.2.x
+
+    hypher: 0.x
+
+    patch-package: 8.0.x
+
+    # generates package.json from package.yaml
+    js-yaml: 4.x
+
+    "@types/svgdom": ^0.1.2
+    "@types/fs-extra": ^11.0.4
+    "@types/js-beautify": ^1.14.3
+
+    ### building
+
+    peggy: 5.1.x
+    mkdirp: 3.x
+    rimraf: 5.x
+
+    typescript: 7.0.x
+    "@typescript/typescript6": "*"   # JS Compiler API
+    tsx: ^4.22.4
+    "@tsconfig/node-ts": ^23.6.4
+    "@tsconfig/node24": ^24.0.4
+
+    ### docs
+
+    split-grid: 1.0.x
+    "@codemirror/autocomplete": 6.x
+    "@codemirror/commands": 6.x
+    "@codemirror/language": 6.x
+    "@codemirror/legacy-modes": 6.x
+    "@codemirror/lint": 6.x
+    "@codemirror/search": 6.x
+    "@codemirror/state": 6.x
+    "@codemirror/view": 6.x
+    vue-tsc: 3.3.x
+    vue-codemirror6: 1.5.x
+    stylus: 0.59.x
+
+    ### bundling
+
+    vite: 8.3.x
+    vite-plugin-node-polyfills: 0.28.x
+    vite-plugin-checker: 1.0.x
+    unplugin-dts: 1.1.x
+    rollup-plugin-visualizer: 7.0.x
+    esbuild: 0.28.x
+    terser: 5.48.x
+
+    "@rolldown/plugin-babel": 0.2.x
+    "@babel/plugin-proposal-decorators": 8.0.x
+
+    ### testing
+
+    mocha: 11.7.x
+    mocha-junit-reporter: 2.x
+    cypress-multi-reporters: 2.0.x
+    chai: 6.x
+    chai-as-promised: 8.0.x
+    slugify: 1.6.x
+    tmp: 0.2.x
+
+    puppeteer: 25.17.x
+    pixelmatch: 8.x
+
+    c8: 12.x
+    codecov: 3.x
+
+    serve-handler: 6.x
+
+    ### types
+
+    "@types/he": ^1.2.3
+    "@types/mocha": ^10.0.10
+    "@types/chai": ^5.2.3
+    "@types/chai-as-promised": ^8.0.2
+    "@types/pngjs": ^6.0.5
+    "@types/serve-handler": ^6.1.4
+    "@types/tmp": ^0.2.6
+
+mocha:
+    node-option:
+        - import=tsx
+    file:
+        - test/lib/globals.ts
+        - test/lib/setup.ts
+    reporter: cypress-multi-reporters
+    reporterOptions:
+        reporterEnabled: spec, mocha-junit-reporter
+        mochaJunitReporterReporterOptions:
+            mochaFile: ./test/test-results.xml
+    inlineDiffs: true
+    timeout: 10000
+    ui: bdd
+    checkLeaks: true
+    sort: true
+    reporterOption: maxDiffSize=0
+
+# first time: install browsers with "npx puppeteer browsers install" after "npm i"
+puppeteer:
+    chrome:
+        skipDownload: false
+    firefox:
+        skipDownload: false
+
+c8:
+    all: true
+    src:
+        - src
+    extension:
+        - .ts
+    exclude:
+        - "**/*.d.ts"
+        - test/**/*
+    reporter:
+        - text
+        - html
+
+
+repository:
+    type: git
+    url: git+https://github.com/michael-brade/LaTeX.js.git
+
+license: MIT
+
+bugs:
+    url: https://github.com/michael-brade/LaTeX.js/issues
+
+homepage: https://latex.js.org
+
+engines:
+    node: ">= 24.0"
+
+EOF
