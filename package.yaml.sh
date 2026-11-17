@@ -271,17 +271,27 @@ puppeteer:
         skipDownload: false
 
 c8:
-    all: true
+    all: true               # also report files no test loads (as 0%)
     src:
         - src
-    extension:
-        - .ts
+    # the tests run the bundle dist/latex.js (and bin/latex.js), which source maps remap to src/:
+    # filter only after remapping, otherwise the bundle is excluded (not in src/) and coverage is 0%
+    exclude-after-remap: true
+    # the remapped paths are not normalized (dist/../src/index.ts), so "src/**" would match nothing;
+    # this drops e.g. the test sources
+    include:
+        - "**/src/**"
     exclude:
         - "**/*.d.ts"
-        - test/**/*
+        - "**/third_party/**"   # puppeteer's bundled chromium-bidi sources
+    # file types to report (the filter also checks these), .pegjs for the grammar
+    extension:
+        - .ts
+        - .pegjs
+    reports-dir: ./test/coverage
     reporter:
         - text
-        - html
+        - html              # test/coverage/index.html
 
 
 repository:

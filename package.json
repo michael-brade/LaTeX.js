@@ -154,13 +154,19 @@
     "src": [
       "src"
     ],
-    "extension": [
-      ".ts"
+    "exclude-after-remap": true,
+    "include": [
+      "**/src/**"
     ],
     "exclude": [
       "**/*.d.ts",
-      "test/**/*"
+      "**/third_party/**"
     ],
+    "extension": [
+      ".ts",
+      ".pegjs"
+    ],
+    "reports-dir": "./test/coverage",
     "reporter": [
       "text",
       "html"
