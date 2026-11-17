@@ -1,7 +1,7 @@
 import { parse, SyntaxError } from './parser/latex-parser.pegjs'
 import { Generator } from './generator/generator.ts'
 import { HtmlGenerator } from './generator/html/generator.ts'
-import { LaTeXJSComponent } from './latex.component.mjs'
+import { LaTeXJSComponent } from './latex.component.ts'
 import type { HtmlOptions, Hyphenator } from './options.ts'
 
 // svg.js is bundled into latex.js, so its element-id counter is private to this bundle;

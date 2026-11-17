@@ -1,16 +1,24 @@
 import { parse } from './parser/latex-parser.pegjs'
 import { HtmlGenerator } from './generator/html/generator.ts'
 
-export let LaTeXJSComponent = null
 
 // fallback for environments without import.meta.url (CJS/UMD builds); there is no location in Node
-const DEFAULT_BASE_PATH = import.meta?.url ?? globalThis.location?.href
+const DEFAULT_BASE_PATH: string | undefined = import.meta?.url ?? globalThis.location?.href
+
+/**
+ * The <latex-js> custom element class.
+ * register it with: customElements.define("latex-js", LaTeXJSComponent)
+ */
+export let LaTeXJSComponent: CustomElementConstructor | null = null
 
 // only define LaTeXJSComponent in browser context, i.e., if HTMLElement exists
 if (typeof HTMLElement !== 'undefined') {
 
   LaTeXJSComponent = class extends HTMLElement
   {
+    shadow: ShadowRoot
+    _observer: MutationObserver | null
+
     constructor()
     {
       super()
@@ -22,7 +30,7 @@ if (typeof HTMLElement !== 'undefined') {
           if (this.textContent) {
             // no longer need to watch for change
             // TODO: actually, we could keep watching to support editing!
-            this._observer.disconnect()
+            this._observer?.disconnect()
             this._observer = null
             this.onContentReady()
           }
@@ -33,7 +41,7 @@ if (typeof HTMLElement !== 'undefined') {
       }
     }
 
-    async onContentReady()
+    async onContentReady(): Promise<void>
     {
       // empty DOM
       this.shadow.innerHTML = ''
@@ -45,12 +53,12 @@ if (typeof HTMLElement !== 'undefined') {
 
       let CustomMacros
       if (this.hasAttribute("macros")) {
-        const macrosPath = new URL(this.getAttribute("macros"), basePath).href
+        const macrosPath = new URL(this.getAttribute("macros")!, basePath).href
         CustomMacros = (await import(/* @vite-ignore */ macrosPath)).default
       }
 
       // parse
-      const generator = parse(this.textContent, {
+      const generator = parse(this.textContent ?? "", {
         generator: new HtmlGenerator({ hyphenate, CustomMacros })
       })
 
@@ -64,7 +72,7 @@ if (typeof HTMLElement !== 'undefined') {
         const style = document.createElement("link")
         style.type = "text/css"
         style.rel = "stylesheet"
-        style.href = this.getAttribute("stylesheet")
+        style.href = this.getAttribute("stylesheet")!
         this.shadow.appendChild(style)
       }
 
@@ -72,7 +80,7 @@ if (typeof HTMLElement !== 'undefined') {
       this.shadow.appendChild(generator.stylesAndScripts(basePath))
       this.shadow.appendChild(page)
 
-      generator.applyLengthsAndGeometryToDom(this.shadow.host)
+      generator.applyLengthsAndGeometryToDom(this.shadow.host as HTMLElement)
 
       // we need to add CMU fonts to the parent page (if they weren't added yet)
       const pDoc = this.ownerDocument
@@ -90,7 +98,7 @@ if (typeof HTMLElement !== 'undefined') {
       }
     }
 
-    disconnectedCallback()
+    disconnectedCallback(): void
     {
       // cleanup to avoid memory leaks
       if (this._observer)
