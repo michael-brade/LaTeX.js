@@ -24,7 +24,7 @@
       "default": "./dist/latex.js"
     },
     "require": {
-      "types": "./dist/types/index.d.ts",
+      "types": "./dist/types/index.d.cts",
       "default": "./dist/latex.cjs"
     }
   },

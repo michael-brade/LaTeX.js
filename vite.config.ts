@@ -48,7 +48,10 @@ export default defineConfig(env => {
                 // gets removed before the rest is appended to outDirs (default: the smallest common directory
                 // of all sources, so set it explicitly to keep the layout stable)
                 entryRoot: "src",
-                outDirs: "dist/types",
+                // .d.ts for "import", plus a CommonJS copy as .d.cts for "require" (package.json "exports"):
+                // in a "type": "module" package, .d.ts files are ESM types, and a CJS consumer can't use them
+                // (TS1479 with "node16"); the .d.cts files import each other with ".cjs" specifiers
+                outDirs: ["dist/types", { dir: "dist/types", moduleFormat: "cjs" }],
                 // also copy hand-written declarations (currently only src/parser/latex-parser.pegjs.d.ts)
                 copyDtsFiles: true,
                 exclude: ["node_modules/**", "src/cli.ts"],
@@ -60,7 +63,15 @@ export default defineConfig(env => {
 
                     // "./latex-parser.pegjs" only resolves to latex-parser.pegjs.d.ts with moduleResolution
                     // "bundler"; "./latex-parser.pegjs.ts" also works with "node16"/"nodenext"
-                    return { content: content.replace(/(latex-parser\.pegjs)(['"])/g, "$1.ts$2") }
+                    content = content.replace(/(latex-parser\.pegjs)(['"])/g, "$1.ts$2")
+
+                    // unplugin-dts only rewrites the first import() of a nested type, e.g.
+                    // import('../util/stack.cjs').default<import('./groups.ts').StackItem>; fix the rest, or
+                    // the .d.cts would reference the ESM .d.ts (TS1542 with "node16")
+                    if (filePath.endsWith(".d.cts"))
+                        content = content.replace(/(['"]\.\.?\/[^'"]*)\.ts(['"])/g, "$1.cjs$2")
+
+                    return { content }
                 },
                 compilerOptions: {
                     stripInternal: true     // drop members marked @internal from the published types
