@@ -1,5 +1,4 @@
 import { Generator, Elements, isElementKind, type ElementKind } from '../generator.ts';
-
 import { HtmlElements, HtmlFactories, type HtmlElementFactory } from './elements.ts';
 
 import type { HtmlOptions } from '../../options.ts';
@@ -9,24 +8,11 @@ import type { MarginPar } from '../floats.ts';
 import { SVG } from '@svgdotjs/svg.js';
 import katex from 'katex';
 
-import Hypher from 'hypher';
-import hEn from 'hyphenation.en-us';
+import type { HyphenationFunctionSync } from 'hyphen';
+import { hyphenateSync as hEn } from "hyphen/en.js";
+import { hyphenateSync as hDe } from "hyphen/de.js";
+
 import { Length, type Vector } from '../../types.ts';
-
-
-// one hyphenator per pattern set: building its trie takes several milliseconds, more than parsing a
-// typical document, and the patterns are usually the same module-level object for every generator
-const hyphenators = new WeakMap<Hypher.LanguageDefinition, Hypher>();
-
-function hyphenator(patterns: Hypher.LanguageDefinition): Hypher
-{
-    let h = hyphenators.get(patterns);
-    if (!h) {
-        h = new Hypher(patterns);
-        hyphenators.set(patterns, h);
-    }
-    return h;
-}
 
 
 function isBlockLevel(el: HTMLElement): boolean
@@ -34,7 +20,6 @@ function isBlockLevel(el: HTMLElement): boolean
     const blockRegex = /^(address|blockquote|body|center|dir|div|dl|fieldset|form|h[1-6]|hr|isindex|menu|noframes|noscript|ol|p|pre|table|ul|dd|dt|frameset|li|tbody|td|tfoot|th|thead|tr|html)$/i;
     return blockRegex.test(el.nodeName);
 }
-
 
 
 
@@ -57,8 +42,8 @@ function appendChildren(parent: Node, children: Node | Node[] | undefined | null
 
 export class HtmlGenerator extends Generator<Node>
 {
-    #dom = document.createDocumentFragment();
-    #h;
+    #dom = document.createDocumentFragment()
+    #h?: HyphenationFunctionSync
 
     // in this class _options is extended
     declare _options: HtmlOptions;
@@ -76,7 +61,7 @@ export class HtmlGenerator extends Generator<Node>
             documentClass: "article",
             styles: [],
             hyphenate: true,
-            languagePatterns: hEn,
+            language: "en",
             precision: 3
         }, options);
 
@@ -84,7 +69,14 @@ export class HtmlGenerator extends Generator<Node>
         super(finalizedOptions);
 
         if (finalizedOptions.hyphenate)
-            this.#h = hyphenator(finalizedOptions.languagePatterns ?? hEn);
+            switch (finalizedOptions.language) {
+                case "de":
+                    this.#h = hDe
+                    break
+                case "en":
+                default:
+                    this.#h = hEn
+            }
 
         this.reset();
     }
@@ -320,7 +312,7 @@ export class HtmlGenerator extends Generator<Node>
     override createText(t: string): any
     {
         if (!t) return;
-        return this.addAttributes(document.createTextNode(this.#h ? this.#h.hyphenateText(t) : t));
+        return this.addAttributes(document.createTextNode(this.#h ? this.#h(t) : t));
     }
 
     // create a pure text node without font attributes and no hyphenation

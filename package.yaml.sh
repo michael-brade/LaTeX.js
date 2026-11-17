@@ -80,6 +80,8 @@ scripts:
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
         rsync -a public/js/ dist/js/;
 
+    typecheck: tsc --noEmit && tsc --noEmit -p test && tsc --noEmit -p docs/.vitepress
+
     devbuild: >-
         vite build --mode development;
         npm run assets;
@@ -130,9 +132,6 @@ dependencies:
     fs-extra: 11.4.x
     js-beautify: 2.0.x
 
-    hyphenation.en-us: "*"
-    hyphenation.de: "*"
-
     svgdom: ^0.1.29
 
     #xmldom: 0.3.x
@@ -141,21 +140,16 @@ dependencies:
 
 
 devDependencies:
+    patch-package: 8.0.x
+    js-yaml: 5.x            # generates package.json from package.yaml.sh
+
     ### actual runtime dependencies, but bundled by vite
 
     katex: ^0.16.10
     "@svgdotjs/svg.js": 3.2.x
 
-    hypher: 0.x
-
-    patch-package: 8.0.x
-
-    # generates package.json from package.yaml.sh
-    js-yaml: 5.x
-
-    "@types/svgdom": ^0.1.2
-    "@types/fs-extra": ^11.0.4
-    "@types/js-beautify": ^1.14.3
+    hyphen: 1.14.x
+    "@types/hyphen": 1.14.x
 
     ### building
 
@@ -203,31 +197,40 @@ devDependencies:
     ### testing
 
     mocha: 12.0.x
+    "@types/mocha": ^10.0.10
+
     mocha-junit-reporter: 2.x
     cypress-multi-reporters: 2.0.x
+
     chai: 6.x
+    "@types/chai": ^5.2.3
+
     chai-as-promised: 8.0.x
+    "@types/chai-as-promised": ^8.0.2
+
     slugify: 1.6.x
+
     tmp: 0.2.x
+    "@types/tmp": ^0.2.6
 
     puppeteer: 25.17.x
-    pngjs: 7.0.x        # really needed
     pixelmatch: 8.x
+
+    pngjs: 7.0.x        # really needed??
+    "@types/pngjs": ^6.0.5
 
     c8: 12.x
     codecov: 3.x
 
     serve-handler: 6.x
+    "@types/serve-handler": ^6.1.4
 
     ### types
 
     "@types/he": ^1.2.3
-    "@types/mocha": ^10.0.10
-    "@types/chai": ^5.2.3
-    "@types/chai-as-promised": ^8.0.2
-    "@types/pngjs": ^6.0.5
-    "@types/serve-handler": ^6.1.4
-    "@types/tmp": ^0.2.6
+    "@types/svgdom": ^0.1.2
+    "@types/fs-extra": ^11.0.4
+    "@types/js-beautify": ^1.14.3
 
 mocha:
     node-option:

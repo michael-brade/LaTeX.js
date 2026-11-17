@@ -10,13 +10,14 @@ import { fileURLToPath } from 'node:url';
 import fs from 'fs-extra';
 import { program } from 'commander';
 import beautify from 'js-beautify';
-import { parse, HtmlGenerator } from 'latex.js';
 import { encode } from 'he';
-import en from 'hyphenation.en-us';
-import de from 'hyphenation.de';
+
 import info from '../package.json' with { type: 'json' };
 
 import { createRequire } from 'node:module';
+
+import { parse, HtmlGenerator, type HtmlOptions } from 'latex.js';
+
 const require = createRequire(import.meta.url);
 
 encode.options.strict = true;
@@ -86,17 +87,18 @@ if (options.body && (options.stylesheet || options.url)) {
     process.exit(1);
 }
 
-const htmlOptions = {
+const htmlOptions: HtmlOptions = {
     hyphenate: options.hyphenation,
-    languagePatterns: (() => {
+    language: (() => {
         switch (options.language) {
-            case 'en': return en;
-            case 'de': return de;
+            case 'en': return 'en';
+            case 'de': return 'de';
             default:
                 console.error(`error: language '${options.language}' is not supported yet`);
                 process.exit(1);
         }
     })(),
+    precision: 3,
     documentClass: options.class,
     CustomMacros: CustomMacros,
     styles: options.stylesheet || []

@@ -25,6 +25,9 @@ function parseLaTeXtoHTML(latex: string, options?: Partial<HtmlOptions>)
     })
 }
 
+export type {
+    HtmlOptions
+}
 
 export {
     parseLaTeXtoHTML,

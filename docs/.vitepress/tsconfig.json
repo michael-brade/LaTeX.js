@@ -1,11 +1,11 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "composite": true,
+        "allowImportingTsExtensions": true,
+        "rewriteRelativeImportExtensions": false,
 
         "isolatedModules": true,
         "skipLibCheck": true,
-        "emitDeclarationOnly": true,
 
         "paths": {
             // must be in sync with aliases in config.ts
@@ -19,6 +19,7 @@
         "**/*.md",
         "**/*.ts",
         "../components/**/*.vue",
-        "../components/**/*.ts"
+        "../components/**/*.ts",
+        "../../src/types/*.d.ts"
     ]
 }
