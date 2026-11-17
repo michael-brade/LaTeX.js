@@ -9,8 +9,8 @@ import { SVG } from '@svgdotjs/svg.js';
 import katex from 'katex';
 
 import type { HyphenationFunctionSync } from 'hyphen';
-import { hyphenateSync as hEn } from "hyphen/en.js";
-import { hyphenateSync as hDe } from "hyphen/de.js";
+import { hyphenateSync as hEn } from "hyphen/en";
+import { hyphenateSync as hDe } from "hyphen/de";
 
 import { Length, type Vector } from '../../types.ts';
 

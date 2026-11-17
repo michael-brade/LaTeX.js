@@ -15,8 +15,9 @@
         "noEmit": true,     // we are using vite, so no need for TypeScript to emit transpiled files
         "allowJs": true,    // TODO: remove once everything is ported to TypeScript
 
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext"
+        // this is required instead of NodeNext to make the hypen/en import work
+        "module": "EsNext",
+        "moduleResolution": "Bundler"
     },
     "include": [
         "src/**/*.ts"
