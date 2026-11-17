@@ -1,16 +1,15 @@
 import { Generator, Elements, isElementKind, type ElementKind } from '../generator.ts';
 import { HtmlElements, HtmlFactories, type HtmlElementFactory } from './elements.ts';
 
-import type { HtmlOptions } from '../../options.ts';
+import type { HtmlOptions, Hyphenator } from '../../options.ts';
 import type { CurrentLabel } from '../references.ts';
 import type { MarginPar } from '../floats.ts';
 
 import { SVG } from '@svgdotjs/svg.js';
 import katex from 'katex';
 
-import type { HyphenationFunctionSync } from 'hyphen';
-import { hyphenateSync as hEn } from "hyphen/en";
-import { hyphenateSync as hDe } from "hyphen/de";
+// only English is bundled; other languages are passed in as a function via the "hyphenate" option
+import { hyphenateSync as hyphenateEn } from "hyphen/en";
 
 import { Length, type Vector } from '../../types.ts';
 
@@ -43,7 +42,7 @@ function appendChildren(parent: Node, children: Node | Node[] | undefined | null
 export class HtmlGenerator extends Generator<Node>
 {
     #dom = document.createDocumentFragment()
-    #h?: HyphenationFunctionSync
+    #h?: Hyphenator
 
     // in this class _options is extended
     declare _options: HtmlOptions;
@@ -61,22 +60,17 @@ export class HtmlGenerator extends Generator<Node>
             documentClass: "article",
             styles: [],
             hyphenate: true,
-            language: "en",
             precision: 3
         }, options);
 
         // super() must be called before using `this` properties
         super(finalizedOptions);
 
-        if (finalizedOptions.hyphenate)
-            switch (finalizedOptions.language) {
-                case "de":
-                    this.#h = hDe
-                    break
-                case "en":
-                default:
-                    this.#h = hEn
-            }
+        const { hyphenate } = finalizedOptions
+        if (typeof hyphenate === "function")
+            this.#h = hyphenate
+        else if (hyphenate)
+            this.#h = hyphenateEn
 
         this.reset();
     }

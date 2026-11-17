@@ -16,7 +16,7 @@ import info from '../package.json' with { type: 'json' };
 
 import { createRequire } from 'node:module';
 
-import { parse, HtmlGenerator, type HtmlOptions } from 'latex.js';
+import { parse, HtmlGenerator, type HtmlOptions, type Hyphenator } from 'latex.js';
 
 const require = createRequire(import.meta.url);
 
@@ -49,7 +49,7 @@ program
     .option('-m, --macros <file>', 'load a JavaScript file with additional custom macros')
     .option('-s, --stylesheet <url>', 'specify an additional style sheet to use (can be repeated)', addStyle)
     .option('-n, --no-hyphenation', 'don\'t insert soft hyphens (disables automatic hyphenation in the browser)')
-    .option('-l, --language <lang>', 'set hyphenation language', 'en')
+    .option('-l, --language <lang>', 'set hyphenation language, any language supported by the "hyphen" package (en-us, en-gb, de, fr, ...)', 'en')
     .on('--help', () => console.log('\nIf no input files are given, STDIN is read.'))
     .parse(process.argv);
 
@@ -87,17 +87,23 @@ if (options.body && (options.stylesheet || options.url)) {
     process.exit(1);
 }
 
+// load the hyphenation patterns for the requested language; only English is bundled with latex.js
+function loadHyphenator(lang: string): Hyphenator
+{
+    if (!/^[a-z]{2,3}(-[a-z0-9]+)*$/.test(lang)) {
+        console.error(`error: invalid language '${lang}'`);
+        process.exit(1);
+    }
+    try {
+        return require(`hyphen/${lang}`).hyphenateSync;
+    } catch {
+        console.error(`error: language '${lang}' is not supported by the "hyphen" package`);
+        process.exit(1);
+    }
+}
+
 const htmlOptions: HtmlOptions = {
-    hyphenate: options.hyphenation,
-    language: (() => {
-        switch (options.language) {
-            case 'en': return 'en';
-            case 'de': return 'de';
-            default:
-                console.error(`error: language '${options.language}' is not supported yet`);
-                process.exit(1);
-        }
-    })(),
+    hyphenate: options.hyphenation && loadHyphenator(options.language),
     precision: 3,
     documentClass: options.class,
     CustomMacros: CustomMacros,

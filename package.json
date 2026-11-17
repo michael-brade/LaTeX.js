@@ -64,15 +64,14 @@
     "he": "2.x",
     "fs-extra": "11.4.x",
     "js-beautify": "2.0.x",
-    "svgdom": "^0.1.29"
+    "svgdom": "^0.1.29",
+    "hyphen": "1.14.x"
   },
   "devDependencies": {
     "patch-package": "8.0.x",
     "js-yaml": "5.x",
     "katex": "^0.16.10",
     "@svgdotjs/svg.js": "3.2.x",
-    "hyphen": "1.14.x",
-    "@types/hyphen": "1.14.x",
     "peggy": "5.1.x",
     "mkdirp": "3.x",
     "rimraf": "6.x",
@@ -124,6 +123,7 @@
     "serve-handler": "6.x",
     "@types/serve-handler": "^6.1.4",
     "@types/he": "^1.2.3",
+    "@types/hyphen": "1.14.x",
     "@types/svgdom": "^0.1.2",
     "@types/fs-extra": "^11.0.4",
     "@types/js-beautify": "^1.14.3"

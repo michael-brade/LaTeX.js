@@ -133,6 +133,7 @@ dependencies:
     js-beautify: 2.0.x
 
     svgdom: ^0.1.29
+    hyphen: 1.14.x
 
     #xmldom: 0.3.x
     #jsdom: 16.x
@@ -147,9 +148,6 @@ devDependencies:
 
     katex: ^0.16.10
     "@svgdotjs/svg.js": 3.2.x
-
-    hyphen: 1.14.x
-    "@types/hyphen": 1.14.x
 
     ### building
 
@@ -228,6 +226,7 @@ devDependencies:
     ### types
 
     "@types/he": ^1.2.3
+    "@types/hyphen": 1.14.x
     "@types/svgdom": ^0.1.2
     "@types/fs-extra": ^11.0.4
     "@types/js-beautify": ^1.14.3

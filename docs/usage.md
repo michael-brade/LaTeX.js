@@ -37,7 +37,7 @@ Options:
   -m, --macros <file>    load a JavaScript file with additional custom macros
   -s, --stylesheet <url> specify an additional style sheet to use (can be repeated)
   -n, --no-hyphenation   don't insert soft hyphens (disables automatic hyphenation in the browser)
-  -l, --language <lang>  set hyphenation language (default: en)
+  -l, --language <lang>  set hyphenation language, any language supported by the "hyphen" package (en-us, en-gb, de, fr, ...) (default: "en")
   -h, --help             output usage information
 
 If no input files are given, STDIN is read.

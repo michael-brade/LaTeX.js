@@ -2,7 +2,7 @@ import { parse, SyntaxError } from './parser/latex-parser.pegjs'
 import { Generator } from './generator/generator.ts'
 import { HtmlGenerator } from './generator/html/generator.ts'
 import { LaTeXJSComponent } from './latex.component.mjs'
-import type { HtmlOptions } from './options.ts'
+import type { HtmlOptions, Hyphenator } from './options.ts'
 
 // svg.js is bundled into latex.js, so its element-id counter is private to this bundle;
 // re-export the reset so that consumers (e.g. tests) can get reproducible SVG ids.
@@ -26,7 +26,8 @@ function parseLaTeXtoHTML(latex: string, options?: Partial<HtmlOptions>)
 }
 
 export type {
-    HtmlOptions
+    HtmlOptions,
+    Hyphenator
 }
 
 export {

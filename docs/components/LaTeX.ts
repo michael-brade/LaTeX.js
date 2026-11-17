@@ -1,4 +1,5 @@
 import { parse, HtmlGenerator, SyntaxError } from 'latex.js'
+import { hyphenateSync } from 'hyphen/en'
 
 
 let generator: HtmlGenerator | null = null
@@ -89,8 +90,7 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
 
     if (!generator) {
         generator = new HtmlGenerator({
-            hyphenate: true,
-            language: "en",
+            hyphenate: hyphenateSync,
             styles: ['css/error.css']
         })
     } else {

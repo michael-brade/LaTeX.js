@@ -37,8 +37,9 @@ Create a new HTML generator. `options` is an <[Object]> that can have the follow
 
 - `documentClass`: <[string]> the default document class if a document without preamble is parsed
 - `CustomMacros`: a <[constructor]>/<[function]> with additional custom macros
-- `hyphenate`: <[boolean]> enable or disable automatic hyphenation
-- `languagePatterns`: language patterns object to use for hyphenation if it is enabled
+- `hyphenate`: <[boolean]|[function]> `true` (default) hyphenates using the bundled English patterns, `false` disables
+  hyphenation. For other languages, pass a function that inserts soft hyphens, e.g. `hyphenateSync` from the
+  [hyphen](https://www.npmjs.com/package/hyphen) package: `import { hyphenateSync } from 'hyphen/de'`
 - `styles`: <[Array]<[string]>> additional CSS stylesheets
 
 ### `htmlGenerator.reset()`
