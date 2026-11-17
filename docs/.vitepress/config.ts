@@ -1,10 +1,7 @@
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 import { defineConfig } from 'vitepress'
 
-
-const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -66,7 +63,7 @@ export default defineConfig({
         resolve: {
             alias: {
                 // Alias to find theme components
-                '@theme/components': path.resolve(dirname, './theme/components')
+                '@theme/components': path.resolve(import.meta.dirname, './theme/components')
             }
         }
     }
