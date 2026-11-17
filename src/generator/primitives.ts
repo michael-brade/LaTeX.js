@@ -15,6 +15,12 @@ export function Primitives<TBase extends Constructor<AttributesAPI>>(Base: TBase
      */
     abstract class PrimitivesMixin extends Base
     {
+        // required, @see Environments.reset() explanation
+        override reset(): void
+        {
+            super.reset()
+        }
+
         //// spaces and invisible characters
 
         readonly sp     = ' '               // collapsible space
