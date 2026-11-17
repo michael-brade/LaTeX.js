@@ -1,4 +1,4 @@
-import { type Constructor } from "../../lib/mixin.ts"
+import { type Constructor } from "../util/mixin.ts"
 
 import type { MacroManagementAPI } from "./macro-management.ts"
 

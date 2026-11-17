@@ -1,4 +1,4 @@
-import { type Constructor } from "../../lib/mixin.ts"
+import { type Constructor } from "../util/mixin.ts"
 
 import type { AttributesAPI } from "./attributes.ts"
 import { ligatures, diacritics, symbols } from "../latex/symbols.ts"
