@@ -4,9 +4,15 @@ import { HtmlGenerator } from './generator/html/generator.ts'
 import { LaTeXJSComponent } from './latex.component.ts'
 import type { HtmlOptions, Hyphenator } from './options.ts'
 
+import { resetDid } from '@svgdotjs/svg.js'
+
 // svg.js is bundled into latex.js, so its element-id counter is private to this bundle;
-// re-export the reset so that consumers (e.g. tests) can get reproducible SVG ids.
-import { resetDid as resetSvgIds } from '@svgdotjs/svg.js'
+// export a reset so that consumers (e.g. tests) can get reproducible SVG ids, but make
+// this a wrapper instead of re-exporting so that the published types don't depend on svg.js
+function resetSvgIds(): void
+{
+    resetDid()
+}
 
 
 /**

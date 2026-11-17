@@ -44,6 +44,9 @@ export default defineConfig(env => {
             }),
 
             dts({
+                compilerOptions: {
+                    stripInternal: true     // drop members marked @internal from the published types
+                },
                 insertTypesEntry: true,
                 bundleTypes: false          // TODO: true breaks at the moment
             })
