@@ -1,16 +1,16 @@
 import { resolve } from 'node:path'
 
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite'
 
-import { checker } from 'vite-plugin-checker';
+import { checker } from 'vite-plugin-checker'
 import dts from 'unplugin-dts/vite'
 
 import babel from "@rolldown/plugin-babel"
 
-import peggy from "./lib/vite-plugin-peggy.ts";
+import peggy from "./lib/vite-plugin-peggy.ts"
 
-import { visualizer } from 'rollup-plugin-visualizer';
-import ignoreInfiniteLoop from "./lib/peggy-plugin-no-infinite-loop.ts";
+import { visualizer } from 'rollup-plugin-visualizer'
+import ignoreInfiniteLoop from "./lib/peggy-plugin-no-infinite-loop.ts"
 
 
 export default defineConfig(env => {
@@ -45,15 +45,16 @@ export default defineConfig(env => {
 
             dts({
                 insertTypesEntry: true,
-                bundleTypes: false          // TODO: try true on prod builds
+                bundleTypes: false          // TODO: true breaks at the moment
             })
         ],
 
-        oxc: false, // then requires esbuild
-
         build: {
             sourcemap: prod,
-            minify: prod ? 'esbuild' : false,
+            // In lib mode, Vite never minifies whitespace of the ES output (esbuild: minifyWhitespace: false,
+            // oxc: codegen: false) to keep /*#__PURE__*/ annotations for downstream tree-shaking.
+            // With oxc we can re-enable it below; the annotations are kept anyway (output.comments.annotation).
+            minify: prod ? 'oxc' : false,
 
             outDir: 'dist',
             emptyOutDir: true,
@@ -68,6 +69,9 @@ export default defineConfig(env => {
             },
 
             rolldownOptions: {
+                // fully minify all formats, including the ES one (see "minify" above)
+                output: prod ? { minify: true } : {},
+
                 plugins: [
                     visualizer({
                         filename: './dist/latex.stats.html',

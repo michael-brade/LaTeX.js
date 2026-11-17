@@ -82,14 +82,16 @@ scripts:
 
     typecheck: tsc --noEmit && tsc --noEmit -p test && tsc --noEmit -p docs/.vitepress
 
+    # library into dist/, then the CLI into bin/latex.js (vite.cli.config.ts), then the static assets
     devbuild: >-
-        vite build --mode development;
-        npm run assets;
-        chmod a+x bin/latex.js;
+        vite build --mode development &&
+        vite build -c vite.cli.config.ts --mode development &&
+        npm run assets
 
     build: >-
-        vite build --mode production;
-        npm run assets;
+        vite build --mode production &&
+        vite build -c vite.cli.config.ts --mode production &&
+        npm run assets
 
 
     # docs/website and playground
@@ -160,6 +162,7 @@ devDependencies:
     tsx: ^4.22.4
     "@tsconfig/node-ts": ^23.6.4
     "@tsconfig/node22": ^22.0.7
+    # "@microsoft/api-extractor": 7.60.x
 
     ### docs
 
