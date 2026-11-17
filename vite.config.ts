@@ -44,6 +44,24 @@ export default defineConfig(env => {
             }),
 
             dts({
+                // emit to dist/src/ (see "files" in package.json), not to dist/
+                // reason this works: entryRoot is the path that gets removed before the rest is appended
+                // to the output directory (dist/); thus, "." means that nothing is removed, so src/...
+                // is kept for all type files
+                entryRoot: ".",
+                // also copy hand-written declarations (currently only src/parser/latex-parser.pegjs.d.ts)
+                copyDtsFiles: true,
+                exclude: ["node_modules/**", "src/cli.ts"],
+                beforeWriteFile: (filePath, content) => {
+                    // src/types/ only has augmentations needed to compile src/ (copied, they'd lose their import)
+                    // TODO: get rid of it by fixing svg.js
+                    if (filePath.includes("/dist/src/types/"))
+                        return false
+
+                    // "./latex-parser.pegjs" only resolves to latex-parser.pegjs.d.ts with moduleResolution
+                    // "bundler"; "./latex-parser.pegjs.ts" also works with "node16"/"nodenext"
+                    return { content: content.replace(/(latex-parser\.pegjs)(['"])/g, "$1.ts$2") }
+                },
                 compilerOptions: {
                     stripInternal: true     // drop members marked @internal from the published types
                 },

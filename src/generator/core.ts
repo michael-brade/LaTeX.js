@@ -1,4 +1,4 @@
-import type { LocationRange } from "peggy"
+import type { LocationRange } from "../parser/latex-parser.pegjs"
 
 import type { Options } from "../options.ts"
 
