@@ -1,5 +1,8 @@
 import type { MacroPackageClass } from "./macros.ts"
-import type Hypher from "hypher"
+
+
+// inserts soft hyphens (U+00AD) into text; compatible with hyphenateSync from the "hyphen" package
+export type Hyphenator = (text: string) => string
 
 
 // Generator options
@@ -10,8 +13,9 @@ export interface Options
     documentClass: string
     precision: number
 
-    hyphenate: boolean
-    languagePatterns?: Hypher.LanguageDefinition
+    // true: hyphenate using the bundled English patterns; false: no hyphenation;
+    // or a hyphenation function for another language, e.g. hyphenateSync from "hyphen/de"
+    hyphenate: boolean | Hyphenator
 
     // a class with additional macros; those override all other macros (except document-local definitions)
     CustomMacros?: MacroPackageClass

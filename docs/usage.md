@@ -37,7 +37,7 @@ Options:
   -m, --macros <file>    load a JavaScript file with additional custom macros
   -s, --stylesheet <url> specify an additional style sheet to use (can be repeated)
   -n, --no-hyphenation   don't insert soft hyphens (disables automatic hyphenation in the browser)
-  -l, --language <lang>  set hyphenation language (default: en)
+  -l, --language <lang>  set hyphenation language, any language supported by the "hyphen" package (en-us, en-gb, de, fr, ...) (default: "en")
   -h, --help             output usage information
 
 If no input files are given, STDIN is read.
@@ -123,11 +123,11 @@ plain text instead of HTML. Currently, only a HTML generator exists.
 
 Import the parser and generator, then parse and translate to HTML:
 
-<<< @/test/api/node.mjs#code
+<<< ../test/api/node.mjs#code
 
 Or using the CommonJS module syntax:
 
-<<< @/test/api/node.js#code
+<<< ../test/api/node.js#code
 
 The `HtmlGenerator` takes several options, see the API section below.
 
@@ -137,7 +137,7 @@ The `HtmlGenerator` takes several options, see the API section below.
 If you want to use the parser and the generator manually, you can either use your own build or use a link directly to
 the jsDelivr CDN:
 
-<<< @/test/api/browser.html
+<<< ../test/api/browser.html
 
 Note that in this case the styles and scripts are not encapsulated, so they can clash with the text and style of the
 containing page.

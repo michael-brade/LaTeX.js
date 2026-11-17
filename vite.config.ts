@@ -13,67 +13,68 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import ignoreInfiniteLoop from "./lib/peggy-plugin-no-infinite-loop.ts";
 
 
-const mode = process.env.NODE_ENV || 'development';
-const prod = mode === "production";
+export default defineConfig(env => {
 
+    const prod = env.mode !== 'development';
 
-export default defineConfig({
-    mode: mode,
-    appType: "custom",
+    return {
+        appType: "custom",
 
-    logLevel: "info",
+        logLevel: "info",
 
-    plugins: [
-        checker({
-            typescript: true
-        }),
+        plugins: [
+            checker({
+                typescript: true
+            }),
 
-        babel({
-            presets: [{
-                preset: () => ({
-                    plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]]
-                }),
-                rolldown: {
-                    filter: { code: "@" }
-                }
-            }]
-        }),
+            babel({
+                presets: [{
+                    preset: () => ({
+                        plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]]
+                    }),
+                    rolldown: {
+                        filter: { code: "@" }
+                    }
+                }]
+            }),
 
-        peggy({
-            plugins: [ignoreInfiniteLoop],
-            trace: false
-        }),
-        dts({
-            insertTypesEntry: true,
-            bundleTypes: false          // TODO: try true on prod builds
-        })
-    ],
+            peggy({
+                plugins: [ignoreInfiniteLoop],
+                trace: false
+            }),
 
-    oxc: false, // then requires esbuild
+            dts({
+                insertTypesEntry: true,
+                bundleTypes: false          // TODO: try true on prod builds
+            })
+        ],
 
-    build: {
-        sourcemap: prod,
-        minify: prod ? 'esbuild' : false,
+        oxc: false, // then requires esbuild
 
-        outDir: 'dist',
-        emptyOutDir: false,
+        build: {
+            sourcemap: prod,
+            minify: prod ? 'esbuild' : false,
 
-        copyPublicDir: false,
+            outDir: 'dist',
+            emptyOutDir: true,
 
-        lib: {
-            entry: resolve(import.meta.dirname, "src/index.ts"),
-            name: "latexjs",
-            fileName: "latex",
-            formats: ["es", "cjs", "umd"]
-        },
+            copyPublicDir: false,
 
-        rolldownOptions: {
-            plugins: [
-                visualizer({
-                    filename: './dist/latex.stats.html',
-                    sourcemap: prod
-                })
-            ]
+            lib: {
+                entry: resolve(import.meta.dirname, "src/index.ts"),
+                name: "latexjs",
+                fileName: "latex",
+                formats: ["es", "cjs", "umd"]
+            },
+
+            rolldownOptions: {
+                plugins: [
+                    visualizer({
+                        filename: './dist/latex.stats.html',
+                        sourcemap: prod
+                    })
+                ]
+            }
         }
     }
 });
