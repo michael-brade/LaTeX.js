@@ -45,10 +45,10 @@
     "dist/documentclasses/"
   ],
   "scripts": {
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && ln -sf ../typescript/bin/tsc node_modules/.bin/tsc",
     "clean": "rimraf dist bin website test/coverage test/test-results.xml docs/.vitepress/.temp docs/.vitepress/.cache;",
     "assets": "mkdirp dist/css; mkdirp dist/js; mkdirp dist/fonts; mkdirp dist/documentclasses; mkdirp dist/packages; touch dist/documentclasses/.keep; touch dist/packages/.keep; rsync -a src/css/ dist/css/; rsync -a public/fonts/ dist/fonts/; rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/; rsync -a public/js/ dist/js/;",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p test && tsc --noEmit -p docs/.vitepress",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p test && node lib/vue-tsc.cjs --noEmit -p docs/.vitepress",
     "devbuild": "vite build --mode development && vite build -c vite.cli.config.ts --mode development && npm run assets",
     "build": "vite build --mode production && vite build -c vite.cli.config.ts --mode production && npm run assets",
     "prepare-latex-assets": "rimraf docs/public/latexjs; mkdirp docs/public/latexjs/css docs/public/latexjs/fonts docs/public/latexjs/js; rsync -a dist/css/ docs/public/latexjs/css/; rsync -a dist/fonts/ docs/public/latexjs/fonts/; rsync -a dist/js/ docs/public/latexjs/js/;",
@@ -75,7 +75,7 @@
     "mkdirp": "3.x",
     "rimraf": "6.x",
     "typescript": "7.0.x",
-    "@typescript/typescript6": "*",
+    "@typescript/typescript6": "6.0.x",
     "tsx": "^4.22.4",
     "@tsconfig/node-ts": "^23.6.4",
     "@tsconfig/node22": "^22.0.7",

@@ -54,7 +54,12 @@ files:
     - dist/documentclasses/
 
 scripts:
-    postinstall: patch-package
+    # typescript (7) and @typescript/old (6, a dependency of @typescript/typescript6) both have a "tsc" bin,
+    # and npm may link either one; make sure node_modules/.bin/tsc is TypeScript 7 (also used by
+    # vite-plugin-checker during vite build)
+    postinstall: >-
+        patch-package &&
+        ln -sf ../typescript/bin/tsc node_modules/.bin/tsc
 
     # rm -rf all elements up to the ;
     clean: >-
@@ -79,7 +84,11 @@ scripts:
         rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/;
         rsync -a public/js/ dist/js/;
 
-    typecheck: tsc --noEmit && tsc --noEmit -p test && tsc --noEmit -p docs/.vitepress
+    # docs: vue-tsc also checks .vue files; it needs TypeScript 6, see lib/vue-tsc.cjs
+    typecheck: >-
+        tsc --noEmit &&
+        tsc --noEmit -p test &&
+        node lib/vue-tsc.cjs --noEmit -p docs/.vitepress
 
     # library into dist/, then the CLI into bin/latex.js (vite.cli.config.ts), then the static assets
     devbuild: >-
@@ -157,7 +166,7 @@ devDependencies:
     rimraf: 6.x
 
     typescript: 7.0.x
-    "@typescript/typescript6": "*"   # JS Compiler API
+    "@typescript/typescript6": 6.0.x # JS compiler API for unplugin-dts and vue-tsc (TS 7 has none)
     tsx: ^4.22.4
     "@tsconfig/node-ts": ^23.6.4
     "@tsconfig/node22": ^22.0.7
