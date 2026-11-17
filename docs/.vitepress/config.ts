@@ -60,6 +60,10 @@ export default defineConfig({
                 }
             }
         },
+        // so that hyphen (CommonJS) gets bundled for SSR (Node can't import its named exports)
+        ssr: {
+            noExternal: ['hyphen']
+        },
         resolve: {
             alias: {
                 // Alias to find theme components

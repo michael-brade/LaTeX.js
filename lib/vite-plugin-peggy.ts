@@ -4,7 +4,7 @@ import path from 'node:path';
 import type { Plugin } from 'vite';
 import type { LoadResult } from 'rolldown';
 
-import { BuildOptionsBase } from 'peggy';
+import type { BuildOptionsBase } from 'peggy';
 import peggy from 'peggy';
 
 

@@ -91,7 +91,8 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
     if (!generator) {
         generator = new HtmlGenerator({
             hyphenate: hyphenateSync,
-            styles: ['css/error.css']
+            // resolved against the baseURL /latexjs/, so make it absolute: it's in docs/public/css/
+            styles: ['/css/error.css']
         })
     } else {
         generator.reset();
