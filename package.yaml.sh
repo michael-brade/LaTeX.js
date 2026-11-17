@@ -70,7 +70,7 @@ scripts:
     clean: >-
         rimraf
         dist bin website
-        test/coverage test/test-results.xml
+        test/coverage
         docs/public/latexjs
         docs/.vitepress/.temp
         docs/.vitepress/cache
@@ -143,7 +143,6 @@ scripts:
     test: mocha test/*.ts;
 
     testc: c8 mocha test/*.ts;
-    codecov: codecov;
 
 dependencies:
     ### CLI dependencies
@@ -219,9 +218,6 @@ devDependencies:
     mocha: 12.0.x
     "@types/mocha": ^10.0.10
 
-    mocha-junit-reporter: 2.x
-    cypress-multi-reporters: 2.0.x
-
     chai: 6.x
     "@types/chai": ^5.2.3
 
@@ -240,7 +236,6 @@ devDependencies:
     "@types/pngjs": ^6.0.5
 
     c8: 12.x
-    codecov: 3.x
 
     serve-handler: 6.x
     "@types/serve-handler": ^6.1.4
@@ -259,17 +254,14 @@ mocha:
     file:
         - test/lib/globals.ts
         - test/lib/setup.ts
-    reporter: cypress-multi-reporters
-    reporterOptions:
-        reporterEnabled: spec, mocha-junit-reporter
-        mochaJunitReporterReporterOptions:
-            mochaFile: ./test/test-results.xml
+    reporter: spec
+    reporter-option:
+        - maxDiffSize=0
     inlineDiffs: true
     timeout: 10000
     ui: bdd
     checkLeaks: true
     sort: true
-    reporterOption: maxDiffSize=0
 
 # first time: install browsers with "npx puppeteer browsers install" after "npm i"
 puppeteer:
