@@ -12,13 +12,14 @@ import { program } from 'commander';
 import beautify from 'js-beautify';
 import { encode } from 'he';
 
-import info from '../package.json' with { type: 'json' };
-
 import { createRequire } from 'node:module';
 
 import { parse, HtmlGenerator, type HtmlOptions, type Hyphenator } from 'latex.js';
 
 const require = createRequire(import.meta.url);
+
+// read package.json at runtime instead of bundling it; same relative path from src/ and bin/
+const info: { name: string, version: string, description: string } = require('../package.json');
 
 encode.options.strict = true;
 encode.options.useNamedReferences = true;
@@ -35,7 +36,7 @@ const addStyle = (url: string, styles?: string[]): string[] => {
 program
     .name(info.name)
     .version(info.version)
-    .description(info.description as string)
+    .description(info.description)
     .usage('[options] [files...]')
     .option('-o, --output <file>', 'specify output file, otherwise STDOUT will be used')
     .option('-a, --assets [dir]', 'copy CSS and fonts to the directory of the output file, unless dir is given (default: no assets are copied)')
