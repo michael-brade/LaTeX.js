@@ -23,25 +23,26 @@ export default defineConfig(env => {
         logLevel: "info",
 
         plugins: [
-        checker({
-            typescript: true
-        }),
+            checker({
+                typescript: true
+            }),
 
-        babel({
-            presets: [{
-                preset: () => ({
-                    plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]]
-                }),
-                rolldown: {
-                    filter: { code: "@" }
-                }
-            }]
-        }),
+            babel({
+                presets: [{
+                    preset: () => ({
+                        plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]]
+                    }),
+                    rolldown: {
+                        filter: { code: "@" }
+                    }
+                }]
+            }),
 
-        peggy({
+            peggy({
                 plugins: [ignoreInfiniteLoop],
                 trace: false
             }),
+
             dts({
                 insertTypesEntry: true,
                 bundleTypes: false          // TODO: try true on prod builds
