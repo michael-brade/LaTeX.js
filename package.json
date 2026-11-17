@@ -20,19 +20,18 @@
   "exports": {
     "latex.js-source": "./src/index.ts",
     "import": {
-      "types": "./dist/latex.d.ts",
+      "types": "./dist/types/index.d.ts",
       "default": "./dist/latex.js"
     },
     "require": {
-      "types": "./dist/latex.d.ts",
+      "types": "./dist/types/index.d.ts",
       "default": "./dist/latex.cjs"
     }
   },
   "browser": "./dist/latex.umd.cjs",
   "files": [
     "bin/latex.js",
-    "dist/latex.d.ts",
-    "dist/src/",
+    "dist/types/",
     "dist/latex.cjs",
     "dist/latex.cjs.map",
     "dist/latex.js",

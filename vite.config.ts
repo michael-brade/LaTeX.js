@@ -44,18 +44,18 @@ export default defineConfig(env => {
             }),
 
             dts({
-                // emit to dist/src/ (see "files" in package.json), not to dist/
-                // reason this works: entryRoot is the path that gets removed before the rest is appended
-                // to the output directory (dist/); thus, "." means that nothing is removed, so src/...
-                // is kept for all type files
-                entryRoot: ".",
+                // emit src/**/*.ts to dist/types/**/*.d.ts: entryRoot is the part of each source path that
+                // gets removed before the rest is appended to outDirs (default: the smallest common directory
+                // of all sources, so set it explicitly to keep the layout stable)
+                entryRoot: "src",
+                outDirs: "dist/types",
                 // also copy hand-written declarations (currently only src/parser/latex-parser.pegjs.d.ts)
                 copyDtsFiles: true,
                 exclude: ["node_modules/**", "src/cli.ts"],
                 beforeWriteFile: (filePath, content) => {
                     // src/types/ only has augmentations needed to compile src/ (copied, they'd lose their import)
                     // TODO: get rid of it by fixing svg.js
-                    if (filePath.includes("/dist/src/types/"))
+                    if (filePath.includes("/dist/types/types/"))
                         return false
 
                     // "./latex-parser.pegjs" only resolves to latex-parser.pegjs.d.ts with moduleResolution
@@ -65,7 +65,7 @@ export default defineConfig(env => {
                 compilerOptions: {
                     stripInternal: true     // drop members marked @internal from the published types
                 },
-                insertTypesEntry: true,
+                insertTypesEntry: false,    // package.json points to dist/types/index.d.ts directly
                 bundleTypes: false          // TODO: true breaks at the moment
             })
         ],
