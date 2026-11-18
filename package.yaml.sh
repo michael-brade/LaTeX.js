@@ -7,7 +7,7 @@ npx js-yaml > package.json <<'EOF'
 ---
 name: latex.js
 description: JavaScript LaTeX to HTML5 translator
-version: 0.12.6
+version: 0.13.0
 
 author:
     name: Michael Brade
@@ -21,7 +21,7 @@ keywords:
     - html5
 
 bin:
-    latex.js: ./bin/latex.js
+    latex.js: bin/latex.js
 
 type: module
 
