@@ -1,10 +1,7 @@
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 import { defineConfig } from 'vitepress'
 
-
-const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -63,10 +60,14 @@ export default defineConfig({
                 }
             }
         },
+        // so that hyphen (CommonJS) gets bundled for SSR (Node can't import its named exports)
+        ssr: {
+            noExternal: ['hyphen']
+        },
         resolve: {
             alias: {
                 // Alias to find theme components
-                '@theme/components': path.resolve(dirname, './theme/components')
+                '@theme/components': path.resolve(import.meta.dirname, './theme/components')
             }
         }
     }

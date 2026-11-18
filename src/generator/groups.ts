@@ -1,5 +1,5 @@
-import Stack from "../../lib/stack.ts";
-import { type Constructor } from "../../lib/mixin.ts"
+import Stack from "../util/stack.ts";
+import { type Constructor } from "../util/mixin.ts"
 
 import { Core } from "./core.ts"
 

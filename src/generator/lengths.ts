@@ -1,4 +1,4 @@
-import { type Constructor } from "../../lib/mixin.ts"
+import { type Constructor } from "../util/mixin.ts"
 
 import type { GroupsAPI, StackItem } from "./groups.ts"
 import { Length } from "../types.ts"
@@ -25,6 +25,12 @@ export function Lengths<TBase extends Constructor<GroupsAPI>>(Base: TBase)
      */
     abstract class LengthsMixin extends Base
     {
+        // required, @see Environments.reset() explanation
+        override reset(): void
+        {
+            super.reset()
+        }
+
         // lengths are local to a group: a new group starts with (a view of) the parent's lengths
         override _newGroup(parent: StackItem | undefined, copyAttrs: boolean): StackItem
         {

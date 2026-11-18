@@ -26,6 +26,32 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+
+    # Ubuntu 23.10+ blocks unprivileged user namespaces via AppArmor, which Chrome's sandbox needs
+    - name: Allow unprivileged user namespaces for Chrome's sandbox
+      run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+    # puppeteer's postinstall downloads Chrome and Firefox into ~/.cache/puppeteer unless they are already
+    # there; restore them before npm ci (the browser versions are pinned by puppeteer's version in the lockfile)
+    - name: Cache puppeteer browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/puppeteer
+        key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
+
+    # check and build
     - run: npm ci
+    - run: npm run typecheck
     - run: npm run build
-    - run: npm test
+
+    - name: Test with coverage
+      run: npm run testc
+    - name: Upload coverage report
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-node-${{ matrix.node-version }}
+        path: |
+          test/coverage/
+          !test/coverage/tmp
+        retention-days: 14

@@ -1,4 +1,4 @@
-import Stack from '../lib/stack.ts';
+import Stack from './util/stack.ts';
 
 import type { Generator } from "./generator/generator.ts";
 import type { PackageOpts } from './options.ts';

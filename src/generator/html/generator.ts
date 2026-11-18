@@ -50,6 +50,10 @@ export class HtmlGenerator extends Generator<Node>
     // narrow marginPars to Node
     declare marginPars: MarginPar<Node>[];
 
+    /**
+     * @internal
+     * svg.js, used by the picture macros, is not part of the published types
+     */
     SVG = SVG
 
     // CTOR

@@ -1,4 +1,4 @@
-import { type Constructor } from "../../lib/mixin.ts"
+import { type Constructor } from "../util/mixin.ts"
 
 import type { GroupsAPI } from "./groups.ts"
 import type { MacroManagementAPI } from "./macro-management.ts"
@@ -12,6 +12,15 @@ export function Environments<TBase extends Constructor<GroupsAPI & MacroManageme
      */
     abstract class EnvironmentsMixin extends Base
     {
+        // no state of its own to reset, but declaring reset() here makes the emitted .d.ts declare it as a
+        // method; otherwise it is inherited from the intersection of the mixin APIs in the type constraint
+        // above and is emitted as "reset: (() => void) & (() => void) & (() => void);", and
+        // Generator's "override reset()" then fails (TS2425)
+        override reset(): void
+        {
+            super.reset()
+        }
+
         // \begin{envId}: start the environment
         // the macro \<envId> is executed by the parser once its arguments are parsed
         begin(envId: string): void

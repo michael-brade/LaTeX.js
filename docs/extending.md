@@ -37,7 +37,7 @@ Files and classes needed to translate <latex/> documents to HTML documents:
 - packages: `src/latex/packages/*.ts`
 
 - the CLI: `src/cli.ts`
-- the webcomponent: `src/latex.component.mjs`
+- the webcomponent: `src/latex.component.ts`
 - the library API: `src/index.ts`
 
 Files needed to display the generated HTML document:

@@ -1,4 +1,4 @@
-import { type Constructor } from "../../lib/mixin.ts"
+import { type Constructor } from "../util/mixin.ts"
 
 import type { AttributesAPI } from "./attributes.ts"
 import { ligatures, diacritics, symbols } from "../latex/symbols.ts"
@@ -15,6 +15,12 @@ export function Primitives<TBase extends Constructor<AttributesAPI>>(Base: TBase
      */
     abstract class PrimitivesMixin extends Base
     {
+        // required, @see Environments.reset() explanation
+        override reset(): void
+        {
+            super.reset()
+        }
+
         //// spaces and invisible characters
 
         readonly sp     = ' '               // collapsible space

@@ -1,0 +1,20 @@
+diff --git a/node_modules/yargs/build/lib/yargs-factory.js b/node_modules/yargs/build/lib/yargs-factory.js
+index d3e6baa..a488ad5 100644
+--- a/node_modules/yargs/build/lib/yargs-factory.js
++++ b/node_modules/yargs/build/lib/yargs-factory.js
+@@ -1098,7 +1098,14 @@ export class YargsInstance {
+         try {
+             let startDir = rootPath || __classPrivateFieldGet(this, _YargsInstance_shim, "f").mainFilename;
+             if (__classPrivateFieldGet(this, _YargsInstance_shim, "f").path.extname(startDir)) {
+-                startDir = __classPrivateFieldGet(this, _YargsInstance_shim, "f").path.dirname(startDir);
++                // a directory can have an "extension", too (like LaTeX.js): only strip a file name;
++                // readdirSync throws for files (and in the browser shim it's a stub that returns [])
++                try {
++                    __classPrivateFieldGet(this, _YargsInstance_shim, "f").readdirSync(startDir);
++                }
++                catch {
++                    startDir = __classPrivateFieldGet(this, _YargsInstance_shim, "f").path.dirname(startDir);
++                }
+             }
+             const pkgJsonPath = __classPrivateFieldGet(this, _YargsInstance_shim, "f").findUp(startDir, (dir, names) => {
+                 if (names.includes('package.json')) {
