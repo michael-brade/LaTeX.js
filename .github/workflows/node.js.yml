@@ -53,5 +53,4 @@ jobs:
         name: coverage-node-${{ matrix.node-version }}
         path: |
           test/coverage/
-          !test/coverage/tmp/
         retention-days: 14
