@@ -92,7 +92,7 @@ index c230ce1..935084f 100644
  Object.defineProperty(exports, 'utils', {
    enumerable: true,
 diff --git a/node_modules/@svgdotjs/svg.js/svg.js.d.ts b/node_modules/@svgdotjs/svg.js/svg.js.d.ts
-index 82fbbbe..4a69566 100644
+index 82fbbbe..34f57ef 100644
 --- a/node_modules/@svgdotjs/svg.js/svg.js.d.ts
 +++ b/node_modules/@svgdotjs/svg.js/svg.js.d.ts
 @@ -72,6 +72,7 @@ declare module '@svgdotjs/svg.js' {
@@ -103,3 +103,33 @@ index 82fbbbe..4a69566 100644
    function create(name: string): SVGElement
    function create(
      name: string,
+@@ -1522,9 +1523,9 @@ declare module '@svgdotjs/svg.js' {
+     clone(deep?: boolean, assignNewIds?: boolean): this
+     ctm(): Matrix
+     cx(): number
+-    cx(x: number): this
++    cx(x: NumberAlias): this
+     cy(): number
+-    cy(y: number): this
++    cy(y: NumberAlias): this
+     data(name: string, value: any, sustain?: boolean): this
+     data(name: string): any
+     data(val: object): this
+@@ -1933,7 +1934,7 @@ declare module '@svgdotjs/svg.js' {
+     rx(rx: NumberAlias): this
+     ry(): NumberAlias
+     ry(ry: NumberAlias): this
+-    radius(x: number, y?: number): this
++    radius(x: NumberAlias, y?: NumberAlias): this
+   }
+ 
+   // shape.js
+@@ -1942,7 +1943,7 @@ declare module '@svgdotjs/svg.js' {
+   // sugar.js
+   interface StrokeData {
+     color?: string
+-    width?: number
++    width?: NumberAlias
+     opacity?: number
+     linecap?: string
+     linejoin?: string

@@ -823,10 +823,10 @@ export class LaTeX
 
 
     // the stroke of a picture object: black, with the given width (default: none); svg.js writes the
-    // length with its unit as given, only its typings insist on a number
+    // length with its unit as given
     private _stroke(width?: Length)
     {
-        return { color: "#000", width: (width ? width.value : "0") as unknown as number };
+        return { color: "#000", width: width ? width.value : "0" };
     }
 
 
