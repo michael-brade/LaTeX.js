@@ -46,12 +46,6 @@ jobs:
 
     - name: Test with coverage
       run: npm run testc
-    - name: Debug coverage location
-      if: ${{ !cancelled() }}
-      run: |
-          pwd
-          ls -la test
-          find . -name index.html -path '*coverage*' -not -path './node_modules/*'
     - name: Upload coverage report
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
