@@ -60,8 +60,11 @@ scripts:
 
     # typescript (7) and @typescript/old (6, a dependency of @typescript/typescript6) both have a "tsc" bin,
     # and npm may link either one; make sure node_modules/.bin/tsc is TypeScript 7 (also used by
-    # vite-plugin-checker during vite build)
-    postinstall: >-
+    # vite-plugin-checker during vite build).
+    # use prepare, not postinstall: it must run only on npm install/ci in this repo and not when
+    # latex.js is installed as a dependency (postinstall would run then) because no patch-package
+    # or typescript exist then
+    prepare: >-
         patch-package &&
         ln -sf ../typescript/bin/tsc node_modules/.bin/tsc
         ;
