@@ -55,3 +55,6 @@ jobs:
           test/coverage/
           !test/coverage/tmp
         retention-days: 14
+
+    - name: Integration tests
+      run: npm run test-int

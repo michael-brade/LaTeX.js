@@ -147,6 +147,14 @@ scripts:
 
     testc: c8 mocha test/*.ts;
 
+    # integration tests
+
+    test-int: >-
+        test/integration/pack.sh &&
+        test/integration/consumer.sh &&
+        test/integration/react.sh
+        ;
+
 dependencies:
     ### CLI dependencies
 

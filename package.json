@@ -55,7 +55,8 @@
     "devdocs": "npm run prepare-latex-assets && vitepress dev docs ;",
     "docs": "npm run build && npm run prepare-latex-assets && { [ -d website ] || git worktree add website gh-pages; } && mv website/.git .website.git && ( vitepress build docs; status=$?; mv .website.git website/.git; exit $status ) && cd website && git add . && { git diff --cached --quiet || git commit -m 'regenerated website'; } ;",
     "test": "mocha test/*.ts;",
-    "testc": "c8 mocha test/*.ts;"
+    "testc": "c8 mocha test/*.ts;",
+    "test-int": "test/integration/pack.sh && test/integration/consumer.sh && test/integration/react.sh ;"
   },
   "dependencies": {
     "commander": "8.x",
