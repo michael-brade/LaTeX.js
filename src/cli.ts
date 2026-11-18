@@ -1,9 +1,3 @@
-// on the server we need to include a DOM implementation - BEFORE requiring HtmlGenerator below
-import { createHTMLWindow } from 'svgdom';
-
-global.window = createHTMLWindow() as any;
-global.document = (global.window as any).document;
-
 import util from 'node:util';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,10 +6,20 @@ import { program } from 'commander';
 import beautify from 'js-beautify';
 import { encode } from 'he';
 
+// on the server we need to include a DOM implementation - BEFORE loading latex.js below:
+// the svg.js bundled into latex.js takes window and document from the globals when it is loaded
+import { createHTMLWindow } from 'svgdom';
+
+global.window = createHTMLWindow() as any;
+global.document = (global.window as any).document;
+
+// static imports are evaluated before this module's code, i.e.,
+// before the globals above are set, so import dynamically instead
+const { parse, HtmlGenerator } = await import('latex.js');
+
+import type { HtmlOptions, Hyphenator } from 'latex.js';
+
 import { createRequire } from 'node:module';
-
-import { parse, HtmlGenerator, type HtmlOptions, type Hyphenator } from 'latex.js';
-
 const require = createRequire(import.meta.url);
 
 // read package.json at runtime instead of bundling it; same relative path from src/ and bin/
@@ -138,7 +142,7 @@ input.then((text: string | Buffer[]) => {
     let html: string;
     if (options.body) {
         const div = document.createElement('div');
-        div.appendChild(generator.domFragment().cloneNode(true));
+        div.appendChild(generator.domFragment());
         html = div.innerHTML;
     } else {
         html = generator.htmlDocument(options.url).documentElement.outerHTML;

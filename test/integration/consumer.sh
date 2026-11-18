@@ -47,6 +47,19 @@ if [[ "$out" != *'<p>A <span class="bf">bold</span> text.</p>'* ]]; then
 fi
 echo "ok: CLI"
 
+# picture: svg.js needs the DOM globals when latex.js is loaded; -b: body only, which must not clone the SVG
+# (TODO: add \multiput once svgdom can clone an svg's plain xmlns attribute, see patches/svgdom+*.patch)
+picture='\setlength{\unitlength}{1cm}\begin{picture}(2,2)\put(0,0){\line(1,1){2}}\put(1,0){\circle{1}}\end{picture}'
+for opt in "" -b; do
+    out=$(echo "$picture" | npx latex.js $opt)
+    if [[ "$out" != *'<line x1="0" y1="0" x2="75.591" y2="75.591"'* || "$out" != *'<circle r="18.8975px"'* ]]; then
+        echo "FAIL: CLI $opt: picture: unexpected output:" >&2
+        echo "$out" >&2
+        exit 1
+    fi
+    echo "ok: CLI $opt picture"
+done
+
 
 echo "--- types"
 
