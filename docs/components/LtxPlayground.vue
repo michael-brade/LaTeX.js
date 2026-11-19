@@ -14,7 +14,7 @@ import { latex } from 'codemirror-lang-latex';
 import { oneDark } from '@codemirror/theme-one-dark'
 
 // LaTeX.js
-import { compile, zoom, handleLinks } from './LaTeX.ts'
+import { compile, applyZoom, handleLinks } from './LaTeX.ts'
 import showcase from '../showcase.tex?raw'
 
 
@@ -51,7 +51,7 @@ const zoomRef = ref(1)
 const zoomTo = (z: number) => {
     zoomRef.value = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round(z * 100) / 100))
     if (preview.value)
-        zoom(preview.value, zoomRef.value)
+        applyZoom(preview.value, zoomRef.value)
 }
 
 // step to the next multiple of 10%
@@ -101,7 +101,8 @@ const onPreviewLoad = () => {
 
     // passive:false because onWheel actually calls preventDefault()
     doc.addEventListener('wheel', onWheel, { passive: false })
-    zoom(preview.value!, zoomRef.value)
+
+    applyZoom(preview.value!, zoomRef.value)
 }
 
 
@@ -155,9 +156,9 @@ onMounted(() => {
             ></iframe>
 
             <div class="zoom-controls">
-                <button title="Zoom out (Ctrl+wheel)" :disabled="zoom <= MIN_ZOOM" @click="zoomOut">−</button>
+                <button title="Zoom out (Ctrl+wheel)" :disabled="zoomRef <= MIN_ZOOM" @click="zoomOut">−</button>
                 <button title="Reset zoom" @click="zoomTo(1)">{{ Math.round(zoomRef * 100) }}%</button>
-                <button title="Zoom in (Ctrl+wheel)" :disabled="zoom >= MAX_ZOOM" @click="zoomIn">+</button>
+                <button title="Zoom in (Ctrl+wheel)" :disabled="zoomRef >= MAX_ZOOM" @click="zoomIn">+</button>
             </div>
         </div>
     </div>

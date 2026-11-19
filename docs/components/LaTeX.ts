@@ -26,6 +26,32 @@ export function handleLinks(doc: Document)
 }
 
 
+function zoomDocument(doc: HTMLElement, z: number)
+{
+    doc.style.setProperty('zoom', z === 1 ? '' : String(z))
+}
+
+/**
+ * Zoom the output in the given iframe, keeping the relative scroll position.
+ * Also call it after the iframe loaded a new document.
+ */
+export function applyZoom(iframe: HTMLIFrameElement, z: number)
+{
+    const el = iframe.contentDocument?.scrollingElement
+    if (!el)
+        return
+
+    const fx = el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)
+    const fy = el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight)
+
+    // apply the zoom factor
+    zoomDocument(iframe.contentDocument?.documentElement, z)
+
+    el.scrollLeft = fx * (el.scrollWidth - el.clientWidth)
+    el.scrollTop = fy * (el.scrollHeight - el.clientHeight)
+}
+
+
 // take 20 chars before and after o from txt
 function excerpt(txt: string, o: number)
 {
@@ -75,35 +101,6 @@ function errorMessage(e: any): string
 
 
 
-let curZoomFactor = 1
-
-function applyZoom(iframe: HTMLIFrameElement)
-{
-    iframe.contentDocument?.documentElement.style.setProperty('zoom', curZoomFactor === 1 ? '' : String(curZoomFactor))
-}
-
-/**
- * Zoom the output in the given iframe, keeping the relative scroll position.
- * Also call it after the iframe loaded a new document.
- */
-export function zoom(iframe: HTMLIFrameElement, z: number)
-{
-    curZoomFactor = z
-
-    const el = iframe.contentDocument?.scrollingElement
-    if (!el)
-        return
-
-    const fx = el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)
-    const fy = el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight)
-
-    applyZoom(iframe)
-
-    el.scrollLeft = fx * (el.scrollWidth - el.clientWidth)
-    el.scrollTop = fy * (el.scrollHeight - el.clientHeight)
-}
-
-
 let generator: HtmlGenerator | null = null
 let scrollY = 0
 
@@ -118,6 +115,8 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
     const doc = iframe.contentDocument
     if (!doc || doc.readyState !== 'complete' || !doc.body)
         return
+
+    const curZoom = doc.documentElement.currentCSSZoom
 
     if (!generator) {
         generator = new HtmlGenerator({
@@ -141,7 +140,7 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
             const newBody = doc.adoptNode(newDoc.body)
             doc.documentElement.replaceChild(newBody, doc.body)
             doc.documentElement.style.cssText = newDoc.documentElement.style.cssText
-            applyZoom(iframe)
+            zoomDocument(doc.documentElement, curZoom)
         } else {
             iframe.srcdoc = newDoc.documentElement.outerHTML
 
