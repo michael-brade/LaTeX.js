@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
 import LaTeX from '@theme/components/LaTeX.vue'
 </script>
@@ -6,34 +6,17 @@ import LaTeX from '@theme/components/LaTeX.vue'
 
 <template>
   <DefaultTheme.Layout>
-    <template #navbar-brand>
-      <a href="/" class="navbar-brand-link">
-        <img
-          vPreload
-          class="logo"
-          src="/img/latexjs.png"
-          alt="LaTeX.js Logo"
-        />
-        <LaTeX />.js
-      </a>
+    <template #nav-bar-title-after>
+      <span class="site-title"><LaTeX />.js</span>
     </template>
   </DefaultTheme.Layout>
 </template>
 
 
 <style scoped>
-/* Style to match old home-link */
-.navbar-brand-link {
-  display: flex;
-  align-items: center;
+.site-title {
   font-family: 'Liberation Serif', serif;
   font-size: 1.5rem;
   font-weight: 500;
-}
-.logo {
-  height: 2rem;
-  padding-bottom: 0.2rem;
-  vertical-align: middle;
-  margin-right: 0.8rem;
 }
 </style>

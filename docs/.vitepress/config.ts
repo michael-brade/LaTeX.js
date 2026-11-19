@@ -23,6 +23,7 @@ export default defineConfig({
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
         logo: '/img/latexjs.png',
+        siteTitle: false,   // the typeset LaTeX.js logo is rendered by theme/Layout.vue
 
         aside: true,
 

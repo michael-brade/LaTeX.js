@@ -90,7 +90,7 @@ onMounted(() => {
 <style scoped>
 #playground {
     margin: 0;
-    height: 100vh;
+    height: 100%;
     display: grid;
     grid-template-rows: 100%;
     grid-template-columns: 1fr 6px 1fr;
