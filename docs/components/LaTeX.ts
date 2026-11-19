@@ -52,55 +52,80 @@ export function applyZoom(iframe: HTMLIFrameElement, z: number)
 }
 
 
-type Excerpt = { prolog: string, token: string, epilog: string }
+type Excerpt = { context: string[], prolog: string, token: string, epilog: string }
 
-// take 20 chars before and after offset o from txt, making invisible characters visible
-function excerpt(txt: string, o: number): Excerpt
+const EXCERPT_CONTEXT = 30      // max chars shown before and after the error position
+const CONTEXT_LINES = 2         // max lines shown before the error line...
+const CONTEXT_LINE_LENGTH = 2 * EXCERPT_CONTEXT + 1     // ...if they are at most this long
+
+// a string with invisible characters made visible
+function visible(s: string): string
 {
-    // clamp boundaries safely between 0 and text length
-    const b = Math.max(0, o - 20)
-    const e = Math.min(txt.length, o + 20)
-    // the token is a whole code point, not half of a surrogate pair
-    const t = o + ((txt.codePointAt(o) ?? 0) > 0xFFFF ? 2 : 1)
-
-    const hex = (ch: string, digits: number) => ch.codePointAt(0)!.toString(16).toUpperCase().padStart(digits, '0')
-
-    const extract = (start: number, end: number) => {
-        if (start >= end) return ''
-
-        return txt
-            .slice(start, end)
-            .replace(/\\/g, '\\\\')
-            .replace(/\x08/g, '\\b')
-            .replace(/\t/g, '\\t')
-            .replace(/\n/g, '\\n')
-            .replace(/\f/g, '\\f')
-            .replace(/\r/g, '\\r')
-            // remaining control and format characters (e.g. zero-width space, BOM), separators, non-breaking space;
-            // everything else, like umlauts, is shown as is
-            .replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}\u00A0]/gu, ch => {
-                const c = ch.codePointAt(0)!
-                return c <= 0xFF ? '\\x' + hex(ch, 2) : c <= 0xFFFF ? '\\u' + hex(ch, 4) : `\\u{${hex(ch, 0)}}`
-            })
-    }
-
-    return {
-        prolog: extract(b, o),
-        token: extract(o, t),
-        epilog: extract(t, Math.max(t, e))
-    }
+    return s
+        // a tab as one space keeps the caret aligned
+        .replace(/\t/g, ' ')
+        // other control and format characters (e.g. zero-width space, BOM), separators, non-breaking space;
+        // not as \x.. or \u..., which would look like LaTeX
+        .replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}\u00A0]/gu, ch =>
+            `⟨U+${ch.codePointAt(0)!.toString(16).toUpperCase().padStart(4, '0')}⟩`)
 }
 
+// length in code points, not UTF-16 units
+const len = (s: string) => [...s].length
+
+// The part of the line that contains offset o: at most EXCERPT_CONTEXT chars before and after it (… if cut off).
+// If the line isn't cut off at the beginning, also up to CONTEXT_LINES short lines before it.
+function excerpt(txt: string, o: number): Excerpt
+{
+    // without \r, so CRLF line endings don't show up as ⟨U+000D⟩
+    const lines = txt.slice(0, o).split('\n').map(l => l.replace(/\r$/, ''))
+    const linePrefix = lines.pop()!
+    const lineRest = /^[^\r\n]*/.exec(txt.slice(o))![0]
+
+    // the token is a whole code point, not half of a surrogate pair; empty at the end of the line
+    const tokenLen = lineRest ? ((lineRest.codePointAt(0)! > 0xFFFF) ? 2 : 1) : 0
+    const token = lineRest.slice(0, tokenLen)
+    const rest = lineRest.slice(tokenLen)
+
+    const prolog = linePrefix.length > EXCERPT_CONTEXT ? '…' + linePrefix.slice(-EXCERPT_CONTEXT) : linePrefix
+    const epilog = rest.length > EXCERPT_CONTEXT ? rest.slice(0, EXCERPT_CONTEXT) + '…' : rest
+
+    // context: the lines before, as long as they are short, without leading empty lines
+    const context: string[] = []
+    if (linePrefix.length <= EXCERPT_CONTEXT) {     // only if the error line isn't cut off at the beginning
+        for (const l of lines.slice(-CONTEXT_LINES).reverse()) {
+            if (len(l) > CONTEXT_LINE_LENGTH)
+                break
+            context.unshift(visible(l))
+        }
+        while (context.length && !context[0].trim())
+            context.shift()
+    }
+
+    return { context, prolog: visible(prolog), token: visible(token), epilog: visible(epilog) }
+}
+
+/**
+ * The error message with the source line (and maybe a few lines before it as context),
+ * a caret pointing at the error position below it:
+ *
+ *                         \section{Intro}
+ *                         Some text
+ *     line 21 (column 8): \begin{abstsract}
+ *     ---------------------------^
+ *     unknown environment: abstsract
+ */
 function errorMessage(e: LaTeXSyntaxError, latex: string): string
 {
     const { line, column, offset } = e.location.start
     const l = excerpt(latex, offset)
 
     const prefix1 = `line ${line} (column ${column}): `
-    // count code points, not UTF-16 units, so the caret lines up
-    const prefix2 = '-'.repeat(prefix1.length + [...l.prolog].length)
+    const prefix2 = '-'.repeat(prefix1.length + len(l.prolog))
+    const indent = ' '.repeat(prefix1.length)
 
-    return `${prefix1}${l.prolog}${l.token}${l.epilog}\n` +
+    return l.context.map(c => `${indent}${c}\n`).join('') +
+           `${prefix1}${l.prolog}${l.token}${l.epilog}\n` +
            `${prefix2}^\n` +
            `${e.message}`
 }
