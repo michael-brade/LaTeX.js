@@ -4,26 +4,25 @@ import { hyphenateSync } from 'hyphen/en'
 import errorCss from './error.scss?inline'
 
 
-let generator: HtmlGenerator | null = null
-
-
-function links()
+/**
+ * Handle same-page links in the given (iframe-)document with one delegated listener.
+ * Call it for each document the iframe loads; it survives compile() replacing the body.
+ */
+export function handleLinks(doc: Document)
 {
-    const as: HTMLCollectionOf<HTMLAnchorElement> = document.getElementsByTagName('a')
-    for (const a of as) {
-        const href = a.getAttribute('href')
-        if (!href || !href.startsWith('#'))
-            continue
+    // Same-page links in an srcdoc iframe would load the parent page into the frame, see
+    // https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame
+    // so use scrollIntoView instead
+    doc.addEventListener('click', (e: MouseEvent) => {
+        // no instanceof: the event comes from the iframe's realm
+        const t = e.target as Element | null
+        const a = typeof t?.closest === 'function' ? t.closest('a[href^="#"]') : null
+        if (!a) return
 
-        a.addEventListener('click', (e: PointerEvent) => {
-            e.preventDefault()
-            const target = href.substring(1)
-            const targetEl = document.getElementById(target)
-            if (!targetEl || !document.scrollingElement)
-                return
-            document.scrollingElement.scrollTop = targetEl.getBoundingClientRect().top
-        })
-    }
+        e.preventDefault()
+        const id = decodeURIComponent(a.getAttribute('href')!.substring(1))
+        a.ownerDocument.getElementById(id)?.scrollIntoView()
+    })
 }
 
 
@@ -105,6 +104,7 @@ export function zoom(iframe: HTMLIFrameElement, z: number)
 }
 
 
+let generator: HtmlGenerator | null = null
 let scrollY = 0
 
 /**
@@ -135,13 +135,6 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
         const errorStyle = newDoc.createElement('style')
         errorStyle.textContent = errorCss
         newDoc.head.appendChild(errorStyle)
-
-        // we need to disable normal processing of same-page links in the iframe
-        // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame
-        // put the script at the end of the body so that links have been processed already by the time it executes
-        const linkScript = newDoc.createElement('script')
-        linkScript.text = `(${links.toString()})();`
-        newDoc.body.appendChild(linkScript)
 
         // don't reload all the styles and fonts if not needed!
         if (doc.head.innerHTML === newDoc.head.innerHTML) {

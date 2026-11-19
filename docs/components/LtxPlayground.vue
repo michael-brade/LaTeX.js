@@ -14,7 +14,7 @@ import { latex } from 'codemirror-lang-latex';
 import { oneDark } from '@codemirror/theme-one-dark'
 
 // LaTeX.js
-import { compile, zoom } from './LaTeX.ts'
+import { compile, zoom, handleLinks } from './LaTeX.ts'
 import showcase from '../showcase.tex?raw'
 
 
@@ -92,12 +92,14 @@ const onWheel = (e: WheelEvent) => {
     }
 }
 
-// wheel events inside the iframe don't reach this page: listen in each document the iframe loads
+// events inside the iframe don't reach this page: listen in each document the iframe loads
 const onPreviewLoad = () => {
     const doc = preview.value?.contentDocument
-    if (!doc)
-        return
-    // passive:false because onWhell actually calls preventDefault()
+    if (!doc) return
+
+    handleLinks(doc)
+
+    // passive:false because onWheel actually calls preventDefault()
     doc.addEventListener('wheel', onWheel, { passive: false })
     zoom(preview.value!, zoomRef.value)
 }
