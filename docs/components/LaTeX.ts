@@ -1,4 +1,4 @@
-import { parse, HtmlGenerator, SyntaxError } from 'latex.js'
+import { parse, HtmlGenerator, SyntaxError as LaTeXSyntaxError } from 'latex.js'
 import { hyphenateSync } from 'hyphen/en'
 
 import errorCss from './error.scss?inline'
@@ -87,16 +87,26 @@ function excerpt(txt: string, o: number)
     }
 }
 
-function errorMessage(e: any): string
+function errorMessage(e: LaTeXSyntaxError, latex: string): string
 {
-    const { line, column, location: l, message } = e
+    const { line, column, offset } = e.location.start
+    const l = excerpt(latex, offset)
 
     const prefix1 = `line ${line} (column ${column}): `
-    const prefix2 = '-'.repeat(prefix1.length + l.prolog.length)
+    // count code points, not UTF-16 units, so the caret lines up
+    const prefix2 = '-'.repeat(prefix1.length + [...l.prolog].length)
 
     return `${prefix1}${l.prolog}${l.token}${l.epilog}\n` +
            `${prefix2}^\n` +
-           `${message}`
+           `${e.message}`
+}
+
+function showError(doc: Document, text: string)
+{
+    const pre = doc.createElement('pre')
+    pre.className = 'error'
+    pre.textContent = text      // not innerHTML: the message and the excerpt can contain < and &
+    doc.body.replaceChildren(pre)
 }
 
 
@@ -152,7 +162,7 @@ export function compile(latex: string, iframe: HTMLIFrameElement, baseURL: strin
             iframe.contentWindow?.scrollTo(0, scrollY)
             scrollY = 0
         }
-    } catch (e: any) {
+    } catch (e: unknown) {
         console.error(e)
 
         // save scrolling position and restore on next successful compile
@@ -160,20 +170,10 @@ export function compile(latex: string, iframe: HTMLIFrameElement, baseURL: strin
             scrollY = iframe.contentWindow?.pageYOffset ?? 0
 
 
-        if (e instanceof SyntaxError) {
-            doc.body.innerHTML ='<pre class="error">ERROR: Parsing failure:\n\n' +
-                errorMessage({
-                    line: e.location?.start?.line ?? 0,
-                    column: e.location?.start?.column ?? 0,
-                    message: e.message,
-                    found: e.found ?? '',
-                    expected: e.expected ?? '',
-                    location: excerpt(latex, e.location?.start?.offset ?? 0)
-                }) +
-            '</pre>'
-        } else {
-            doc.body.innerHTML = '<pre class="error">ERROR: ' + e.message + '</pre>'
-        }
+        if (e instanceof LaTeXSyntaxError)
+            showError(doc, 'ERROR: Parsing failure:\n\n' + errorMessage(e, latex))
+        else
+            showError(doc, 'ERROR: ' + (e instanceof Error ? e.message : String(e)))
     }
 }
 
