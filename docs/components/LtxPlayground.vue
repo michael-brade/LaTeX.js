@@ -153,6 +153,11 @@ const onPreviewLoad = () => {
     const doc = preview.value?.contentDocument
     if (!doc) return
 
+    // the initial about:blank finished loading (no srcdoc yet): onCmReady may have come too early,
+    // when compile() still had to skip it, so do the first render now
+    if (!preview.value!.srcdoc)
+        compile(code.value, preview.value!, latexjsURL())
+
     handleLinks(doc)
 
     // passive:false because onWheel actually calls preventDefault()
@@ -191,7 +196,6 @@ onMounted(() => {
                 <code-mirror id="latex-editor"
                     v-model="code"
                     :extensions="extensions"
-                    :style="{ width: '100%', height: '100%' }"
                     :autofocus="true"
                     :indent-with-tab="true"
                     :tab-size="4"
@@ -230,7 +234,6 @@ $border: #ccc;
     display: grid;
     grid-template-rows: 100%;
     grid-template-columns: 1fr 6px 1fr;
-    grid-template-areas: 'latex gutter preview';
 }
 
 .pane-wrapper {
@@ -264,12 +267,31 @@ $border: #ccc;
 }
 
 #latex-editor {
-    grid-area: latex;
+    width: 100%;
     height: 100%;
 }
 
+#gutter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: col-resize;
+
+    &::before {
+        display: block;
+        content: '';
+        width: 2px;
+        height: 40px;
+        border-left: 1px solid $border;
+        border-right: 1px solid $border;
+    }
+
+    &:hover::before {
+        border-color: #999;
+    }
+}
+
 #preview {
-    grid-area: preview;
     color: #333;
     border: none;
     width: 100%;
@@ -312,26 +334,6 @@ $border: #ccc;
             color: #bbb;
             cursor: default;
         }
-    }
-}
-
-#gutter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: col-resize;
-
-    &::before {
-        display: block;
-        content: '';
-        width: 2px;
-        height: 40px;
-        border-left: 1px solid $border;
-        border-right: 1px solid $border;
-    }
-
-    &:hover::before {
-        border-color: #999;
     }
 }
 </style>
