@@ -1,8 +1,10 @@
-function getVariable(el, propertyName) {
+function getVariable(el, propertyName)
+{
     return String(getComputedStyle(el).getPropertyValue('--' + propertyName)).trim();
-};
+}
 
-function processTheElements() {
+function processTheElements()
+{
     var thes = document.querySelectorAll('.the');
     for (var i = 0; i < thes.length; i++) {
         var v = getVariable(thes[i], thes[i].getAttribute('display-var'));
@@ -14,14 +16,14 @@ function processTheElements() {
 }
 
 
-function _vertical(el, tb) {
+function _vertical(el, tb)
+{
     var doc, docEl, rect, win;
 
     // return zero for disconnected and hidden (display: none) elements, IE <= 11 only
     // running getBoundingClientRect() on a disconnected node in IE throws an error
-    if ( !el.getClientRects().length ) {
+    if (!el.getClientRects().length)
         return 0;
-    }
 
     rect = el.getBoundingClientRect();
 
@@ -33,27 +35,32 @@ function _vertical(el, tb) {
 }
 
 
-function offsetTop(el) {
+function offsetTop(el)
+{
     return _vertical(el, "top");
 }
 
-function offsetBottom(el) {
+function offsetBottom(el)
+{
     return _vertical(el, "bottom");
 }
 
-function offsetBaseline(el) {
+function offsetBaseline(el)
+{
     var mpbaseline = el.querySelector('.mpbaseline');
     return offsetBottom(mpbaseline);
 }
 
-function heightAboveBaseline(el) {
+function heightAboveBaseline(el)
+{
     var baseline = offsetBaseline(el);
     var top = offsetTop(el);
     return baseline - top;
 }
 
 
-function positionMarginpars() {
+function positionMarginpars()
+{
     var mpars = document.querySelectorAll('.marginpar > div');
     var prevBottom = 0;
 
@@ -68,9 +75,8 @@ function positionMarginpars() {
         var top = Math.round((baselineref - heightAB - prevBottom) * 10) / 10;
 
         // only mutate if it actually changed
-        if (mpar.style.marginTop != Math.max(0, top) + "px") {
+        if (mpar.style.marginTop != Math.max(0, top) + "px")
             mpar.style.marginTop = Math.max(0, top) + "px";
-        }
 
         // if marginTop would have been negative, the element is now further down by that offset => add it to prevBottom
         prevBottom = baselineref - heightAB + height - Math.min(0, top);
@@ -124,7 +130,8 @@ var optimizedResize = (function() {
 
 // setup event listeners
 
-function completed() {
+function completed()
+{
     document.removeEventListener("DOMContentLoaded", completed);
 	window.removeEventListener("load", positionMarginpars);
 
