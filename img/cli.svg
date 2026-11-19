@@ -1,0 +1,14 @@
+<svg width="48.012" height="48.013" version="1.1" viewBox="0 0 480.12 480.13" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="filter4172" x="-.11442" y="-.20697" width="1.2288" height="1.4139">
+      <feGaussianBlur stdDeviation="8.1029346"/>
+    </filter>
+  </defs>
+  <g transform="translate(-113.66 -356.81)">
+    <rect x="124.29" y="367.44" width="458.86" height="458.87" ry="55.863" color="#000000" fill="#1a1a1a" stroke="#bcbbba" stroke-linejoin="round" stroke-width="21.26"/>
+    <g transform="translate(20.796,23.246)" fill="#fff" font-family="Sans" font-size="40px" letter-spacing="0px" word-spacing="0px">
+      <text x="139.36914" y="465.04187" filter="url(#filter4172)" style="line-height:125%" xml:space="preserve">         <tspan x="139.36914" y="465.04187" fill="#ffffff" font-size="120px" font-weight="bold">&gt;_</tspan>      </text>
+      <text x="139" y="464.36218" style="line-height:125%" xml:space="preserve">         <tspan x="139" y="464.36218" fill="#ffffff" font-size="120px" font-weight="bold">&gt;_</tspan>      </text>
+    </g>
+  </g>
+</svg>
