@@ -46,7 +46,7 @@
   ],
   "scripts": {
     "prepare": "patch-package && ln -sf ../typescript/bin/tsc node_modules/.bin/tsc ;",
-    "clean": "rimraf dist bin website test/coverage docs/public/latexjs docs/.vitepress/.temp docs/.vitepress/cache ;",
+    "clean": "rimraf dist bin website .website.git test/coverage docs/public/latexjs docs/.vitepress/.temp docs/.vitepress/cache ; git worktree remove --force website 2>/dev/null; git worktree prune;",
     "assets": "mkdirp dist/css dist/js dist/fonts dist/documentclasses dist/packages && touch dist/documentclasses/.keep dist/packages/.keep && rsync -a src/css/ dist/css/ && rsync -a public/fonts/ dist/fonts/ && rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/ && rsync -a public/js/ dist/js/ ;",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test && node lib/vue-tsc.cjs --noEmit -p docs/.vitepress ;",
     "devbuild": "vite build --mode development && vite build -c vite.cli.config.ts --mode development && npm run assets ;",
