@@ -6,11 +6,17 @@ import Split from 'split-grid'
 
 // CodeMirror
 import CodeMirror from 'vue-codemirror6'
-import { basicSetup } from 'codemirror'
 
-import type { LanguageSupport } from '@codemirror/language';
-import type { EditorState, Extension } from '@codemirror/state';
-import { EditorView, type ViewUpdate } from '@codemirror/view';
+import { EditorState, type Extension } from '@codemirror/state'
+import {
+    EditorView, keymap, lineNumbers, highlightActiveLineGutter, highlightSpecialChars, drawSelection,
+    dropCursor, rectangularSelection, crosshairCursor, highlightActiveLine
+} from '@codemirror/view'
+import { foldGutter, foldKeymap, indentOnInput, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
+import { history, historyKeymap, defaultKeymap } from '@codemirror/commands'
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
+import { closeBracketsKeymap } from '@codemirror/autocomplete'
+import { lintKeymap } from '@codemirror/lint'
 import { latex } from 'codemirror-lang-latex';
 import { oneDark } from '@codemirror/theme-one-dark'
 
@@ -24,7 +30,52 @@ const fontSize = EditorView.theme({
     '&': { fontSize: '13px' }
 })
 
-const extensions: Extension[] = [basicSetup, latex(), oneDark, fontSize]
+// editorSetup currently does what `basicSetup` from the `codemirror` package does;
+// latex() already brings autocompletion (+ completionKeymap), closeBrackets and bracket matching,
+// plus linting and hover tooltips, so no need for them here
+const editorSetup: Extension[] = [
+    // gutters
+    lineNumbers(),
+    highlightActiveLineGutter(),
+    foldGutter(),
+
+    // display
+    highlightSpecialChars(),
+    drawSelection(),
+    dropCursor(),
+    highlightActiveLine(),
+    highlightSelectionMatches(),
+    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+
+    // editing
+    history(),
+    indentOnInput(),
+    EditorState.allowMultipleSelections.of(true),
+    rectangularSelection(),
+    crosshairCursor(),
+
+    keymap.of([
+        ...closeBracketsKeymap,
+        ...defaultKeymap,
+        ...searchKeymap,
+        ...historyKeymap,
+        ...foldKeymap,
+        ...lintKeymap
+    ])
+]
+
+const extensions: Extension[] = [
+    editorSetup,
+    latex({
+        autoCloseTags: true,
+        autoCloseBrackets: true,
+        enableAutocomplete: true,
+        enableLinting: false,       // we get the real parse errors, no need for linting
+        enableTooltips: true
+    }),
+    oneDark,
+    fontSize
+]
 
 // absolute URL of the LaTeX.js css/, fonts/ and js/ folders (docs/public/latexjs/), respecting the site's base;
 // a function because window doesn't exist during SSR
