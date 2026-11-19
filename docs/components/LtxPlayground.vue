@@ -162,7 +162,9 @@ onMounted(() => {
 </template>
 
 
-<style scoped>
+<style scoped lang="scss">
+$border: #ccc;
+
 #playground {
     margin: 0;
     height: 100%;
@@ -184,22 +186,22 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-}
 
-/*
-Target CodeMirror's core web component layout directly.
-This treats whatever element the wrapper generates as a strict layout block.
-*/
-.absolute-container > div,
-.absolute-container :deep(.cm-editor) {
-    height: 100% !important;
-    width: 100% !important;
-}
+    /*
+    Target CodeMirror's core web component layout directly.
+    This treats whatever element the wrapper generates as a strict layout block.
+    */
+    > div,
+    :deep(.cm-editor) {
+        height: 100% !important;
+        width: 100% !important;
+    }
 
-/* Ensure inner scroll tracks do not bubble up layout shifts to split-grid */
-.absolute-container :deep(.cm-scroller) {
-    overflow: auto;
-    scrollbar-gutter: stable; /* Keeps layout tracking static when scrollbars toggle */
+    /* Ensure inner scroll tracks do not bubble up layout shifts to split-grid */
+    :deep(.cm-scroller) {
+        overflow: auto;
+        scrollbar-gutter: stable; /* Keeps layout tracking static when scrollbars toggle */
+    }
 }
 
 #latex-editor {
@@ -221,7 +223,7 @@ This treats whatever element the wrapper generates as a strict layout block.
     top: 8px;
     right: 24px;    /* leave room for the iframe's scrollbar */
     display: flex;
-    border: 1px solid #ccc;
+    border: 1px solid $border;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.9);
     font-size: 13px;
@@ -229,29 +231,29 @@ This treats whatever element the wrapper generates as a strict layout block.
     opacity: 0.5;
     transition: opacity 0.2s;
     overflow: hidden;
-}
 
-.zoom-controls:hover {
-    opacity: 1;
-}
+    &:hover {
+        opacity: 1;
+    }
 
-.zoom-controls button {
-    padding: 2px 8px;
-    min-width: 28px;
-    font-variant-numeric: tabular-nums;
-}
+    button {
+        padding: 2px 8px;
+        min-width: 28px;
+        font-variant-numeric: tabular-nums;
 
-.zoom-controls button + button {
-    border-left: 1px solid #ccc;
-}
+        & + button {
+            border-left: 1px solid $border;
+        }
 
-.zoom-controls button:hover:not(:disabled) {
-    background: #eee;
-}
+        &:hover:not(:disabled) {
+            background: #eee;
+        }
 
-.zoom-controls button:disabled {
-    color: #bbb;
-    cursor: default;
+        &:disabled {
+            color: #bbb;
+            cursor: default;
+        }
+    }
 }
 
 #gutter {
@@ -259,18 +261,18 @@ This treats whatever element the wrapper generates as a strict layout block.
     justify-content: center;
     align-items: center;
     cursor: col-resize;
-}
 
-#gutter::before {
-    display: block;
-    content: '';
-    width: 2px;
-    height: 40px;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-}
+    &::before {
+        display: block;
+        content: '';
+        width: 2px;
+        height: 40px;
+        border-left: 1px solid $border;
+        border-right: 1px solid $border;
+    }
 
-#gutter:hover::before {
-    border-color: #999;
+    &:hover::before {
+        border-color: #999;
+    }
 }
 </style>

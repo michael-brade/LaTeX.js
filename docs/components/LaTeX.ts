@@ -1,6 +1,8 @@
 import { parse, HtmlGenerator, SyntaxError } from 'latex.js'
 import { hyphenateSync } from 'hyphen/en'
 
+import errorCss from './error.scss?inline'
+
 
 let generator: HtmlGenerator | null = null
 
@@ -119,9 +121,7 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
 
     if (!generator) {
         generator = new HtmlGenerator({
-            hyphenate: hyphenateSync,
-            // resolved against the baseURL /latexjs/, so make it absolute: it's in docs/public/css/
-            styles: ['/css/error.css']
+            hyphenate: hyphenateSync
         })
     } else {
         generator.reset();
@@ -130,6 +130,11 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
     try {
         const baseURL = window.location.origin + '/latexjs/'
         const newDoc = parse(latex, { generator }).htmlDocument(baseURL)
+
+        // styles for the error messages below
+        const errorStyle = newDoc.createElement('style')
+        errorStyle.textContent = errorCss
+        newDoc.head.appendChild(errorStyle)
 
         // we need to disable normal processing of same-page links in the iframe
         // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame

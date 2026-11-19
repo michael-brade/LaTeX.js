@@ -11,3 +11,9 @@ declare module '*.vue' {
 }
 
 declare module '*.css'
+declare module '*.scss'
+
+declare module '*?inline' {
+    const content: string
+    export default content
+}

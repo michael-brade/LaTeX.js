@@ -13,7 +13,7 @@ import LaTeX from '@theme/components/LaTeX.vue'
 </template>
 
 
-<style scoped>
+<style scoped lang="scss">
 .site-title {
   font-family: 'Liberation Serif', serif;
   font-size: 1.5rem;

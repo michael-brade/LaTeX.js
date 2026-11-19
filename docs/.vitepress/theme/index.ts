@@ -5,7 +5,7 @@ import Layout from './Layout.vue'
 import LaTeX from '@theme/components/LaTeX.vue'
 import TeX from '@theme/components/TeX.vue'
 
-import './style.css'
+import './style.scss'
 
 export default {
     extends: DefaultTheme,

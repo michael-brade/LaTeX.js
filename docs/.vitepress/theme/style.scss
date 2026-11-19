@@ -1,0 +1,64 @@
+$nav-green: #3eaf7c;    // #2e8555
+
+:root {
+    --ltx-nav-green: #{$nav-green};
+
+    /* remember the theme's colors (computed per light/dark) to restore them in navbar dropdowns */
+    --ltx-c-text-1: var(--vp-c-text-1);
+    --ltx-c-text-2: var(--vp-c-text-2);
+    --ltx-c-brand-1: var(--vp-c-brand-1);
+    --ltx-c-divider: var(--vp-c-divider);
+    --ltx-c-gutter: var(--vp-c-gutter);
+
+    --vp-nav-bg-color: var(--ltx-nav-green);
+
+    --vp-nav-height: 45px;        /* VitePress default: 64px */
+    --vp-nav-logo-height: 28px;   /* VitePress default: 24px */
+}
+
+/* VitePress makes parts of the navbar transparent (home page, title above the sidebar) */
+.VPNavBar,
+.VPNavBar .content-body,
+.VPNavScreen {
+    background-color: var(--ltx-nav-green) !important;
+}
+
+.VPNavBarTitle .logo {
+    margin-bottom: -5px;
+}
+
+/* white text, links and icons on green */
+.VPNavBar,
+.VPNavScreen {
+    --vp-c-text-1: #fff;
+    --vp-c-text-2: rgba(255, 255, 255, 0.85);
+    --vp-c-brand-1: #fff;
+    --vp-c-divider: rgba(255, 255, 255, 0.35);
+    --vp-c-gutter: rgba(255, 255, 255, 0.35);
+}
+
+.VPNavBar {
+    .divider-line {
+        background-color: transparent !important;
+    }
+
+    /* dropdown menus (e.g. the "..." flyout) have a normal background: restore normal colors */
+    .VPFlyout .menu {
+        --vp-c-text-1: var(--ltx-c-text-1);
+        --vp-c-text-2: var(--ltx-c-text-2);
+        --vp-c-brand-1: var(--ltx-c-brand-1);
+        --vp-c-divider: var(--ltx-c-divider);
+        --vp-c-gutter: var(--ltx-c-gutter);
+    }
+}
+
+/* mark the active top-level link, since it can't be colored differently anymore */
+.VPNavBarMenuLink.active {
+    text-decoration: underline;
+    text-underline-offset: 6px;
+}
+
+
+.vp-doc {
+    text-align: justify;
+}
