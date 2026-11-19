@@ -75,7 +75,6 @@ scripts:
         rimraf
         dist bin website .website.git
         test/coverage
-        docs/public/latexjs
         docs/.vitepress/.temp
         docs/.vitepress/cache
         ;
@@ -116,16 +115,8 @@ scripts:
 
     # docs/website and playground
 
-    prepare-latex-assets: >-
-        rimraf docs/public/latexjs &&
-        mkdirp docs/public/latexjs/css docs/public/latexjs/fonts docs/public/latexjs/js &&
-        rsync -a dist/css/ docs/public/latexjs/css/ &&
-        rsync -a dist/fonts/ docs/public/latexjs/fonts/ &&
-        rsync -a dist/js/ docs/public/latexjs/js/
-        ;
-
+    # docs/public/latexjs/{css,fonts,js} are symlinks into dist/
     devdocs: >-
-        npm run prepare-latex-assets &&
         vitepress dev docs
         ;
 
@@ -134,7 +125,6 @@ scripts:
     # and always moved back, even if the build fails
     docs: >-
         npm run build &&
-        npm run prepare-latex-assets &&
         { [ -d website ] || git worktree add website gh-pages; } &&
         mv website/.git .website.git &&
         ( vitepress build docs; status=$?; mv .website.git website/.git; exit $status ) &&
