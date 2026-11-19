@@ -15,7 +15,7 @@ import { latex } from 'codemirror-lang-latex';
 import { oneDark } from '@codemirror/theme-one-dark'
 
 // LaTeX.js
-import { compile, applyZoom, handleLinks } from './LaTeX.ts'
+import { compile, compileDebounced, applyZoom, handleLinks } from './LaTeX.ts'
 import showcase from '../showcase.tex?raw'
 
 
@@ -42,7 +42,7 @@ const onCmReady = () => {
 const onCmCodeChange = (state: EditorState) => {
     // code.value = state.doc.toString()
     if (preview.value)
-        compile(state.doc.toString(), preview.value, latexjsURL())
+        compileDebounced(state.doc.toString(), preview.value, latexjsURL())
 }
 
 

@@ -176,3 +176,15 @@ export function compile(latex: string, iframe: HTMLIFrameElement, baseURL: strin
         }
     }
 }
+
+
+let compileTimer: ReturnType<typeof setTimeout> | undefined
+
+/**
+ * Call compile(), but only if the interval since the last call is at least `delay` ms (e.g. while typing).
+ */
+export function compileDebounced(latex: string, iframe: HTMLIFrameElement, baseURL: string, delay = 250)
+{
+    clearTimeout(compileTimer)
+    compileTimer = setTimeout(() => compile(latex, iframe, baseURL), delay)
+}
