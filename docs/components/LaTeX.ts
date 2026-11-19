@@ -106,8 +106,9 @@ let scrollY = 0
 
 /**
  * Compile latex source into the given iframe.
+ * @param baseURL URL of the directory with the LaTeX.js css/, fonts/ and js/ folders
  */
-export function compile(latex: string, iframe: HTMLIFrameElement)
+export function compile(latex: string, iframe: HTMLIFrameElement, baseURL: string)
 {
     if (typeof window === 'undefined' || typeof document === 'undefined')
         return // SSR
@@ -127,7 +128,6 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
     }
 
     try {
-        const baseURL = window.location.origin + '/latexjs/'
         const newDoc = parse(latex, { generator }).htmlDocument(baseURL)
 
         // styles for the error messages below

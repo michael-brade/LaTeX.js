@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { withBase } from 'vitepress'
 
 import Split from 'split-grid'
 
@@ -25,19 +26,23 @@ const fontSize = EditorView.theme({
 
 const extensions: Extension[] = [basicSetup, latex(), oneDark, fontSize]
 
+// absolute URL of the LaTeX.js css/, fonts/ and js/ folders (docs/public/latexjs/), respecting the site's base;
+// a function because window doesn't exist during SSR
+const latexjsURL = () => window.location.origin + withBase('/latexjs/')
+
 const code = ref<string>(showcase)
 const preview = ref<HTMLIFrameElement | null>(null)
 const gutter = ref<HTMLDivElement | null>(null)
 
 const onCmReady = () => {
     if (preview.value)
-        compile(code.value, preview.value)
+        compile(code.value, preview.value, latexjsURL())
 }
 
 const onCmCodeChange = (state: EditorState) => {
     // code.value = state.doc.toString()
     if (preview.value)
-        compile(state.doc.toString(), preview.value)
+        compile(state.doc.toString(), preview.value, latexjsURL())
 }
 
 
