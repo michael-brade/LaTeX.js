@@ -46,7 +46,10 @@ export default defineConfig({
 
     // Enable markdown line breaks
     markdown: {
-        breaks: true
+        breaks: true,
+        languageAlias: {
+            mjs: 'js'
+        }
     },
 
     // Vite-specific configuration
