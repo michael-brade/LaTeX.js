@@ -74,6 +74,35 @@ function errorMessage(e: any): string
 
 
 
+let curZoomFactor = 1
+
+function applyZoom(iframe: HTMLIFrameElement)
+{
+    iframe.contentDocument?.documentElement.style.setProperty('zoom', curZoomFactor === 1 ? '' : String(curZoomFactor))
+}
+
+/**
+ * Zoom the output in the given iframe, keeping the relative scroll position.
+ * Also call it after the iframe loaded a new document.
+ */
+export function zoom(iframe: HTMLIFrameElement, z: number)
+{
+    curZoomFactor = z
+
+    const el = iframe.contentDocument?.scrollingElement
+    if (!el)
+        return
+
+    const fx = el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)
+    const fy = el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight)
+
+    applyZoom(iframe)
+
+    el.scrollLeft = fx * (el.scrollWidth - el.clientWidth)
+    el.scrollTop = fy * (el.scrollHeight - el.clientHeight)
+}
+
+
 let scrollY = 0
 
 /**
@@ -114,6 +143,7 @@ export function compile(latex: string, iframe: HTMLIFrameElement)
             const newBody = doc.adoptNode(newDoc.body)
             doc.documentElement.replaceChild(newBody, doc.body)
             doc.documentElement.style.cssText = newDoc.documentElement.style.cssText
+            applyZoom(iframe)
         } else {
             iframe.srcdoc = newDoc.documentElement.outerHTML
 

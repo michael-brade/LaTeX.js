@@ -14,7 +14,7 @@ import { latex } from 'codemirror-lang-latex';
 import { oneDark } from '@codemirror/theme-one-dark'
 
 // LaTeX.js
-import { compile } from './LaTeX.ts'
+import { compile, zoom } from './LaTeX.ts'
 import showcase from '../showcase.tex?raw'
 
 
@@ -39,6 +39,69 @@ const onCmCodeChange = (state: EditorState) => {
     if (preview.value)
         compile(state.doc.toString(), preview.value)
 }
+
+
+// zoom of the output: Ctrl+wheel (also trackpad pinch) over the preview, or the buttons
+
+const MIN_ZOOM = 0.25
+const MAX_ZOOM = 4
+
+const zoomRef = ref(1)
+
+const zoomTo = (z: number) => {
+    zoomRef.value = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round(z * 100) / 100))
+    if (preview.value)
+        zoom(preview.value, zoomRef.value)
+}
+
+// step to the next multiple of 10%
+const zoomIn = () => zoomTo(Math.floor(zoomRef.value * 10 + 1e-6) / 10 + 0.1)
+const zoomOut = () => zoomTo(Math.ceil(zoomRef.value * 10 - 1e-6) / 10 - 0.1)
+
+// one 10% step per wheel notch; browsers report very different deltas for a notch (Firefox ~ 170px,
+// Chromium ~ 70px), so ignore its size. Trackpad pinch sends many small deltas instead: sum them up
+// until they are worth a notch.
+const WHEEL_STEP = 40   // px
+let wheelSum = 0
+
+const onWheel = (e: WheelEvent) => {
+    // zoom with Ctrl or Meta/Cmd
+    if (!e.ctrlKey && !e.metaKey) return
+
+    // don't zoom the whole page
+    e.preventDefault()
+
+    const multiplier =
+        e.deltaMode === WheelEvent.DOM_DELTA_LINE ? 33 :
+        e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? 400 :
+        1
+
+    const dy = e.deltaY * multiplier
+
+    // ignore 0-delta events so they don't accidentally reset wheelSum (Math.sign(0) === 0)
+    if (dy === 0) return
+
+    if (Math.sign(dy) !== Math.sign(wheelSum))
+        wheelSum = 0            // changed direction -> reset
+
+    wheelSum += dy
+
+    if (Math.abs(wheelSum) >= WHEEL_STEP) {
+        wheelSum < 0 ? zoomIn() : zoomOut()
+        wheelSum = 0 // Discard remainder so 1 notch = 1 step
+    }
+}
+
+// wheel events inside the iframe don't reach this page: listen in each document the iframe loads
+const onPreviewLoad = () => {
+    const doc = preview.value?.contentDocument
+    if (!doc)
+        return
+    // passive:false because onWhell actually calls preventDefault()
+    doc.addEventListener('wheel', onWheel, { passive: false })
+    zoom(preview.value!, zoomRef.value)
+}
+
 
 onMounted(() => {
     if (gutter.value) {
@@ -83,10 +146,17 @@ onMounted(() => {
         <div id="gutter" ref="gutter"></div>
 
         <!-- Right side: LaTeX preview -->
-        <div class="pane-wrapper">
+        <div class="pane-wrapper" @wheel="onWheel">
             <iframe id="preview" ref="preview"
                 sandbox="allow-same-origin allow-scripts"
+                @load="onPreviewLoad"
             ></iframe>
+
+            <div class="zoom-controls">
+                <button title="Zoom out (Ctrl+wheel)" :disabled="zoom <= MIN_ZOOM" @click="zoomOut">−</button>
+                <button title="Reset zoom" @click="zoomTo(1)">{{ Math.round(zoomRef * 100) }}%</button>
+                <button title="Zoom in (Ctrl+wheel)" :disabled="zoom >= MAX_ZOOM" @click="zoomIn">+</button>
+            </div>
         </div>
     </div>
 </template>
@@ -143,6 +213,45 @@ This treats whatever element the wrapper generates as a strict layout block.
     border: none;
     width: 100%;
     height: 100%;
+}
+
+/* zoom buttons, floating at the top right of the output */
+.zoom-controls {
+    position: absolute;
+    top: 8px;
+    right: 24px;    /* leave room for the iframe's scrollbar */
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    color: #333;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    overflow: hidden;
+}
+
+.zoom-controls:hover {
+    opacity: 1;
+}
+
+.zoom-controls button {
+    padding: 2px 8px;
+    min-width: 28px;
+    font-variant-numeric: tabular-nums;
+}
+
+.zoom-controls button + button {
+    border-left: 1px solid #ccc;
+}
+
+.zoom-controls button:hover:not(:disabled) {
+    background: #eee;
+}
+
+.zoom-controls button:disabled {
+    color: #bbb;
+    cursor: default;
 }
 
 #gutter {

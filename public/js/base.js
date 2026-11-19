@@ -31,7 +31,8 @@ function _vertical(el, tb)
     docEl = doc.documentElement;
     win = doc.defaultView;
 
-    return rect[tb] + win.pageYOffset - docEl.clientTop;
+    // under CSS zoom, rects are zoomed, but offsetHeight and margins are not: return unzoomed CSS px
+    return (rect[tb] + win.pageYOffset - docEl.clientTop) / (el.currentCSSZoom || 1);
 }
 
 
