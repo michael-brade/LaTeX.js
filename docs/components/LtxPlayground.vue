@@ -9,7 +9,7 @@ import { basicSetup } from 'codemirror'
 
 import type { LanguageSupport } from '@codemirror/language';
 import type { EditorState, Extension } from '@codemirror/state';
-import type { ViewUpdate } from '@codemirror/view';
+import { EditorView, type ViewUpdate } from '@codemirror/view';
 import { latex } from 'codemirror-lang-latex';
 import { oneDark } from '@codemirror/theme-one-dark'
 
@@ -18,7 +18,12 @@ import { compile } from './LaTeX.ts'
 import showcase from '../showcase.tex?raw'
 
 
-const extensions: Extension[] = [basicSetup, latex(), oneDark]
+// editor font size (CodeMirror inherits VitePress' 16px otherwise)
+const fontSize = EditorView.theme({
+    '&': { fontSize: '13px' }
+})
+
+const extensions: Extension[] = [basicSetup, latex(), oneDark, fontSize]
 
 const code = ref<string>(showcase)
 const preview = ref<HTMLIFrameElement | null>(null)
