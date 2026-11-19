@@ -52,16 +52,18 @@ export function applyZoom(iframe: HTMLIFrameElement, z: number)
 }
 
 
-// take 20 chars before and after o from txt
-function excerpt(txt: string, o: number)
-{
-    const l = txt.length
+type Excerpt = { prolog: string, token: string, epilog: string }
 
+// take 20 chars before and after offset o from txt, making invisible characters visible
+function excerpt(txt: string, o: number): Excerpt
+{
     // clamp boundaries safely between 0 and text length
     const b = Math.max(0, o - 20)
-    const e = Math.min(l, o + 20)
+    const e = Math.min(txt.length, o + 20)
+    // the token is a whole code point, not half of a surrogate pair
+    const t = o + ((txt.codePointAt(o) ?? 0) > 0xFFFF ? 2 : 1)
 
-    const hex = (ch: string) => ch.charCodeAt(0).toString(16).toUpperCase()
+    const hex = (ch: string, digits: number) => ch.codePointAt(0)!.toString(16).toUpperCase().padStart(digits, '0')
 
     const extract = (start: number, end: number) => {
         if (start >= end) return ''
@@ -74,16 +76,18 @@ function excerpt(txt: string, o: number)
             .replace(/\n/g, '\\n')
             .replace(/\f/g, '\\f')
             .replace(/\r/g, '\\r')
-            .replace(/[\x00-\x07\x0B\x0E\x0F]/g, ch => '\\x0' + hex(ch))
-            .replace(/[\x10-\x1F\x80-\xFF]/g, ch => '\\x' + hex(ch))
-            .replace(/[\u0100-\u0FFF]/g, ch => '\\u0' + hex(ch))
-            .replace(/[\u1000-\uFFFF]/g, ch => '\\u' + hex(ch))
+            // remaining control and format characters (e.g. zero-width space, BOM), separators, non-breaking space;
+            // everything else, like umlauts, is shown as is
+            .replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}\u00A0]/gu, ch => {
+                const c = ch.codePointAt(0)!
+                return c <= 0xFF ? '\\x' + hex(ch, 2) : c <= 0xFFFF ? '\\u' + hex(ch, 4) : `\\u{${hex(ch, 0)}}`
+            })
     }
 
     return {
         prolog: extract(b, o),
-        token: extract(o, o + 1),
-        epilog: extract(o + 1, e)
+        token: extract(o, t),
+        epilog: extract(t, Math.max(t, e))
     }
 }
 
