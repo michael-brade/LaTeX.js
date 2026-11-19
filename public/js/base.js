@@ -74,8 +74,11 @@ function positionMarginpars()
         // round to 1 digit
         var top = Math.round((baselineref - heightAB - prevBottom) * 10) / 10;
 
-        // only mutate if it actually changed
-        if (mpar.style.marginTop != Math.max(0, top) + "px")
+        // only mutate if it actually changed by at least 0.5px: each mutation triggers the
+        // MutationObserver again, and sometimes the computed position can alternate forever
+        // between two values that differ just due to rounding
+        var current = parseFloat(mpar.style.marginTop) || 0;
+        if (Math.abs(current - Math.max(0, top)) >= 0.5)
             mpar.style.marginTop = Math.max(0, top) + "px";
 
         // if marginTop would have been negative, the element is now further down by that offset => add it to prevBottom
@@ -133,7 +136,7 @@ var optimizedResize = (function() {
 function completed()
 {
     document.removeEventListener("DOMContentLoaded", completed);
-	window.removeEventListener("load", positionMarginpars);
+	window.removeEventListener("load", completed);
 
     var observer = new MutationObserver(function() {
         processTheElements();
