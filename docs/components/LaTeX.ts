@@ -142,19 +142,24 @@ function showError(doc: Document, text: string)
 
 let generator: HtmlGenerator | null = null
 let scrollY = 0
+let compileTimer: ReturnType<typeof setTimeout> | undefined
 
 /**
  * Compile latex source into the given iframe.
  * @param baseURL URL of the directory with the LaTeX.js css/, fonts/ and js/ folders
+ * @returns the error if compiling failed (it is also shown in the iframe), otherwise null
  */
-export function compile(latex: string, iframe: HTMLIFrameElement, baseURL: string)
+export function compile(latex: string, iframe: HTMLIFrameElement, baseURL: string): unknown
 {
+    // a pending debounced compile would only compile the same or older source again
+    clearTimeout(compileTimer)
+
     if (typeof window === 'undefined' || typeof document === 'undefined')
-        return // SSR
+        return null // SSR
 
     const doc = iframe.contentDocument
     if (!doc || doc.readyState !== 'complete' || !doc.body)
-        return
+        return null
 
     const curZoom = doc.documentElement.currentCSSZoom
 
@@ -191,6 +196,8 @@ export function compile(latex: string, iframe: HTMLIFrameElement, baseURL: strin
             iframe.contentWindow?.scrollTo(0, scrollY)
             scrollY = 0
         }
+
+        return null
     } catch (e: unknown) {
         console.error(e)
 
@@ -203,17 +210,22 @@ export function compile(latex: string, iframe: HTMLIFrameElement, baseURL: strin
             showError(doc, 'ERROR: Parsing failure:\n\n' + errorMessage(e, latex))
         else
             showError(doc, 'ERROR: ' + (e instanceof Error ? e.message : String(e)))
+
+        return e
     }
 }
 
 
-let compileTimer: ReturnType<typeof setTimeout> | undefined
-
 /**
  * Call compile(), but only if the interval since the last call is at least `delay` ms (e.g. while typing).
+ * @param onCompiled called with compile()'s result
  */
-export function compileDebounced(latex: string, iframe: HTMLIFrameElement, baseURL: string, delay = 250)
+export function compileDebounced(latex: string, iframe: HTMLIFrameElement, baseURL: string,
+                                 onCompiled?: (error: unknown) => void, delay = 250)
 {
     clearTimeout(compileTimer)
-    compileTimer = setTimeout(() => compile(latex, iframe, baseURL), delay)
+    compileTimer = setTimeout(() => {
+        const error = compile(latex, iframe, baseURL)
+        onCompiled?.(error)
+    }, delay)
 }

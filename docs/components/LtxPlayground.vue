@@ -16,11 +16,12 @@ import { foldGutter, foldKeymap, indentOnInput, syntaxHighlighting, defaultHighl
 import { history, historyKeymap, defaultKeymap } from '@codemirror/commands'
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
 import { closeBracketsKeymap } from '@codemirror/autocomplete'
-import { lintKeymap } from '@codemirror/lint'
+import { lintGutter, lintKeymap, setDiagnostics, type Diagnostic } from '@codemirror/lint'
 import { latex } from 'codemirror-lang-latex';
 import { oneDark } from '@codemirror/theme-one-dark'
 
 // LaTeX.js
+import { SyntaxError as LaTeXSyntaxError } from 'latex.js'
 import { compile, compileDebounced, applyZoom, handleLinks } from './LaTeX.ts'
 import showcase from '../showcase.tex?raw'
 
@@ -37,6 +38,7 @@ const editorSetup: Extension[] = [
     // gutters
     lineNumbers(),
     highlightActiveLineGutter(),
+    lintGutter(),
     foldGutter(),
 
     // display
@@ -71,12 +73,16 @@ const extensions: Extension[] = [
         autoCloseTags: true,
         autoCloseBrackets: true,
         enableAutocomplete: true,
-        enableLinting: false,       // we get the real parse errors, no need for linting
+        enableLinting: false,       // we get the real parse errors (showErrors()); a linter would replace them
         enableTooltips: true
     }),
     oneDark,
     fontSize
 ]
+
+// not a ref: Vue's proxy would get in the way of CodeMirror
+let view: EditorView | null = null
+
 
 // absolute URL of the LaTeX.js css/, fonts/ and js/ folders (docs/public/latexjs/), respecting the site's base;
 // a function because window doesn't exist during SSR
@@ -86,15 +92,37 @@ const code = ref<string>(showcase)
 const preview = ref<HTMLIFrameElement | null>(null)
 const gutter = ref<HTMLDivElement | null>(null)
 
-const onCmReady = () => {
-    if (preview.value)
-        compile(code.value, preview.value, latexjsURL())
+
+/** Show a LaTeX.js error (or none) in the editor, at its position in the source. */
+const showErrors = (error: unknown) => {
+    if (!view) return
+
+    const diagnostics: Diagnostic[] = []
+
+    // other errors have no position; they are only shown in the preview
+    if (error instanceof LaTeXSyntaxError) {
+        const length = view.state.doc.length
+        const from = Math.min(error.location.start.offset, length)
+        const to = Math.min(Math.max(error.location.end.offset, from + 1), length)
+        diagnostics.push({ from, to, severity: 'error', source: 'LaTeX.js', message: error.message })
+    }
+
+    view.dispatch(setDiagnostics(view.state, diagnostics))
+}
+
+const compileNow = () => {
+    if (view && preview.value)
+        showErrors(compile(view.state.doc.toString(), preview.value, latexjsURL()))
+}
+
+const onCmReady = async ({ view: v }: { view: EditorView }) => {
+    view = v
+    compileNow()
 }
 
 const onCmCodeChange = (state: EditorState) => {
-    // code.value = state.doc.toString()
     if (preview.value)
-        compileDebounced(state.doc.toString(), preview.value, latexjsURL())
+        compileDebounced(state.doc.toString(), preview.value, latexjsURL(), showErrors)
 }
 
 
@@ -157,7 +185,7 @@ const onPreviewLoad = () => {
     // the initial about:blank finished loading (no srcdoc yet): onCmReady may have come too early,
     // when compile() still had to skip it, so do the first render now
     if (!preview.value!.srcdoc)
-        compile(code.value, preview.value!, latexjsURL())
+        compileNow()
 
     handleLinks(doc)
 
@@ -294,6 +322,7 @@ $border: #ccc;
 
 #preview {
     color: #333;
+    background: #fff;   /* LaTeX output is black on white, also in VitePress' dark mode */
     border: none;
     width: 100%;
     height: 100%;
