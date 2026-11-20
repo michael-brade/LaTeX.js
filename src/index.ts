@@ -14,30 +14,12 @@ function resetSvgIds(): void
     resetDid()
 }
 
-
-/**
- * Translate LaTeX to HTML using the default configuration.
- *
- * @param latex The LaTeX source
- * @param options
- */
-function parseLaTeXtoHTML(latex: string, options?: Partial<HtmlOptions>)
-{
-    const generator = new HtmlGenerator(options)
-
-    // parse
-    const result = parse(latex, {
-        generator: generator
-    })
-}
-
 export type {
     HtmlOptions,
     Hyphenator
 }
 
 export {
-    parseLaTeXtoHTML,
     parse,
     SyntaxError,
     Generator,

@@ -13,8 +13,8 @@
   <base href="../../dist/">
 
   <script src="latex.umd.cjs"></script>
-  <!-- <script src="node_modules/latex.js/dist/latex.umd.js"></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/latex.js/dist/latex.umd.js"></script> -->
+  <!-- <script src="node_modules/latex.js/dist/latex.umd.cjs"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/latex.js/dist/latex.umd.cjs"></script> -->
 
   <title>LaTeX.js Browser Test</title>
 </head>
@@ -29,7 +29,7 @@
 
     generator = latexjs.parse(text, { generator: generator })
 
-    // document.head.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.12.4/dist/"))
+    // document.head.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.13.0/dist/"))
     document.head.appendChild(generator.stylesAndScripts(""))
     document.body.appendChild(generator.domFragment())
   </script>

@@ -58,7 +58,7 @@ If no input files are given, STDIN is read.
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script type="module">
-    import { LaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.mjs"
+    import { LaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.js"
     customElements.define("latex-js", LaTeXJSComponent)
   </script>
 
