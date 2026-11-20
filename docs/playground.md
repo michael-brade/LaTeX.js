@@ -1,9 +1,10 @@
 ---
-layout: page      # default theme with navbar, but no sidebar, aside or doc styling
+title: LaTeX.js Live Playground
+description: This is the LaTeX.js editor with live preview.
+layout: page
 sidebar: false
 aside: false
 pageClass: playground-page
-title: Live Playground
 ---
 
 <div id="playground-page">

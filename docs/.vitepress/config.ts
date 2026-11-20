@@ -69,7 +69,8 @@ export default defineConfig({
         resolve: {
             alias: {
                 // Alias to find theme components
-                '@theme/components': path.resolve(import.meta.dirname, './theme/components')
+                '@theme/components': path.resolve(import.meta.dirname, './theme/components'),
+                '@theme/Layout.vue': path.resolve(import.meta.dirname, './theme/Layout.vue')
             }
         }
     }

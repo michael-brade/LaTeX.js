@@ -1,15 +1,16 @@
-import type { EnhanceAppContext } from 'vitepress'
+import type { EnhanceAppContext, Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 
-import Layout from './Layout.vue'
+import Layout from '@theme/Layout.vue'
 import LaTeX from '@theme/components/LaTeX.vue'
 import TeX from '@theme/components/TeX.vue'
 
 import './style.scss'
 
+
 export default {
     extends: DefaultTheme,
-    Layout,
+    Layout: Layout,
 
     enhanceApp({ app }: EnhanceAppContext) {
         app.component('LaTeX', LaTeX)
@@ -17,4 +18,4 @@ export default {
         app.component('TeX', TeX)
         app.component('tex', TeX)
     }
-}
+} satisfies Theme

@@ -9,7 +9,8 @@
 
         "paths": {
             // must be in sync with aliases in config.ts
-            "@theme/components/*": ["./theme/components/*"]
+            "@theme/components/*": ["./theme/components/*"],
+            "@theme/Layout.vue": ["./theme/Layout.vue"]
         }
     },
     "include": [
