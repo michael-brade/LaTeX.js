@@ -5,5 +5,4 @@
 /test/coverage/
 /test/test-results.xml
 /test/screenshots/test-results.xml
-/.nyc_output/
 /docs/.vitepress/cache/

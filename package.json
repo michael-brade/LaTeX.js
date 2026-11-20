@@ -46,13 +46,13 @@
   ],
   "scripts": {
     "prepare": "patch-package && ln -sf ../typescript/bin/tsc node_modules/.bin/tsc ;",
-    "clean": "rimraf dist bin website .website.git test/coverage docs/.vitepress/.temp docs/.vitepress/cache ; git worktree remove --force website 2>/dev/null; git worktree prune;",
+    "clean": "rimraf dist bin test/coverage docs/.vitepress/.temp docs/.vitepress/cache ; git worktree remove --force website 2>/dev/null; git worktree prune; rimraf website .website.git ;",
     "assets": "mkdirp dist/css dist/js dist/fonts dist/documentclasses dist/packages && touch dist/documentclasses/.keep dist/packages/.keep && rsync -a src/css/ dist/css/ && rsync -a public/fonts/ dist/fonts/ && rsync -a node_modules/katex/dist/fonts/*.woff2 dist/fonts/ && rsync -a public/js/ dist/js/ ;",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test && node lib/vue-tsc.cjs --noEmit -p docs/.vitepress ;",
     "devbuild": "vite build --mode development && vite build -c vite.cli.config.ts --mode development && npm run assets ;",
     "build": "vite build --mode production && vite build -c vite.cli.config.ts --mode production && npm run assets ;",
-    "devdocs": "vitepress dev docs ;",
-    "docs": "npm run build && { [ -d website ] || git worktree add website gh-pages; } && mv website/.git .website.git && ( vitepress build docs; status=$?; mv .website.git website/.git; exit $status ) && cd website && git add . && { git diff --cached --quiet || git commit -m 'regenerated website'; } ;",
+    "devdocs": "vitepress dev docs;",
+    "docs": "npm run build && { [ -d website ] || { git worktree prune && git worktree add website gh-pages; }; } && mv website/.git .website.git && ( vitepress build docs; status=$?; mv .website.git website/.git; exit $status ) && cd website && git add . && { git diff --cached --quiet || git commit -m 'regenerated website'; } ;",
     "test": "mocha test/*.ts;",
     "testc": "c8 mocha test/*.ts;",
     "test-int": "test/integration/pack.sh && test/integration/consumer.sh && test/integration/react.sh ;"
