@@ -45,7 +45,8 @@ const editorSetup: Extension[] = [
     dropCursor(),
     highlightActiveLine(),
     highlightSelectionMatches(),
-    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),   // used if the theme has no highlighting
+    EditorView.lineWrapping,
 
     // editing
     history(),
