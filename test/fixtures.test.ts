@@ -59,79 +59,87 @@ function runFixture(fixture: Fixture, name: string): void {
                 : fixture.attrs.has("+") ? test.only
                 : test;
 
-    // make a screenshot by adding the attribute "#"
-    let screenshot = false;
-    if (fixture.attrs.has("#"))
-        screenshot = true;
+    const title = fixture.header || 'fixture number ' + fixture.id;
 
-
-    // create syntax test
-    _test(fixture.header || 'fixture number ' + fixture.id, () => {
-        resetSvgIds();
-
-        let htmlIs: string;
-        let htmlShould: string;
-
-        try {
-            const generator = parse(fixture.source, {
-                generator: new HtmlGenerator({ hyphenate: false })
-            });
-            const div = document.createElement('div');
-            div.appendChild(generator.domFragment().cloneNode(true));
-            htmlIs = div.innerHTML;
-            htmlShould = fixture.result;
-        } catch (e: any) {
-            if (e.location) {
-                const lines = fixture.source.split(/\r\n|\n|\r/);
-                e.message = `${e.message} at line ${e.location.start.line} (column ${e.location.start.column}): ${
-                    lines[e.location.start.line - 1]
-                }`;
-            }
-            throw e;
-        }
-
-        htmlIs = decode(htmlIs.replace(/\r\n|\n|\r/g, ""));
-        htmlShould = decode(htmlShould.replace(/\r\n|\n|\r/g, ""));
-
-        if (htmlIs !== htmlShould) {
-            const filename = path.join(dirname, 'html', slugify(name + ' ' + fixture.header, {
-                remove: /[*+~()'"!:@,{}\\]/g
-            }));
-            try {
-                fs.mkdirSync(path.dirname(filename), { recursive: true });
-            } catch {}
-            fs.writeFileSync(filename, htmlIs);
-        }
-
-        // htmlIs = beautify.html(htmlIs);
-        // htmlShould = beautify.html(htmlShould);
-        expect(htmlIs).toBe(htmlShould);
-    });
-
-    // create screenshot test
-    if (screenshot) {
-        _test('   - screenshot', async () => {
-            const htmlDoc = parse(fixture.source, {
-                generator: new HtmlGenerator({ hyphenate: false })
-            }).htmlDocument();
-
-            // create null favicon to make the browser stop looking for one
-            const favicon = document.createElement("link");
-            favicon.rel = "icon";
-            favicon.href = ";base64,iVBORw0KGgo=";
-
-            htmlDoc.head.appendChild(favicon);
-
-            const filename = path.join(dirname, 'screenshots', slugify(name + ' ' + fixture.header, {
-                remove: /[*+~()'"!:@,{}\\]/g
-            }));
-
-            await takeScreenshot(htmlDoc.documentElement.outerHTML, filename);
-
-            // update native LaTeX screenshot
-            // latexScreenshot(fixture.source, filename);
+    // make a screenshot by adding the attribute "#": then the fixture is a suite with
+    // the tests "html" and "screenshot", otherwise just the html test
+    if (fixture.attrs.has("#")) {
+        describe(title, () => {
+            _test('html', () => htmlTest(fixture, name));
+            _test('screenshot', () => screenshotTest(fixture, name));
         });
+    } else {
+        _test(title, () => htmlTest(fixture, name));
     }
+}
+
+
+// compare the generated html with the fixture's result
+function htmlTest(fixture: Fixture, name: string): void {
+    resetSvgIds();
+
+    let htmlIs: string;
+    let htmlShould: string;
+
+    try {
+        const generator = parse(fixture.source, {
+            generator: new HtmlGenerator({ hyphenate: false })
+        });
+        const div = document.createElement('div');
+        div.appendChild(generator.domFragment().cloneNode(true));
+        htmlIs = div.innerHTML;
+        htmlShould = fixture.result;
+    } catch (e: any) {
+        if (e.location) {
+            const lines = fixture.source.split(/\r\n|\n|\r/);
+            e.message = `${e.message} at line ${e.location.start.line} (column ${e.location.start.column}): ${
+                lines[e.location.start.line - 1]
+            }`;
+        }
+        throw e;
+    }
+
+    htmlIs = decode(htmlIs.replace(/\r\n|\n|\r/g, ""));
+    htmlShould = decode(htmlShould.replace(/\r\n|\n|\r/g, ""));
+
+    // if the test failed, write its actual html output to test/html/
+    if (htmlIs !== htmlShould) {
+        const filename = path.join(dirname, 'html', slugify(name + ' ' + fixture.header, {
+            remove: /[*+~()'"!:@,{}\\]/g
+        }));
+        try {
+            fs.mkdirSync(path.dirname(filename), { recursive: true });
+        } catch {}
+        fs.writeFileSync(filename, htmlIs);
+    }
+
+    // htmlIs = beautify.html(htmlIs);
+    // htmlShould = beautify.html(htmlShould);
+    expect(htmlIs).toBe(htmlShould);
+}
+
+
+// render the fixture in chrome and firefox and compare with the stored screenshots
+async function screenshotTest(fixture: Fixture, name: string): Promise<void> {
+    const htmlDoc = parse(fixture.source, {
+        generator: new HtmlGenerator({ hyphenate: false })
+    }).htmlDocument();
+
+    // create null favicon to make the browser stop looking for one
+    const favicon = document.createElement("link");
+    favicon.rel = "icon";
+    favicon.href = ";base64,iVBORw0KGgo=";
+
+    htmlDoc.head.appendChild(favicon);
+
+    const filename = path.join(dirname, 'screenshots', slugify(name + ' ' + fixture.header, {
+        remove: /[*+~()'"!:@,{}\\]/g
+    }));
+
+    await takeScreenshot(htmlDoc.documentElement.outerHTML, filename);
+
+    // update native LaTeX screenshot
+    // latexScreenshot(fixture.source, filename);
 }
 
 
