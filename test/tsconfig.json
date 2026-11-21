@@ -5,7 +5,7 @@
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": false,
 
-    "types": ["mocha", "chai", "node"],
+    "types": ["node"],
     "esModuleInterop": true,
     "resolveJsonModule": true
   },

@@ -140,10 +140,10 @@ scripts:
 
     # unit tests
 
-    # while porting to vitest: mocha runs test/*.ts except *.test.ts (see "ignore" below), vitest runs *.test.ts
-    test: mocha test/*.ts && vitest run;
+    test: vitest run;
 
-    testc: c8 npm test;
+    # coverage needs a build with source maps (npm run build); report in test/coverage/
+    testc: vitest run --coverage;
 
     # integration tests
 
@@ -225,27 +225,13 @@ devDependencies:
     vitest: 5.1.x
     "@vitest/coverage-v8": 5.1.x
 
-    mocha: 12.0.x
-    "@types/mocha": ^10.0.10
-
-    chai: 6.x
-    "@types/chai": ^5.2.3
-
-    chai-as-promised: 8.0.x
-    "@types/chai-as-promised": ^8.0.2
-
     slugify: 1.6.x
-
-    tmp: 0.2.x
-    "@types/tmp": ^0.2.6
 
     puppeteer: 25.17.x
 
     pixelmatch: 8.x
     pngjs: 7.0.x
     "@types/pngjs": ^6.0.5
-
-    c8: 12.x
 
     serve-handler: 6.x
     "@types/serve-handler": ^6.1.4
@@ -258,53 +244,12 @@ devDependencies:
     "@types/fs-extra": ^11.0.4
     "@types/js-beautify": ^1.14.3
 
-mocha:
-    node-option:
-        - import=tsx
-    file:
-        - test/lib/globals.ts
-        - test/lib/setup.ts
-    ignore:
-        - test/**/*.test.ts     # vitest
-    reporter: spec
-    reporter-option:
-        - maxDiffSize=0
-    inlineDiffs: true
-    timeout: 10000
-    ui: bdd
-    checkLeaks: true
-    sort: true
-
 # first time: install browsers with "npx puppeteer browsers install" after "npm i"
 puppeteer:
     chrome:
         skipDownload: false
     firefox:
         skipDownload: false
-
-c8:
-    all: true               # also report files no test loads (as 0%)
-    src:
-        - src
-    # the tests run the bundle dist/latex.js (and bin/latex.js), which source maps remap to src/:
-    # filter only after remapping, otherwise the bundle is excluded (not in src/) and coverage is 0%
-    exclude-after-remap: true
-    # the remapped paths are not normalized (dist/../src/index.ts), so "src/**" would match nothing;
-    # this drops e.g. the test sources
-    include:
-        - "**/src/**"
-    exclude:
-        - "**/*.d.ts"
-        - "**/third_party/**"   # puppeteer's bundled chromium-bidi sources
-    # file types to report (the filter also checks these), .pegjs for the grammar
-    extension:
-        - .ts
-        - .pegjs
-    reports-dir: ./test/coverage
-    reporter:
-        - text
-        - html              # test/coverage/index.html
-
 
 repository:
     type: git
