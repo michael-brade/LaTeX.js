@@ -6,6 +6,14 @@ export default defineConfig({
     test: {
         include: ['test/**/*.test.ts'],
         exclude: ['**/node_modules/**', 'test/integration/**'],
-        testTimeout: 10000
+        testTimeout: 10000,
+        // `vitest run --coverage`; the VS Code extension overrides reporter and reportsDirectory
+        coverage: {
+            provider: 'v8',
+            include: ['src/**'],
+            exclude: ['**/*.d.ts', '**/*.pegjs'],   // the grammar can't be parsed as JS
+            reportsDirectory: 'test/coverage',
+            reporter: ['text', 'html']      // test/coverage/index.html
+        }
     }
 });
