@@ -174,7 +174,7 @@ devDependencies:
 
     ### actual runtime dependencies, but bundled by vite
 
-    katex: ^0.16.10
+    katex: 0.19.x
     "@svgdotjs/svg.js": 3.2.x
 
     ### building
@@ -214,9 +214,7 @@ devDependencies:
     vite-plugin-node-polyfills: 0.28.x
     vite-plugin-checker: 1.0.x
     unplugin-dts: 1.1.x
-    rollup-plugin-visualizer: 7.0.x
-    esbuild: 0.28.x
-    terser: 5.51.x
+    rollup-plugin-visualizer: 7.1.x
 
     "@rolldown/plugin-babel": 0.3.x
     "@babel/plugin-proposal-decorators": 8.0.x
@@ -238,9 +236,9 @@ devDependencies:
     "@types/tmp": ^0.2.6
 
     puppeteer: 25.17.x
-    pixelmatch: 8.x
 
-    pngjs: 7.0.x        # really needed??
+    pixelmatch: 8.x
+    pngjs: 7.0.x
     "@types/pngjs": ^6.0.5
 
     c8: 12.x

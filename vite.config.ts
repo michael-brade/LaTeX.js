@@ -73,6 +73,12 @@ export default defineConfig(env => {
                 },
                 insertTypesEntry: false,    // package.json points to dist/types/index.d.ts directly
                 bundleTypes: false          // TODO: true breaks at the moment
+            }),
+
+            visualizer({
+                filename: './dist/latex.stats.html',
+                template: 'treemap', // treemap, sunburst, flamegraph
+                sourcemap: prod
             })
         ],
 
@@ -97,14 +103,7 @@ export default defineConfig(env => {
 
             rolldownOptions: {
                 // fully minify all formats, including the ES one (see "minify" above)
-                output: prod ? { minify: true } : {},
-
-                plugins: [
-                    visualizer({
-                        filename: './dist/latex.stats.html',
-                        sourcemap: prod
-                    })
-                ]
+                output: prod ? { minify: true } : {}
             }
         }
     }
