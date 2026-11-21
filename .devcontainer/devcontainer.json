@@ -41,7 +41,9 @@
                 "ms-azuretools.vscode-containers",
                 "EditorConfig.EditorConfig",
                 "maattdd.gitless",
-                "PeggyJS.peggy-language"
+                "PeggyJS.peggy-language",
+                "Vue.volar",
+                "kamikillerto.vscode-colorize"
             ]
         }
     },
