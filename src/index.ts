@@ -1,7 +1,7 @@
 import { parse, SyntaxError } from './parser/latex-parser.pegjs'
 import { Generator } from './generator/generator.ts'
 import { HtmlGenerator } from './generator/html/generator.ts'
-import { LaTeXJSComponent } from './latex.component.ts'
+import { LaTeXJSComponent, defineLaTeXJSComponent } from './latex.component.ts'
 import type { HtmlOptions, Hyphenator } from './options.ts'
 
 import { resetDid } from '@svgdotjs/svg.js'
@@ -25,5 +25,6 @@ export {
     Generator,
     HtmlGenerator,
     LaTeXJSComponent,
+    defineLaTeXJSComponent,
     resetSvgIds
 }

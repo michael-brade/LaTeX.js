@@ -58,8 +58,8 @@ If no input files are given, STDIN is read.
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script type="module">
-    import { LaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.js"
-    customElements.define("latex-js", LaTeXJSComponent)
+    import { defineLaTeXJSComponent } from "https://cdn.jsdelivr.net/npm/latex.js/dist/latex.js"
+    defineLaTeXJSComponent()   // or: customElements.define("latex-js", LaTeXJSComponent)
   </script>
 
   <style>
@@ -100,12 +100,26 @@ This, however, requires a browser with support for the shadow DOM.
 Then you need to decide how to embed the `<latex-js>` element and style it accordingly with CSS; most importantly, set
 the `display:` property. It is `inline` by default.
 
+`defineLaTeXJSComponent(name = "latex-js")` registers the element; it does nothing if the element is already defined
+(e.g. with hot module reloading) or outside of the browser, so it is safe to call in code that is also run on the
+server.
+
+The `<latex-js>` element renders again whenever its content or one of its attributes changes, so frameworks like React
+or Vue can simply set its content. If the new content doesn't parse, the error is logged to the console and the
+previous rendering stays.
+
 The `<latex-js>` element supports a few attributes to configure <latex/>.js:
 
-- `baseURL`: if you want the <latex/>.js component to use a different set of stylesheets than the ones delivered along
-  with the `latex.component.js`, then you need to set the base using this attribute.
+- `baseURL`: where to load the stylesheets, fonts and scripts (`css/`, `fonts/`, `js/` in `dist/`) from; it may be
+  relative to the page. By default, they are loaded from next to the `latex.js` module. If you use a bundler (Vite,
+  webpack, ...), latex.js is bundled into your code, so you have to serve these files yourself (e.g. copy them from
+  `node_modules/latex.js/dist/` to your public folder) or use a CDN, and set `baseURL` accordingly.
 
 - `hyphenate`: enable or disable hyphenation (default: enabled)
+
+- `macros`: URL of a module that exports `CustomMacros` as default export (see [Extending](extending.md))
+
+- `stylesheet`: URL of an additional stylesheet
 
 
 ## Library

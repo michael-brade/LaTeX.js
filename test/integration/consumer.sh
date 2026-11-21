@@ -65,7 +65,7 @@ echo "--- types"
 
 # .mts is always ESM, .cts always CommonJS, regardless of "type" in package.json
 code='
-import { parse, HtmlGenerator, SyntaxError, LaTeXJSComponent } from "latex.js";
+import { parse, HtmlGenerator, SyntaxError, LaTeXJSComponent, defineLaTeXJSComponent } from "latex.js";
 import type { HtmlOptions } from "latex.js";
 
 const options: Partial<HtmlOptions> = { hyphenate: false };
@@ -73,8 +73,9 @@ const generator: HtmlGenerator = parse("Hi.", { generator: new HtmlGenerator(opt
 const fragment: DocumentFragment = generator.domFragment();
 const html: string = generator.htmlDocument().documentElement.outerHTML;
 const isError: boolean = new Error() instanceof SyntaxError;
-// LaTeXJSComponent is null outside of the browser
-customElements.define("latex-js", LaTeXJSComponent!);
+customElements.define("latex-js", LaTeXJSComponent);
+defineLaTeXJSComponent("latex-js-2");
+const component: HTMLElement = new LaTeXJSComponent();
 
 export { fragment, html, isError };
 '
