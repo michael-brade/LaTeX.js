@@ -141,7 +141,7 @@ Import the parser and generator, then parse and translate to HTML:
 
 Or using the CommonJS module syntax:
 
-<<< ../test/api/node.js#code
+<<< ../test/api/node.cjs#code
 
 The `HtmlGenerator` takes several options, see the API section below.
 

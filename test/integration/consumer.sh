@@ -13,7 +13,7 @@ dir=tmp/consumer
 
 rm -rf $dir
 mkdir -p $dir
-cp ../api/node.js $dir/node.cjs     # the consumer is "type": "module"
+cp ../api/node.cjs $dir/node.cjs
 cp ../api/node.mjs $dir/node.mjs
 
 cd $dir
