@@ -43,7 +43,8 @@
                 "maattdd.gitless",
                 "PeggyJS.peggy-language",
                 "Vue.volar",
-                "kamikillerto.vscode-colorize"
+                "kamikillerto.vscode-colorize",
+                "dbaeumer.vscode-eslint"
             ]
         }
     },

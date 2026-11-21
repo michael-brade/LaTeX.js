@@ -2,8 +2,11 @@
 
 # Source of package.json -- edit this file, then run ./package.yaml.sh to regenerate package.json
 # Note: the heredoc is quoted ('EOF'), so bash leaves $, backticks and backslashes in the YAML alone.
-npx js-yaml > package.json <<'EOF'
-
+#
+# Don't pipe to package.json directly - that would truncate it before npx/node start, and on a
+# YAML error in this file, that would leave package.json empty.
+set -euo pipefail
+npx js-yaml <<'EOF' | sponge package.json
 ---
 name: latex.js
 description: JavaScript LaTeX to HTML5 translator

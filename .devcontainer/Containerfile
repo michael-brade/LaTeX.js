@@ -11,6 +11,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get upgrade -y && \
     apt-get install -y --fix-missing --no-install-recommends \
     git git-lfs \
+    moreutils \
     less \
     rsync \
     neovim \
