@@ -140,9 +140,10 @@ scripts:
 
     # unit tests
 
-    test: mocha test/*.ts;
+    # while porting to vitest: mocha runs test/*.ts except *.test.ts (see "ignore" below), vitest runs *.test.ts
+    test: mocha test/*.ts && vitest run;
 
-    testc: c8 mocha test/*.ts;
+    testc: c8 npm test;
 
     # integration tests
 
@@ -262,6 +263,8 @@ mocha:
     file:
         - test/lib/globals.ts
         - test/lib/setup.ts
+    ignore:
+        - test/**/*.test.ts     # vitest
     reporter: spec
     reporter-option:
         - maxDiffSize=0

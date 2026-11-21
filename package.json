@@ -53,8 +53,8 @@
     "build": "vite build --mode production && vite build -c vite.cli.config.ts --mode production && npm run assets ;",
     "devdocs": "vitepress dev docs;",
     "docs": "npm run build && { [ -d website ] || { git worktree prune && git worktree add website gh-pages; }; } && mv website/.git .website.git && ( vitepress build docs; status=$?; mv .website.git website/.git; exit $status ) && cd website && git add . && { git diff --cached --quiet || git commit -m 'regenerated website'; } ;",
-    "test": "mocha test/*.ts;",
-    "testc": "c8 mocha test/*.ts;",
+    "test": "mocha test/*.ts && vitest run;",
+    "testc": "c8 npm test;",
     "test-int": "test/integration/pack.sh && test/integration/consumer.sh && test/integration/react.sh ;"
   },
   "dependencies": {
@@ -129,6 +129,9 @@
     "file": [
       "test/lib/globals.ts",
       "test/lib/setup.ts"
+    ],
+    "ignore": [
+      "test/**/*.test.ts"
     ],
     "reporter": "spec",
     "reporter-option": [
