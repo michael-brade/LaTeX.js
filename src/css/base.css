@@ -201,7 +201,7 @@ html, .page {
     font-family: "Computer Modern Serif" !important;  /* for KaTeX_Main */
 }
 
-.katex .mathdefault,
+.katex .mathnormal,
 .katex .boldsymbol {
     font-family: "Computer Modern Serif" !important;  /* for KaTeX_Math */
 }
