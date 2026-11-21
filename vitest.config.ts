@@ -7,6 +7,7 @@ export default defineConfig({
         include: ['test/**/*.test.ts'],
         exclude: ['**/node_modules/**', 'test/integration/**'],
         testTimeout: 10000,
+        hookTimeout: 30000,     // launching chrome and firefox
         // `vitest run --coverage`; the VS Code extension overrides reporter and reportsDirectory
         coverage: {
             provider: 'v8',
