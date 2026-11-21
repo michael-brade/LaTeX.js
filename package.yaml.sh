@@ -221,6 +221,8 @@ devDependencies:
 
     ### testing
 
+    vitest: 5.1.x
+
     mocha: 12.0.x
     "@types/mocha": ^10.0.10
 

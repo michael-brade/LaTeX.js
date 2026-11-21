@@ -44,7 +44,8 @@
                 "PeggyJS.peggy-language",
                 "Vue.volar",
                 "kamikillerto.vscode-colorize",
-                "dbaeumer.vscode-eslint"
+                "dbaeumer.vscode-eslint",
+                "vitest.explorer"
             ]
         }
     },
