@@ -30,9 +30,6 @@ const Base = (typeof HTMLElement !== 'undefined' ?
  */
 export class LaTeXJSComponent extends Base
 {
-    // HTML attribute names are lowercase
-    static observedAttributes = ["baseurl", "hyphenate", "macros", "stylesheet"]
-
     #shadow: ShadowRoot
     #observer: MutationObserver
     #renderQueued = false
@@ -69,6 +66,9 @@ export class LaTeXJSComponent extends Base
     {
         this.#observer.disconnect()
     }
+
+    // HTML attribute names are lowercase
+    static observedAttributes = ["baseurl", "hyphenate", "macros", "stylesheet"]
 
     /**
      * Custom component lifecycle callback.
@@ -131,20 +131,21 @@ export class LaTeXJSComponent extends Base
         page.className = "page"
         page.appendChild(generator.domFragment())
 
-        const styles = document.createDocumentFragment()
+        const stylesAndScripts = document.createDocumentFragment()
 
-        // load optional stylesheet
+        // load optional user stylesheet
         if (this.hasAttribute("stylesheet")) {
-            const style = document.createElement("link")
-            style.type = "text/css"
-            style.rel = "stylesheet"
-            style.href = new URL(this.getAttribute("stylesheet")!, document.baseURI).href
-            styles.appendChild(style)
+            const userstyle = document.createElement("link")
+            userstyle.type = "text/css"
+            userstyle.rel = "stylesheet"
+            userstyle.href = new URL(this.getAttribute("stylesheet")!, document.baseURI).href
+
+            stylesAndScripts.appendChild(userstyle)
         }
 
         // replace styles, scripts, and page
-        styles.appendChild(generator.stylesAndScripts(basePath))
-        this.#shadow.replaceChildren(styles, page)
+        stylesAndScripts.appendChild(generator.stylesAndScripts(basePath))
+        this.#shadow.replaceChildren(stylesAndScripts, page)
 
         generator.applyLengthsAndGeometryToDom(this)
 
@@ -152,19 +153,22 @@ export class LaTeXJSComponent extends Base
         // (if they weren't added yet)
         const pDoc = this.ownerDocument
 
-        for (const fonts of ["./fonts/cmu.css", "./fonts/katex.css"]) {
+        for (const fonts of [
+            "./fonts/cmu.css",
+            "./fonts/katex.css"
+        ]) {
             const href = new URL(fonts, basePath).href
 
             // check if fonts have been included already
             const exists = Array.from(pDoc.querySelectorAll('link')).some(link => link.href === href)
+            if (exists)
+                continue
 
-            if (!exists) {
-                const linkEl = pDoc.createElement("link")
-                linkEl.type = "text/css"
-                linkEl.rel = "stylesheet"
-                linkEl.href = href
-                pDoc.head.appendChild(linkEl)
-            }
+            const linkEl = pDoc.createElement("link")
+            linkEl.type = "text/css"
+            linkEl.rel = "stylesheet"
+            linkEl.href = href
+            pDoc.head.appendChild(linkEl)
         }
     }
 }
