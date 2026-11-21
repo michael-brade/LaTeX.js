@@ -82,19 +82,23 @@ if (typeof HTMLElement !== 'undefined') {
 
       generator.applyLengthsAndGeometryToDom(this.shadow.host as HTMLElement)
 
-      // we need to add CMU fonts to the parent page (if they weren't added yet)
+      // @font-face is ignored in a shadow DOM, so add the CMU and KaTeX fonts to the parent page
+      // (if they weren't added yet)
       const pDoc = this.ownerDocument
-      const cmu = new URL("./fonts/cmu.css", basePath)
 
-      // check if fonts have been included already
-      const exists = Array.from(pDoc.querySelectorAll('link')).some(link => link.href === cmu.href)
+      for (const fonts of ["./fonts/cmu.css", "./fonts/katex.css"]) {
+        const href = new URL(fonts, basePath).href
 
-      if (!exists) {
-        const linkEl = pDoc.createElement("link")
-        linkEl.type = "text/css"
-        linkEl.rel = "stylesheet"
-        linkEl.href = cmu.href
-        pDoc.head.appendChild(linkEl)
+        // check if fonts have been included already
+        const exists = Array.from(pDoc.querySelectorAll('link')).some(link => link.href === href)
+
+        if (!exists) {
+          const linkEl = pDoc.createElement("link")
+          linkEl.type = "text/css"
+          linkEl.rel = "stylesheet"
+          linkEl.href = href
+          pDoc.head.appendChild(linkEl)
+        }
       }
     }
 

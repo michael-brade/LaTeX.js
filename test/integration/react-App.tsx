@@ -19,7 +19,10 @@ declare module 'react' {
     }
 }
 
-const source = 'Hi, this is \\LaTeX.js in \\textbf{React}: $e^{i\\pi} + 1 = 0$.'
+// letters and digits are set in CMU; the symbols (not in CMU), \mathbb and the big operators need the KaTeX fonts
+const source = 'Hi, this is \\LaTeX.js in \\textbf{React}: $e^{i\\pi} + 1 = 0$, $x \\in \\mathbb{R}$, '
+    + '$\\infty \\le \\Rightarrow \\forall \\exists \\partial \\nabla \\emptyset \\langle a \\rangle$, '
+    + '$\\displaystyle \\sum_{i=1}^n \\int_0^1 \\left( \\frac{a}{b} \\right)$.'
 
 
 // renders LaTeX with the API: like <latex-js>, put it into a shadow DOM, since the latex.js stylesheets would
@@ -48,11 +51,13 @@ function App() {
     // @font-face doesn't work in a shadow DOM, so the fonts have to be loaded by the page (<latex-js> does this
     // itself, the LaTeX component above relies on it)
     useEffect(() => {
-        const link = document.createElement('link')
-        link.rel = 'stylesheet'
-        link.href = baseURL + 'fonts/cmu.css'
-        document.head.appendChild(link)
-        return () => link.remove()
+        const links = ['fonts/cmu.css', 'fonts/katex.css'].map(fonts => {
+            const link = document.createElement('link')
+            link.rel = 'stylesheet'
+            link.href = baseURL + fonts
+            return document.head.appendChild(link)
+        })
+        return () => links.forEach(link => link.remove())
     }, [])
 
     return (
