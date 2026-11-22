@@ -35,7 +35,7 @@ function App() {
             {/** you may even edit the LaTeX source live */}
             <textarea value={source} onChange={e => setSource(e.target.value)} rows={4} cols={80} />
 
-            {/* css/, fonts/ and js/ of latex.js are served from public/latexjs/ (see react.sh); <latex-js>
+            {/* css/, fonts/ and js/ of latex.js are served from public/latexjs/ (see test/integration.test.ts); <latex-js>
                 renders again whenever source changes */}
             <latex-js baseURL="latexjs/" hyphenate="false">{source}</latex-js>
         </>

@@ -34,9 +34,9 @@ npm test
 npm run build        # library → dist/ (vite.config.ts), CLI → bin/latex.js (vite.cli.config.ts), css/fonts/js → dist/
 npm run devbuild     # same, unminified, no source maps
 npm run typecheck    # tsc for src/, test/, and docs/.vitepress/ (including the .vue files)
-npm test             # vitest run
-npm run testc        # vitest run --coverage, report in test/coverage/; needs `npm run build`, not devbuild: source maps
-npm run test-int     # integration tests: npm pack tarball installed into consumer projects (needs a build)
+npm test             # vitest run --project unit: all tests except the integration tests
+npm run testc        # vitest run --coverage --project unit, report in test/coverage/; needs `npm run build`, not devbuild: source maps
+npm run test-int     # integration tests: npm pack tarball installed into consumer projects (needs a build, network)
 npm run devdocs      # `vitepress dev docs` (needs a build)
 npm run docs         # build + generate the website into the gh-pages worktree ./website and commit it there
 npm run clean        # remove the build output, test/coverage/, the VitePress cache and the website/ worktree
@@ -63,7 +63,7 @@ The tests and the website use the built library from `dist/` and `bin/`, so buil
 | `test/fixtures/` | <latex/> sources and their expected HTML, see [Fixtures](#fixtures) |
 | `test/screenshots/` | the stored screenshots of the fixtures and of the web component |
 | `test/api/` | API examples run by `test/api.test.ts`, and included in the [usage](usage.md) docs |
-| `test/integration/` | the integration tests, see [below](#integration-tests) |
+| `test/integration/` | files for the integration tests in `test/integration.test.ts`, see [below](#integration-tests) |
 | `docs/` | the website: the pages are Markdown; config and theme in `docs/.vitepress/` (with its own `tsconfig.json`), the playground in `docs/components/` (`LtxPlayground.vue`, `LaTeX.ts`) |
 | `dist/`, `bin/` | build output (not in git) |
 | `website/` | the generated website, a worktree of the `gh-pages` branch (not in git) |
@@ -73,9 +73,9 @@ The generator and the macros use TC39 decorators; Babel transpiles them in the V
 
 ## Tests
 
-`npm test` runs all tests. To run only some of them, pass files or a filter, e.g. `npx vitest run test/cli.test.ts`;
-the Vitest extension for VS Code runs and debugs single tests. `DEBUG=chrome npm test` (or `DEBUG=firefox`) shows that
-browser with its devtools instead of running it headless.
+`npm test` runs all tests except the [integration tests](#integration-tests). To run only some of them, pass files
+or a filter, e.g. `npx vitest run test/cli.test.ts`; the Vitest extension for VS Code runs and debugs single tests.
+`DEBUG=chrome npm test` (or `DEBUG=firefox`) shows that browser with its devtools instead of running it headless.
 
 - `test/fixtures.test.ts` translates the [fixtures](#fixtures) and compares the HTML,
 - `test/cli.test.ts` runs `bin/latex.js`,
@@ -119,14 +119,17 @@ is 0%.
 
 ### Integration Tests
 
-`npm run test-int` needs a build and network access. It tests the package the way consumers get it:
+`npm run test-int` runs `test/integration.test.ts`, the vitest project `integration` (`npm test` runs the project
+`unit`, plain `npx vitest` both, see `vitest.config.ts`). It needs a build and network access, and tests the package
+the way consumers get it:
 
-- `test/integration/pack.sh` creates the tarball `test/integration/tmp/latex.js.tgz` with `npm pack`,
-- `consumer.sh` installs it into a new project and runs the Node API examples and the CLI there; it also type-checks a
-  consumer with `strict` and without `skipLibCheck`: an ES module consumer with the module resolutions `bundler`,
-  `node16` and `nodenext`, and a CommonJS consumer with `node16` and `nodenext`,
-- `react.sh` builds a Vite + React app that uses the package and checks in Chrome that it renders. The app stays in
-  `test/integration/react-app/`, so you can try it with `npm run dev` there.
+- first, `test/integration/pack.sh` creates the tarball `test/integration/tmp/latex.js.tgz` with `npm pack`,
+- `consumer` installs it into a new project in `test/integration/tmp/consumer/` and runs the Node API examples and
+  the CLI there; it also type-checks a consumer with `strict` and without `skipLibCheck`: an ES module consumer with
+  the module resolutions `bundler`, `node16` and `nodenext`, and a CommonJS consumer with `node16` and `nodenext`,
+- `React app` builds a Vite + React app that uses the package (its `App.tsx` is `test/integration/react-App.tsx`) and
+  checks in Chrome that it renders with the LaTeX styles and fonts, and again when React changes its content. The app
+  stays in `test/integration/react-app/`, so you can try it with `npm run dev` there.
 
 Run them when you change the build or the public API: `npm run build && npm run test-int`.
 

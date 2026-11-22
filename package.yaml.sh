@@ -139,19 +139,13 @@ scripts:
 
 
     # unit tests
-
-    test: vitest run;
+    test: vitest run --project unit;
 
     # coverage needs a build with source maps (npm run build); report in test/coverage/
-    testc: vitest run --coverage;
+    testc: vitest run --coverage --project unit;
 
     # integration tests
-
-    test-int: >-
-        test/integration/pack.sh &&
-        test/integration/consumer.sh &&
-        test/integration/react.sh
-        ;
+    test-int: vitest run --project integration;
 
 dependencies:
     ### CLI dependencies
