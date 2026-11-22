@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
 // #region code
-import { parse, HtmlGenerator } from 'latex.js'
 import { createHTMLWindow } from 'svgdom'
 
+// LaTeX.js needs a DOM; it has to exist before latex.js is loaded
 global.window = createHTMLWindow()
 global.document = window.document
+
+// a static import would be evaluated before the globals above are set
+const { parse, HtmlGenerator } = await import('latex.js')
 
 
 let latex = "Hi, this is a line of text."

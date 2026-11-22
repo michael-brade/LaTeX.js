@@ -32,6 +32,9 @@
     // document.head.appendChild(generator.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js@0.13.0/dist/"))
     document.head.appendChild(generator.stylesAndScripts(""))
     document.body.appendChild(generator.domFragment())
+
+    // font size, text width and margins of the document class
+    generator.applyLengthsAndGeometryToDom(document.documentElement)
   </script>
 </body>
 
