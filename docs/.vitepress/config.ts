@@ -38,13 +38,18 @@ export default defineConfig({
             { text: 'Usage', link: '/usage' },
             { text: 'API', link: '/api' },
             { text: 'Extending', link: '/extending' },
-            { text: 'Limitations', link: '/limitations' }
+            { text: 'Limitations', link: '/limitations' },
+            { text: 'Development', link: '/development' }
         ]
     },
 
-    // Enable markdown line breaks
+    // no "breaks: true": the Markdown sources are hard-wrapped, so a newline must not become a <br>
     markdown: {
-        breaks: true,
+        // the logo components are inline: a line that starts with one must not start an HTML block,
+        // which would split its paragraph
+        component: {
+            inlineTags: ['latex', 'LaTeX', 'tex', 'TeX']
+        },
         languageAlias: {
             mjs: 'js'
         }
