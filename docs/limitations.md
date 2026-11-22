@@ -3,7 +3,7 @@
 - I don't create an intermediate AST yet, so <TeX/>'s conditional expressions are impossible
 - deprecated macros, or macros that are not supposed to be used in <latex/>, won't even exist in <latex/>.js.
   Examples include: `eqnarray`, the old <latex/> 2.09 font macros `\it`, `\sl`, etc. Also missing are most of the plain<TeX/> macros.
-  See also [`l2tabuen.pdf`](ftp://ftp.dante.de/tex-archive/info/l2tabu/english/l2tabuen.pdf).
+  See also [`l2tabuen.pdf`](https://mirrors.ctan.org/info/l2tabu/english/l2tabuen.pdf).
 - incorrect but legal markup in <latex/> won't produce the same result in <latex/>.js - like when using `\raggedleft` in the
   middle of a paragraph; but the <latex/>.js result should be intuitively correct.
 - because of the limitations when parsing <TeX/> as a context-free grammar (see [below](#parsing-tex)), native <latex/> packages
@@ -75,8 +75,9 @@ I therefore take a slightly different approach:
 - First, I don't care about <TeX/>, but only <latex/>, and most <latex/> documents do not use <TeX/> syntax, or `\def` in
   particular. Therefore, this parser assumes standard <latex/> syntax and catcodes.
 
-- Second, for now there is no way of defining macros, only expanding macros is supported. So if a new
-  <latex/> macro is needed, reimplement it in JavaScript directly, thus circumventing the problem altogether.
+- Second, for now there is no way of defining macros in the document (there is no `\def` or `\newcommand`), only
+  expanding macros is supported. So if a new <latex/> macro is needed, reimplement it in JavaScript directly, thus
+  circumventing the problem altogether, see [Custom Macros](extending.md#custom-macros).
 
 
 ### Expansion and Execution
