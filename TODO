@@ -1,0 +1,5 @@
+- CLI:
+  * it has -n and -l, use only one, -l [lang]
+  * latex.js -a doc.tex: if doc.tex is an existing file, treat -a as having no argument
+
+- usage.md and test/api.ts, test/api/node.*js: rename mjs to just js?

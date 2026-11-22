@@ -51,6 +51,7 @@ export default defineConfig({
             inlineTags: ['latex', 'LaTeX', 'tex', 'TeX']
         },
         languageAlias: {
+            cjs: 'js',
             mjs: 'js'
         }
     },
