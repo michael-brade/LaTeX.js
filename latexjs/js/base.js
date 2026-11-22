@@ -137,7 +137,7 @@ var optimizedResize = (function() {
 function completed()
 {
     document.removeEventListener("DOMContentLoaded", completed);
-	window.removeEventListener("load", completed);
+    window.removeEventListener("load", completed);
 
     var observer = new MutationObserver(function() {
         processTheElements();
