@@ -7,3 +7,13 @@
 
 - The web component's macros URL is resolved against baseURL, while stylesheet is resolved against the page
 - static css is ignored for CustomMacros
+
+
+- don't use two decorators per macro:
+    @Macro('H')
+    @Args(...)
+  consolidate it to one:
+    @HMacro(<args>)
+    @VMacro(...)
+    @HVMacro(...)
+    @PMacro(...)
