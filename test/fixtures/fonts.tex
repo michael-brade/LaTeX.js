@@ -72,6 +72,24 @@ Wrap all the paragraphs.
 .
 
 
+fonts reach into environments
+.
+outer {\bfseries bold
+\begin{center}
+    still bold
+\end{center}
+bold} end outer
+.
+<div class="body">
+<p>outer <span class="bf">bold</span></p>
+<div class="list center">
+<p><span class="bf">still bold</span></p>
+</div>
+<p class="continue"><span class="bf">bold</span>​ end outer</p>
+</div>
+.
+
+
 monospaced fonts do not use ligatures
 .
 \texttt{first test of -- and ---}
