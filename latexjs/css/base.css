@@ -194,16 +194,20 @@ html, .page {
     font-size: 1em !important;
 }
 
+/* letters and digits in CMU, like the text; but we need the original KaTeX
+ * fallback because CMU is a text font and lacks some/most math symbols
+ * (∞ ≤ ∈ ∑ ∫ ...)
+ */
 .katex,
 .katex .mainrm,
 .katex .mathit,
 .katex .mathbf {
-    font-family: "Computer Modern Serif" !important;  /* for KaTeX_Main */
+    font-family: "Computer Modern Serif", KaTeX_Main !important;
 }
 
-.katex .mathdefault,
+.katex .mathnormal,
 .katex .boldsymbol {
-    font-family: "Computer Modern Serif" !important;  /* for KaTeX_Math */
+    font-family: "Computer Modern Serif", KaTeX_Math !important;
 }
 
 .katex .mathsf,
@@ -212,7 +216,7 @@ html, .page {
 .katex .textboldsf,
 .katex .mathitsf,
 .katex .textitsf {
-    font-family: "Computer Modern Sans" !important;  /* for KaTeX_SansSerif */
+    font-family: "Computer Modern Sans", KaTeX_SansSerif !important;
 }
 
 
