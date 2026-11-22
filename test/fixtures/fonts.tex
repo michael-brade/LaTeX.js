@@ -90,6 +90,27 @@ bold} end outer
 .
 
 
+a paragraph continued after an environment may start with a font change
+.
+text
+\begin{center}
+    centered
+\end{center}
+\textbf{bold} start of the continued paragraph
+
+\textbf{bold} start of a new paragraph
+.
+<div class="body">
+<p>text</p>
+<div class="list center">
+<p>centered</p>
+</div>
+<p class="continue"><span class="bf">bold</span> start of the continued paragraph</p>
+<p><span class="bf">bold</span> start of a new paragraph</p>
+</div>
+.
+
+
 monospaced fonts do not use ligatures
 .
 \texttt{first test of -- and ---}
