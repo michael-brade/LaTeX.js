@@ -3,3 +3,7 @@
   * latex.js -a doc.tex: if doc.tex is an existing file, treat -a as having no argument
 
 - usage.md and test/api.ts, test/api/node.*js: rename mjs to just js?
+
+
+- The web component's macros URL is resolved against baseURL, while stylesheet is resolved against the page
+- static css is ignored for CustomMacros
