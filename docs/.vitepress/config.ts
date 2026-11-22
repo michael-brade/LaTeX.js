@@ -6,7 +6,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
     title: 'LaTeX.js',
-    description: 'A LaTeX parser written in JavaScript.',
+    description: 'A LaTeX parser written in TypeScript.',
 
     outDir: '../website',
     // cacheDir: './.vitepress/cache',

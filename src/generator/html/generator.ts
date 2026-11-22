@@ -177,9 +177,15 @@ export class HtmlGenerator extends Generator<Node>
     }
 
 
-    /* @return DocumentFragment, the full page without stylesheets or scripts */
+    /**
+     * @return DocumentFragment, the full page without stylesheets or scripts
+     */
     domFragment(): DocumentFragment
     {
+        // TODO: post-process this.#dom here:
+        //   - merge same nodes
+        //   - implement \unskip as processing instruction and do it here
+
         const f = document.createDocumentFragment();
 
         // text body
