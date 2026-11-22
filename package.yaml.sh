@@ -10,7 +10,7 @@ npx js-yaml <<'EOF' | sponge package.json
 ---
 name: latex.js
 description: JavaScript LaTeX to HTML5 translator
-version: 0.13.0
+version: 0.13.1
 
 author:
     name: Michael Brade
