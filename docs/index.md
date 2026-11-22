@@ -24,7 +24,7 @@ pageClass: ltx-home-page
 <div class="features">
   <div class="feature">
     <h2>100% JavaScript</h2>
-    <p><latex/>.js is written in 100% JavaScript and runs in the browser. No external dependencies need to be loaded.</p>
+    <p><latex/>.js is written in TypeScript, compiles to 100% JavaScript, and runs in the browser. No external dependencies need to be loaded.</p>
   </div>
 
   <div class="feature">

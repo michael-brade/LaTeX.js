@@ -1,7 +1,8 @@
 # Usage
 
-<latex/>.js has a command line interface (CLI), it can be embedded in a website using the provided webcomponent, or it
-can be used to directly obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each of those use-cases is explained in the following subsections.
+<latex/>.js has a command line interface (CLI), it can be embedded in a website using the provided web component, or
+it can be used to directly obtain and possibly modify the generated HTML/DOM by accessing the low-level classes. Each
+of those use-cases is explained in the following subsections.
 
 
 <latex/>.js can parse full <latex/> documents as well as documents without a preamble and only the text that comes
@@ -11,7 +12,7 @@ documentclass is used, which is `article` unless specified otherwise.
 
 ## CLI
 
-For CLI usage, you will probably want to install <latex/>.js globally:
+For CLI usage, you will probably want to install <latex/>.js globally (it needs Node.js 22 or newer):
 
 ```
 npm install -g latex.js
@@ -102,7 +103,8 @@ the `display:` property. It is `inline` by default.
 
 `defineLaTeXJSComponent(name = "latex-js")` registers the element; it does nothing if the element is already defined
 (e.g. with hot module reloading) or outside of the browser, so it is safe to call in code that is also run on the
-server.
+server. Without modules, load the UMD build `dist/latex.umd.cjs` with a `<script>` tag instead; it provides everything
+as properties of the global `latexjs`, e.g. `latexjs.defineLaTeXJSComponent()`.
 
 The `<latex-js>` element renders again whenever its content or one of its attributes changes, so frameworks like React
 or Vue can simply set its content. If the new content doesn't parse, the error is logged to the console and the
