@@ -2,8 +2,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import serveHandler from 'serve-handler';
 import puppeteer, { Browser, ConsoleMessage, Page } from 'puppeteer';
-import pixelmatch from 'pixelmatch';
-import { PNG } from 'pngjs';
+import { diff } from '@blazediff/core-native';
 
 
 export let chrome: Browser;
@@ -109,38 +108,42 @@ export async function closeBrowsers(): Promise<void> {
     if (!DEBUG)               server.close();
 }
 
-function compareScreenshots(filename: string): void {
-    if (fs.existsSync(filename + '.png')) {
-        // now compare the screenshots and delete the new one if they match
-        const png1 = PNG.sync.read(fs.readFileSync(filename + '.png'));
-        const png2 = PNG.sync.read(fs.readFileSync(filename + '.new.png'));
+// compare a new screenshot (PNG bytes) with the stored filename.png; if they differ, keep the new one as
+// filename.new.png and the difference as filename.diff.png
+async function compareScreenshots(filename: string, screenshot: Uint8Array): Promise<void> {
+    const stored = filename + '.png';
+    const newFile = filename + '.new.png';
+    const diffFile = filename + '.diff.png';
 
-        const diff = new PNG({ width: png1.width, height: png1.height });
-
-        const dfpx = pixelmatch(
-            png1.data,
-            png2.data,
-            diff.data,
-            png1.width,
-            png1.height,
-            {
-                threshold: 0,
-                diffColorAlt: [0, 255, 0]
-            }
-        );
-
-        fs.writeFileSync(filename + '.diff.png', PNG.sync.write(diff));
-
-        if (dfpx > 0) {
-            throw new Error(`screenshots differ by ${dfpx} pixels - see ${filename + '.*.png'}`);
-        } else {
-            fs.unlinkSync(filename + '.new.png');
-            fs.unlinkSync(filename + '.diff.png');
-        }
-    } else {
-        // if no screenshot exists yet, use this new one
-        fs.renameSync(filename + '.new.png', filename + '.png');
+    // if no screenshot exists yet, use this new one
+    if (!fs.existsSync(stored)) {
+        fs.writeFileSync(stored, screenshot);
+        return;
     }
+
+    // leftovers of an earlier failed run
+    fs.rmSync(newFile, { force: true });
+    fs.rmSync(diffFile, { force: true });
+
+    // the diff file is only written if the images differ; "oklab" counts like pixelmatch
+    const result = await diff(stored, screenshot, {
+        threshold: 0,
+        metric: 'oklab',
+        render: { diffColorAlt: [0, 255, 0] },     // pixels that got darker: green, lighter: red
+        output: diffFile
+    });
+
+    if (result.kind === 'compared' && result.identical)
+        return;
+
+    fs.writeFileSync(newFile, screenshot);
+
+    if (result.kind === 'compared')
+        throw new Error(`screenshots differ by ${result.count} pixels - see ${filename + '.*.png'}`);
+    if (result.kind === 'dimension-mismatch')
+        throw new Error(`screenshot size changed from ${result.a.width}x${result.a.height} to ` +
+                        `${result.b.width}x${result.b.height} - see ${filename + '.*.png'}`);
+    throw new Error(`comparing screenshots failed: ${result.message}`);
 }
 
 // render html and take screenshot
@@ -182,14 +185,8 @@ export async function takeScreenshot(html: string, filename: string): Promise<vo
         screenshotPage(fPage)
     ]);
 
-    const cfile = `${filename}.ch`;
-    const ffile = `${filename}.ff`;
-
-    fs.writeFileSync(`${cfile}.new.png`, cScreenshot);
-    fs.writeFileSync(`${ffile}.new.png`, fScreenshot);
-
-    compareScreenshots(cfile);
-    compareScreenshots(ffile);
+    await compareScreenshots(`${filename}.ch`, cScreenshot);
+    await compareScreenshots(`${filename}.ff`, fScreenshot);
 
     // only delete the page again when not debugging
     if (!DEBUG)

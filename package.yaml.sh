@@ -229,9 +229,7 @@ devDependencies:
 
     puppeteer: 25.17.x
 
-    pixelmatch: 8.x
-    pngjs: 7.0.x
-    "@types/pngjs": ^6.0.5
+    "@blazediff/core-native": 7.0.x       # screenshot diffs
 
     serve-handler: 6.x
     "@types/serve-handler": ^6.1.4
