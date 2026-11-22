@@ -64,4 +64,14 @@ $nav-green: #3eaf7c;    // #2e8555
 
 .vp-doc {
     text-align: justify;
+
+    /* inline code: the default theme shrinks it to 0.875em (--vp-code-font-size, also used by code blocks,
+       so it isn't changed here) and pads it by 3px 6px, which looks bad in running text */
+    :not(pre, h1, h2, h3, h4, h5, h6) > code {
+        font-size: inherit;
+    }
+
+    :not(pre) > code {
+        padding: 0;
+    }
 }
