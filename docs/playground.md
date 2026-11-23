@@ -12,7 +12,11 @@ pageClass: playground-page
 </div>
 
 <script setup>
-import LtxPlayground from './components/LtxPlayground.vue'
+import { defineClientComponent } from 'vitepress'
+
+// rendered in the browser only, not server-rendered by `vitepress build`: Vue creates the preview iframe with its
+// load listener, and the playground (CodeMirror, LaTeX.js) stays out of the server bundle
+const LtxPlayground = defineClientComponent(() => import('./components/LtxPlayground.vue'))
 </script>
 
 <style>

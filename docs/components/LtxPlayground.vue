@@ -14,7 +14,6 @@ import showcase from '../showcase.tex?raw'
 
 
 const code = ref<string>(showcase)
-const previewFrame = ref<HTMLIFrameElement | null>(null)
 const gutter = ref<HTMLDivElement | null>(null)
 
 // not a ref: Vue's proxy would get in the way of CodeMirror
@@ -24,9 +23,10 @@ let view: EditorView | null = null
 // zoom of the output: Ctrl+wheel over the preview, or the buttons
 const { zoom, canZoomIn, canZoomOut, zoomTo, zoomIn, zoomOut, onWheel } = useZoom(z => preview.zoom = z)
 
+// the component is client-only (see playground.md), so setup can use window and document
 const preview = new LaTeXPreview({
     // absolute URL of the LaTeX.js css/, fonts/ and js/ folders (docs/public/latexjs/), respecting the site's base
-    baseURL: () => window.location.origin + withBase('/latexjs/'),
+    baseURL: window.location.origin + withBase('/latexjs/'),
     onCompiled: error => view && showErrors(view, error),
     onWheel
 })
@@ -40,14 +40,6 @@ const onCmCodeChange = (state: EditorState) => preview.compileDebounced(state.do
 
 
 onMounted(() => {
-    // In the built site the page is server-rendered: the iframe's initial about:blank can finish loading before
-    // hydration adds the load listener, and then preview.attach() never runs.
-    //
-    // attach() may now be called by onMounted and by the load listener, so attach() must ignore a second call.
-    const iframe = previewFrame.value
-    if (iframe?.contentDocument?.readyState === 'complete')
-        preview.attach(iframe)
-
     if (gutter.value) {
         Split({
             columnGutters: [{
@@ -82,9 +74,9 @@ onMounted(() => {
 
         <!-- Right side: LaTeX preview -->
         <div class="pane-wrapper" @wheel="onWheel">
-            <iframe id="preview" ref="previewFrame"
+            <iframe id="preview"
                 sandbox="allow-same-origin allow-scripts"
-                @load="previewFrame && preview.attach(previewFrame)"
+                @load="preview.attach($event.target as HTMLIFrameElement)"
             ></iframe>
 
             <div class="zoom-controls">

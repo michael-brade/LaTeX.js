@@ -140,6 +140,11 @@ Run them when you change the build or the public API: `npm run build && npm run 
 an iframe. In the pages, `<latex/>` and `<tex/>` render the logos, and the library examples in [Usage](usage.md) are
 included from `test/api/` (with `<<<`), so they are tested.
 
+`vitepress build` pre-renders the pages in Node (`vitepress dev` doesn't), but the playground is client-only
+(`defineClientComponent` in `playground.md`), so its code can use `window` and `document` freely and stays out of the
+server bundle. Test playground changes with a built site too (`vitepress build` and `vitepress preview`), not only
+with `devdocs`.
+
 The website uses the library from `dist/`: `"latex.js"` resolves through `exports`, and
 `docs/public/latexjs/{css,fonts,js}` are committed symlinks to `dist/{css,fonts,js}` (the playground loads them from
 `/latexjs/`; `vitepress build` copies the real files). After changes in `src/`, rebuild (`npm run devbuild` is faster)

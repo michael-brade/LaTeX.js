@@ -116,10 +116,9 @@ function showError(doc: Document, text: string)
 export interface LaTeXPreviewOptions
 {
     /**
-     * URL of the directory with the LaTeX.js css/, fonts/ and js/ folders;
-     * a function because it may need window
+     * absolute URL of the directory with the LaTeX.js css/, fonts/ and js/ folders
      */
-    baseURL: () => string
+    baseURL: string
 
     /**
      * called after each compile with the error, or null if compiling succeeded
@@ -134,68 +133,62 @@ export interface LaTeXPreviewOptions
 
 /**
  * Compiles LaTeX into an iframe and keeps its state: zoom, scroll position across errors, debouncing.
- * Constructing it doesn't touch the DOM (SSR); call attach() on each load event of the iframe, and on mount.
+ * Call attach() on each load event of the iframe.
  */
 export class LaTeXPreview
 {
-    private generator: HtmlGenerator | null = null
-    private source: string | null = null
+    #generator: HtmlGenerator | null = null
+    #source: string | null = null
 
-    private iframe: HTMLIFrameElement | null = null
-    private attachedDoc: Document | null = null
-    private compileTimer: ReturnType<typeof setTimeout> | undefined
-    private scrollY = 0
-    private _zoom = 1
-    private readonly options: LaTeXPreviewOptions
+    #iframe: HTMLIFrameElement | null = null
+    #compileTimer: ReturnType<typeof setTimeout> | undefined
+    #scrollY = 0
+    #zoom = 1
+    readonly #options: LaTeXPreviewOptions
 
     constructor(options: LaTeXPreviewOptions)
     {
-        this.options = options
+        this.#options = options
     }
 
 
     /**
-     * Set up the document the iframe just loaded. Call it from the iframe's load event, and on mount if the iframe has
-     * already loaded (see LtxPlayground.vue). Calling it again for the same document does nothing to prevent multiple
-     * event listeners being registered e.g. for the "wheel" event.
+     * Set up the document the iframe just loaded.
      */
     attach(iframe: HTMLIFrameElement)
     {
-        this.iframe = iframe
+        this.#iframe = iframe
 
         const doc = iframe.contentDocument
-        if (!doc || doc === this.attachedDoc)
+        if (!doc)
             return
-
-        // remember the document attach() was last called for
-        this.attachedDoc = doc
 
         handleLinks(doc)
 
         // passive:false because onWheel may call preventDefault()
-        if (this.options.onWheel)
-            doc.addEventListener('wheel', this.options.onWheel, { passive: false })
+        if (this.#options.onWheel)
+            doc.addEventListener('wheel', this.#options.onWheel, { passive: false })
 
         this.applyZoom()
 
         // the initial about:blank finished loading (no srcdoc yet): an earlier compile() had to skip it
-        if (!iframe.srcdoc && this.source !== null)
+        if (!iframe.srcdoc && this.#source !== null)
             this.compile()
     }
 
 
-    get zoom(): number { return this._zoom }
+    get zoom(): number { return this.#zoom }
 
     /** Zoom the output, keeping the relative scroll position. */
     set zoom(z: number)
     {
-        this._zoom = z
+        this.#zoom = z
         this.applyZoom()
     }
 
     private applyZoom()
     {
-        const el = this.iframe?.contentDocument?.scrollingElement
+        const el = this.#iframe?.contentDocument?.scrollingElement
         if (!el)
             return
 
@@ -210,7 +203,10 @@ export class LaTeXPreview
 
     private setDocumentZoom()
     {
-        this.iframe?.contentDocument?.documentElement.style.setProperty('zoom', this._zoom === 1 ? '' : String(this._zoom))
+        this.#iframe?.contentDocument?.documentElement.style.setProperty(
+            'zoom',
+            this.#zoom === 1 ? '' : String(this.#zoom)
+        )
     }
 
 
@@ -218,33 +214,30 @@ export class LaTeXPreview
      * Compile latex source into the iframe (default: the last source given). Errors are also shown in the iframe.
      * If the iframe isn't ready yet, the source is compiled once it is (see attach()).
      */
-    compile(latex: string = this.source ?? '')
+    compile(latex: string = this.#source ?? '')
     {
         // a pending debounced compile would only compile the same or older source again
-        clearTimeout(this.compileTimer)
+        clearTimeout(this.#compileTimer)
 
-        this.source = latex
+        this.#source = latex
 
-        if (typeof window === 'undefined' || typeof document === 'undefined')
-            return // SSR
-
-        const iframe = this.iframe
+        const iframe = this.#iframe
         const doc = iframe?.contentDocument
         if (!iframe || !doc || doc.readyState !== 'complete' || !doc.body)
             return
 
-        if (!this.generator) {
-            this.generator = new HtmlGenerator({
+        if (!this.#generator) {
+            this.#generator = new HtmlGenerator({
                 hyphenate: hyphenateSync
             })
         } else {
-            this.generator.reset();
+            this.#generator.reset();
         }
 
         let error: unknown = null
 
         try {
-            const newDoc = parse(latex, { generator: this.generator }).htmlDocument(this.options.baseURL())
+            const newDoc = parse(latex, { generator: this.#generator }).htmlDocument(this.#options.baseURL)
 
             // styles for the error messages below
             const errorStyle = newDoc.createElement('style')
@@ -262,17 +255,17 @@ export class LaTeXPreview
                 iframe.srcdoc = newDoc.documentElement.outerHTML
             }
 
-            if (this.scrollY) {
-                iframe.contentWindow?.scrollTo(0, this.scrollY)
-                this.scrollY = 0
+            if (this.#scrollY) {
+                iframe.contentWindow?.scrollTo(0, this.#scrollY)
+                this.#scrollY = 0
             }
         } catch (e: unknown) {
             console.error(e)
             error = e
 
             // save scrolling position and restore on next successful compile
-            if (!this.scrollY)
-                this.scrollY = iframe.contentWindow?.pageYOffset ?? 0
+            if (!this.#scrollY)
+                this.#scrollY = iframe.contentWindow?.pageYOffset ?? 0
 
             if (e instanceof LaTeXSyntaxError)
                 showError(doc, 'ERROR: Parsing failure:\n\n' + errorMessage(e, latex))
@@ -280,13 +273,15 @@ export class LaTeXPreview
                 showError(doc, 'ERROR: ' + (e instanceof Error ? e.message : String(e)))
         }
 
-        this.options.onCompiled?.(error)
+        this.#options.onCompiled?.(error)
     }
 
-    /** Call compile(), but only if the interval since the last call is at least `delay` ms (e.g. while typing). */
+    /**
+     * Call compile(), but only if the interval since the last call is at least `delay` ms (e.g. while typing).
+     */
     compileDebounced(latex: string, delay = 250)
     {
-        clearTimeout(this.compileTimer)
-        this.compileTimer = setTimeout(() => this.compile(latex), delay)
+        clearTimeout(this.#compileTimer)
+        this.#compileTimer = setTimeout(() => this.compile(latex), delay)
     }
 }
