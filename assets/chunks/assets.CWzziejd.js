@@ -1,0 +1,1 @@
+var e=`/img/latexjs.svg`;export{e as t};
