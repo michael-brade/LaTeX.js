@@ -271,6 +271,13 @@ export class HtmlGenerator extends Generator<Node>
         if (!isElementKind(kind))
             this.error(`unknown element kind: ${String(kind)}`);
 
+        // if continue then do not add parindent or parskip, we are not supposed to start a new paragraph;
+        // only a paragraph can continue: inline elements are created before the paragraph they end up in
+        if (kind === Elements.par && this._continue && this.location().end.offset > this._continue) {
+            classes += " continue";
+            this.break();
+        }
+
         return this.createElement(HtmlElements[kind], children, classes);
     }
 
@@ -280,7 +287,7 @@ export class HtmlGenerator extends Generator<Node>
     }
 
     // create an element using a tag name or an element factory
-    // adds the current alignment and continuation classes
+    // adds the current alignment class
     // children: a Node or an array of Nodes
     protected createElement(type: HtmlElementFactory,
                             children?: Node | Node[] | null,
@@ -297,12 +304,6 @@ export class HtmlGenerator extends Generator<Node>
 
         if (this.alignment())
             classes += " " + this.alignment();
-
-        // if continue then do not add parindent or parskip, we are not supposed to start a new paragraph
-        if (this._continue && this.location().end.offset > this._continue) {
-            classes = classes + " continue";
-            this.break();
-        }
 
         if (classes.trim())
             el.setAttribute("class", classes.replace(/\s+/g, ' ').trim());
