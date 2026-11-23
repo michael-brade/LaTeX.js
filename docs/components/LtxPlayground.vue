@@ -38,10 +38,16 @@ const onCmReady = ({ view: v }: { view: EditorView }) => {
 
 const onCmCodeChange = (state: EditorState) => preview.compileDebounced(state.doc.toString())
 
-const onPreviewLoad = (e: Event) => preview.attach(e.target as HTMLIFrameElement)
-
 
 onMounted(() => {
+    // In the built site the page is server-rendered: the iframe's initial about:blank can finish loading before
+    // hydration adds the load listener, and then preview.attach() never runs.
+    //
+    // attach() may now be called by onMounted and by the load listener, so attach() must ignore a second call.
+    const iframe = previewFrame.value
+    if (iframe?.contentDocument?.readyState === 'complete')
+        preview.attach(iframe)
+
     if (gutter.value) {
         Split({
             columnGutters: [{
@@ -87,7 +93,7 @@ onMounted(() => {
         <div class="pane-wrapper" @wheel="onWheel">
             <iframe id="preview" ref="previewFrame"
                 sandbox="allow-same-origin allow-scripts"
-                @load="onPreviewLoad"
+                @load="previewFrame && preview.attach(previewFrame)"
             ></iframe>
 
             <div class="zoom-controls">

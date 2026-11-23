@@ -134,15 +134,17 @@ export interface LaTeXPreviewOptions
 
 /**
  * Compiles LaTeX into an iframe and keeps its state: zoom, scroll position across errors, debouncing.
- * Constructing it doesn't touch the DOM (SSR); call attach() on each load event of the iframe.
+ * Constructing it doesn't touch the DOM (SSR); call attach() on each load event of the iframe, and on mount.
  */
 export class LaTeXPreview
 {
-    private iframe: HTMLIFrameElement | null = null
     private generator: HtmlGenerator | null = null
     private source: string | null = null
-    private scrollY = 0
+
+    private iframe: HTMLIFrameElement | null = null
+    private attachedDoc: Document | null = null
     private compileTimer: ReturnType<typeof setTimeout> | undefined
+    private scrollY = 0
     private _zoom = 1
     private readonly options: LaTeXPreviewOptions
 
@@ -152,13 +154,21 @@ export class LaTeXPreview
     }
 
 
-    /** Set up the document the iframe just loaded. Call it from the iframe's load event. */
+    /**
+     * Set up the document the iframe just loaded. Call it from the iframe's load event, and on mount if the iframe has
+     * already loaded (see LtxPlayground.vue). Calling it again for the same document does nothing to prevent multiple
+     * event listeners being registered e.g. for the "wheel" event.
+     */
     attach(iframe: HTMLIFrameElement)
     {
         this.iframe = iframe
 
         const doc = iframe.contentDocument
-        if (!doc) return
+        if (!doc || doc === this.attachedDoc)
+            return
+
+        // remember the document attach() was last called for
+        this.attachedDoc = doc
 
         handleLinks(doc)
 
