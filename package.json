@@ -78,7 +78,7 @@
     "tsx": "^4.22.4",
     "@tsconfig/node-ts": "^23.6.4",
     "@tsconfig/node22": "^22.0.7",
-    "vitepress": "^1.6.4",
+    "vitepress": "2.0.0-alpha.21",
     "split-grid": "1.0.x",
     "@codemirror/autocomplete": "6.x",
     "@codemirror/commands": "6.x",

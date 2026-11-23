@@ -187,7 +187,7 @@ devDependencies:
 
     ### docs
 
-    vitepress: ^1.6.4
+    vitepress: 2.0.0-alpha.21
 
     split-grid: 1.0.x
     "@codemirror/autocomplete": 6.x
