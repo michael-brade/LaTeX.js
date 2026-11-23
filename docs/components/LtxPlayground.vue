@@ -53,16 +53,7 @@ onMounted(() => {
             columnGutters: [{
                 track: 1,
                 element: gutter.value
-            }],
-            onDragEnd: () => {
-                // microscopic opacity shift forces Chrome to reset the scroll tree
-                // without this, scrolling with the mousewheel is not possible after using the splitter
-                const iframe = previewFrame.value
-                if (iframe) {
-                    iframe.style.opacity = '0.999';
-                    requestAnimationFrame(() => iframe.style.opacity = '1');
-                }
-            }
+            }]
         })
     }
 })
