@@ -49,11 +49,12 @@ $mobile-narrow: 419px;
     .hero {
         text-align: center;
 
+        // the logo is a pair of braces: size and align it so they cover the area
+        // from the top of the A to the bottom the E in LaTeX
         img {
             display: inline;
-            width: 5rem;
-            vertical-align: middle;
-            padding-bottom: 0.5rem;
+            height: 0.92em;
+            vertical-align: -0.22em;
         }
 
         h1 {
@@ -115,6 +116,21 @@ $mobile-narrow: 419px;
             font-weight: 500;
             line-height: 1.25;
             color: var(--ltx-home-text-h2);
+
+            .icon {
+                display: inline-block;
+                width: 1.1em;
+                height: 1.1em;
+                margin-right: 0.25em;
+                vertical-align: -0.12em;
+                // the SVG is used as a mask, so the icon takes the heading color
+                background-color: currentColor;
+                mask: var(--icon) center / contain no-repeat;
+            }
+
+            @each $name in typescript, cli, compatible, extend, speed, open_source {
+                .icon-#{$name} { --icon: url('/img/#{$name}.svg'); }
+            }
         }
 
         p {

@@ -27,7 +27,9 @@ $nav-green: #3eaf7c;    // #2e8555
 }
 
 .VPNavBarTitle .logo {
-    margin-bottom: -5px;
+    position: relative;
+    top: 4px;
+    padding: 3px 0;     // so that the logo covers exactly the area of LaTeX.js
 }
 
 /* white text, links and icons on green */
