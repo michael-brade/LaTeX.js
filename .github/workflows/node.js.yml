@@ -132,7 +132,7 @@ jobs:
         path: test/coverage
 
     - name: Upload coverage to Qlty
-      uses: qltysh/qlty-action/coverage@v2
+      uses: qltysh/qlty-action/coverage@a46e29cfd54065ae8a2c6b1fd3446aed1b1a4257    # v2.8.0
       with:
         # authenticates with OIDC (id-token: write), no secret needed
         oidc: true

@@ -117,6 +117,11 @@ is intended, replace the `.png` with the `.new.png`; don't commit the `.new.png`
 run the bundles in `dist/` and `bin/`, and only their source maps lead back to `src/`. After a `devbuild`, the coverage
 is 0%.
 
+The CI workflow (`.github/workflows/node.js.yml`) uploads `test/coverage/lcov.info` to [Qlty](https://qlty.sh/gh/michael-brade/projects/LaTeX.js),
+which shows the coverage (and maintainability) in the README badges and on pull requests. The workflow has three jobs:
+`build` type-checks and builds, `test` runs the unit tests with coverage and the integration tests on that build, and
+`upload` sends the coverage report to Qlty; only `upload` may request the OIDC token, and it runs no project code.
+
 ### Integration Tests
 
 `npm run test-int` runs `test/integration.test.ts`, the vitest project `integration` (`npm test` runs the project
