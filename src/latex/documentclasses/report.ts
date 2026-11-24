@@ -97,7 +97,7 @@ export class Report extends Base
         this.g.setFontSize("small");
 
         // TODO: use center env directly instead...
-        this.g.enterGroup();
+        this.g.enterGroup(true);    // an environment's group must copy the attributes
         this.g.setFontWeight("bf");
         const head = this.g.create(Elements.list, this.g.macro("abstractname"), "center");
         this.g.exitGroup();

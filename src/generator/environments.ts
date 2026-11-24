@@ -29,7 +29,8 @@ export function Environments<TBase extends Constructor<GroupsAPI & MacroManageme
                 this.error(`unknown environment: ${envId}`);
 
             this.startBalanced();
-            this.enterGroup();
+            // font declarations of the enclosing group stay active inside the environment
+            this.enterGroup(true);
             this._manager.beginArgs(envId);
         }
 
