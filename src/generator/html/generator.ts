@@ -509,7 +509,17 @@ export class HtmlGenerator extends Generator<Node>
     }
 
 
-    // This wraps the current attribute values around the given element or array of elements
+    /**
+     * This wraps the current attribute values around the given element or array of elements.
+     *
+     * The element that is created and wrapped around depends on the type of element(s) to wrap.
+     *  - HTML tag:
+     *    * wrap it with a block element if it isBlockLevel
+     *    * wrap it with an inline element otherwise
+     *  - Text or SVG: wrap it with an inline element
+     *  - an array or document fragment with a set of elements: wrap them according to the above
+     *    but wrap a sequence of inline elements all together
+     */
     override addAttributes(node: Node): Node
     override addAttributes(nodes: Node[]): Node[]
     override addAttributes(nodes: Node|Node[]): Node|Node[]
@@ -518,21 +528,50 @@ export class HtmlGenerator extends Generator<Node>
         if (!attrs)
             return nodes;
 
-        if (nodes instanceof window.Element) {
-            // Must reference the static method through the Class name
-            if (isBlockLevel(nodes as HTMLElement))
+        // instanceof: here we need the "window." prefix because the CLI and tests only set
+        // the window global, not HTMLElement and its other members; and TypeScript doesn't
+        // erase types after instanceof
+        if (nodes instanceof window.HTMLElement) {
+            if (isBlockLevel(nodes))
                 return this.create(Elements.block, nodes, attrs);
 
             return this.create(Elements.inline, nodes, attrs);
-        } else if (nodes instanceof window.Text || nodes instanceof window.DocumentFragment) {
+        } else if (nodes instanceof window.SVGElement || nodes instanceof window.Text) {
             return this.create(Elements.inline, nodes, attrs);
+        } else if (nodes instanceof window.DocumentFragment) {
+            return this.createFragment(this.#wrapNodes([...nodes.childNodes], attrs)) as Node;
         } else if (Array.isArray(nodes)) {
-            // Using an arrow function here safely binds 'this' context lexically
-            return nodes.map((node) => this.create(Elements.inline, node, attrs));
+            return this.#wrapNodes(nodes, attrs);
         } else {
             console.warn("addAttributes got an unknown/unsupported argument:", nodes);
         }
 
         return nodes;
     }
+
+    // wrap a sequence of inline nodes in one inline element,
+    // but each block on its own in a block element
+    #wrapNodes(nodes: Node[], attrs: string): Node[]
+    {
+        const result: Node[] = []
+        let inlineRun: Node[] = []
+
+        const finishRun = () => {
+            if (inlineRun.length)
+                result.push(this.create(Elements.inline, inlineRun, attrs))
+            inlineRun.length = 0
+        }
+
+        for (const node of nodes) {
+            if (node instanceof window.HTMLElement && isBlockLevel(node)) {
+                finishRun()
+                result.push(this.create(Elements.block, node, attrs))
+            } else
+                inlineRun.push(node)
+        }
+        finishRun()
+
+        return result
+    }
+
 }

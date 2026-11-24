@@ -90,6 +90,23 @@ bold} end outer
 .
 
 
+font commands wrap inline content and environments in their argument separately
+.
+Some \textbf{bold \emph{italic} text \begin{itemize}\item bold item\end{itemize} more bold text} and normal text.
+.
+<div class="body">
+<p class="continue">Some <span class="bf">bold <span class="it">italic</span> text</span>
+<div class="bf">
+<ul class="list">
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>bold item</p></li>
+</ul>
+</div>
+<span class="bf"> more bold text</span> and normal text.
+</p>
+</div>
+.
+
+
 a paragraph continued after an environment may start with a font change
 .
 text
