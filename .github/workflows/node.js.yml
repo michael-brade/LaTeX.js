@@ -86,6 +86,9 @@ jobs:
       uses: actions/cache/restore@v6
       with:
         key: build
+        path: |
+          dist/
+          bin/
 
     - name: Test with coverage
       run: npm run testc
