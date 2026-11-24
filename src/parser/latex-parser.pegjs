@@ -758,7 +758,7 @@ end_env "\\end" =
 h_environment =
     id:begin_env
         macro_args                                          // parse macro args (which now become environment args)
-        node:( &. { return g.macro(id.id, m.endArgs().parsed); })  // then execute macro with args without consuming input
+        node:( &. { return g.macro(id.id, m.endArgs().parsed, false); })  // then execute macro with args without consuming input
         sb:(s:space? {return g.createText(s); })
         p:paragraph_with_linebreak*                         // then parse environment contents (if macro left some)
     end_id:end_env se:(s:space? {return g.createText(s); })
@@ -784,7 +784,7 @@ h_environment =
 environment =
     id:begin_env  !{ g.break(); }
         macro_args                                          // parse macro args (which now become environment args)
-        node:( &. { return g.macro(id.id, m.endArgs().parsed); })  // then execute macro with args without consuming input
+        node:( &. { return g.macro(id.id, m.endArgs().parsed, false); })  // then execute macro with args without consuming input
         p:paragraph*                                        // then parse environment contents (if macro left some)
     end_id:end_env
     {

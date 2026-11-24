@@ -96,13 +96,13 @@ export class Report extends Base
         // onecolumn, no titlepage
         this.g.setFontSize("small");
 
-        // TODO use center env directly instead...
+        // TODO: use center env directly instead...
         this.g.enterGroup();
         this.g.setFontWeight("bf");
         const head = this.g.create(Elements.list, this.g.macro("abstractname"), "center");
         this.g.exitGroup();
 
-        return [ head, ...this.g.macro("quotation") ];
+        return [ head, ...this.g.macro("quotation", [], false) ];
     }
 
     endabstract(): void

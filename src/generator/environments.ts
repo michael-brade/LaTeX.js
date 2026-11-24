@@ -45,7 +45,7 @@ export function Environments<TBase extends Constructor<GroupsAPI & MacroManageme
 
             let end: unknown[] | undefined;
             if (this.hasMacro("end" + id))
-                end = this.macro("end" + id);
+                end = this.macro("end" + id, [], false);
 
             this.exitGroup();
 

@@ -45,8 +45,11 @@ export function MacroManagement<TBase extends Constructor<Core>>(Base: TBase)
          * "execute" (expand) a macro with the given (parsed) arguments
          * @param name the macro's name to expand
          * @param [args=[]] macro's parsed arguments as array
+         * @param [addAttributes=true] add the current attributes to the nodes of the result;
+         *    environments don't: the text inside is created in the environment's group
+         *    and gets its attributes there
          */
-        macro(name: string, args: unknown[] = []): any[]
+        macro(name: string, args: unknown[] = [], addAttributes: boolean = true): any[]
         {
             const macroFn = this._manager.macroFn(name);
             if (!macroFn)
@@ -61,8 +64,8 @@ export function MacroManagement<TBase extends Constructor<Core>>(Base: TBase)
                     if (typeof x === 'string' || x instanceof String)
                         return this.createText(x);
 
-                    // otherwise, add the current attributes to the node
-                    return this.addAttributes(x);
+                    // otherwise, check if we have to add the current attributes to the node
+                    return addAttributes ? this.addAttributes(x) : x;
                 });
         }
 
