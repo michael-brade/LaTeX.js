@@ -1,0 +1,28 @@
+// in docs/, not docs/.vitepress/: editors use the nearest tsconfig.json in a file's parent folders,
+// so this one has to be a parent of docs/components/ as well
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "allowImportingTsExtensions": true,
+        "rewriteRelativeImportExtensions": false,
+
+        "isolatedModules": true,
+        "skipLibCheck": true,
+
+        "paths": {
+            // must be in sync with aliases in .vitepress/config.ts
+            "@theme/components/*": ["./.vitepress/theme/components/*"],
+            "@theme/Layout.vue": ["./.vitepress/theme/Layout.vue"]
+        }
+    },
+    "include": [
+        ".vitepress/**/*.ts",
+        ".vitepress/**/*.vue",
+        "components/**/*.ts",
+        "components/**/*.vue"
+    ],
+    "exclude": [
+        ".vitepress/cache",
+        ".vitepress/.temp"
+    ]
+}

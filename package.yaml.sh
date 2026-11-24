@@ -103,7 +103,7 @@ scripts:
     typecheck: >-
         tsc --noEmit &&
         tsc --noEmit -p test &&
-        node lib/vue-tsc.cjs --noEmit -p docs/.vitepress
+        node lib/vue-tsc.cjs --noEmit -p docs
         ;
 
     # library into dist/, then the CLI into bin/latex.js (vite.cli.config.ts), then the static assets
