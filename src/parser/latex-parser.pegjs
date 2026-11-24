@@ -78,6 +78,13 @@ paragraph =
     be:break?
     {
         bb.length > 0 && g.break();
+
+        // text that didn't produce anything (e.g. only declarations, or the end of a group) is no paragraph
+        if (!txt.some(t => t != undefined)) {
+            be && g.break();
+            return undefined;
+        }
+
         var p = g.create(Elements.par, txt, n ? "noindent" : "");
         be && g.break();
         return p;

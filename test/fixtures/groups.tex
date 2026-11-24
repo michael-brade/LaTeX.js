@@ -33,3 +33,35 @@ It is also possible {to have a\par par command} in a group.
 <p>par command​ in a group.</p>
 </div>
 .
+
+
+a group that ends after an environment doesn't start an empty paragraph
+.
+text {\itshape italic
+\begin{quote}
+    quote
+\end{quote}}
+
+a new {} paragraph
+
+{}
+
+{\bfseries bold
+\begin{quote}
+    quote
+\end{quote}}
+continued
+.
+<div class="body">
+<p>text <span class="it">italic</span></p>
+<div class="list quote">
+<p><span class="it">quote</span></p>
+</div>
+<p>a new ​ paragraph</p>
+<p><span class="bf">bold</span></p>
+<div class="list quote">
+<p><span class="bf">quote</span></p>
+</div>
+<p class="continue">​ continued</p>
+</div>
+.
