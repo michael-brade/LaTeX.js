@@ -1,7 +1,8 @@
 [![NPM version](https://img.shields.io/npm/v/latex.js.svg?style=plastic)](https://www.npmjs.org/package/latex.js)
 [![NPM downloads](https://img.shields.io/npm/dm/latex.js.svg?style=plastic)](https://www.npmjs.org/package/latex.js)
 [![CI](https://img.shields.io/github/actions/workflow/status/michael-brade/LaTeX.js/node.js.yml?branch=master&style=plastic)](https://github.com/michael-brade/LaTeX.js/actions/workflows/node.js.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f2ab8b70a87a9da55189/maintainability)](https://codeclimate.com/github/michael-brade/LaTeX.js/maintainability)
+[![Maintainability](https://qlty.sh/gh/michael-brade/projects/LaTeX.js/maintainability.svg)](https://qlty.sh/gh/michael-brade/projects/LaTeX.js)
+[![Code Coverage](https://qlty.sh/gh/michael-brade/projects/LaTeX.js/coverage.svg)](https://qlty.sh/gh/michael-brade/projects/LaTeX.js)
 [![License](https://img.shields.io/github/license/michael-brade/LaTeX.js.svg?style=plastic)](https://github.com/michael-brade/LaTeX.js/blob/master/LICENSE)
 
 

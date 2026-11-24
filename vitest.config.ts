@@ -48,8 +48,11 @@ export default defineConfig({
             excludeAfterRemap: true,        // drop the bundled dependencies (katex, svg.js, hyphen)
             autoAttachSubprocess: true,     // the CLI and API tests spawn node
 
+            // text: console
+            // html: test/coverage/index.html
+            // lcovonly: test/coverage/lcov.info (for Qlty)
             reportsDirectory: 'test/coverage',
-            reporter: ['text', 'html']      // test/coverage/index.html
+            reporter: ['text', 'html', 'lcovonly']
         }
     }
 });
