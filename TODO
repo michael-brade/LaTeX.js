@@ -17,3 +17,7 @@
     @VMacro(...)
     @HVMacro(...)
     @PMacro(...)
+
+
+- check out LinkeDom (or Happy-DOM) and see if it works with LaTeX.js
+  both have no SVG font metrics - do I even need that (getBBox)?
