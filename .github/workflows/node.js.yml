@@ -1,5 +1,8 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# Type-checks and builds the library, runs the unit tests with coverage and the integration tests on the build, and
+# uploads the coverage to Qlty.
+#
+# Each job runs on a fresh runner, the build and the coverage report are cached between runners.
+# Only the upload job can request an OIDC token, and it runs no project code.
 
 name: Node.js CI
 
@@ -9,22 +12,60 @@ on:
   pull_request:
     branches: [ "master" ]
 
+permissions:
+  contents: read
+
+env:
+  # see Node.js Release Schedule: https://nodejs.org/en/about/releases/
+  NODE_VERSION: 24.x
+
 jobs:
   build:
-
+    name: Check and build
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [24.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    # neither the type check nor the build needs puppeteer's browsers
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: true
 
     steps:
-    - uses: actions/checkout@v6
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v6
+    - uses: actions/checkout@v7
+
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v7
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ env.NODE_VERSION }}
+        # this already caches npm dependencies for faster "npm ci" and later jobs
+        cache: 'npm'
+
+    - run: npm ci
+
+    - run: npm run typecheck
+    - run: npm run build
+
+    - name: Cache the build
+      uses: actions/cache/save@v6
+      with:
+        # the tests use the build: dist/ and bin/, with source maps for the coverage
+        key: build
+        path: |
+          dist/
+          bin/
+
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v7
+      with:
+        node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
 
     # Ubuntu 23.10+ blocks unprivileged user namespaces via AppArmor, which Chrome's sandbox needs
@@ -34,23 +75,26 @@ jobs:
     # puppeteer's postinstall downloads Chrome and Firefox into ~/.cache/puppeteer unless they are already
     # there; restore them before npm ci (the browser versions are pinned by puppeteer's version in the lockfile)
     - name: Cache puppeteer browsers
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ~/.cache/puppeteer
         key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
 
-    # check and build
     - run: npm ci
-    - run: npm run typecheck
-    - run: npm run build
+
+    - name: Restore the build
+      uses: actions/cache/restore@v6
+      with:
+        key: build
 
     - name: Test with coverage
       run: npm run testc
-    - name: Upload coverage report
+
+    - name: Archive coverage report
       if: ${{ !cancelled() }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
-        name: coverage-node-${{ matrix.node-version }}
+        name: coverage
         path: |
           test/coverage/
           !test/coverage/tmp
@@ -58,3 +102,35 @@ jobs:
 
     - name: Integration tests
       run: npm run test-int
+
+
+  upload:
+    name: Upload coverage
+    runs-on: ubuntu-latest
+
+    needs: test
+
+    # GitHub gives pull_request runs from forks neither an OIDC token nor secrets, so skip the upload there
+    # TODO: fork PRs get no coverage in Qlty, only after merging
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+
+    permissions:
+      contents: read
+      id-token: write   # Qlty coverage upload with OIDC
+
+    steps:
+    # Qlty reads the commit from git and matches the paths in lcov.info against the files; nothing is run
+    - uses: actions/checkout@v6
+
+    - name: Download coverage report
+      uses: actions/download-artifact@v4
+      with:
+        name: coverage
+        path: test/coverage
+
+    - name: Upload coverage to Qlty
+      uses: qltysh/qlty-action/coverage@v2
+      with:
+        # authenticates with OIDC (id-token: write), no secret needed
+        oidc: true
+        files: test/coverage/lcov.info
