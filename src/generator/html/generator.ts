@@ -368,11 +368,11 @@ export class HtmlGenerator extends Generator<Node>
         return this.addAttributes(document.createTextNode(this.#h ? this.#h(t) : t));
     }
 
-    // create a pure text node without font attributes and no hyphenation
-    override createVerbatim(t: string): Text | undefined
+    // create verbatim text (\verb): typewriter font, no hyphenation, and of the
+    // current font attributes only the size
+    override createVerbatim(t: string): HTMLElement
     {
-        if (!t) return;
-        return document.createTextNode(t);
+        return this.create(Elements.verb, t ? document.createTextNode(t) : null, this.fontSize());
     }
 
     // create a fragment; arguments may be Node(s) and/or arrays of Node(s)

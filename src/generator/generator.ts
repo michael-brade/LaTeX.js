@@ -85,8 +85,9 @@ export abstract class Generator<TNode = unknown> extends
     // create a text node that has font attributes set and allows for hyphenation
     abstract override createText(t: string | String): TNode | undefined
 
-    // create a pure text node without font attributes and no hyphenation
-    abstract createVerbatim(t: string, ...rest: unknown[]): TNode | undefined
+    // create verbatim text (\verb): typewriter font, no hyphenation, and of the
+    // current font attributes only the size
+    abstract createVerbatim(t: string): TNode
 
     // create a fragment; arguments may be Node(s) and/or arrays of Node(s)
     abstract override createFragment(...args: (TNode | TNode[])[]): TNode | undefined

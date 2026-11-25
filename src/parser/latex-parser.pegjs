@@ -714,7 +714,6 @@ smbskip_vmode   =   s:$("small"/"med"/"big")"skip" !char _ { return g.createVSpa
 
 // verb - one-line verbatim text
 
-// TODO: this should use the current font size!
 verb            =   "verb" s:"*"? _ !char
                     b:.
                         v:$(!nl t:. !{ return b == t; })*
@@ -724,7 +723,7 @@ verb            =   "verb" s:"*"? _ !char
                         if (s)
                             v = v.replace(/ /g, g.visp);
 
-                        return g.create(Elements.verb, g.createVerbatim(v, true));
+                        return g.createVerbatim(v);
                     }
 
 
