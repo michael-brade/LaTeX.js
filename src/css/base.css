@@ -185,7 +185,6 @@ body, .page {
 /*********/
 
 html, .page {
-    font-family: "Computer Modern Serif", serif;
     font-size: var(--size);
 
     text-align: justify;
@@ -224,21 +223,44 @@ html, .page {
 
 
 
-/* family */
+/* Family and shape are independent of each other and can be on different, nested elements, but not every family has
+ * its own font for each shape. So the family sets the fonts to use for the shapes, and the shape decides which one to
+ * take: exactly one of --up, --sl, and --sc is "initial", i.e., invalid, so that var() takes its fallback; the others
+ * are empty. Since all of them are inherited, the font is right no matter which of the two is set first.
+ */
+
+
+/***** family *****/
+
+/* global default reset/baseline */
+html, .page, h1, h2, h3, h4,
 .rm {
-    font-family: "Computer Modern Serif", serif;
+    --font-up: "Computer Modern Serif", serif;
+    --font-sl: "Computer Modern Serif Slanted", serif;
+    --font-sc: "Computer Modern Serif", serif;
+
     font-variant-ligatures: normal;
 }
+
+/* LaTeX has no sans-serif small-caps and uses the serif ones instead */
 .sf {
-    font-family: "Computer Modern Sans", sans-serif;
+    --font-up: "Computer Modern Sans", sans-serif;
+    --font-sl: "Computer Modern Sans", sans-serif;
+    --font-sc: "Computer Modern Serif", serif;
+
     font-variant-ligatures: normal;
 }
+
 .tt {
-    font-family: "Computer Modern Typewriter", monospace;
+    --font-up: "Computer Modern Typewriter", monospace;
+    --font-sl: "Computer Modern Typewriter Slanted", monospace;
+    --font-sc: "Computer Modern Typewriter", monospace;
+
     font-variant-ligatures: none;
 }
 
-/* weight */
+/***** weight *****/
+
 .md {
     font-weight: normal;
 }
@@ -247,40 +269,57 @@ html, .page {
     font-weight: bold;
 }
 
-/* shape - LaTeX doesn't support slanted small-caps by default */
+
+/***** shape *****/
+
+/* LaTeX doesn't support slanted small-caps by default */
+
+/* global default reset/baseline */
+html, .page, h1, h2, h3, h4,
 .up {
-    font-family: "Computer Modern Serif", serif;
+    --up: initial;  /* active */
+    --sl: ;         /* only a space -> off */
+    --sc: ;         /* only a space -> off */
+
     font-style: normal;
     font-variant-caps: normal;
 }
 
 .it {
+    --up: initial;
+    --sl: ;
+    --sc: ;
+
     font-style: italic;
     font-variant-caps: normal;
 }
 
 .sl {
-    font-family: "Computer Modern Serif Slanted";
-    font-style: oblique;
-    font-variant-caps: normal;
-}
+    --up: ;
+    --sl: initial;
+    --sc: ;
 
-.sf.sl {
-    font-family: "Computer Modern Sans", sans-serif;
-    font-style: oblique;
-    font-variant-caps: normal;
-}
-
-.tt.sl {
-    font-family: "Computer Modern Typewriter Slanted", monospace;
     font-style: oblique;
     font-variant-caps: normal;
 }
 
 .sc {
-    font-family: "Computer Modern Serif", serif;
+    --up: ;
+    --sl: ;
+    --sc: initial;
+
     font-style: normal;
     font-variant-caps: small-caps;
+}
+
+
+/* the font of the current family and shape */
+html, .page, h1, h2, h3, h4,
+.rm, .sf, .tt,
+.up, .it, .sl, .sc {
+    font-family: var(--up, var(--font-up))
+                 var(--sl, var(--font-sl))
+                 var(--sc, var(--font-sc));
 }
 
 
@@ -339,11 +378,7 @@ html, .page {
 /**************/
 
 h1, h2, h3, h4 {
-    /* \normalfont */
-    font-family: "Computer Modern Serif", serif;
-    font-style: normal;
-    font-variant-caps: normal;
-
+    /* \normalfont: see the family and shape rules above */
     text-align: left;
 }
 
