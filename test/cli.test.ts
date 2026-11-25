@@ -34,7 +34,7 @@ describe('LaTeX.js CLI test', () => {
 
     test('default translation', async () => {
         await expect(latexjs.execute([], ["A paragraph."])).resolves
-            .toHaveProperty('stdout', '<html style="--size: 13.284px; --textwidth: 56.162%; --marginleftwidth: 21.919%; --marginrightwidth: 21.919%; --marginparwidth: 48.892%; --marginparsep: 14.612px; --marginparpush: 6.642px;"><head><title>untitled</title><meta charset="UTF-8"><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>A para\u00ADgraph.</p></div></body></html>' + EOL);
+            .toHaveProperty('stdout', '<!DOCTYPE html><html style="--size: 13.284px; --textwidth: 56.162%; --marginleftwidth: 21.919%; --marginrightwidth: 21.919%; --marginparwidth: 48.892%; --marginparsep: 14.612px; --marginparpush: 6.642px;"><head><title>untitled</title><meta charset="UTF-8"><link type="text/css" rel="stylesheet" href="css/katex.css"><link type="text/css" rel="stylesheet" href="css/article.css"><script src="js/base.js"></script></head><body><div class="body"><p>A para\u00ADgraph.</p></div></body></html>' + EOL);
     });
 
     test('return only the body', async () => {

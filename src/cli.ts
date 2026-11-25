@@ -145,7 +145,9 @@ input.then((text: string | Buffer[]) => {
         div.appendChild(generator.domFragment());
         html = div.innerHTML;
     } else {
-        html = generator.htmlDocument(options.url).documentElement.outerHTML;
+        // outerHTML doesn't include the doctype, but without it, browsers use quirks mode: class names ignore the case
+        // (so e.g. \large = \LARGE), and line heights are calculated differently
+        html = '<!DOCTYPE html>' + generator.htmlDocument(options.url).documentElement.outerHTML;
     }
     if (options.entities)
         html = encode(html, { 'allowUnsafeSymbols': true });

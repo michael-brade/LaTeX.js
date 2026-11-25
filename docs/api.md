@@ -81,7 +81,9 @@ to be used as its own standalone webpage or in an `<iframe>`.
 `baseURL` will be used as base for the scripts and stylesheets; if omitted, the base will be `window.location.href` or,
 if not available, scripts and stylesheets will have relative URLs.
 
-To serialize it, use `htmlGenerator.htmlDocument().documentElement.outerHTML`.
+To serialize it, use `'<!DOCTYPE html>' + htmlGenerator.htmlDocument().documentElement.outerHTML`. `outerHTML` doesn't
+include the doctype, but without it, browsers render the page in quirks mode, with wrong font sizes: class names ignore
+the case then, so `\large`, `\Large`, and `\LARGE` would all have the same size.
 
 ### `htmlGenerator.stylesAndScripts(baseURL)`
 
