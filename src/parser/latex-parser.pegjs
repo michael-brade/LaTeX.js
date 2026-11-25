@@ -761,10 +761,9 @@ h_environment =
         node:( &. { return g.macro(id.id, m.endArgs().parsed, false); })  // then execute macro with args without consuming input
         sb:(s:space? {return g.createText(s); })
         p:paragraph_with_linebreak*                         // then parse environment contents (if macro left some)
-    end_id:end_env se:(s:space? {return g.createText(s); })
+    end:(end_id:end_env { return g.end(id.end, end_id); })  // end the group before the space after \end is created
+    se:(s:space? {return g.createText(s); })
     {
-        var end = g.end(id.end, end_id);
-
         // if nodes are created by macro, add content as children to the last element
         // if node is a text node, just add it
         // potential spaces after \begin and \end have to be added explicitely
