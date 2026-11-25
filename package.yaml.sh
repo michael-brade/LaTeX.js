@@ -237,6 +237,12 @@ devDependencies:
     "@types/fs-extra": ^11.0.4
     "@types/js-beautify": ^1.14.3
 
+overrides:
+    minimatch: ^11.0.5
+    serve-handler:
+        minimatch: 3.1.5
+
+
 # first time: install browsers with "npx puppeteer browsers install" after "npm i"
 puppeteer:
     chrome:
