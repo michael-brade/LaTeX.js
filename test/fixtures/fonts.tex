@@ -1,9 +1,53 @@
-\bfseries declaration
+#
+font commands, font declarations, and font sizes
 .
-Hello \bfseries is emphasized.
+\textrm{roman}, \textsf{sans serif}, \texttt{typewriter}, \textmd{medium}, \textbf{bold},
+\textup{upright}, \textit{italic}, \textsl{slanted}, \textsc{Small Caps}, \textnormal{normal}
+
+default \rmfamily roman \sffamily sans serif \ttfamily typewriter
+\bfseries bold \mdseries medium
+\itshape italic \slshape slanted \scshape Small Caps \upshape upright
+\normalfont normal
+
+\tiny tiny \scriptsize scriptsize \footnotesize footnotesize \small small \normalsize normalsize
+\large large \Large Large \LARGE LARGE \huge huge \Huge Huge
 .
 <div class="body">
-<p>Hello <span class="bf">is emphasized.</span></p>
+<p>
+<span class="rm">roman</span>,
+ <span class="sf">sans serif</span>,
+ <span class="tt">typewriter</span>,
+ <span class="md">medium</span>,
+ <span class="bf">bold</span>,
+ <span class="up">upright</span>,
+ <span class="it">italic</span>,
+ <span class="sl">slanted</span>,
+ <span class="sc">Small Caps</span>,
+ <span class="rm md up">normal</span>
+</p>
+<p>default <span class="rm">roman </span>
+<span class="sf">sans serif </span>
+<span class="tt">typewriter </span>
+<span class="tt bf">bold </span>
+<span class="tt md">medium </span>
+<span class="tt md it">italic </span>
+<span class="tt md sl">slanted </span>
+<span class="tt md sc">Small Caps </span>
+<span class="tt md up">upright </span>
+<span class="rm md up">normal</span>
+</p>
+<p>
+<span class="rm md up tiny">tiny </span>
+<span class="rm md up scriptsize">scriptsize </span>
+<span class="rm md up footnotesize">footnotesize </span>
+<span class="rm md up small">small </span>
+<span class="rm md up normalsize">normalsize </span>
+<span class="rm md up large">large </span>
+<span class="rm md up Large">Large </span>
+<span class="rm md up LARGE">LARGE </span>
+<span class="rm md up huge">huge </span>
+<span class="rm md up Huge">Huge</span>
+</p>
 </div>
 .
 
@@ -103,6 +147,44 @@ Some \textbf{bold \emph{italic} text \begin{itemize}\item bold item\end{itemize}
 </div>
 <span class="bf"> more bold text</span> and normal text.
 </p>
+</div>
+.
+
+
+fonts reach into lists, and groups in items still end
+.
+\itshape italic
+\begin{itemize}
+    \item still italic
+    \item {\upshape upright} and italic again
+\end{itemize}
+italic
+.
+<div class="body">
+<p><span class="it">italic</span></p>
+<ul class="list">
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p><span class="it">still italic</span></p></li>
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p><span class="up">upright</span><span class="it">​ </span><span class="it">and italic again</span></p></li>
+</ul>
+<p class="continue"><span class="it">italic</span></p>
+</div>
+.
+
+
+fonts set in an environment combine with the outer fonts, and end with the environment
+.
+\small small
+\begin{quote}
+    \bfseries small and bold
+\end{quote}
+only small
+.
+<div class="body">
+<p><span class="small">small</span></p>
+<div class="list quote">
+<p><span class="bf small">small and bold</span></p>
+</div>
+<p class="continue"><span class="small">only small</span></p>
 </div>
 .
 

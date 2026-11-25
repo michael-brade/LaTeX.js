@@ -151,6 +151,22 @@ a paragraph of text
 
         with a new paragraph
     \item second item
+        \begin{enumerate}
+            \item second level
+                \begin{enumerate}
+                    \item third level
+                        \begin{enumerate}
+                            \item fourth level
+                            \item fourth level again
+                        \end{enumerate}
+                    \item third level again
+                \end{enumerate}
+            \item second level again
+        \end{enumerate}
+    \item third item
+        \begin{enumerate}
+            \item second level starts again
+        \end{enumerate}
 \end{enumerate}
 this belongs to paragraph with enumerate
 .
@@ -164,6 +180,46 @@ this belongs to paragraph with enumerate
 <li>
 <span class="itemlabel"><span class="hbox llap"><span id="item-1">1.</span></span></span>
 <p>second item</p>
+<ol class="list">
+<li>
+<span class="itemlabel"><span class="hbox llap"><span id="item-2">(a)</span></span></span>
+<p>second level</p>
+<ol class="list">
+<li>
+<span class="itemlabel"><span class="hbox llap"><span id="item-3">i.</span></span></span>
+<p>third level</p>
+<ol class="list">
+<li>
+<span class="itemlabel"><span class="hbox llap"><span id="item-4">A.</span></span></span>
+<p>fourth level</p>
+</li>
+<li>
+<span class="itemlabel"><span class="hbox llap"><span id="item-5">B.</span></span></span>
+<p>fourth level again</p>
+</li>
+</ol>
+</li>
+<li>
+<span class="itemlabel"><span class="hbox llap"><span id="item-6">ii.</span></span></span>
+<p>third level again</p>
+</li>
+</ol>
+</li>
+<li>
+<span class="itemlabel"><span class="hbox llap"><span id="item-7">(b)</span></span></span>
+<p>second level again</p>
+</li>
+</ol>
+</li>
+<li>
+<span class="itemlabel"><span class="hbox llap"><span id="item-8">2.</span></span></span>
+<p>third item</p>
+<ol class="list">
+<li>
+<span class="itemlabel"><span class="hbox llap"><span id="item-9">(a)</span></span></span>
+<p>second level starts again</p>
+</li>
+</ol>
 </li>
 </ol>
 <p class="continue">this belongs to paragraph with enumerate</p>
