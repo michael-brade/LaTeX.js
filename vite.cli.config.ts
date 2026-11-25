@@ -28,7 +28,8 @@ export default defineConfig(env => ({
         emptyOutDir: true,
         copyPublicDir: false,
 
-        sourcemap: false,
+        // true means separate file, not inline: the coverage ignores inline source maps
+        sourcemap: env.mode !== 'development',
         minify: false,
 
         rolldownOptions: {

@@ -118,12 +118,17 @@ run the bundles in `dist/` and `bin/`, and only their source maps lead back to `
 is 0%.
 
 The CI workflow (`.github/workflows/node.js.yml`) uploads `test/coverage/lcov.info` to [Qlty](https://qlty.sh/gh/michael-brade/projects/LaTeX.js),
-which shows the coverage (and maintainability) in the README badges and on pull requests. The workflow has three jobs:
+which shows the coverage (and maintainability) in the README badges and on pull requests, and to SonarQube Cloud. The
+workflow has five jobs:
 
 - `build` type-checks and builds,
 - `test` runs the unit tests with coverage on that build,
-- `test-integration` runs the integration tests on that build, and
-- `upload` sends the coverage report to Qlty; only `upload` may request the OIDC token, and it runs no project code.
+- `test-integration` runs the integration tests on that build,
+- `upload` sends the coverage report to Qlty, and
+- `sonar` analyzes the code with SonarQube and sends it the coverage report.
+
+Only `upload` and `sonar` may request an OIDC token, and they run no project code. Both are skipped for pull requests
+from forks, which get no OIDC token.
 
 ### Integration Tests
 

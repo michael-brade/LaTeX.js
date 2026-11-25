@@ -31,6 +31,7 @@
   "browser": "./dist/latex.umd.cjs",
   "files": [
     "bin/latex.js",
+    "bin/latex.js.map",
     "dist/types/",
     "dist/latex.cjs",
     "dist/latex.cjs.map",

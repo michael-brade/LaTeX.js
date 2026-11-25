@@ -1,8 +1,8 @@
-# Type-checks and builds the library, runs the unit tests with coverage and the integration tests on the build, and
-# uploads the coverage to Qlty.
+# Type-checks and builds the library, runs the unit tests with coverage and the integration tests on the build, uploads
+# the coverage to Qlty, and analyzes the code with SonarQube (including the coverage).
 #
-# Each job runs on a fresh runner, the build and the coverage report are cached between runners.
-# Only the upload job can request an OIDC token, and it runs no project code.
+# Each job runs on a fresh runner, the build and the coverage report are passed on between runners.
+# Only the upload and sonar jobs can request an OIDC token, and they run no project code.
 
 name: Node.js CI
 
@@ -30,10 +30,6 @@ jobs:
     name: Check and build
     runs-on: ubuntu-latest
 
-    # neither the type check nor the build needs puppeteer's browsers
-    env:
-      PUPPETEER_SKIP_DOWNLOAD: true
-
     steps:
     - uses: actions/checkout@v7
 
@@ -44,7 +40,10 @@ jobs:
         # this already caches npm dependencies for faster "npm ci" and later jobs
         cache: 'npm'
 
-    - run: npm ci
+    # no lifecycle scripts of dependencies...
+    - run: npm ci --ignore-scripts
+    # ...run only our own: it applies the patches and re-links tsc
+    - run: npm run prepare
 
     - run: npm run typecheck
     - run: npm run build
@@ -78,15 +77,19 @@ jobs:
     - name: Allow unprivileged user namespaces for Chrome's sandbox
       run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
-    # puppeteer's postinstall downloads Chrome and Firefox into ~/.cache/puppeteer unless they are already
-    # there; restore them before npm ci (the browser versions are pinned by puppeteer's version in the lockfile)
+    # "puppeteer browsers install" below downloads Chrome and Firefox into ~/.cache/puppeteer unless they are already
+    # there; restore them before that (the browser versions are pinned by puppeteer's version in the lockfile)
     - name: Cache puppeteer browsers
       uses: actions/cache@v6
       with:
         path: ~/.cache/puppeteer
         key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
 
-    - run: npm ci
+    - run: npm ci --ignore-scripts
+    - run: npm run prepare
+
+    # instead of puppeteer's postinstall; does nothing if the browsers are already in the cache
+    - run: npx --no puppeteer browsers install
 
     - name: Restore the build
       uses: actions/cache/restore@v6
@@ -137,7 +140,10 @@ jobs:
         path: ~/.cache/puppeteer
         key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
 
-    - run: npm ci
+    # see test job
+    - run: npm ci --ignore-scripts
+    - run: npm run prepare
+    - run: npx --no puppeteer browsers install
 
     - name: Restore the build
       uses: actions/cache/restore@v6
