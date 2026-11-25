@@ -106,6 +106,44 @@ jobs:
           !test/coverage/tmp
         retention-days: 14
 
+
+  test-integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v7
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    # see the test job
+    - name: Allow unprivileged user namespaces for Chrome's sandbox
+      run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+    # same key as in the test job, so download both browsers here as well: caches are immutable
+    - name: Cache puppeteer browsers
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/puppeteer
+        key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
+
+    - run: npm ci
+
+    - name: Restore the build
+      uses: actions/cache/restore@v6
+      with:
+        key: ${{ env.BUILD_CACHE_KEY }}
+        fail-on-cache-miss: true
+        path: |
+          dist/
+          bin/
+
     - name: Integration tests
       run: npm run test-int
 
@@ -140,3 +178,4 @@ jobs:
         # authenticates with OIDC (id-token: write), no secret needed
         oidc: true
         files: test/coverage/lcov.info
+        skip-errors: false

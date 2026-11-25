@@ -119,8 +119,11 @@ is 0%.
 
 The CI workflow (`.github/workflows/node.js.yml`) uploads `test/coverage/lcov.info` to [Qlty](https://qlty.sh/gh/michael-brade/projects/LaTeX.js),
 which shows the coverage (and maintainability) in the README badges and on pull requests. The workflow has three jobs:
-`build` type-checks and builds, `test` runs the unit tests with coverage and the integration tests on that build, and
-`upload` sends the coverage report to Qlty; only `upload` may request the OIDC token, and it runs no project code.
+
+- `build` type-checks and builds,
+- `test` runs the unit tests with coverage on that build,
+- `test-integration` runs the integration tests on that build, and
+- `upload` sends the coverage report to Qlty; only `upload` may request the OIDC token, and it runs no project code.
 
 ### Integration Tests
 
