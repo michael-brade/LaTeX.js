@@ -45,7 +45,7 @@ default \rmfamily roman \sffamily sans serif \ttfamily typewriter
 <span class="tt md up">upright </span>
 <span class="rm md up">normal</span>
 </p>
-<p>
+<p class="Huge">
 <span class="rm md up tiny">tiny </span>
 <span class="rm md up scriptsize">scriptsize </span>
 <span class="rm md up footnotesize">footnotesize </span>
@@ -189,11 +189,11 @@ fonts set in an environment combine with the outer fonts, and end with the envir
 only small
 .
 <div class="body">
-<p><span class="small">small</span></p>
+<p class="small"><span class="small">small</span></p>
 <div class="list quote">
-<p><span class="bf small">small and bold</span></p>
+<p class="small"><span class="bf small">small and bold</span></p>
 </div>
-<p class="continue"><span class="small">only small</span></p>
+<p class="small continue"><span class="small">only small</span></p>
 </div>
 .
 
@@ -244,13 +244,12 @@ Text without a size, \large large text, and {\small small text in a group.\par}
 
 
 #
-em lengths are relative to current font sizes
+em lengths are relative to font size at the end of the paragraph
 .
 \small
 a line of text\\[1em]
 a line of text\\[1em]
-% TODO: in LaTeX, \Huge changes ALL of the current paragraph! also above!
-\Huge
+\Huge   % this changes ALL line spacing (\baselineskip) of the current paragraph, also above!
 a line of text\\[1em]
 a line of text
 
@@ -263,17 +262,17 @@ a line of text\\[1em]
 a line of text
 .
 <div class="body">
-<p>
+<p class="Huge">
 <span class="small">a line of text</span><span class="small"><span class="breakspace" style="margin-bottom:1em"></span></span>
 <span class="small">a line of text</span><span class="small"><span class="breakspace" style="margin-bottom:1em"></span></span>
 <span class="Huge">a line of text</span><span class="Huge"><span class="breakspace" style="margin-bottom:1em"></span></span>
 <span class="Huge">a line of text</span>
 </p>
-<p>
+<p class="small">
 <span class="small">a line of text</span><span class="small"><span class="breakspace" style="margin-bottom:1em"></span></span>
 <span class="small">a line of text</span>
 </p>
-<p>
+<p class="Huge">
 <span class="Huge">a line of text</span><span class="Huge"><span class="breakspace" style="margin-bottom:1em"></span></span>
 <span class="Huge">a line of text</span>
 </p>
@@ -294,16 +293,16 @@ This is yet another paragraph. With a\\[1em] lot of meaningless text and meaning
 .
 <div class="body">
 <p>This is yet another paragraph. With a lot of meaningless text and meaningless text meaningless text meaningless text.</p>
-<p>
+<p class="tiny">
 <span class="tiny">This is yet another paragraph. With a lot of meaningless</span>
 <span class="tiny"><span class="breakspace" style="margin-bottom:1em"></span></span>
 <span class="tiny">text and meaningless text meaningless text meaningless text.</span>
 </p>
-<p>
+<p class="Large">
 <span class="tiny">This is yet another </span>
 <span class="Large">paragraph. With a lot of meaningless text and meaningless text meaningless text meaningless text.</span>
 </p>
-<p>
+<p class="Large">
 <span class="Large">This is yet another paragraph. With a</span>
 <span class="Large"><span class="breakspace" style="margin-bottom:1em"></span></span>
 <span class="Large">lot of meaningless text and meaningless text meaningless text meaningless text.</span>

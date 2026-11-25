@@ -25,6 +25,7 @@ declare module "./groups.ts" {
     interface StackItem {
         attrs: TextAttributes
         align: Alignment
+        outerFontSize: string | undefined   // see _outerFontSize()
     }
 }
 
@@ -56,6 +57,7 @@ export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
             const item = super._newGroup(parent, copyAttrs)
             item.attrs = copyAttrs && parent ? { ...parent.attrs } : {}
             item.align = null
+            item.outerFontSize = copyAttrs && parent ? parent.outerFontSize : this._activeAttributeValue("fontSize")
             return item
         }
 
@@ -112,6 +114,23 @@ export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
         setFontSize(size: string): void
         {
             this._stack.top.attrs.fontSize = size;
+        }
+
+        /**
+         * @returns the font size that was set in the current group;
+         *          undefined if it is still the one of the surrounding text
+         */
+        fontSize(): string | undefined
+        {
+            return this._stack.top.attrs.fontSize;
+        }
+
+        // the font size of text in the current group as long as no size is set:
+        // the size that was active when the group was entered, or rather the outermost of
+        // the enclosing groups that copied the attributes
+        _outerFontSize(): string
+        {
+            return this._stack.top.outerFontSize ?? "normalsize";
         }
 
         setTextDecoration(decoration: string): void

@@ -14,6 +14,11 @@ import { hyphenateSync as hyphenateEn } from "hyphen/en";
 import { Length, type Vector } from '../../types.ts';
 
 
+// the CSS classes of the LaTeX font sizes
+const fontSizes = new Set([
+    "tiny", "scriptsize", "footnotesize", "small", "normalsize", "large", "Large", "LARGE", "huge", "Huge"
+]);
+
 function isBlockLevel(el: HTMLElement): boolean
 {
     const blockRegex = /^(address|blockquote|body|center|dir|div|dl|fieldset|form|h[1-6]|hr|isindex|menu|noframes|noscript|ol|p|pre|table|ul|dd|dt|frameset|li|tbody|td|tfoot|th|thead|tr|html)$/i;
@@ -278,7 +283,50 @@ export class HtmlGenerator extends Generator<Node>
             this.break();
         }
 
-        return this.createElement(HtmlElements[kind], children, classes);
+        // like in LaTeX, the font size at the end of a paragraph determines the line spacing of the
+        // whole paragraph -> put that font size on the paragraph so that this will be the paragraph's
+        // line spacing
+        const size = this.fontSize();
+        if (size && kind === Elements.par)
+            classes = size + " " + classes;
+
+        const el = this.createElement(HtmlElements[kind], children, classes);
+
+        if (size && kind === Elements.par)
+            this.#keepOuterFontSize(el, size);
+
+        return el;
+    }
+
+    // Content that was created before a font size was set has no font size class.
+    // If it is part of a paragraph that has a different size, it needs one.
+    #keepOuterFontSize(par: HTMLElement, size: string): void
+    {
+        const outerSize = this._outerFontSize();
+        if (outerSize === size)
+            return;
+
+        const hasSize = (node: Node) => node instanceof window.Element &&
+            (node.getAttribute("class") ?? "").split(" ").some(c => fontSizes.has(c));
+
+        // walk all direct children of the paragraph
+        const nodes = [...par.childNodes];
+        while (nodes.length) {
+            const consecutive: Node[] = [];
+            // collect consecutive nodes with text but without a size;
+            // nodes without text (like line breaks) don't need a size
+            while (nodes.length && nodes[0].textContent && !hasSize(nodes[0]))
+                consecutive.push(nodes.shift()!);
+
+            // consecutive nodes could share one element, let #wrapNodes() decide
+            if (consecutive.length) {
+                const next = nodes[0] ?? null;
+                for (const el of this.#wrapNodes(consecutive, outerSize))
+                    par.insertBefore(el, next);
+            } else {
+                nodes.shift();
+            }
+        }
     }
 
     override setId(node: HTMLElement, id: string): void
