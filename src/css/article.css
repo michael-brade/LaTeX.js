@@ -8,7 +8,7 @@
 /* section */
 h2 {
     counter-reset: subsection;
-    font-size: 1.4rem;      /* \Large */
+    font-size: calc(1.4 * var(--size));      /* \Large */
     font-weight: bold;
     margin-top: 3.5ex;
     margin-bottom: 2.3ex;
@@ -17,7 +17,7 @@ h2 {
 
 /* subsection */
 h3 {
-    font-size: 1.2rem;      /* \large */
+    font-size: calc(1.2 * var(--size));      /* \large */
     font-weight: bold;
     margin-top: 3.25ex;
     margin-bottom: 1.5ex;
@@ -26,7 +26,7 @@ h3 {
 
 /* subsubsection */
 h4 {
-    font-size: 1rem;        /* \normalsize */
+    font-size: var(--size);        /* \normalsize */
     font-weight: bold;
     margin-top: 3.25ex;
     margin-bottom: 1.5ex;

@@ -17,26 +17,29 @@
      * So if a fixed width page is desired, simply set --paperwidth to an absolute value.
      */
 
-    --parindent: 1.5em;
+    /* LaTeX defines these lengths in the em of the document's font size; they must not depend on the current font size,
+     * but em in a custom property is the em of the element that uses the property
+     */
+    --parindent: calc(1.5 * var(--size));
     --parskip: 0px;             /* needs to be a length, otherwise calc(2px + var(--parskip)) will return 0 */
 
-    --smallskipamount: 0.3rem;
-    --medskipamount: 0.6rem;
-    --bigskipamount: 1.2rem;
+    --smallskipamount: calc(0.3 * var(--size));
+    --medskipamount: calc(0.6 * var(--size));
+    --bigskipamount: calc(1.2 * var(--size));
 
     --listparindent: 0px;
     --itemindent: 0px;
 
-    --leftmargini: 2.5em;
-    --leftmarginii: 2.2em;
-    --leftmarginiii: 1.87em;
-    --leftmarginiv: 1.7em;
-    --leftmarginv: 1em;
-    --leftmarginvi: 1em;
+    --leftmargini: calc(2.5 * var(--size));
+    --leftmarginii: calc(2.2 * var(--size));
+    --leftmarginiii: calc(1.87 * var(--size));
+    --leftmarginiv: calc(1.7 * var(--size));
+    --leftmarginv: var(--size);
+    --leftmarginvi: var(--size);
 
     --leftmargin: var(--leftmargini);
 
-    --labelsep: 0.5rem;
+    --labelsep: calc(0.5 * var(--size));
 
     --fboxrule: 0.4pt;
     --fboxsep: 3pt;
@@ -53,32 +56,32 @@
 
 
 .twocolumn {
-    --parindent: 1em;
+    --parindent: var(--size);
 
-    --marginparsep: 1rem;
+    --marginparsep: var(--size);
 
-    --leftmargini: 2em;
-    --leftmarginv: 0.5em;
-    --leftmarginvi: 0.5em;
+    --leftmargini: calc(2 * var(--size));
+    --leftmarginv: calc(0.5 * var(--size));
+    --leftmarginvi: calc(0.5 * var(--size));
 }
 
 
 .list {
-    --topsep: 0.8rem;
-    --parsep: 0.4rem;
-    --itemsep: 0.4rem;
+    --topsep: calc(0.8 * var(--size));
+    --parsep: calc(0.4 * var(--size));
+    --itemsep: calc(0.4 * var(--size));
     --leftmargin: var(--leftmargini);
 }
 
 .list .list {
-    --topsep: 0.4rem;
-    --parsep: 0.2rem;
+    --topsep: calc(0.4 * var(--size));
+    --parsep: calc(0.2 * var(--size));
     --itemsep: var(--parsep);
     --leftmargin: var(--leftmarginii);
 }
 
 .list .list .list {
-    --topsep: 0.2rem;
+    --topsep: calc(0.2 * var(--size));
     --parsep: 0;
     --itemsep: var(--topsep);
     --leftmargin: var(--leftmarginiii);
@@ -285,44 +288,47 @@ html, .page {
 
 /* size */
 
+/* these must be relative to the document's font size, and rem is not: in the web component,
+   that is the font size of the page around it - so use calc() on --size instead of rem */
+
 .tiny {
-    font-size: .5rem;
+    font-size: calc(.5 * var(--size));
 }
 
 .scriptsize {
-    font-size: .7rem;
+    font-size: calc(.7 * var(--size));
 }
 
 .footnotesize {
-    font-size: .82rem;
+    font-size: calc(.82 * var(--size));
 }
 
 .small {
-    font-size: .91rem;
+    font-size: calc(.91 * var(--size));
 }
 
 .normalsize {
-    font-size: 1rem;
+    font-size: var(--size);
 }
 
 .large {
-    font-size: 1.2rem;
+    font-size: calc(1.2 * var(--size));
 }
 
 .Large {
-    font-size: 1.4rem;
+    font-size: calc(1.4 * var(--size));
 }
 
 .LARGE {
-    font-size: 1.7rem;
+    font-size: calc(1.7 * var(--size));
 }
 
 .huge {
-    font-size: 2rem;
+    font-size: calc(2 * var(--size));
 }
 
 .Huge {
-    font-size: 2.5rem;
+    font-size: calc(2.5 * var(--size));
 }
 
 
@@ -344,15 +350,15 @@ h1, h2, h3, h4 {
 
 .titlepage {
     height: 100vh;
-    min-height: 20rem;
+    min-height: calc(20 * var(--size));
 }
 
 .title {
-    font-size: 1.7rem;  /* LARGE */
+    font-size: calc(1.7 * var(--size));  /* LARGE */
 }
 
 .author, .date {
-    font-size: 1.2rem;  /* large */
+    font-size: calc(1.2 * var(--size));  /* large */
 }
 
 
@@ -781,7 +787,7 @@ dd {
 
 .quotation {
     --parsep: 0px;
-    --itemindent: 1.5em;
+    --itemindent: calc(1.5 * var(--size));
     --listparindent: var(--itemindent);
 }
 
@@ -789,7 +795,7 @@ dd {
     text-align: left;
 
     margin-left: calc(1.5em + var(--leftmargin));
-    --itemindent: -1.5em;
+    --itemindent: calc(-1.5 * var(--size));
     --listparindent: var(--itemindent);
 }
 
