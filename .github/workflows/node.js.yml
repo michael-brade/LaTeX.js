@@ -18,6 +18,8 @@ permissions:
 env:
   # see Node.js Release Schedule: https://nodejs.org/en/about/releases/
   NODE_VERSION: 24.x
+  # caches are immutable: with a fixed key, only the first build is saved and all later runs test only that
+  BUILD_CACHE_KEY: build-${{ github.run_id }}
 
 jobs:
   build:
@@ -47,7 +49,7 @@ jobs:
       uses: actions/cache/save@v6
       with:
         # the tests use the build: dist/ and bin/, with source maps for the coverage
-        key: build
+        key: ${{ env.BUILD_CACHE_KEY }}
         path: |
           dist/
           bin/
@@ -85,7 +87,8 @@ jobs:
     - name: Restore the build
       uses: actions/cache/restore@v6
       with:
-        key: build
+        key: ${{ env.BUILD_CACHE_KEY }}
+        fail-on-cache-miss: true
         path: |
           dist/
           bin/
