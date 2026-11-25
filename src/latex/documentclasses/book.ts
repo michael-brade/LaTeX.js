@@ -3,8 +3,6 @@ import { Args, Macro } from '../../macros.ts'
 import { Report } from './report.ts'
 
 
-// book in LaTeX has no abstract
-
 export class Book extends Report
 {
     public static css = "css/book.css";
@@ -25,6 +23,13 @@ export class Book extends Report
     {
         const unnumbered = s || !this._mainmatter;
         return [ this._startsection("chapter", 0, unnumbered, toc, ttl) ];
+    }
+
+    // book in LaTeX has no abstract
+    @Macro("V")
+    override abstract(): never
+    {
+        this.g.error("book: environment abstract undefined");
     }
 
     @Macro("V")

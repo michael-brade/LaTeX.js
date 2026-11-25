@@ -49,13 +49,13 @@ export function Counters<TBase extends Constructor<MacroManagementAPI>>(Base: TB
             return super.hasMacro(name) || this._theCounter(name) !== undefined;
         }
 
-        override macro(name: string, args: unknown[] = []): any[]
+        override macro(name: string, args: unknown[] = [], addAttributes: boolean = true): any[]
         {
             const c = super.hasMacro(name) ? undefined : this._theCounter(name);
             if (c)
                 return [this.createText(this.arabic(this.counter(c)))];
 
-            return super.macro(name, args);
+            return super.macro(name, args, addAttributes);
         }
 
 

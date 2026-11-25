@@ -72,6 +72,62 @@ Wrap all the paragraphs.
 .
 
 
+fonts reach into environments
+.
+outer {\bfseries bold
+\begin{center}
+    still bold
+\end{center}
+bold} end outer
+.
+<div class="body">
+<p>outer <span class="bf">bold</span></p>
+<div class="list center">
+<p><span class="bf">still bold</span></p>
+</div>
+<p class="continue"><span class="bf">bold</span>​ end outer</p>
+</div>
+.
+
+
+font commands wrap inline content and environments in their argument separately
+.
+Some \textbf{bold \emph{italic} text \begin{itemize}\item bold item\end{itemize} more bold text} and normal text.
+.
+<div class="body">
+<p class="continue">Some <span class="bf">bold <span class="it">italic</span> text</span>
+<div class="bf">
+<ul class="list">
+<li><span class="itemlabel"><span class="hbox llap">•</span></span><p>bold item</p></li>
+</ul>
+</div>
+<span class="bf"> more bold text</span> and normal text.
+</p>
+</div>
+.
+
+
+a paragraph continued after an environment may start with a font change
+.
+text
+\begin{center}
+    centered
+\end{center}
+\textbf{bold} start of the continued paragraph
+
+\textbf{bold} start of a new paragraph
+.
+<div class="body">
+<p>text</p>
+<div class="list center">
+<p>centered</p>
+</div>
+<p class="continue"><span class="bf">bold</span> start of the continued paragraph</p>
+<p><span class="bf">bold</span> start of a new paragraph</p>
+</div>
+.
+
+
 monospaced fonts do not use ligatures
 .
 \texttt{first test of -- and ---}

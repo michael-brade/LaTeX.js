@@ -55,6 +55,11 @@ export class Report extends Base
         return [ chaphead, ttl ];
     }
 
+    protected override _unnumberedHeading(ttl: unknown): unknown[]
+    {
+        return this.chapter(true, undefined, ttl);
+    }
+
     thechapter()
     {
         return [ this.g.arabic(this.g.counter("chapter")) ];
@@ -77,37 +82,6 @@ export class Report extends Base
     {
         const prefix = this.g.counter("chapter") > 0 ? [...this.g.macro("thechapter"), "."] : [];
         return [ ...prefix, this.g.arabic(this.g.counter("table")) ];
-    }
-
-
-    // toc
-
-    @Macro("V")
-    tableofcontents()
-    {
-        // TODO: the table of contents itself is not implemented yet
-        return [ ...this.chapter(true, undefined, this.g.macro("contentsname")) ];
-    }
-
-
-    @Macro("V")
-    abstract()
-    {
-        // onecolumn, no titlepage
-        this.g.setFontSize("small");
-
-        // TODO use center env directly instead...
-        this.g.enterGroup();
-        this.g.setFontWeight("bf");
-        const head = this.g.create(Elements.list, this.g.macro("abstractname"), "center");
-        this.g.exitGroup();
-
-        return [ head, ...this.g.macro("quotation") ];
-    }
-
-    endabstract(): void
-    {
-        this.g.macro("endquotation");
     }
 
 
