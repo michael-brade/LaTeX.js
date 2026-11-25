@@ -772,6 +772,17 @@ li {
     list-style: none;
 }
 
+/* The first paragraph of an item is inline, so its lines belong to the li or the dl. Those don't have the font size of
+ * the paragraph, so they must not contribute to the line height.
+ */
+li, dl, dd {
+    line-height: 0;
+}
+
+li > *, dt, dd > * {
+    line-height: var(--line-height);
+}
+
 /* label should be next to the item, so the first element after the label needs to be inline */
 .itemlabel + * {
     display: inline;

@@ -817,15 +817,20 @@ item =
     skip_all_space escape "item" !char !{ g.break(); } og:opt_group? skip_all_space
     { return og; }
 
+// the font size of the label
+item_size = ""  { return g.fontSize(); }
+
 // items without a counter
 items =
     (
         (skip_all_space hv_macro)*
         label:item
+        size:item_size
         pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
         {
             return {
                 label: label,
+                size: size,
                 text: g.createFragment(pars)
             };
         }
@@ -853,10 +858,12 @@ enumitems =
                 node: label
             };
         })
+        size:item_size
         pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
         {
             return {
                 label: label,
+                size: size,
                 text: g.createFragment(pars)
             };
         }

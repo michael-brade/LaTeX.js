@@ -229,6 +229,65 @@ monospaced fonts do not use ligatures
 .
 
 
+#
+a paragraph has the line spacing of the font size at its end
+.
+The spacing of these lines is larger because the paragraph ends with a larger font size. The text before it
+keeps its size: \textbf{bold text}, \verb|verbatim|, $e^x$, and {\tiny a group}. \LARGE The end.
+
+\normalsize
+The spacing of these lines is normal because the font size is only changed in a group.
+{\tiny This is tiny text, and the group ends before the paragraph.}
+
+\footnotesize
+\begin{itemize}
+    \item The label and the line spacing of the first paragraph of an item have the font size of the item, too, and
+        so do \verb|verbatim| and $x$.
+    \item[$\ast$] custom label
+\end{itemize}
+\begin{description}
+    \item[term] description
+\end{description}
+.
+<div class="body">
+<p class="LARGE">
+<span class="normalsize">The spacing of these lines is larger because the paragraph ends with a larger font size. The text before it keeps its size: <span class="bf">bold text</span>, <code class="tt">verbatim</code>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>e</mi><mi>x</mi></msup></mrow><annotation encoding="application/x-tex">e^x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height: 0.6644em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.6644em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span></span></span></span>, and </span>
+<span class="tiny">a group</span>
+<span class="normalsize">. </span>
+<span class="LARGE">The end.</span>
+</p>
+<p class="normalsize">
+<span class="normalsize">The spacing of these lines is normal because the font size is only changed in a group. </span>
+<span class="tiny">This is tiny text, and the group ends before the paragraph.</span>
+</p>
+<ul class="list">
+<li><span class="itemlabel footnotesize"><span class="hbox llap">•</span></span>
+<p class="footnotesize">
+<span class="footnotesize">The label and the line spacing of the ﬁrst paragraph of an item have the font size of the item, too, and so do </span>
+<code class="tt footnotesize">verbatim</code>
+<span class="footnotesize"> and </span>
+<span class="footnotesize"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height: 0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span></span>
+<span class="footnotesize">.</span>
+</p>
+</li>
+<li><span class="itemlabel footnotesize"><span class="hbox llap"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∗</mo></mrow><annotation encoding="application/x-tex">\ast</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height: 0.4653em;"></span><span class="mord">∗</span></span></span></span></span></span>
+<p class="footnotesize">
+<span class="footnotesize">custom label</span>
+</p>
+</li>
+</ul>
+<dl class="list">
+<dt class="footnotesize">term</dt>
+<dd>
+<p class="footnotesize">
+<span class="footnotesize">description</span>
+</p>
+</dd>
+</dl>
+</div>
+.
+
+
 text without a size keeps its size if the paragraph ends in a group with another size
 .
 Text without a size, \large large text, and {\small small text in a group.\par}
