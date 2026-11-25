@@ -199,6 +199,12 @@ export class Base
         return [ ...this.g.macro("the" + sec), this.g.createText(this.g.symbol("quad")), ttl ];
     }
 
+    // the heading of \tableofcontents and the like: an unnumbered section, or a chapter if the class has them
+    protected _unnumberedHeading(ttl: unknown): unknown[]
+    {
+        return this.section(true, undefined, ttl);
+    }
+
     @Macro("V")
     @Args("s", "X", "o?", "g")
     part(s: any, toc: any, ttl: any)
@@ -288,5 +294,38 @@ export class Base
         this.maketitleFn = null;
 
         return [ maketitle ];
+    }
+
+
+    // toc
+
+    @Macro("V")
+    tableofcontents()
+    {
+        // TODO: the table of contents itself is not implemented yet
+        return this._unnumberedHeading(this.g.macro("contentsname"));
+    }
+
+
+    // abstract
+
+    @Macro("V")
+    abstract()
+    {
+        // onecolumn, no titlepage
+        this.g.setFontSize("small");
+
+        // TODO: use center env directly instead...
+        this.g.enterGroup(true);    // an environment's group must copy the attributes
+        this.g.setFontWeight("bf");
+        const head = this.g.create(Elements.list, this.g.macro("abstractname"), "center");
+        this.g.exitGroup();
+
+        return [ head, ...this.g.macro("quotation", [], false) ];
+    }
+
+    endabstract(): void
+    {
+        this.g.macro("endquotation");
     }
 }

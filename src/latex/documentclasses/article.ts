@@ -1,5 +1,3 @@
-import { Elements } from "../../generator/generator.ts";
-
 import { Macro } from '../../macros.ts'
 import { Base } from './base.ts'
 
@@ -20,37 +18,6 @@ export class Article extends Base
     refname()
     {
         return [ "References" ];
-    }
-
-
-    // toc
-
-    @Macro("V")
-    tableofcontents()
-    {
-        // TODO: the table of contents itself is not implemented yet
-        return [ ...this.section(true, undefined, this.g.macro("contentsname")) ];
-    }
-
-
-    @Macro("V")
-    abstract()
-    {
-        // onecolumn, no titlepage
-        this.g.setFontSize("small");
-
-        // TODO: use center env directly instead...
-        this.g.enterGroup(true);    // an environment's group must copy the attributes
-        this.g.setFontWeight("bf");
-        const head = this.g.create(Elements.list, this.g.macro("abstractname"), "center");
-        this.g.exitGroup();
-
-        return [ head, ...this.g.macro("quotation", [], false) ];
-    }
-
-    endabstract(): void
-    {
-        this.g.macro("endquotation");
     }
 
 
