@@ -21,3 +21,16 @@
 
 - check out LinkeDom (or Happy-DOM) and see if it works with LaTeX.js
   both have no SVG font metrics - do I even need that (getBBox)?
+  
+- in the unit tests: check the (serialized) html for validity
+
+import { HtmlValidate } from "html-validate";
+
+const htmlvalidate = new HtmlValidate({
+  extends: ["html-validate:recommended"],
+});
+
+const report = await htmlvalidate.validateString("<p><div>invalid</div></p>");
+
+console.log(report.valid); // false
+console.log(report.results[0].messages);
