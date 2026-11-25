@@ -119,6 +119,7 @@ The rest of the list (array entries) declares the arguments:
 | `i?` | [ ] | optional id                          | letters only |  |
 |  `k` | { } | key                                  | anything but = and , | |
 | `k?` | [ ] | optional key                         | anything but = and , | |
+|  `r` | { } | raw text                             | text without parsing it as <latex/>, with balanced nested groups preserved | |
 |`csv` | { } | comma-separated values               || |
 |`csv?`| [ ] | optional comma-separated values      ||  |
 |`kv?` | [ ] | optional key-value list              ||  |

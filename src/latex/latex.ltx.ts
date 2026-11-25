@@ -569,12 +569,12 @@ export class LaTeX
     // label, ref
 
     @Macro("HV")
-    @Args("g")
-    label(label: unknown)   { this.g.setLabel(this.g.plainText(label as Node)); }
+    @Args("r")
+    label(label: string)    { this.g.setLabel(label); }
 
     @Macro("H")
-    @Args("g")
-    ref(label: unknown)     { return [ this.g.ref(this.g.plainText(label as Node)) ]; }
+    @Args("r")
+    ref(label: string)      { return [ this.g.ref(label) ]; }
 
 
 

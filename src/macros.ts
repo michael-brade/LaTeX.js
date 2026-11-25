@@ -25,6 +25,7 @@ export type MandatoryArgType =
     | "i"    // Strict identifier containing letters only, wrapped in {}
     | "ie"   // Strict identifier (s.o.) or empty group
     | "k"    // Key entry containing anything except = or ,
+    | "r"    // Raw text wrapped in {}, without parsing it as LaTeX
     | "csv"  // Comma-separated values list wrapped in {}
     | "u"    // Standard URL string conforming to RFC3986
     | "c"    // Color specification (name, float value, or float triplet)

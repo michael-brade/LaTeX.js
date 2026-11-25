@@ -274,6 +274,7 @@ macro_args =
       / &{ return m.nextArg("ie") }   i:(ide_group      / &{ m.argError("id or empty group arg expected") })    { m.addParsedArg(i); }
       / &{ return m.nextArg("i?") }   i: id_optgroup?                                                           { m.addParsedArg(i); }
       / &{ return m.nextArg("k") }    k:(key_group      / &{ m.argError("key group argument expected") })       { m.addParsedArg(k); }
+      / &{ return m.nextArg("r") }    r:(raw_group      / &{ m.argError("raw group argument expected") })       { m.addParsedArg(r); }
       / &{ return m.nextArg("k?") }   k: key_optgroup?                                                          { m.addParsedArg(k); }
       / &{ return m.nextArg("kv?") }  k: keyval_optgroup?                                                       { m.addParsedArg(k); }
       / &{ return m.nextArg("csv") }  v:(csv_group      / &{ m.argError("comma-sep. values group expected") })  { m.addParsedArg(v); }
@@ -349,6 +350,19 @@ key_optgroup    =   _ begin_optgroup _
                         k:key
                     _ end_optgroup
                     { return k; }
+
+// {raw text}
+raw_group       =   _ begin_group _
+                        r:raw_contents
+                    _ end_group
+                    { return r; }
+
+raw_contents    =   parts:(raw_chars / nested_raw_group)*
+                    { return parts.join(""); }
+
+raw_chars       =   $(![{}] .)+
+
+nested_raw_group =  $(begin_group raw_contents end_group)
 
 
 // [key-val list]  (key1=val1,key2=val2)
