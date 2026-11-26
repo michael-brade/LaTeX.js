@@ -185,10 +185,17 @@ export async function takeScreenshot(html: string, filename: string): Promise<vo
         screenshotPage(fPage)
     ]);
 
-    await compareScreenshots(`${filename}.ch`, cScreenshot);
-    await compareScreenshots(`${filename}.ff`, fScreenshot);
+    // compare both, even if one differs, so that each browser gets its .new.png/.diff.png
+    const results = await Promise.allSettled([
+        compareScreenshots(`${filename}.ch`, cScreenshot),
+        compareScreenshots(`${filename}.ff`, fScreenshot)
+    ]);
 
     // only delete the page again when not debugging
     if (!DEBUG)
         htmlRegistry.delete(filename);
+
+    const errors = results.flatMap(r => r.status === 'rejected' ? [r.reason.message] : []);
+    if (errors.length)
+        throw new Error(errors.join('\n'));
 };
