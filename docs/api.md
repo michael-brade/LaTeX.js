@@ -124,19 +124,26 @@ methods:
   `"linebreak"`, the sectioning kinds `"part"` to `"subparagraph"`, kinds for lists, title and abstract, and `"verb"`
   and `"verbatim"`; see `Elements` in `src/generator/elements.ts`.
 - `createText(text)`: a text node with the current font attributes, hyphenated
-- `createVerbatim(text)`: a text node without font attributes and hyphenation
+- `createVerbatim(text)`: verbatim text like `\verb`: an element in typewriter font, without hyphenation, and of the
+  current font attributes only with the size
 - `createFragment(...nodes)`: a fragment of the given nodes or arrays of nodes
 - `createLink(url, children)`, `createImage(width, height, url)`
 - `macro(name, args)`: the output of another macro, e.g. `this.g.macro("LaTeX")`
 
 **Groups and fonts**
 
-- `enterGroup()`, `exitGroup()`: like `{` and `}`; font changes last until the end of the current group
+- `enterGroup(copyAttrs)`, `exitGroup()`: like `{` and `}`; font changes last until the end of the current group.
+  By default, text created in the group only gets the font attributes set in the group itself: a macro's result gets
+  the current attributes from `macro()` anyway, so they aren't repeated inside it. With `copyAttrs = true`, the text
+  also gets the attributes of the enclosing groups, as in `{...}` in the text and in environments, whose output nobody
+  adds them to.
 - `setFontFamily(family)`: `"rm"`, `"sf"` or `"tt"`
 - `setFontWeight(weight)`: `"md"` or `"bf"`
 - `setFontShape(shape)`: `"up"`, `"it"`, `"sl"` or `"sc"`; `"em"` toggles between italic and upright
 - `setFontSize(size)`: `"tiny"`, `"scriptsize"`, `"footnotesize"`, `"small"`, `"normalsize"`, `"large"`, `"Large"`,
   `"LARGE"`, `"huge"` or `"Huge"`
+- `fontFamily()`, `fontWeight()`, `fontShape()`, `fontSize()`, `textDecoration()`: the value that was set in the
+  current group, or that the group copied from its parent; `undefined` if the one of the surrounding text still applies
 - `setAlignment(alignment)`: `"centering"`, `"raggedright"` or `"raggedleft"`
 
 **Counters and lengths**
