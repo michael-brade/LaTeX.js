@@ -477,7 +477,7 @@ export class HtmlGenerator extends Generator<Node>
     }
 
     // return HTMLElement instead?
-    override parseMath(math: string, display: boolean): DocumentFragment
+    override parseMath(math: string, display: boolean): Node
     {
         const f = document.createDocumentFragment();
         // KaTeX only needs appendChild() and textContent, a fragment is fine
@@ -485,7 +485,12 @@ export class HtmlGenerator extends Generator<Node>
             displayMode: display,
             throwOnError: false
         });
-        return f;
+
+        // math doesn't have the current font attributes, except for the size;
+        // always inline: display math lives inside a <p> and KaTeX's .katex-display span
+        // has display:block itself
+        const size = this.fontSize();
+        return size ? this.create(Elements.inline, f, size) : f;
     }
 
     override theLength(id: string): HTMLElement
@@ -536,7 +541,7 @@ export class HtmlGenerator extends Generator<Node>
     //// attributes and nodes/elements
 
     // add the given attribute(s) to a single element
-    // TODO: unused
+    // (only used by \framebox)
     addAttribute(el: HTMLElement, attrs: string): void
     {
         if (el.hasAttribute("class"))
@@ -545,7 +550,7 @@ export class HtmlGenerator extends Generator<Node>
         el.setAttribute("class", attrs);
     }
 
-    // TODO: unused
+    // (only used by \framebox)
     hasAttribute(el: HTMLElement, attr: string): boolean
     {
         const classAttr = el.getAttribute("class");
