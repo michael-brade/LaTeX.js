@@ -1,0 +1,12 @@
+{
+    // don't allow editing whitespace fixture, it would destroy the different EOLs
+    "files.readonlyInclude": {
+        "**/test/fixtures/whitespace.tex": true
+    },
+
+    // for fixtures: prevent auto-formatting or trailing whitespace trimming on save
+    "[latex]": {
+        "files.trimTrailingWhitespace": false,
+        "editor.formatOnSave": false
+    }
+}

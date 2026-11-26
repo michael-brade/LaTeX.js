@@ -327,8 +327,8 @@ html, .page, h1, h2, h3, h4,
 
 /* size */
 
-/* these must be relative to the document's font size, and rem is not: in the web component,
-   that is the font size of the page around it - so use calc() on --size instead of rem */
+/* these must be relative to the document's font size, and rem is not: in the web component, *
+ * that is the font size of the page around it - so use calc() on --size instead of rem      */
 
 .tiny {
     font-size: calc(.5 * var(--size));
