@@ -104,6 +104,20 @@ jobs:
       run: npm run testc
 
 
+    # a failed screenshot test leaves the new screenshot (.new.png) and the difference (.diff.png), a failed html test
+    # the actual html (test/html/)
+    - name: Archive failed screenshots and html
+      if: failure()
+      uses: actions/upload-artifact@v7
+      with:
+        name: failed-tests
+        path: |
+          test/screenshots/**/*.new.png
+          test/screenshots/**/*.diff.png
+          test/html/
+        if-no-files-found: ignore
+        retention-days: 14
+
     - name: Archive coverage report
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v7
