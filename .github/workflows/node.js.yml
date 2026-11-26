@@ -34,6 +34,7 @@ jobs:
     - uses: actions/checkout@v7
 
     - name: Use Node.js ${{ env.NODE_VERSION }}
+      &step-install-node
       uses: actions/setup-node@v7
       with:
         node-version: ${{ env.NODE_VERSION }}
@@ -70,11 +71,12 @@ jobs:
     needs: build
 
     # Runs all steps below directly inside the official Debian Trixie + Node container
-    container:
-      image: node:${{ env.NODE_VERSION }}-trixie
+    container: &node-container
+      image: node:24.22-trixie
 
     steps:
     - name: Install dependencies
+      &step-install-deps
       run: |
         apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
             rsync oxipng \
@@ -83,15 +85,9 @@ jobs:
             libgtk-3-0t64 \
         && rm -rf /var/lib/apt/lists/*
 
-    steps:
     - uses: actions/checkout@v7
 
-    # Node.js itself runs in the container; this only caches ~/.npm, which the container shares
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v7
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
+    - *step-install-node
 
     # Ubuntu 23.10+ blocks unprivileged user namespaces via AppArmor, which Chrome's sandbox needs
     # - name: Allow unprivileged user namespaces for Chrome's sandbox
@@ -155,18 +151,17 @@ jobs:
 
     needs: build
 
+    container: *node-container
+
     steps:
+    - *step-install-deps
+    - *step-install-node
+
     - uses: actions/checkout@v7
 
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v7
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-
     # see the test job
-    - name: Allow unprivileged user namespaces for Chrome's sandbox
-      run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+    # - name: Allow unprivileged user namespaces for Chrome's sandbox
+    #   run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
     # same key as in the test job, so download both browsers here as well: caches are immutable
     - name: Cache puppeteer browsers
