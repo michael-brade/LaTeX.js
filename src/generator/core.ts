@@ -4,9 +4,8 @@ import type { Options } from "../options.ts"
 
 
 /**
- * Root of the generator class hierarchy: the infrastructure every mixin relies on,
- * namely options, error reporting, source location, unique ids, and the root of the
- * reset() chain.
+ * Root of the generator class hierarchy: the infrastructure every mixin relies on, namely
+ * options, error reporting, source location, unique ids, and the root of the reset() chain.
  *
  * The Generator itself is composed of this core plus the mixins, see generator.ts.
  *
@@ -15,6 +14,9 @@ import type { Options } from "../options.ts"
  */
 export abstract class Core
 {
+    // names without _ are the API for the grammar and macros, so every name starting
+    // with _ is internal to the generator classes/mixins (TS doesn't allow protected in mixins)
+
     _options: Options
     _uid: number = 1
 

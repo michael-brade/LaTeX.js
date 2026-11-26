@@ -562,6 +562,15 @@ export class HtmlGenerator extends Generator<Node>
     }
 
 
+    // the text attributes of the current group as CSS classes; the order of the classes is
+    // the one the fixtures expect
+    #inlineAttributes(): string
+    {
+        return [this.fontFamily(), this.fontWeight(), this.fontShape(), this.fontSize(), this.textDecoration()]
+            .filter(Boolean).join(" ");
+    }
+
+
     /**
      * This wraps the current attribute values around the given element or array of elements.
      *
@@ -577,7 +586,7 @@ export class HtmlGenerator extends Generator<Node>
     override addAttributes(nodes: Node[]): Node[]
     override addAttributes(nodes: Node|Node[]): Node|Node[]
     {
-        const attrs = this._inlineAttributes();
+        const attrs = this.#inlineAttributes();
         if (!attrs)
             return nodes;
 
@@ -604,6 +613,8 @@ export class HtmlGenerator extends Generator<Node>
 
     // wrap a sequence of inline nodes in one inline element,
     // but each block on its own in a block element
+    //
+    // attrs is a space-separated list of CSS classes
     #wrapNodes(nodes: Node[], attrs: string): Node[]
     {
         const result: Node[] = []
