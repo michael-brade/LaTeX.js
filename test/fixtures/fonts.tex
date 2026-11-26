@@ -229,6 +229,20 @@ monospaced fonts do not use ligatures
 .
 
 
+text without a size keeps its size if the paragraph ends in a group with another size
+.
+Text without a size, \large large text, and {\small small text in a group.\par}
+.
+<div class="body">
+<p class="small">
+<span class="normalsize">Text without a size, </span>
+<span class="large">large text, and </span>
+<span class="small">small text in a group.</span>
+</p>
+</div>
+.
+
+
 #
 em lengths are relative to current font sizes
 .
