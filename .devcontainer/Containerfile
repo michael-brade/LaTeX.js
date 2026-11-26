@@ -1,4 +1,7 @@
-FROM node:lts-trixie
+# also the image of the CI test job, which passes its own NODE_VERSION (see .github/workflows/node.js.yml)
+ARG NODE_VERSION=24.22
+
+FROM node:${NODE_VERSION}-trixie
 
 # disable Debian's built-in docker-clean scripts so the cache mounts actually persist
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
