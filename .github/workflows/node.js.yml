@@ -33,8 +33,8 @@ jobs:
     steps:
     - uses: actions/checkout@v7
 
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      &step-install-node
+    - &step-install-node
+      name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v7
       with:
         node-version: ${{ env.NODE_VERSION }}
@@ -75,8 +75,8 @@ jobs:
       image: node:24.22-trixie
 
     steps:
-    - name: Install dependencies
-      &step-install-deps
+    - &step-install-deps
+      name: Install dependencies
       run: |
         apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
             rsync oxipng \
