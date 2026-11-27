@@ -25,3 +25,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     libxkbcommon0 libasound2t64 libgbm1 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
     # for firefox in puppeteer
     libgtk-3-0t64
+
+RUN curl -fsSL https://qlty.sh | QLTY_INSTALL_BIN_PATH=/usr/local/bin sh \
+    && rm -rf /root/.qlty
