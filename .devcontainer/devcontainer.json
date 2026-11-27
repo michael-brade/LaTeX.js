@@ -45,7 +45,8 @@
                 "Vue.volar",
                 "kamikillerto.vscode-colorize",
                 "dbaeumer.vscode-eslint",
-                "vitest.explorer"
+                "vitest.explorer",
+                "timonwong.shellcheck"
             ]
         }
     },
