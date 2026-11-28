@@ -15,3 +15,6 @@ indent_size = 2
 indent_size = unset
 end_of_line = unset
 trim_trailing_whitespace = false
+
+[docs/*.md]
+indent_size = unset

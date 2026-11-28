@@ -38,8 +38,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
     # Node.js, "npm ci" and "npm run prepare"
+    # qlty-ignore: actionlint/action
     - uses: $/.github/actions/setup-node
       with:
         node-version: ${{ env.NODE_VERSION }}
@@ -74,9 +77,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
+    # qlty-ignore: actionlint/action
     - uses: $/.github/actions/install-deps
 
+    # qlty-ignore: actionlint/action
     - uses: $/.github/actions/setup-node
       with:
         node-version: ${{ env.NODE_VERSION }}
@@ -113,7 +120,7 @@ jobs:
     # the actual html (test/html/)
     - name: Archive failed screenshots and html
       if: failure()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
         name: failed-tests
         path: |
@@ -140,13 +147,18 @@ jobs:
 
     needs: build
 
+    # qlty-ignore: actionlint/syntax-check
     container: *node-container
 
     steps:
     - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
+    # qlty-ignore: actionlint/action
     - uses: $/.github/actions/install-deps
 
+    # qlty-ignore: actionlint/action
     - uses: $/.github/actions/setup-node
       with:
         node-version: ${{ env.NODE_VERSION }}
