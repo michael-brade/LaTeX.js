@@ -163,9 +163,10 @@ server bundle. Test playground changes with a built site too (`vitepress build` 
 with `devdocs`.
 
 The website uses the library from `dist/`: `"latex.js"` resolves through `exports`, and
-`docs/public/latexjs/{css,fonts,js}` are committed symlinks to `dist/{css,fonts,js}` (the playground loads them from
-`/latexjs/`; `vitepress build` copies the real files). After changes in `src/`, rebuild (`npm run devbuild` is faster)
-and restart `devdocs`; for changes of the CSS, fonts or scripts, a rebuild is enough.
+`docs/public/latexjs/{css,fonts,js}` are symlinks to `dist/{css,fonts,js}` that `npm run prepare` creates (it runs
+on `npm ci` and `npm install`; the playground loads them from `/latexjs/`, `vitepress build` copies the real files).
+After changes in `src/`, rebuild (`npm run devbuild` is faster) and restart `devdocs`; for changes of the CSS, fonts or
+scripts, a rebuild is enough.
 
 `npm run docs` builds the library and then the website into `website/`, a worktree of the `gh-pages` branch (created
 if it doesn't exist), and commits it there. It doesn't push.
