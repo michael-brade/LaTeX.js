@@ -1,1 +1,6 @@
 test/fixtures/** -text
+
+# symlinks into the build (dist/ is not in git): dangling in an archive, and the GitHub Actions runner
+# fails on them when it downloads this repository for the "uses: $/..." local actions, so don't
+# archive them
+docs/public/latexjs export-ignore
