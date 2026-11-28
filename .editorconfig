@@ -8,6 +8,9 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
+[.github/**]
+indent_size = 2
+
 [test/fixtures/**]
 indent_size = unset
 end_of_line = unset

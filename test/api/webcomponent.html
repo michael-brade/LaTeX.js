@@ -1,59 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta charset="UTF-8">
-  <meta http-equiv="content-language" content="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="content-language" content="en">
 
-  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
-  <base href="../../dist/">
+    <base href="../../dist/">
 
-  <script src="./latex.umd.cjs"></script>
-  <script>
-    customElements.define("latex-js", latexjs.LaTeXJSComponent)
-  </script>
+    <script src="./latex.umd.cjs"></script>
+    <script>
+        customElements.define("latex-js", latexjs.LaTeXJSComponent)
+    </script>
 
-  <style>
-    body {
-      font-family: "DejaVu Sans";
-      font-size: 14px;
-    }
+    <style>
+        body {
+            font-family: "DejaVu Sans";
+            font-size: 14px;
+        }
 
-    latex-js {
-      display: inline-block;
-      width: 45%;
-      border: 1px solid green;
-      margin-left: 2%;
-      margin-right: 2%;
-    }
-  </style>
+        latex-js {
+            display: inline-block;
+            width: 45%;
+            border: 1px solid green;
+            margin-left: 2%;
+            margin-right: 2%;
+        }
+    </style>
 
-  <title>LaTeX.js Web Component Test</title>
+    <title>LaTeX.js Web Component Test</title>
 </head>
 
 <body>
-  <h1>Compiling LaTeX</h1>
+    <h1>Compiling LaTeX</h1>
 
-  <p>Here are two LaTeX documents side by side:</p>
+    <p>Here are two LaTeX documents side by side:</p>
 
-  <p>
-    <latex-js>
-      \documentclass[16pt]{article}
+    <p>
+        <latex-js>
+            \documentclass[16pt]{article}
 
-      \begin{document}
-      {\large Hello World.} \\
-      \texttt{homecoming} configuring components environments playground.
-      \end{document}
-    </latex-js>
+            \begin{document}
+            {\large Hello World.} \\
+            \texttt{homecoming} configuring components environments playground.
+            \end{document}
+        </latex-js>
 
 
-    <latex-js hyphenate="false">
-      {\large Hello World.} \\
-      Another. The above "Hello World" is smaller here than on the left.
-    </latex-js>
-  </p>
+        <latex-js hyphenate="false">
+            {\large Hello World.} \\
+            Another. The above "Hello World" is smaller here than on the left.
+        </latex-js>
+    </p>
 </body>
 
 </html>
