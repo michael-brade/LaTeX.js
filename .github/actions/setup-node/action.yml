@@ -1,0 +1,31 @@
+# Sets up Node.js and installs the npm dependencies.
+#
+# Local actions are read from the workspace, so actions/checkout must run before this.
+
+name: Set up Node.js
+description: Install Node.js with the npm cache, then install the dependencies and run our own prepare script
+
+inputs:
+  node-version:
+    description: The Node.js version to install
+    required: true
+
+runs:
+  using: composite
+  steps:
+  - name: Use Node.js ${{ inputs.node-version }}
+    uses: actions/setup-node@v7
+    with:
+      node-version: ${{ inputs.node-version }}
+      # this already caches npm dependencies for faster "npm ci" and later jobs
+      cache: 'npm'
+
+  # no lifecycle scripts of dependencies...
+  - name: Install npm dependencies
+    shell: bash
+    run: npm ci --ignore-scripts
+
+  # ...run only our own: it applies the patches and re-links tsc
+  - name: Prepare
+    shell: bash
+    run: npm run prepare

@@ -30,21 +30,19 @@ jobs:
     name: Check and build
     runs-on: ubuntu-latest
 
+    # container.image can't read env, but it can read needs: pass NODE_VERSION on to the jobs in the container
+    # if build should also have container: with a node version, we could create a reusable workflow (workflow_call)
+    # with a node-version input that could hold the whole container job
+    outputs:
+      node-version: ${{ env.NODE_VERSION }}
+
     steps:
     - uses: actions/checkout@v7
 
-    - &step-install-node
-      name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v7
+    # Node.js, "npm ci" and "npm run prepare"
+    - uses: ./.github/actions/setup-node
       with:
         node-version: ${{ env.NODE_VERSION }}
-        # this already caches npm dependencies for faster "npm ci" and later jobs
-        cache: 'npm'
-
-    # no lifecycle scripts of dependencies...
-    - run: npm ci --ignore-scripts
-    # ...run only our own: it applies the patches and re-links tsc
-    - run: npm run prepare
 
     - run: npm run typecheck
     - run: npm run build
@@ -72,22 +70,16 @@ jobs:
 
     # Runs all steps below directly inside the official Debian Trixie + Node container
     container: &node-container
-      image: node:24.22-trixie
+      image: node:${{ needs.build.outputs.node-version }}-trixie
 
     steps:
-    - &step-install-deps
-      name: Install dependencies
-      run: |
-        apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
-            rsync oxipng \
-            libnspr4 libnss3 libatk1.0-0t64 libatk-bridge2.0-0t64 libcups2t64 \
-            libxkbcommon0 libasound2t64 libgbm1 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
-            libgtk-3-0t64 \
-        && rm -rf /var/lib/apt/lists/*
-
     - uses: actions/checkout@v7
 
-    - *step-install-node
+    - uses: ./.github/actions/install-deps
+
+    - uses: ./.github/actions/setup-node
+      with:
+        node-version: ${{ env.NODE_VERSION }}
 
     # Ubuntu 23.10+ blocks unprivileged user namespaces via AppArmor, which Chrome's sandbox needs
     # - name: Allow unprivileged user namespaces for Chrome's sandbox
@@ -100,9 +92,6 @@ jobs:
       with:
         path: ~/.cache/puppeteer
         key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
-
-    - run: npm ci --ignore-scripts
-    - run: npm run prepare
 
     # instead of puppeteer's postinstall; does nothing if the browsers are already in the cache
     - run: npx --no puppeteer browsers install
@@ -154,10 +143,13 @@ jobs:
     container: *node-container
 
     steps:
-    - *step-install-deps
-    - *step-install-node
-
     - uses: actions/checkout@v7
+
+    - uses: ./.github/actions/install-deps
+
+    - uses: ./.github/actions/setup-node
+      with:
+        node-version: ${{ env.NODE_VERSION }}
 
     # see the test job
     # - name: Allow unprivileged user namespaces for Chrome's sandbox
@@ -171,8 +163,6 @@ jobs:
         key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
 
     # see test job
-    - run: npm ci --ignore-scripts
-    - run: npm run prepare
     - run: npx --no puppeteer browsers install
 
     - name: Restore the build
