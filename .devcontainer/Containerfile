@@ -3,6 +3,10 @@ ARG NODE_VERSION=24.22
 
 FROM node:${NODE_VERSION}-trixie
 
+ARG OXIPNG_VERSION=10.2.1
+ARG OXIPNG_CHECKSUM=sha256:4c3e7440c3ebf94b0d5a67d3add25b9a40897c7f14678ecdb5db3c7b77ff816f
+
+
 # disable Debian's built-in docker-clean scripts so the cache mounts actually persist
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-debs; \
@@ -25,11 +29,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     # for firefox in puppeteer
     libgtk-3-0t64
 
-ADD --checksum=sha256:4c3e7440c3ebf94b0d5a67d3add25b9a40897c7f14678ecdb5db3c7b77ff816f \
-    https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng_10.2.1-1_amd64.deb \
-    /tmp/
+ADD --checksum=$OXIPNG_CHECKSUM \
+    https://github.com/oxipng/oxipng/releases/download/v$OXIPNG_VERSION/oxipng_$OXIPNG_VERSION-1_amd64.deb \
+    /tmp/oxipng.deb
 
-RUN dpkg -i /tmp/oxipng_10.2.1-1_amd64.deb
+RUN dpkg -i /tmp/oxipng.deb && rm /tmp/oxipng.deb
 
 RUN curl -fsSL https://qlty.sh | QLTY_INSTALL_BIN_PATH=/usr/local/bin sh \
     && rm -rf /root/.qlty

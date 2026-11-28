@@ -89,8 +89,8 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
 
     # Ubuntu 23.10+ blocks unprivileged user namespaces via AppArmor, which Chrome's sandbox needs
-    # - name: Allow unprivileged user namespaces for Chrome's sandbox
-    #   run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+    - name: Allow unprivileged user namespaces for Chrome's sandbox
+      run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
     # "puppeteer browsers install" below downloads Chrome and Firefox into ~/.cache/puppeteer unless they are already
     # there; restore them before that (the browser versions are pinned by puppeteer's version in the lockfile)
@@ -164,8 +164,8 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
 
     # see the test job
-    # - name: Allow unprivileged user namespaces for Chrome's sandbox
-    #   run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+    - name: Allow unprivileged user namespaces for Chrome's sandbox
+      run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
     # same key as in the test job, so download both browsers here as well: caches are immutable
     - name: Cache puppeteer browsers
