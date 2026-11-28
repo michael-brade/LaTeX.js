@@ -162,7 +162,8 @@ describe('React app', () => {
         server = http.createServer((req, res) => serveHandler(req, res, { public: path.join(app, 'dist') }));
         await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
 
-        browser = await puppeteer.launch();
+        // without the sandbox in CI, see test/lib/browsers.ts
+        browser = await puppeteer.launch({ args: process.env.CI ? ['--no-sandbox'] : [] });
         page = await browser.newPage();
 
         page.on('pageerror', err => errors.push(`page error: ${err}`));

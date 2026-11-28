@@ -20,9 +20,6 @@ runs:
       echo "$OXIPNG_SHA256  /tmp/oxipng.deb" | sha256sum -c -
 
       packages=(
-          # needed for allowing unprivileged user namespaces
-          sudo
-
           /tmp/oxipng.deb
           rsync
 

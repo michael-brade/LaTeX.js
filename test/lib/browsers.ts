@@ -28,7 +28,9 @@ export async function launchBrowsers(): Promise<void> {
         headless: DEBUG != 'chrome',
         devtools: DEBUG === 'chrome',
         dumpio: false,
-        // args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files']
+        // CI runs the tests in a container as root, where Chrome only starts without its sandbox (and the
+        // container can't allow the unprivileged user namespaces it needs); GitHub Actions always sets CI
+        args: process.env.CI ? ['--no-sandbox'] : [],
     });
 
     firefox = await puppeteer.launch({
