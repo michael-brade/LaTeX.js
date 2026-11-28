@@ -103,6 +103,10 @@ A line with attributes may come before the title: `!` skips the fixture, `+` run
 `#` also takes screenshots of it. The fixtures are translated without hyphenation; line breaks in the HTML are ignored.
 When a fixture fails, its actual HTML is written to `test/html/`.
 
+Whitespace in the fixtures is part of the test: `.editorconfig` and `.gitattributes` keep their indentation, trailing
+spaces and line endings as they are. `whitespace.tex` mixes Unix, Windows and old Mac line endings, which editors
+normalize when saving, so `.vscode/settings.json` opens it read-only.
+
 ### Screenshots
 
 The fixtures with `#` and the web component examples are rendered in Chrome and Firefox (with puppeteer) and compared
@@ -159,9 +163,10 @@ server bundle. Test playground changes with a built site too (`vitepress build` 
 with `devdocs`.
 
 The website uses the library from `dist/`: `"latex.js"` resolves through `exports`, and
-`docs/public/latexjs/{css,fonts,js}` are committed symlinks to `dist/{css,fonts,js}` (the playground loads them from
-`/latexjs/`; `vitepress build` copies the real files). After changes in `src/`, rebuild (`npm run devbuild` is faster)
-and restart `devdocs`; for changes of the CSS, fonts or scripts, a rebuild is enough.
+`docs/public/latexjs/{css,fonts,js}` are symlinks to `dist/{css,fonts,js}` that `npm run prepare` creates (it runs
+on `npm ci` and `npm install`; the playground loads them from `/latexjs/`, `vitepress build` copies the real files).
+After changes in `src/`, rebuild (`npm run devbuild` is faster) and restart `devdocs`; for changes of the CSS, fonts or
+scripts, a rebuild is enough.
 
 `npm run docs` builds the library and then the website into `website/`, a worktree of the `gh-pages` branch (created
 if it doesn't exist), and commits it there. It doesn't push.
@@ -236,6 +241,9 @@ file, then run `./package.yaml.sh` (it pipes the YAML through `npx js-yaml` into
   `dist/fonts/katex.css` holds only the `@font-face` rules, and `dist/css/katex.css` the rest, importing them. Don't
   add a `src/css/katex.css`. `@font-face` is ignored in a shadow DOM, so pages that show the output in one (like
   `<latex-js>`) load `fonts/cmu.css` and `fonts/katex.css` into the page itself.
+- Don't use `rem` in the stylesheets: it is relative to the font size of the page's `<html>` element, not to the
+  document's, so in a `<latex-js>` component, it would ignore the font size set in the <latex/> source. Use
+  `calc(n * var(--size))` instead.
 - When updating `katex`, check `src/css/base.css` against KaTeX's class names (e.g. `.mathnormal`, which used to be
   `.mathdefault`), and look at the math screenshots.
 - When you change the behavior or the API, update the documentation in `docs/` and the `README.md`.

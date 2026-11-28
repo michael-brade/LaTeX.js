@@ -17,5 +17,5 @@ let generator = new HtmlGenerator({ hyphenate: false })
 
 let doc = parse(latex, { generator: generator }).htmlDocument()
 
-console.log(doc.documentElement.outerHTML)
+console.log('<!DOCTYPE html>' + doc.documentElement.outerHTML)
 // #endregion code

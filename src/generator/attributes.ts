@@ -25,6 +25,7 @@ declare module "./groups.ts" {
     interface StackItem {
         attrs: TextAttributes
         align: Alignment
+        outerFontSize: string | undefined   // see _outerFontSize()
     }
 }
 
@@ -56,6 +57,7 @@ export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
             const item = super._newGroup(parent, copyAttrs)
             item.attrs = copyAttrs && parent ? { ...parent.attrs } : {}
             item.align = null
+            item.outerFontSize = copyAttrs && parent ? parent.outerFontSize : this._activeAttributeValue("fontSize")
             return item
         }
 
@@ -90,14 +92,27 @@ export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
 
         /// font attributes
 
+        // The getters return the attribute that was set in the current group, or that the group
+        // copied from its parent; undefined if it is still the one of the surrounding text.
+
         setFontFamily(family: string): void
         {
             this._stack.top.attrs.fontFamily = family;
         }
 
+        fontFamily(): string | undefined
+        {
+            return this._stack.top.attrs.fontFamily;
+        }
+
         setFontWeight(weight: string): void
         {
             this._stack.top.attrs.fontWeight = weight;
+        }
+
+        fontWeight(): string | undefined
+        {
+            return this._stack.top.attrs.fontWeight;
         }
 
         setFontShape(shape: string): void
@@ -109,9 +124,27 @@ export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
             this._stack.top.attrs.fontShape = shape;
         }
 
+        fontShape(): string | undefined
+        {
+            return this._stack.top.attrs.fontShape;
+        }
+
         setFontSize(size: string): void
         {
             this._stack.top.attrs.fontSize = size;
+        }
+
+        fontSize(): string | undefined
+        {
+            return this._stack.top.attrs.fontSize;
+        }
+
+        // the font size of text in the current group as long as no size is set:
+        // the size that was active when the group was entered, or rather the outermost of
+        // the enclosing groups that copied the attributes
+        _outerFontSize(): string
+        {
+            return this._stack.top.outerFontSize ?? "normalsize";
         }
 
         setTextDecoration(decoration: string): void
@@ -119,13 +152,9 @@ export function Attributes<TBase extends Constructor<GroupsAPI>>(Base: TBase)
             this._stack.top.attrs.textDecoration = decoration;
         }
 
-
-        // get all inline attributes of the current group as a space-separated string
-        _inlineAttributes(): string
+        textDecoration(): string | undefined
         {
-            const cur = this._stack.top.attrs;
-            return [cur.fontFamily, cur.fontWeight, cur.fontShape, cur.fontSize, cur.textDecoration]
-                .join(' ').replace(/\s+/g, ' ').trim();
+            return this._stack.top.attrs.textDecoration;
         }
 
         // get the currently active value for a specific attribute, also taking into account inheritance

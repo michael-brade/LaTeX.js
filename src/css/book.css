@@ -7,20 +7,20 @@
 
 /* chapter */
 h1 div {
-    font-size: 2rem;        /* \huge */
-    margin-bottom: 2rem;
+    font-size: calc(2 * var(--size));        /* \huge */
+    margin-bottom: calc(2 * var(--size));
 }
 
 h1 {
-    font-size: 2.5rem;      /* \Huge */
+    font-size: calc(2.5 * var(--size));      /* \Huge */
     font-weight: bold;
-    margin-top: calc(5rem + 1em);       /* \vspace*{} in LaTeX adds an additional line */
-    margin-bottom: 4rem;
+    margin-top: calc(5 * var(--size) + 1em); /* \vspace*{} in LaTeX adds an additional line */
+    margin-bottom: calc(4 * var(--size));
 }
 
 /* section */
 h2 {
-    font-size: 1.4rem;      /* \Large */
+    font-size: calc(1.4 * var(--size));      /* \Large */
     font-weight: bold;
     margin-top: 3.5ex;
     margin-bottom: 2.3ex;
@@ -28,7 +28,7 @@ h2 {
 
 /* subsection */
 h3 {
-    font-size: 1.2rem;      /* \large */
+    font-size: calc(1.2 * var(--size));      /* \large */
     font-weight: bold;
     margin-top: 3.25ex;
     margin-bottom: 1.5ex;
@@ -36,7 +36,7 @@ h3 {
 
 /* subsubsection */
 h4 {
-    font-size: 1rem;        /* \normalsize */
+    font-size: var(--size);        /* \normalsize */
     font-weight: bold;
     margin-top: 3.25ex;
     margin-bottom: 1.5ex;

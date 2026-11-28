@@ -1,14 +1,14 @@
 @font-face {
-	font-family: 'Computer Modern Serif Slanted';
-	src: url('cmunsl.woff') format('woff');
-	font-weight: normal;
-	font-style: normal;
+    font-family: 'Computer Modern Serif Slanted';
+    src: url('cmunsl.woff') format('woff');
+    font-weight: normal;
+    font-style: oblique;
 }
 
 
 @font-face {
-	font-family: 'Computer Modern Serif Slanted';
-	src: url('cmunbl.woff') format('woff');
-	font-weight: bold;
-	font-style: normal;
+    font-family: 'Computer Modern Serif Slanted';
+    src: url('cmunbl.woff') format('woff');
+    font-weight: bold;
+    font-style: oblique;
 }

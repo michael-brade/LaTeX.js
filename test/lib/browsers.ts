@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import http from 'node:http';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import serveHandler from 'serve-handler';
 import puppeteer, { Browser, ConsoleMessage, Page } from 'puppeteer';
 import { diff } from '@blazediff/core-native';
@@ -26,7 +28,9 @@ export async function launchBrowsers(): Promise<void> {
         headless: DEBUG != 'chrome',
         devtools: DEBUG === 'chrome',
         dumpio: false,
-        // args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files']
+        // CI runs the tests in a container as root, where Chrome only starts without its sandbox (and the
+        // container can't allow the unprivileged user namespaces it needs); GitHub Actions always sets CI
+        args: process.env.CI ? ['--no-sandbox'] : [],
     });
 
     firefox = await puppeteer.launch({
@@ -108,6 +112,27 @@ export async function closeBrowsers(): Promise<void> {
     if (!DEBUG)               server.close();
 }
 
+let oxipngMissing = false;
+
+// write a screenshot and compress it losslessly with oxipng (if installed); the screenshots are compared by
+// their decoded pixels, so an optimized file still compares identical to the browser's output
+async function writePng(file: string, png: Uint8Array): Promise<void> {
+    fs.writeFileSync(file, png);
+
+    if (oxipngMissing)
+        return;
+
+    try {
+        await promisify(execFile)('oxipng', ['-o', 'max', '--strip', 'safe', '-q', file]);
+    } catch (e: any) {
+        if (e.code === 'ENOENT') {
+            oxipngMissing = true;
+            console.warn('oxipng is not installed, screenshots are not optimized');
+        } else
+            console.warn(`oxipng failed, ${file} is not optimized: ${e.message}`);
+    }
+}
+
 // compare a new screenshot (PNG bytes) with the stored filename.png; if they differ, keep the new one as
 // filename.new.png and the difference as filename.diff.png
 async function compareScreenshots(filename: string, screenshot: Uint8Array): Promise<void> {
@@ -117,7 +142,7 @@ async function compareScreenshots(filename: string, screenshot: Uint8Array): Pro
 
     // if no screenshot exists yet, use this new one
     if (!fs.existsSync(stored)) {
-        fs.writeFileSync(stored, screenshot);
+        await writePng(stored, screenshot);
         return;
     }
 
@@ -136,7 +161,8 @@ async function compareScreenshots(filename: string, screenshot: Uint8Array): Pro
     if (result.kind === 'compared' && result.identical)
         return;
 
-    fs.writeFileSync(newFile, screenshot);
+    // optimized as well, so that it can be accepted by just renaming it to filename.png
+    await writePng(newFile, screenshot);
 
     if (result.kind === 'compared')
         throw new Error(`screenshots differ by ${result.count} pixels - see ${filename + '.*.png'}`);
@@ -185,10 +211,17 @@ export async function takeScreenshot(html: string, filename: string): Promise<vo
         screenshotPage(fPage)
     ]);
 
-    await compareScreenshots(`${filename}.ch`, cScreenshot);
-    await compareScreenshots(`${filename}.ff`, fScreenshot);
+    // compare both, even if one differs, so that each browser gets its .new.png/.diff.png
+    const results = await Promise.allSettled([
+        compareScreenshots(`${filename}.ch`, cScreenshot),
+        compareScreenshots(`${filename}.ff`, fScreenshot)
+    ]);
 
     // only delete the page again when not debugging
     if (!DEBUG)
         htmlRegistry.delete(filename);
+
+    const errors = results.flatMap(r => r.status === 'rejected' ? [r.reason.message] : []);
+    if (errors.length)
+        throw new Error(errors.join('\n'));
 };

@@ -7,3 +7,14 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
+
+[.github/**]
+indent_size = 2
+
+[test/fixtures/**]
+indent_size = unset
+end_of_line = unset
+trim_trailing_whitespace = false
+
+[docs/*.md]
+indent_size = unset

@@ -14,6 +14,11 @@ import { hyphenateSync as hyphenateEn } from "hyphen/en";
 import { Length, type Vector } from '../../types.ts';
 
 
+// the CSS classes of the LaTeX font sizes
+const fontSizes = new Set([
+    "tiny", "scriptsize", "footnotesize", "small", "normalsize", "large", "Large", "LARGE", "huge", "Huge"
+]);
+
 function isBlockLevel(el: HTMLElement): boolean
 {
     const blockRegex = /^(address|blockquote|body|center|dir|div|dl|fieldset|form|h[1-6]|hr|isindex|menu|noframes|noscript|ol|p|pre|table|ul|dd|dt|frameset|li|tbody|td|tfoot|th|thead|tr|html)$/i;
@@ -278,7 +283,50 @@ export class HtmlGenerator extends Generator<Node>
             this.break();
         }
 
-        return this.createElement(HtmlElements[kind], children, classes);
+        // like in LaTeX, the font size at the end of a paragraph determines the line spacing of the
+        // whole paragraph -> put that font size on the paragraph so that this will be the paragraph's
+        // line spacing
+        const size = this.fontSize();
+        if (size && kind === Elements.par)
+            classes = size + " " + classes;
+
+        const el = this.createElement(HtmlElements[kind], children, classes);
+
+        if (size && kind === Elements.par)
+            this.#keepOuterFontSize(el, size);
+
+        return el;
+    }
+
+    // Content that was created before a font size was set has no font size class.
+    // If it is part of a paragraph that has a different size, it needs one.
+    #keepOuterFontSize(par: HTMLElement, size: string): void
+    {
+        const outerSize = this._outerFontSize();
+        if (outerSize === size)
+            return;
+
+        const hasSize = (node: Node) => node instanceof window.Element &&
+            (node.getAttribute("class") ?? "").split(" ").some(c => fontSizes.has(c));
+
+        // walk all direct children of the paragraph
+        const nodes = [...par.childNodes];
+        while (nodes.length) {
+            const consecutive: Node[] = [];
+            // collect consecutive nodes with text but without a size;
+            // nodes without text (like line breaks) don't need a size
+            while (nodes.length && nodes[0].textContent && !hasSize(nodes[0]))
+                consecutive.push(nodes.shift()!);
+
+            // consecutive nodes could share one element, let #wrapNodes() decide
+            if (consecutive.length) {
+                const next = nodes[0] ?? null;
+                for (const el of this.#wrapNodes(consecutive, outerSize))
+                    par.insertBefore(el, next);
+            } else {
+                nodes.shift();
+            }
+        }
     }
 
     override setId(node: HTMLElement, id: string): void
@@ -320,11 +368,11 @@ export class HtmlGenerator extends Generator<Node>
         return this.addAttributes(document.createTextNode(this.#h ? this.#h(t) : t));
     }
 
-    // create a pure text node without font attributes and no hyphenation
-    override createVerbatim(t: string): Text | undefined
+    // create verbatim text (\verb): typewriter font, no hyphenation, and of the
+    // current font attributes only the size
+    override createVerbatim(t: string): HTMLElement
     {
-        if (!t) return;
-        return document.createTextNode(t);
+        return this.create(Elements.verb, t ? document.createTextNode(t) : null, this.fontSize());
     }
 
     // create a fragment; arguments may be Node(s) and/or arrays of Node(s)
@@ -429,7 +477,7 @@ export class HtmlGenerator extends Generator<Node>
     }
 
     // return HTMLElement instead?
-    override parseMath(math: string, display: boolean): DocumentFragment
+    override parseMath(math: string, display: boolean): Node
     {
         const f = document.createDocumentFragment();
         // KaTeX only needs appendChild() and textContent, a fragment is fine
@@ -437,7 +485,12 @@ export class HtmlGenerator extends Generator<Node>
             displayMode: display,
             throwOnError: false
         });
-        return f;
+
+        // math doesn't have the current font attributes, except for the size;
+        // always inline: display math lives inside a <p> and KaTeX's .katex-display span
+        // has display:block itself
+        const size = this.fontSize();
+        return size ? this.create(Elements.inline, f, size) : f;
     }
 
     override theLength(id: string): HTMLElement
@@ -488,7 +541,7 @@ export class HtmlGenerator extends Generator<Node>
     //// attributes and nodes/elements
 
     // add the given attribute(s) to a single element
-    // TODO: unused
+    // (only used by \framebox)
     addAttribute(el: HTMLElement, attrs: string): void
     {
         if (el.hasAttribute("class"))
@@ -497,7 +550,7 @@ export class HtmlGenerator extends Generator<Node>
         el.setAttribute("class", attrs);
     }
 
-    // TODO: unused
+    // (only used by \framebox)
     hasAttribute(el: HTMLElement, attr: string): boolean
     {
         const classAttr = el.getAttribute("class");
@@ -506,6 +559,15 @@ export class HtmlGenerator extends Generator<Node>
 
         const regex = new RegExp(`\\b${attr}\\b`);
         return regex.test(classAttr);
+    }
+
+
+    // the text attributes of the current group as CSS classes; the order of the classes is
+    // the one the fixtures expect
+    #inlineAttributes(): string
+    {
+        return [this.fontFamily(), this.fontWeight(), this.fontShape(), this.fontSize(), this.textDecoration()]
+            .filter(Boolean).join(" ");
     }
 
 
@@ -524,7 +586,7 @@ export class HtmlGenerator extends Generator<Node>
     override addAttributes(nodes: Node[]): Node[]
     override addAttributes(nodes: Node|Node[]): Node|Node[]
     {
-        const attrs = this._inlineAttributes();
+        const attrs = this.#inlineAttributes();
         if (!attrs)
             return nodes;
 
@@ -551,6 +613,8 @@ export class HtmlGenerator extends Generator<Node>
 
     // wrap a sequence of inline nodes in one inline element,
     // but each block on its own in a block element
+    //
+    // attrs is a space-separated list of CSS classes
     #wrapNodes(nodes: Node[], attrs: string): Node[]
     {
         const result: Node[] = []

@@ -136,7 +136,8 @@ async function screenshotTest(fixture: Fixture, name: string): Promise<void> {
         remove: /[*+~()'"!:@,{}\\]/g
     }));
 
-    await takeScreenshot(htmlDoc.documentElement.outerHTML, filename);
+    // outerHTML doesn't include the doctype, but without it, the browsers use quirks mode
+    await takeScreenshot('<!DOCTYPE html>' + htmlDoc.documentElement.outerHTML, filename);
 
     // update native LaTeX screenshot
     // latexScreenshot(fixture.source, filename);

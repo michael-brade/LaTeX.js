@@ -21,7 +21,7 @@
 
 - check out LinkeDom (or Happy-DOM) and see if it works with LaTeX.js
   both have no SVG font metrics - do I even need that (getBBox)?
-  
+
 - in the unit tests: check the (serialized) html for validity
 
 import { HtmlValidate } from "html-validate";
@@ -34,3 +34,22 @@ const report = await htmlvalidate.validateString("<p><div>invalid</div></p>");
 
 console.log(report.valid); // false
 console.log(report.results[0].messages);
+
+
+- CSS: use @property for custom property definitions
+
+@property --rotation {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 45deg;
+}
+
+
+- CSS: put font size definitions (tiny, scriptsize, ...) in custom properties
+  and reuse them instead of using the magic values
+
+- implement negative tests?
+
+
+- CMU fonts: where did I get the woff/CSS files from? install fonttools and
+  fix the missing smcp feature registration for latn and DFLT in cmuntt

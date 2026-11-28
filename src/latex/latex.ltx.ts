@@ -31,6 +31,7 @@ const todayFormat = new Intl.DateTimeFormat("en", {
 interface Item
 {
     label: unknown
+    size: string | undefined
     text: unknown
 }
 
@@ -38,6 +39,7 @@ interface Item
 interface EnumItem
 {
     label: { id?: string, node: unknown }
+    size: string | undefined
     text: unknown
 }
 
@@ -469,7 +471,8 @@ export class LaTeX
                 this.g.enterGroup();
                 // label: null means no opt_group was given (\item ...), undefined is an empty one (\item[] ...)
                 const makelabel = this.g.create(Elements.itemlabel,
-                                                this.llap(item.label !== null ? item.label : this.g.macro(label)));
+                                                this.llap(item.label !== null ? item.label : this.g.macro(label)),
+                                                item.size);
                 this.g.exitGroup();
 
                 return this.g.create(Elements.listitem, [ makelabel, item.text as Node ]);
@@ -505,7 +508,7 @@ export class LaTeX
                 if (item.label.id)
                     this.g.setId(label, item.label.id);
 
-                const makelabel = this.g.create(Elements.itemlabel, this.llap(label));
+                const makelabel = this.g.create(Elements.itemlabel, this.llap(label), item.size);
                 return this.g.create(Elements.listitem, [ makelabel, item.text as Node ]);
             }))
         ];
@@ -529,7 +532,7 @@ export class LaTeX
 
         return [
             this.g.create(Elements.descriptionList, args[0].map(item => {
-                const dt = this.g.create(Elements.term, item.label as Node);
+                const dt = this.g.create(Elements.term, item.label as Node, item.size);
                 const dd = this.g.create(Elements.description, item.text as Node);
                 return this.g.createFragment([ dt, dd ]) as Node;
             }))

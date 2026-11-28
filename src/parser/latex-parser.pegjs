@@ -728,7 +728,6 @@ smbskip_vmode   =   s:$("small"/"med"/"big")"skip" !char _ { return g.createVSpa
 
 // verb - one-line verbatim text
 
-// TODO: this should use the current font size!
 verb            =   "verb" s:"*"? _ !char
                     b:.
                         v:$(!nl t:. !{ return b == t; })*
@@ -738,7 +737,7 @@ verb            =   "verb" s:"*"? _ !char
                         if (s)
                             v = v.replace(/ /g, g.visp);
 
-                        return g.create(Elements.verb, g.createVerbatim(v, true));
+                        return g.createVerbatim(v);
                     }
 
 
@@ -832,15 +831,20 @@ item =
     skip_all_space escape "item" !char !{ g.break(); } og:opt_group? skip_all_space
     { return og; }
 
+// the font size of the label
+item_size = ""  { return g.fontSize(); }
+
 // items without a counter
 items =
     (
         (skip_all_space hv_macro)*
         label:item
+        size:item_size
         pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
         {
             return {
                 label: label,
+                size: size,
                 text: g.createFragment(pars)
             };
         }
@@ -868,10 +872,12 @@ enumitems =
                 node: label
             };
         })
+        size:item_size
         pars:(!(item/end_env) p:paragraph { return p; })*   // collect paragraphs in pars
         {
             return {
                 label: label,
+                size: size,
                 text: g.createFragment(pars)
             };
         }

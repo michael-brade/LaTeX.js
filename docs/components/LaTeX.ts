@@ -176,7 +176,8 @@ export class LaTeXPreview
                 this.setDocumentZoom()
             } else {
                 // loads a new document; attach() applies the zoom
-                iframe.srcdoc = newDoc.documentElement.outerHTML
+                // outerHTML doesn't include the doctype, and without it, the iframe is in quirks mode
+                iframe.srcdoc = '<!DOCTYPE html>' + newDoc.documentElement.outerHTML
             }
 
             if (this.#scrollY) {

@@ -1,5 +1,5 @@
 {
-    "name": "LaTeX.js Dev",
+    "name": "LaTeX.js",
 
     "build": {
         "dockerfile": "Containerfile",
@@ -28,9 +28,8 @@
     // "capAdd": ["SYS_PTRACE"],
     // "securityOpt": ["seccomp=unconfined"],
 
-
-    "workspaceMount": "source=${localWorkspaceFolder},target=/source,type=bind",
-    "workspaceFolder": "/source",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
     "containerUser": "node",
     "containerEnv": { },
@@ -45,12 +44,12 @@
                 "Vue.volar",
                 "kamikillerto.vscode-colorize",
                 "dbaeumer.vscode-eslint",
-                "vitest.explorer"
+                "vitest.explorer",
+                "ms-vscode.hexeditor",
+                "timonwong.shellcheck"
             ]
         }
     },
-
-    "postCreateCommand": "echo 'LaTeX.js DevContainer ready'",
 
     "mounts": [
         {
